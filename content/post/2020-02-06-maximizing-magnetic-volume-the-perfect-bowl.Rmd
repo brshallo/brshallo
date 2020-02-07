@@ -35,14 +35,14 @@ For example, here’s how you could split your opponent’s bowls when ɸ is 75&
 
 *Sketched-out:*
 
-![My drawings are rotated 90&deg; clockwise from the problem description -- does not affect solution](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/bowl_calc.jpg){width=400px}
+![My drawings are rotated 90&deg; clockwise from the problem description (does not affect solution)](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/bowl_calc.jpg){width=400px}
 
 *Walked through:*
 
-**I.** The minimum angle will be one where the green bowl touches points on both red bowls -- this creates two tangents that you can think of as forming the track the green bowl travels down. Given the distance between the centers of the red bowls is 5 units, the distance between a green and a red bowl[^1] will be half this, 2.5 units. Also, the lines tangent to a red bowl and the green bowl will pass a point half way between this at 1.25 units from the center of a red circle[^1]. 
+**I.** The minimum angle will be one where the green bowl touches points on both red bowls -- this creates two tangents that you can think of as forming the track the green bowl travels down. Given the distance between the centers of the red bowls is 5 units, the distance between a green and a red bowl[^1] will be half this, 2.5 units. Also, the lines tangent to a red bowl and the green bowl will pass a point halfway between this at 1.25 units from the center of a red circle[^1]. 
 
-[^1]:When passing the line between the centers of the red circles
-.
+[^1]: When passing the line between the centers of the red circles.
+
 **II.** Create the following three lines:
 
 * Connect the centers of the red circles
@@ -51,7 +51,7 @@ For example, here’s how you could split your opponent’s bowls when ɸ is 75&
 
 Connecting these lines will create a right triangle with side length of 1 and hypotenuse of 1.25.
 
-**III.** If you remember the *soh cah toa* rules from trigonometry, you can use the identity *sin(phi) = opposite/hypotenuse* --> *phi = arcsin(1/1.25)* and compute the minimum angle is ~53.13&deg;. 
+**III.** If you remember the *soh cah toa* rules from trigonometry, you can use the identity $sin(\phi) = \frac{opposite}{hypotenuse} \longrightarrow \phi = arcsin(\frac{1}{1.25})$ and compute the minimum angle is ~53.13&deg;. 
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
@@ -108,19 +108,20 @@ The riddle:
 
 **My Approach:**
 
-The Magna-Tiles will form regular pyramids. The question is which *n-sided* pyramid will have the greatest volume. The volume of a pyramid is *(1/3) x (area of base) x (height of pyramid)*. Hence we need to first calculate the [Area of the base of the pyramid] and the [Height of the pyramid]. I'll set-up a way of calculating these as a function of the number of (75-75-30) Magna-Tiles.
 
-## Area of the base of the pyramid
+The Magna-Tiles will form regular pyramids. The question is which *n-sided* pyramid will have the greatest volume. $$(Volume\;of\;a\;regular\;pyramid) = \frac{1}{3}(area\;of\;base)(height\;of\;pyramid)$$ Hence we need to first calculate the [Area of the base of the pyramid] and the [Height of the pyramid]. I'll set-up a way of calculating these as a function of the number of (75&deg;-75&deg;-30&deg;) Magna-Tiles.
+
+## Area of the base of the pyramid 
 
 The side length of the base of our pyramid will be the length of the shortest side of a Magna-Tile. We weren't told the lengths of the sides of the Magna-Tiles but they don't matter for this problem^[As the pyramids created will be similar so each pyramid would scale proportionally to one another.]. To keep things simple, I'll say the two congruent sides of the Magna-Tiles are equal to 1 unit.
 
-Given this, a little trigonometry shows the base of the Magna-Tile has length equal to *2 x sin(15&deg;).*
+Given this, a little trigonometry shows the base of the Magna-Tile has length equal to *2sin(15&deg;).*
 
 ![Base polygon side length](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/base_length.jpg){width=400px}
 
-I used *Math Open Reference* to find an equation for [area of a regular polygon](https://www.mathopenref.com/polygonregulararea.html) as a function of side length and number of sides: *(area of regular polygon) = (number of sides) x (side length)^2 / (4 x tan(180&deg; / (number of sides)))*
+I used *Math Open Reference* to find an equation for [area of a regular polygon](https://www.mathopenref.com/polygonregulararea.html) as a function of side length and number of sides: $$(area\;of\;regular\;polygon)\;=\;\frac{(side\;length)^{2}(number\;of\;sides)}{4tan(\frac{180^{\circ}}{number\;of\;sides})}$$
 
-You can replace *(side length)* in this equation with *2 x sin(15&deg;)* (calculated above),
+You can replace *(side length)* in this equation with *2sin(15&deg;)* (calculated above),
 making area a function of *only* the number of sides on our pyramid (i.e. the number of Magna-Tiles).
 
 ## Height of the pyramid
@@ -141,22 +142,20 @@ Calculating **I** & **II** will enable us to use the Pythagorean Theorem to calc
 
 **I.** Length of a Magna-Tile (over its line of symmetry)
 
-Using the trigonemtric rule that *cos(angle) = adjacent/hypotenuse* reveals the length of a Magna-Tile as: *cos(15&deg;)* (Remember we are treating the longest sides of the Magna-Tile as equal to 1 unit^[In this case the longest sides are each a hypotenuse.].
+Using the trigonemtric rule that $cos(\theta) = \frac{adjacent}{hypotenuse}$ reveals the length of a Magna-Tile as equal to *cos(15&deg;)* -- remember we are treating the longest sides of the Magna-Tile as equal to 1 unit^[In this case the longest sides are each a hypotenuse.].
 
 ![Magna-Tile length (over its line of symmetry)](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/mag_length.jpg){width=200px}
 
+**II.** I used Math Open Reference to find the equation for [apothem length](https://www.mathopenref.com/apothem.html) as a function of number and length of sides in a regular polygon. $$apothem\;length = \frac{side\;length}{2tan(\frac{180^{\circ}}{number\;of\;sides})}$$ You can replace *side length* in this equation with *2sin(15&deg;)* (calculated above), making apothem length a function of *only* the number of sides on our pyramid (i.e. the number of Magna-Tiles).
 
-**II.** I used Math Open Reference to find the equation for [apothem length](https://www.mathopenref.com/apothem.html) as a function of number and length of sides in a regular polygon. *apothem = (side length) / (2 x tan(180&deg; / number of sides))* . You can replace *(side length)* in this equation with *2 x sin(15&deg;)* (calculated above), making apothem length a function of *only* the number of sides on our pyramid (i.e. the number of Magna-Tiles).
-
-**III.** We now have the length of two out of three of the sides of our interior right triangle. Simply use the Pythagorean Theorem to calculate the height:  *sqrt(magnatile_length^2 - base_apothem^2)*. If you fill these in with the equations from parts **I** & **II** above, you'll note height is represented as a function of *only* # of sides (i.e. number of Magna-Tiles)
-
-**III.** Parts **I.** and **II.** represent two sides of a right triangle. To find the third side, corresponding with pyramid height, simpy use the pythagorean theorem:  *sqrt(magnatile_length^2 - base_apothem^2)*. Fill these in with the parts detailed in **I** & **II** above and you'll see pyramid height is now represented as a function of *only* # of sides (i.e. number of Magna-Tiles).
+**III.** Parts **I** and **II** represent two sides of a right triangle. To find the third side (corresponding with *pyramid height*) simply use the pythagorean theorem: $$pyramid\;height = \sqrt{(MagnaTile\;length)^{2} - (apothem\;length)^{2}}$$ 
+Fill in the values for *(Magna-Tile length)* and *(apothem length)* (as described in **I** & **II**) and you'll see pyramid height is now represented as a function of *only* number of sides (i.e. number of Magna-Tiles).  
 
 ![Finding pyramid height](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg){width=600px}
 
 ## Encode functions and calculate volumes
 
-I used R to encode these functions^[In the code I use pi / 12 radians, which is equivalent to 15&deg; used throughout the descriptions.] and then calculated the volumes for pyramids built from 3 to 11 Magna-Tiles^[If you put in 2 or 12 Magna-Tiles, the functions would output a volume of 0.]. 
+I used R to encode these functions^[In the code I use pi / 12 radians, which is equivalent to 15&deg; used throughout the descriptions.] and calculate the volumes for pyramids built from 2 to 12 Magna-Tiles^[2 and 12 Magna-Tiles represent flat structures ad therefore no volume.]. 
 
 ```{r area-and-apothem-polygon}
 area_poly <- function(s, n) s ^ 2 * n / (4 * tan(pi / n))
@@ -203,9 +202,10 @@ volumes %>%
 
 * Volume increases up until 10 Magna-Tiles and then decreases at 11^[At 12 the structure is flat so no longer has volume.]. 
 
-See [Appendix] for a bonus plot showing number of tiles (and size of pyramid base) vs pyramid height.
 
 # Appendix
+
+*Bonus plot showing number of tiles (and size of pyramid base) vs pyramid height.*
 
 ```{r heights-and-apothem-graph}
 volumes %>% 
