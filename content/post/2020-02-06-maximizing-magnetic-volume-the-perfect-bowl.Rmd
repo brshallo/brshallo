@@ -12,7 +12,7 @@ tags:
 slug: maximizing-magnetic-volume-the-perfect-bowl
 ---
 
-This post contains solutions to FiveThirtyEight's two riddles released 2020-01-31, the [Riddler Express] and the [Riddler Classic].
+This post contains solutions to FiveThirtyEight's two riddles released 2020-01-31, [Riddler Express] and [Riddler Classic].
 
 
 # Riddler Express
@@ -35,27 +35,64 @@ For example, here’s how you could split your opponent’s bowls when ɸ is 75&
 
 *Sketched-out:*
 
-![](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/bowl_calc.jpg){width=400px}
+![My drawings are rotated 90&deg; clockwise from the problem description -- does not affect solution](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/bowl_calc.jpg){width=400px}
 
 *Walked through:*
 
-**I.** The minimum angle will be one where the green bowl touches a single tangent point on both red bowls. You can think of this as a track the green bowl has to travel down. Given the distance between the centers of the red bowls is 5 units, the distance between a green and a red bowl will be half this, 2.5 units. The edge of the green bowl will pass a point half way between this at 1.25 units from the center of the red circle. 
+**I.** The minimum angle will be one where the green bowl touches points on both red bowls -- this creates two tangents that you can think of as forming the track the green bowl travels down. Given the distance between the centers of the red bowls is 5 units, the distance between a green and a red bowl[^1] will be half this, 2.5 units. Also, the lines tangent to a red bowl and the green bowl will pass a point half way between this at 1.25 units from the center of a red circle[^1]. 
 
-**II.** Create the following lines:
+[^1]:When passing the line between the centers of the red circles
+.
+**II.** Create the following three lines:
 
-* Connect the centers of the red circle
-* The line(s) tangent to both a red circle and the green circle
-* The line(s) perpendicular to the tangent point on the red circle
+* Connect the centers of the red circles
+* The line tangent to both a red circle and the green circle^[Could do for either or both circles  and would get same solution as below steps will form congruent triangles -- but following these steps using the top red circle more closely follows the story of the problem.]
+* The line perpendicular to the tangent point on the red circle
 
-Connecting these lines will create a right triangle(s) with side length of 1 and hypotenuse of 1.25.
+Connecting these lines will create a right triangle with side length of 1 and hypotenuse of 1.25.
 
 **III.** If you remember the *soh cah toa* rules from trigonometry, you can use the identity *sin(phi) = opposite/hypotenuse* --> *phi = arcsin(1/1.25)* and compute the minimum angle is ~53.13&deg;. 
 
-*What the path of the green bowl would look like:*
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
 
-![Path of a perfect bowl](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/bowl_image.png){width=400px}
+```{r, libraries}
+library(tidyverse) 
 
-See [my github gist](https://gist.github.com/brshallo/b360c2e1e5a45145fc3c45575ade36c3) for the code used to create the above plot.
+```
+
+```{r bowl-perfect-path}
+circles <- data.frame(
+  x0 = rep(0, 2),
+  y0 = c(-2.5, 2.5),
+  r = rep(1, 2),
+  colour = factor(c("g", "g"), c("g", "r"))
+)
+
+circles_moving <- data.frame(
+  x0 = seq(-1.5, 1.5, by = 0.2)
+) %>% 
+  # The slope of -0.45/0.6 can be calculated from the solution described above
+  mutate(y0 = -(0.45/0.6)*x0,
+         r = rep(1, n()),
+         colour = rep("r", n()),
+         index = row_number()
+         )
+```
+
+*What the path of the perfect bowl would look like:*
+
+```{r bowl-perfect-path-figure, out.width= "70%"}
+ggplot(aes(fill = colour), data = circles_moving) +
+  geom_abline(slope = -0.45/0.6, intercept = 0)+
+  ggforce::geom_circle(aes(x0 = x0, y0 = y0, r = r), alpha = 0.2)+
+  ggforce::geom_circle(aes(x0 = x0, y0 = y0, r = r), data = tail(circles_moving, 1))+
+  ggforce::geom_circle(aes(x0 = x0, y0 = y0, r = r), data = circles)+
+  coord_fixed()+
+  ggforce::theme_no_axes()+
+  theme(legend.position = "none", panel.border = element_blank())
+```
 
 # Riddler Classic
 
@@ -90,42 +127,36 @@ making area a function of *only* the number of sides on our pyramid (i.e. the nu
 
 *Sketched out:*
 
-![Calculate height](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg){width=600px}
+![Finding pyramid height](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg){width=600px}
 
 *Walked through:*
 
-The highest point of the pyramid will rest over the center of the base polygon. You can imagine a right triangle on the interior of a regular n-sided pyramid that is composed of three line segments: 
+The highest point of the pyramid will rest over the center of the base polygon. You can imagine a right triangle on the interior of a regular n-sided pyramid with its three line segments corresponding with: 
 
-**I.** the length of any Magna-Tile (over line of symmetry)  
+**I.** the length of a Magna-Tile (over its line of symmetry)  
 **II.** an apothem of the pyramid's base (an apothem is just a line segment from the center of a regular polygon to the middle of any side)  
 **III.** the pyramid's height  
 
-Calculating **I** & **II** will enable us to calculate the **pyramid height**.
+Calculating **I** & **II** will enable us to use the Pythagorean Theorem to calculate the **pyramid height**.
 
-**I.** Length of a Magna-Tile (over line of symmetry)
+**I.** Length of a Magna-Tile (over its line of symmetry)
 
-Using the trigonemtric rule that *cos(angle) = adjacent/hypotenuse* reveals the length of a Magna-Tile as: cos(15&deg;) (Remember we are treating the longest sides of the Magna-Tile -- in this case our hypotenuse(s) -- to 1 unit).
+Using the trigonemtric rule that *cos(angle) = adjacent/hypotenuse* reveals the length of a Magna-Tile as: *cos(15&deg;)* (Remember we are treating the longest sides of the Magna-Tile as equal to 1 unit^[In this case the longest sides are each a hypotenuse.].
 
-![Magna-Tile length](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/mag_length.jpg){width=200px}
+![Magna-Tile length (over its line of symmetry)](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/mag_length.jpg){width=200px}
 
 
-**II.** I used Math Open Reference to find the equation for [apothem length](https://www.mathopenref.com/apothem.html) as a function of number and length of sides in a regular polygon.
+**II.** I used Math Open Reference to find the equation for [apothem length](https://www.mathopenref.com/apothem.html) as a function of number and length of sides in a regular polygon. *apothem = (side length) / (2 x tan(180&deg; / number of sides))* . You can replace *(side length)* in this equation with *2 x sin(15&deg;)* (calculated above), making apothem length a function of *only* the number of sides on our pyramid (i.e. the number of Magna-Tiles).
 
 **III.** We now have the length of two out of three of the sides of our interior right triangle. Simply use the Pythagorean Theorem to calculate the height:  *sqrt(magnatile_length^2 - base_apothem^2)*. If you fill these in with the equations from parts **I** & **II** above, you'll note height is represented as a function of *only* # of sides (i.e. number of Magna-Tiles)
 
-![Calculate height](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg){width=600px}
+**III.** Parts **I.** and **II.** represent two sides of a right triangle. To find the third side, corresponding with pyramid height, simpy use the pythagorean theorem:  *sqrt(magnatile_length^2 - base_apothem^2)*. Fill these in with the parts detailed in **I** & **II** above and you'll see pyramid height is now represented as a function of *only* # of sides (i.e. number of Magna-Tiles).
+
+![Finding pyramid height](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg){width=600px}
 
 ## Encode functions and calculate volumes
 
 I used R to encode these functions^[In the code I use pi / 12 radians, which is equivalent to 15&deg; used throughout the descriptions.] and then calculated the volumes for pyramids built from 3 to 11 Magna-Tiles^[If you put in 2 or 12 Magna-Tiles, the functions would output a volume of 0.]. 
-
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
-```
-
-```{r load-libraries}
-library(tidyverse)
-```
 
 ```{r area-and-apothem-polygon}
 area_poly <- function(s, n) s ^ 2 * n / (4 * tan(pi / n))
@@ -149,7 +180,7 @@ side <- 2 * sin(pi / 12)
 ```
 
 ```{r volumes-df}
-volumes <- tibble(n = 3:11, 
+volumes <- tibble(n = 2:12, 
        hypot_len = tile_len, 
        side_len = side) %>% 
   mutate(area = area_poly(side_len, n),
@@ -178,6 +209,7 @@ See [Appendix] for a bonus plot showing number of tiles (and size of pyramid bas
 
 ```{r heights-and-apothem-graph}
 volumes %>% 
+  filter(!(n %in% c(2, 12))) %>% 
   ggplot(aes(x = as.factor(n), y = height))+
   geom_col(aes(width = apoth_len))+
   labs(x = "Number of Magna-Tiles",
