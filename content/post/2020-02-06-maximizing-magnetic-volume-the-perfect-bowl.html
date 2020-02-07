@@ -1,0 +1,131 @@
+---
+title: 'FiveThirtyEight Riddler Solutions: Perfect Bowl & Magnetic Volume'
+author: Bryan Shalloway
+date: '2020-02-06'
+categories:
+  - math
+tags:
+  - math
+  - geometry
+  - riddles
+  - rstats
+slug: maximizing-magnetic-volume-the-perfect-bowl
+---
+
+
+
+<p>This post contains solutions to FiveThirtyEight’s two riddles released 2020-01-31, the <a href="#riddler-express">Riddler Express</a> and the <a href="#riddler-classic">Riddler Classic</a>.</p>
+<div id="riddler-express" class="section level1">
+<h1>Riddler Express</h1>
+<p>The riddle:</p>
+<blockquote>
+At the recent World Indoor Bowls Championships in Great Yarmouth, England, one of the rolls by Nick Brett went viral. Here it is in all its glory:
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+12/10 on the mindblowing scale 🤯 <a href="https://twitter.com/hashtag/SCtop10?src=hash&amp;ref_src=twsrc%5Etfw">#SCtop10</a><br><br>(via <a href="https://twitter.com/BBCSport?ref_src=twsrc%5Etfw"><span class="citation">@BBCSport</span></a>) <a href="https://t.co/6pN6ybzVel">pic.twitter.com/6pN6ybzVel</a>
+</p>
+— SportsCenter (<span class="citation">@SportsCenter</span>) <a href="https://twitter.com/SportsCenter/status/1220355057503363072?ref_src=twsrc%5Etfw">January 23, 2020</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</blockquote>
+<blockquote>
+<p>In order for Nick’s green bowl to split the two red bowls, he needed expert precision in both the speed of the roll and its final angle of approach.</p>
+<p>Suppose you were standing in Nick’s shoes, and you wanted to split two of your opponent’s bowls. Let’s simplify the math a little, and say that each bowl is a sphere with a radius of 1. Let’s further suppose that your opponent’s two red bowls are separated by a distance of 3 — that is, the centers of the red bowls are separated by a distance of 5. Define ɸ as the angle between the path your bowl is on and the line connecting your opponent’s bowls.
+For example, here’s how you could split your opponent’s bowls when ɸ is 75°:</p>
+<p><img src="https://fivethirtyeight.com/wp-content/uploads/2020/01/bowls.gif" /></p>
+<p>– <a href="https://fivethirtyeight.com/contributors/zach-wissner-gross/">Zach Wissner-Gross</a>, <a href="https://fivethirtyeight.com/features/can-you-roll-the-perfect-bowl/">"Can You Roll The Perfect Bowl? FiveThirtyEight</a></p>
+</blockquote>
+<p><strong>My Approach:</strong></p>
+<p><em>Sketched-out:</em></p>
+<p><img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/bowl_calc.jpg" width="400" /></p>
+<p><em>Walked through:</em></p>
+<p><strong>I.</strong> The minimum angle will be one where the green bowl touches a single tangent point on both red bowls. You can think of this as a track the green bowl has to travel down. Given the distance between the centers of the red bowls is 5 units, the distance between a green and a red bowl will be half this, 2.5 units. The edge of the green bowl will pass a point half way between this at 1.25 units from the center of the red circle.</p>
+<p><strong>II.</strong> Create the following lines:</p>
+<ul>
+<li>Connect the centers of the red circle</li>
+<li>The line(s) tangent to both a red circle and the green circle</li>
+<li>The line(s) perpendicular to the tangent point on the red circle</li>
+</ul>
+<p>Connecting these lines will create a right triangle(s) with side length of 1 and hypotenuse of 1.25.</p>
+<p><strong>III.</strong> If you remember the <em>soh cah toa</em> rules from trigonometry, you can use the identity <em>sin(phi) = opposite/hypotenuse</em> –&gt; <em>phi = arcsin(1/1.25)</em> and compute the minimum angle is ~53.13°.</p>
+<p><em>What the path of the green bowl would look like:</em></p>
+<div class="figure">
+<img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/bowl_image.png" alt="Path of a perfect bowl" width="400" />
+<p class="caption">Path of a perfect bowl</p>
+</div>
+<p>See <a href="https://gist.github.com/brshallo/b360c2e1e5a45145fc3c45575ade36c3">my github gist</a> for the code used to create the above plot.</p>
+</div>
+<div id="riddler-classic" class="section level1">
+<h1>Riddler Classic</h1>
+<p>The riddle:</p>
+<blockquote>
+<p>From Robert Berger comes a question of maximizing magnetic volume:</p>
+</blockquote>
+<blockquote>
+<p>Robert’s daughter has a set of Magna-Tiles, which, as their name implies, are tiles with magnets on the edges that can be used to build various polygons and polyhedra. Some of the tiles are identical isosceles triangles with one 30 degree angle and two 75 degree angles. If you were to arrange 12 of these tiles with their 30 degree angles in the center, they would lay flat and form a regular dodecagon. If you were to put fewer (between three and 11) of those tiles together in a similar way, they would form a pyramid whose base is a regular polygon. Robert has graciously provided a photo of the resulting pyramids when three and 11 tiles are used:</p>
+<p><img src="https://fivethirtyeight.com/wp-content/uploads/2020/01/pyramids.png" width="400" /></p>
+<p>– <a href="https://fivethirtyeight.com/contributors/zach-wissner-gross/">Zach Wissner-Gross</a>, <a href="https://fivethirtyeight.com/features/can-you-roll-the-perfect-bowl/">"Can You Roll The Perfect Bowl? FiveThirtyEight</a></p>
+</blockquote>
+<p><strong>My Approach:</strong></p>
+<p>The Magna-Tiles will form regular pyramids. The question is which <em>n-sided</em> pyramid will have the greatest volume. The volume of a pyramid is <em>(1/3) x (area of base) x (height of pyramid)</em>. Hence we need to first calculate the <a href="#area-of-the-base-of-the-pyramid">Area of the base of the pyramid</a> and the <a href="#height-of-the-pyramid">Height of the pyramid</a>. I’ll set-up a way of calculating these as a function of the number of (75-75-30) Magna-Tiles.</p>
+<div id="area-of-the-base-of-the-pyramid" class="section level2">
+<h2>Area of the base of the pyramid</h2>
+<p>The side length of the base of our pyramid will be the length of the shortest side of a Magna-Tile. We weren’t told the lengths of the sides of the Magna-Tiles but they don’t matter for this problem<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. To keep things simple, I’ll say the two congruent sides of the Magna-Tiles are equal to 1 unit.</p>
+<p>Given this, a little trigonometry shows the base of the Magna-Tile has length equal to <em>2 x sin(15°).</em></p>
+<div class="figure">
+<img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/base_length.jpg" alt="Base polygon side length" width="400" />
+<p class="caption">Base polygon side length</p>
+</div>
+<p>I used <em>Math Open Reference</em> to find an equation for <a href="https://www.mathopenref.com/polygonregulararea.html">area of a regular polygon</a> as a function of side length and number of sides: <em>(area of regular polygon) = (number of sides) x (side length)^2 / (4 x tan(180° / (number of sides)))</em></p>
+<p>You can replace <em>(side length)</em> in this equation with <em>2 x sin(15°)</em> (calculated above),
+making area a function of <em>only</em> the number of sides on our pyramid (i.e. the number of Magna-Tiles).</p>
+</div>
+<div id="height-of-the-pyramid" class="section level2">
+<h2>Height of the pyramid</h2>
+<p><em>Sketched out:</em></p>
+<div class="figure">
+<img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg" alt="Calculate height" width="600" />
+<p class="caption">Calculate height</p>
+</div>
+<p><em>Walked through:</em></p>
+<p>The highest point of the pyramid will rest over the center of the base polygon. You can imagine a right triangle on the interior of a regular n-sided pyramid that is composed of three line segments:</p>
+<p><strong>I.</strong> the length of any Magna-Tile (over line of symmetry)<br />
+<strong>II.</strong> an apothem of the pyramid’s base (an apothem is just a line segment from the center of a regular polygon to the middle of any side)<br />
+<strong>III.</strong> the pyramid’s height</p>
+<p>Calculating <strong>I</strong> &amp; <strong>II</strong> will enable us to calculate the <strong>pyramid height</strong>.</p>
+<p><strong>I.</strong> Length of a Magna-Tile (over line of symmetry)</p>
+<p>Using the trigonemtric rule that <em>cos(angle) = adjacent/hypotenuse</em> reveals the length of a Magna-Tile as: cos(15°) (Remember we are treating the longest sides of the Magna-Tile – in this case our hypotenuse(s) – to 1 unit).</p>
+<div class="figure">
+<img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/mag_length.jpg" alt="Magna-Tile length" width="200" />
+<p class="caption">Magna-Tile length</p>
+</div>
+<p><strong>II.</strong> I used Math Open Reference to find the equation for <a href="https://www.mathopenref.com/apothem.html">apothem length</a> as a function of number and length of sides in a regular polygon.</p>
+<p><strong>III.</strong> We now have the length of two out of three of the sides of our interior right triangle. Simply use the Pythagorean Theorem to calculate the height: <em>sqrt(magnatile_length^2 - base_apothem^2)</em>. If you fill these in with the equations from parts <strong>I</strong> &amp; <strong>II</strong> above, you’ll note height is represented as a function of <em>only</em> # of sides (i.e. number of Magna-Tiles)</p>
+<div class="figure">
+<img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg" alt="Calculate height" width="600" />
+<p class="caption">Calculate height</p>
+</div>
+</div>
+<div id="encode-functions-and-calculate-volumes" class="section level2">
+<h2>Encode functions and calculate volumes</h2>
+<p>I used R to encode these functions<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> and then calculated the volumes for pyramids built from 3 to 11 Magna-Tiles<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
+<p><img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/figure-html/volumes-graph-1.png" width="672" /></p>
+<ul>
+<li>Volume increases up until 10 Magna-Tiles and then decreases at 11<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</li>
+</ul>
+<p>See <a href="#appendix">Appendix</a> for a bonus plot showing number of tiles (and size of pyramid base) vs pyramid height.</p>
+</div>
+</div>
+<div id="appendix" class="section level1">
+<h1>Appendix</h1>
+<p><img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/figure-html/heights-and-apothem-graph-1.png" width="672" /></p>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>As the pyramids created will be similar so each pyramid would scale proportionally to one another.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>In the code I use pi / 12 radians, which is equivalent to 15° used throughout the descriptions.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>If you put in 2 or 12 Magna-Tiles, the functions would output a volume of 0.<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>At 12 the structure is flat so no longer has volume.<a href="#fnref4" class="footnote-back">↩</a></p></li>
+</ol>
+</div>

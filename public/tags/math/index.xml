@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>math on A Hugo website</title>
+    <link>/tags/math/</link>
+    <description>Recent content in math on A Hugo website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 06 Feb 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/math/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>FiveThirtyEight Riddler Solutions: Perfect Bowl &amp; Magnetic Volume</title>
+      <link>/2020/02/06/maximizing-magnetic-volume-the-perfect-bowl/</link>
+      <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/02/06/maximizing-magnetic-volume-the-perfect-bowl/</guid>
+      <description>This post contains solutions to FiveThirtyEight’s two riddles released 2020-01-31, the Riddler Express and the Riddler Classic.
+Riddler ExpressThe riddle:
+At the recent World Indoor Bowls Championships in Great Yarmouth, England, one of the rolls by Nick Brett went viral. Here it is in all its glory:12/10 on the mindblowing scale 🤯 #SCtop10
+(via @BBCSport) pic.twitter.com/6pN6ybzVel— SportsCenter (@SportsCenter) January 23, 2020In order for Nick’s green bowl to split the two red bowls, he needed expert precision in both the speed of the roll and its final angle of approach.</description>
+    </item>
+    
+  </channel>
+</rss>
