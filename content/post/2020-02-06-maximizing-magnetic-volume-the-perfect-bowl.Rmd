@@ -109,7 +109,7 @@ The riddle:
 **My Approach:**
 
 
-The Magna-Tiles will form regular pyramids. The question is which *n-sided* pyramid will have the greatest volume. $$(Volume\;of\;a\;regular\;pyramid) = \frac{1}{3}(area\;of\;base)(height\;of\;pyramid)$$ Hence we need to first calculate the [Area of the base of the pyramid] and the [Height of the pyramid]. I'll set-up a way of calculating these as a function of the number of (75&deg;-75&deg;-30&deg;) Magna-Tiles.
+The Magna-Tiles will form regular pyramids. The question is which *n-sided* pyramid will have the greatest volume. $$(Volume\;of\;a\;pyramid) = \frac{1}{3}(area\;of\;base)(height\;of\;pyramid)$$ Hence we need to first calculate the [Area of the base of the pyramid] and the [Height of the pyramid]. I'll set-up a way of calculating these as a function of the number of (75&deg;-75&deg;-30&deg;) Magna-Tiles.
 
 ## Area of the base of the pyramid 
 
