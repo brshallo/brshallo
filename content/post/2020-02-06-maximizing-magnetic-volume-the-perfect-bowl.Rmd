@@ -12,7 +12,7 @@ tags:
 slug: maximizing-magnetic-volume-the-perfect-bowl
 ---
 
-This post contains solutions to FiveThirtyEight's two riddles released 2020-01-31, [Riddler Express] and [Riddler Classic].
+This post contains solutions to FiveThirtyEight's two riddles released 2020-01-31, [Riddler Express] and [Riddler Classic]. Associated code for my figures and solutions can be found on my [github page](https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl.Rmd).
 
 
 # Riddler Express
