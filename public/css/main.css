@@ -319,3 +319,10 @@ code {
     box-shadow: none;
   }
 }
+
+img {
+  display: block;
+  margin: 0 0 1rem;
+  border-radius: 5px;
+  max-width: 100%;
+}

@@ -35,9 +35,9 @@ For example, here’s how you could split your opponent’s bowls when ɸ is 75&
 
 *Sketched-out:*
 
-![My drawings are rotated 90&deg; clockwise from the problem description (does not affect solution)](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/bowl_calc.jpg){width=400px}
+![My drawings are rotated 90&deg; clockwise from the problem description (does not affect solution)](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/bowl_calc.jpg){width="58%"}
 
-*Walked through:*
+!Walked through:*
 
 **I.** The minimum angle will be one where the green bowl touches points on both red bowls -- this creates two tangents that you can think of as forming the track the green bowl travels down. Given the distance between the centers of the red bowls is 5 units, the distance between a green and a red bowl[^1] will be half this, 2.5 units. Also, the lines tangent to a red bowl and the green bowl will pass a point halfway between this at 1.25 units from the center of a red circle[^1]. 
 
@@ -102,7 +102,7 @@ The riddle:
 
 >Robert’s daughter has a set of Magna-Tiles, which, as their name implies, are tiles with magnets on the edges that can be used to build various polygons and polyhedra. Some of the tiles are identical isosceles triangles with one 30 degree angle and two 75 degree angles. If you were to arrange 12 of these tiles with their 30 degree angles in the center, they would lay flat and form a regular dodecagon. If you were to put fewer (between three and 11) of those tiles together in a similar way, they would form a pyramid whose base is a regular polygon. Robert has graciously provided a photo of the resulting pyramids when three and 11 tiles are used:
 >
->![](https://fivethirtyeight.com/wp-content/uploads/2020/01/pyramids.png){width=400px}
+>![](https://fivethirtyeight.com/wp-content/uploads/2020/01/pyramids.png){width="58%"}
 >
 >-- [Zach Wissner-Gross](https://fivethirtyeight.com/contributors/zach-wissner-gross/), ["Can You Roll The Perfect Bowl? FiveThirtyEight](https://fivethirtyeight.com/features/can-you-roll-the-perfect-bowl/)
 
@@ -117,7 +117,7 @@ The side length of the base of our pyramid will be the length of the shortest si
 
 Given this, a little trigonometry shows the base of the Magna-Tile has length equal to *2sin(15&deg;).*
 
-![Base polygon side length](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/base_length.jpg){width=400px}
+![Base polygon side length](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/base_length.jpg){width="58%"}
 
 I used *Math Open Reference* to find an equation for [area of a regular polygon](https://www.mathopenref.com/polygonregulararea.html) as a function of side length and number of sides: $$(area\;of\;regular\;polygon)\;=\;\frac{(side\;length)^{2}(number\;of\;sides)}{4tan(\frac{180^{\circ}}{number\;of\;sides})}$$
 
@@ -128,7 +128,7 @@ making area a function of *only* the number of sides on our pyramid (i.e. the nu
 
 *Sketched out:*
 
-![Finding pyramid height](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg){width=600px}
+![Finding pyramid height](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg){width="80%"}
 
 *Walked through:*
 
@@ -151,7 +151,7 @@ Using the trigonemtric rule that $cos(\theta) = \frac{adjacent}{hypotenuse}$ rev
 **III.** Parts **I** and **II** represent two sides of a right triangle. To find the third side (corresponding with *pyramid height*) simply use the pythagorean theorem: $$pyramid\;height = \sqrt{(MagnaTile\;length)^{2} - (apothem\;length)^{2}}$$ 
 Fill in the values for *(Magna-Tile length)* and *(apothem length)* (as described in **I** & **II**) and you'll see pyramid height is now represented as a function of *only* number of sides (i.e. number of Magna-Tiles).  
 
-![Finding pyramid height](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg){width=600px}
+![Finding pyramid height](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg){width="80%"}
 
 ## Encode functions and calculate volumes
 
@@ -188,7 +188,7 @@ volumes <- tibble(n = 2:12,
          vol = vol_pyramid(area, height))
 ```
 
-```{r volumes-graph}
+```{r volumes-graph, out.width="100%"}
 volumes %>% 
   ggplot(aes(x = as.factor(n), y = vol))+
   geom_point()+
@@ -207,7 +207,7 @@ volumes %>%
 
 *Bonus plot showing number of tiles (and size of pyramid base) vs pyramid height.*
 
-```{r heights-and-apothem-graph}
+```{r heights-and-apothem-graph, out.width="100%"}
 volumes %>% 
   filter(!(n %in% c(2, 12))) %>% 
   ggplot(aes(x = as.factor(n), y = height))+
