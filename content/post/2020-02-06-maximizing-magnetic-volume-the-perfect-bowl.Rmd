@@ -114,7 +114,7 @@ The Magna-Tiles will form regular pyramids. The question is which *n-sided* pyra
 
 The side length of the base of our pyramid will be the length of the shortest side of a Magna-Tile. We weren't told the lengths of the sides of the Magna-Tiles but they don't matter for this problem^[As the pyramids created will be similar so each pyramid would scale proportionally to one another.]. To keep things simple, I'll say the two congruent sides of the Magna-Tiles are equal to 1 unit.
 
-Drawing a line perpendicular to the base splits our Magna-Tile into two congruent triangles. Given the trigonemtric identity that $sin(\theta) = \frac{opposite}{hypotenuse}$ and that the hypotenuse of each triangle was set at 1 unit, we can calculate the length of the base of the Magna-Tile is *2sin(15&deg;).*
+Drawing a line perpendicular to the base splits our Magna-Tile into two congruent triangles. Given the trigonometric identity that $sin(\theta) = \frac{opposite}{hypotenuse}$ and that the hypotenuse of each triangle was set at 1 unit, we can calculate the length of the base of the Magna-Tile is *2sin(15&deg;).*
 
 ![Base polygon side length](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/base_length.jpg){width="58%"}
 
@@ -141,13 +141,13 @@ Calculating **I** & **II** will enable us to use the Pythagorean Theorem to calc
 
 **I.** Length of a Magna-Tile (over its line of symmetry)
 
-Using the trigonemtric rule that $cos(\theta) = \frac{adjacent}{hypotenuse}$ reveals the length of a Magna-Tile as equal to *cos(15&deg;)* -- remember we are treating the longest sides of the Magna-Tile as equal to 1 unit^[In this case the longest sides are each a hypotenuse.].
+Using the trigonometric rule that $cos(\theta) = \frac{adjacent}{hypotenuse}$ reveals the length of a Magna-Tile as equal to *cos(15&deg;)* -- remember we are treating the longest sides of the Magna-Tile as equal to 1 unit^[In this case the longest sides are each a hypotenuse.].
 
 ![Magna-Tile length (over its line of symmetry)](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/mag_length.jpg){width=200px}
 
 **II.** I used Math Open Reference to find the equation for [apothem length](https://www.mathopenref.com/apothem.html) as a function of number and length of sides in a regular polygon. $$apothem\;length = \frac{side\;length}{2tan(\frac{180^{\circ}}{number\;of\;sides})}$$ You can replace *side length* in this equation with *2sin(15&deg;)* (calculated above), making apothem length a function of *only* the number of sides on our pyramid (i.e. the number of Magna-Tiles).
 
-**III.** Parts **I** and **II** represent two sides of a right triangle. To find the third side (corresponding with *pyramid height*) simply use the pythagorean theorem: $$pyramid\;height = \sqrt{(MagnaTile\;length)^{2} - (apothem\;length)^{2}}$$ 
+**III.** Parts **I** and **II** represent two sides of a right triangle. To find the third side (corresponding with *pyramid height*) simply use the Pythagorean theorem: $$pyramid\;height = \sqrt{(MagnaTile\;length)^{2} - (apothem\;length)^{2}}$$ 
 Fill in the values for *(Magna-Tile length)* and *(apothem length)* (as described in **I** & **II**) and you'll see pyramid height is now represented as a function of *only* number of sides (i.e. number of Magna-Tiles).  
 
 ![Finding pyramid height](/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg){width="80%"}
