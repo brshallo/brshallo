@@ -154,7 +154,7 @@ Fill in the values for *(Magna-Tile length)* and *(apothem length)* (as describe
 
 ## Encode functions and calculate volumes
 
-I used R to encode these functions^[In the code I use pi / 12 radians, which is equivalent to 15&deg; used throughout the descriptions.] and calculate the volumes for pyramids built from 2 to 12 Magna-Tiles^[2 and 12 Magna-Tiles represent flat structures ad therefore no volume.]. 
+I used [R to encode](https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl.Rmd) these functions^[In the code I use pi / 12 radians, which is equivalent to 15&deg; used throughout the descriptions.] and calculate the volumes for pyramids built from 2 to 12 Magna-Tiles^[2 and 12 Magna-Tiles represent flat structures ad therefore no volume.]. 
 
 ```{r area-and-apothem-polygon}
 area_poly <- function(s, n) s ^ 2 * n / (4 * tan(pi / n))
