@@ -1,0 +1,312 @@
+---
+title: 'Riddler Solutions: Palindrome debts and ambiguous absolut value
+  signs'
+author: Bryan Shalloway
+date: '2020-02-13'
+slug: fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs
+categories:
+  - math
+tags:
+  - combinatorics
+  - math
+  - rstats
+---
+
+This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-07, [Riddler Express] and [Riddler Classic]. Code for figures and solutions can be found on my github page.
+
+# Riddler Express
+
+The riddle:
+
+>From James Anderson comes a palindromic puzzle of calendars:
+>
+>This past Sunday was Groundhog Day. Also, there was a football game. But to top it all off, the date, 02/02/2020, was palindromic, meaning it reads the same forwards and backwards (if you ignore the slashes).
+>
+>If we write out dates in the American format of MM/DD/YYYY (i.e., the two digits of the month, followed by the two digits of the day, followed by the four digits of the year), how many more palindromic dates will there be this century?
+>
+>-- [Zach Wissner-Gross](https://fivethirtyeight.com/contributors/zach-wissner-gross/), ["How Many More Palindrome Dates Will You See," FiveThirtyEight](https://fivethirtyeight.com/features/can-you-roll-the-perfect-bowl/)
+
+**My approach:**
+
+I took a simple brute-force approach. Within a dataframe and using a little code from R's `tidyverse` I... 
+
+1. created a column^[vector] containing each date from now until the end of the century 
+1. created another column that contains the reverse of this 
+1. filtered to only rows where the columns equal the same value
+1. counted the number of rows
+
+```{r setup, echo = FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+suppressMessages(library(tidyverse))
+suppressMessages(library(lubridate))
+```
+
+```{r, eval = TRUE, eval = FALSE}
+tibble(
+  dates = seq.Date(from = ymd(20200207),
+                   to = ymd(21000101),
+                   by = "days") %>% format.Date("%m%d%Y")
+  ) %>% 
+  mutate(dates_rev = stringi::stri_reverse(dates)) %>% 
+  filter(dates == dates_rev)
+```
+
+```{r, echo = FALSE}
+tibble(
+  dates = seq.Date(from = ymd(20200207),
+                   to = ymd(21000101),
+                   by = "days") %>% format.Date("%m%d%Y")
+  ) %>% 
+  mutate(dates_rev = stringi::stri_reverse(dates)) %>% 
+  filter(dates == dates_rev) %>% 
+  knitr::kable()
+```
+
+Which shows there will be eight more pallindromic dates in the century -- one in each decade remaining.
+
+# Riddler Classic
+
+>Also on Super Bowl Sunday, math professor Jim Propp made a rather interesting observation:
+><blockquote class="twitter-tweet"><p lang="en" dir="ltr">I told my kid (who’d asked about absolute value signs) “They’re just like parentheses so there’s never any ambiguity,” but then I realized that things are more complicated; for instance |-1|-2|-3| could be 5 or -5. Has anyone encountered ambiguities like this in the wild?</p>&mdash; James Propp (@JimPropp) <a href="https://twitter.com/JimPropp/status/1224177172362989571?ref_src=twsrc%5Etfw">February 3, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+>
+At first glance, this might look like one of those annoying memes about order of operations that goes viral every few years — but it’s not.
+>
+When you write lengthy mathematical expressions using parentheses, it’s always clear which “open” parenthesis corresponds to which “close” parenthesis. For example, in the expression (1+2(3−4)+5), the closing parenthesis after the 4 pairs with the opening parenthesis before the 3, and not with the opening parenthesis before the 1.
+>
+But pairings of other mathematical symbols can be more ambiguous. Take the absolute value symbols in Jim’s example, which are vertical bars, regardless of whether they mark the opening or closing of the absolute value. As Jim points out, |−1|−2|−3| has two possible interpretations:
+>
+The two left bars are a pair and the two right bars are a pair. In this case, we have 1−2·3 = 1−6 = −5.
+The two outer bars are a pair and the two inner bars are a pair. In this case, we have |−1·2−3| = |−2−3| = |−5| = 5.
+Of course, if we gave each pair of bars a different height (as is done in mathematical typesetting), this wouldn’t be an issue. But for the purposes of this problem, assume the bars are indistinguishable.
+>
+How many different values can the expression |−1|−2|−3|−4|−5|−6|−7|−8|−9| have?
+
+>-- [Zach Wissner-Gross](https://fivethirtyeight.com/contributors/zach-wissner-gross/), ["How Many More Palindrome Dates Will You See," FiveThirtyEight](https://fivethirtyeight.com/features/can-you-roll-the-perfect-bowl/)
+
+**My approach:**
+
+The question is how many ways can you interpret the expression above. As hinted at by the author, the ambiguity in the expression becomes resolved based on where the parentheses are placed. Hence the question is how many different ways can we arrange the parentheses?
+
+*Constraints on placing parentheses:*
+
+* Parentheses form pairs, hence there must be an equal numbers of left-closed and right-closed parentheses, i.e. `)` and `(`
+* We need to avoid adding meaningless parentheses (that don't lessen ambiguity). Hence like those on the left of this expression should not count as placing a parentheses:
+
+|(-1)|(-2)|(-3)| $\Leftrightarrow$ |-1|-2|-3|
+    
+Hence, we will say...
+
+  * A bar can only have a single parentheses placed next to it (either a right or left closed)
+  * Right-closed will be placed to the left of a bar and left closed to the right of a bar, i.e. `|)` and `(|` 
+  * We can ignore the left and right most bars and say that a left-closed parenthese has to go on the left, and a right closed parentheses on the right, hence we can start the problem like "(|-1|-2|-3|)"
+    
+With these rules we can tackle the first part of the problem and think of each interior bar as representing a place-holder, the collection of which must be filled by an equal number of `)` and `(` .
+
+|−1 _ −2 _ −3 _ −4 _ −5 _ −6 _ −7 _ −8 _−9|
+
+This can be represented as a combinatorics^[[Khan Academy](khanacademy.org) if you want to brush up on your combinatorics skills.] problem that can be represented by $6 \choose 3$.
+
+We could use the `combinat` package in R to generate all these combinations. 
+
+```{r build-function, echo = FALSE}
+create_solve_expr_df <- function(x = -1:-7, out_nofilt = FALSE, out_nconfigs = FALSE){
+  
+  start_data <- tibble(index = seq_len(length(x) - 1), x = x[-1])
+  
+  comb_all <- combn(seq_len(length(x) - 1), (length(x) - 1) / 2) %>%
+    as_tibble()
+
+  tibble_string <- function(df, x_one = x[1]){
+    
+    df %>%
+      transpose() %>%
+      unlist() %>%
+      stringr::str_flatten() %>%
+      c("(|", x_one, ., "|)") %>%
+      stringr::str_flatten()
+  }
+  
+  df_express <- comb_all %>%
+    # map(~tibble(index = .x, index_dup = .x, char = "*(|")) %>%
+    map(~tibble(index = .x, index_dup = .x, char = "(|")) %>%
+    map(right_join, y = start_data, by = "index") %>%
+    map(~mutate(.x, char = ifelse(is.na(char), "|)", char))) %>%
+    map(~mutate(.x, index_dup_inv = ifelse(is.na(index_dup), index, NA))) %>%
+    tibble(data = .) %>%
+    # mutate(remove = map_lgl(data, ~check_all(.x$index_dup, exclude))) %>%
+    mutate(equation = map(data, ~select(.x, char, x))) %>%
+    mutate(equation = map_chr(equation, tibble_string))
+  
+  num_rows_max <- nrow(df_express)
+  
+  df_express <- df_express %>%
+    mutate(equation_prepped = str_replace_all(equation, "\\(\\|", "*abs\\(") %>%
+             str_replace_all("\\|\\)", "\\)") %>% str_sub(2)) %>%
+    mutate(val = map(equation_prepped, safely(~parse(text = .x)))) %>%
+    mutate(noerror = map(val, "error") %>% map_lgl(is.null)) 
+  
+  if(out_nofilt) return(df_express)
+  
+  df_express <- df_express %>%
+    filter(noerror) %>%
+    mutate(result = map(val, "result"),
+           evaluated = map_dbl(result, eval))
+  
+  if(out_nconfigs) return(list(n_configs = nrow(df_express), n_unique = length(unique(df_express$evaluated))))
+  df_express
+}
+```
+
+**However**, there is a problem; some of the combinations created could result in configurations with open parentheses. For example, even on a shorter version of this problem, the rules above would not safeguard from configurations such as:
+
+```{r, echo = FALSE}
+create_solve_expr_df(-1:-5, out_nofilt = TRUE) %>% 
+  filter(noerror == FALSE) %>%
+  pluck("equation") %>% 
+  str_view_all("\\)|\\(") 
+```
+
+that go against the rules of parentheses.
+
+*You might take one of these approaches:*
+
+* plug all combinations into a calculator and throw-out those that return an error
+* define additional rules about the configuration of parentheses that will filter out those configurations, like the one above, that would break (more effort)
+
+I ended-up doing it both ways (was a good way to verify my work). See [Define more rules] in the [Appendix] if you want to see how you might take the latter approach. For now, I'll go the easy route and start computing our expressions. 
+
+```{r, echo = FALSE}
+solution_9 <- create_solve_expr_df(-1:-9)
+```
+
+One thing I needed to do was make it so our mathematical solutions, i.e.:
+
+```{r, echo = FALSE}
+solution_9 %>% 
+  slice(1:2) %>% 
+  pluck("equation") %>% 
+  c(., "...") %>% 
+  str_view_all("\\)|\\(")
+```
+
+Could be represented as meaningful expressions within the R programming language, i.e.:
+
+```{r, echo = FALSE}
+solution_9 %>% 
+  slice(1:2) %>% 
+  pluck("equation_prepped") %>% 
+  c(., "...") %>% 
+  str_view_all("\\)|\\(")
+```
+
+I made an equation `create_solve_expr_df()` that creates the expressions and computes the solutions.  See the [raw Rmd file](github page link) on my github to see the code^[The code isn't *the most* attractive. The dataframe set-up could be cleaner.  Also I'd like to go back and rewrite the expression part of this using `rlang` and some of the cool things you can do with manipulating environments and expressions in R... but alas... hacked this solution together by just stitching together text...] I wrote to accomplish this.
+
+After creating all possible configurations, I need to actually compute each viable expression to check if any of the configurations resulted in duplicate solutions.
+
+*Number of different configurations of parentheses:*
+```{r, echo = TRUE}
+solution_9 %>% 
+  nrow()
+```
+
+**There are 42 individual configurations.** However we need to check if all of the evaluated solutions are unique.
+
+```{r, echo = TRUE}
+solution_9 %>% 
+  distinct(evaluated) %>% 
+  nrow()
+```
+
+*Given these particular inputs, there are only 39 unique solutions*, meaning that three configurations of parentheses led to duplicate solutions.
+
+# Appendix
+
+## On duplicates
+
+You might wonder if a different set of inputs to the expression $|x_1|x_2|x_3|...|x_9|$^[Note that $x_n < 0$.] would lead to 39 unique solutions, or if there would be 42 unique solutions -- one for each configuration. (I.e. whether the duplicates were specific to the integer inputs `r -1:-9` into the expression, or would have occurred regardless of input).
+
+To verify that you could in fact get 42 unique solutions, I passed in random negative numbers with decimals to see if the function would output unique values for all configurations, or if there would again be duplicates. 
+
+```{r, echo = TRUE}
+set.seed(123)
+solution_rand9 <- create_solve_expr_df(-runif(9))
+
+solution_rand9 %>% 
+  nrow()
+```
+
+```{r}
+solution_rand9 %>% 
+  distinct(evaluated) %>% 
+  nrow()
+```
+
+This led to an equal number of configurations and unique solutions -- no duplicates. Hence the fact there were duplicates in our problem was specific to the inputs of -1 to -9 not something that would result when inputting any 9 numbers into this expression. I also found this to be the case on longer expressions up to length 17 i.e. $|x_1|x_2|x_3|...|x_17|$.
+
+## More than 9 numbers
+
+With the above set-up you could calculate the number of configurations for any length of input. Though I found that once I started getting into problems into the 20's things take a long-time to process. See below for a chart of unique solutions from 1 to 17^[Note also that this problem requires that there be an odd number of inputs and that they all be negative.]
+
+```{r}
+num_solutions <- tibble(start = -1L, end = seq.int(-3L, -15L, by = -2L)) %>% 
+  mutate(vec = map2(start, end, ~.x:.y),
+         num_solutions = map(vec, create_solve_expr_df, out_nconfigs = TRUE)) %>% 
+  unnest_wider(num_solutions)
+```
+
+```{r}
+num_solutions %>% 
+  ggplot(aes(x = abs(end)))+
+  geom_line(aes(y = n_configs, colour = "num config"))+
+  geom_line(aes(y = n_unique, colour = "num unique"))+
+  labs(title = "Number of potential interpretations grows exponentially", 
+       x = "Length of expression",
+       y = "Number of solutions",
+       caption = "Num unique represents number of unique solutions \ngiven integer inputs of form -1, -2, ... -n")+
+  theme_bw()+
+  scale_y_log10()
+```
+
+## Define more rules
+
+We could define a few more rules about the configuration of our parentheses.
+
+* Counting from left to right, the number of `)` should never exceed the number of `(`
+* Counting from right to left, the number of `(` should never exceed the number of `)`
+
+I couldn't immediately think of a clean way of representing this using combinatorics, so instead decided to run a simulation on our existing subset of combinations from $6 choose 3$ that would filter out examples that break the above rules. 
+
+My set-up took inspiration from David Robinson's approach to a different [FiveThirtyEight "Riddler" problem](https://www.youtube.com/watch?v=TDzd73z8thU).
+
+```{r}
+library(combinat)
+library(tidyverse)
+
+x <- -1:-9
+index_paren <- tibble(index_LR = 1:8)
+
+combn(seq_len(length(x) - 1), (length(x) - 1) / 2, simplify = FALSE) %>% 
+  tibble(comb = .) %>% 
+  mutate(comb_num = row_number(),
+         data = map(comb, ~tibble(index_LR = .x, paren_index_LR = 1)),
+         # LR is here to indicate that we are going from left to right, hence
+         # index_LR represents the standard left to right counting of the index
+         data = map(data, right_join, y = index_paren, by = "index_LR"),
+         # left parentheses are 1, right parentheses are -1 
+         # paren_index_LR means going from from left to right
+         data = map(data, ~mutate(.x, paren_index_LR = ifelse(is.na(paren_index_LR), -1, paren_index_LR))),
+         # paren_index_RL means counting parentheses from left to right
+         data = map(data, ~mutate(.x, paren_index_RL = rev(paren_index_LR)))) %>%
+  select(-comb) %>% 
+  unnest(data) %>% 
+  group_by(comb_num) %>% 
+  mutate(left_agg = 1 + cumsum(paren_index_LR),
+         right_agg = -1 + cumsum(paren_index_RL)) %>% 
+  summarise(left_good = all(left_agg >= 0),
+            right_good = all(right_agg <= 0)) %>% 
+  summarise(num_possible_combinations = sum(left_good & right_good))
+```
+
+* Gives the number of meaningful configurations of parentheses 
+    * Would still need to go and make these all 

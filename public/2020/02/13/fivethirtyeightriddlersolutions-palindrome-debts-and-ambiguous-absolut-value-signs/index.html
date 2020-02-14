@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.57.2" />
+
+
+<title>Riddler Solutions: Palindrome debts and ambiguous absolut value signs - Bryan&#39;s website</title>
+<meta property="og:title" content="Riddler Solutions: Palindrome debts and ambiguous absolut value signs - Bryan&#39;s website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/bryan_edit.jpg"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://twitter.com/brshallo">Twitter</a></li>
+    
+    <li><a href="https://github.com/brshallo">GitHub</a></li>
+    
+    <li><a href="https://www.linkedin.com/in/bryanshalloway/">LinkedIn</a></li>
+    
+    <li><a href="https://www.youtube.com/channel/UCDVMC4-VRU-tR2Z4nYc1mDA">YouTube</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">8 min read</span>
+    
+
+    <h1 class="article-title">Riddler Solutions: Palindrome debts and ambiguous absolut value signs</h1>
+
+    
+    <span class="article-date">2020-02-13</span>
+    
+
+    <div class="article-content">
+      
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<link href="/rmarkdown-libs/str_view/str_view.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/str_view-binding/str_view.js"></script>
+
+
+<p>This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-07, <a href="#riddler-express">Riddler Express</a> and <a href="#riddler-classic">Riddler Classic</a>. Code for figures and solutions can be found on my github page.</p>
+<div id="riddler-express" class="section level1">
+<h1>Riddler Express</h1>
+<p>The riddle:</p>
+<blockquote>
+<p>From James Anderson comes a palindromic puzzle of calendars:</p>
+<p>This past Sunday was Groundhog Day. Also, there was a football game. But to top it all off, the date, 02/02/2020, was palindromic, meaning it reads the same forwards and backwards (if you ignore the slashes).</p>
+<p>If we write out dates in the American format of MM/DD/YYYY (i.e., the two digits of the month, followed by the two digits of the day, followed by the four digits of the year), how many more palindromic dates will there be this century?</p>
+<p>– <a href="https://fivethirtyeight.com/contributors/zach-wissner-gross/">Zach Wissner-Gross</a>, <a href="https://fivethirtyeight.com/features/can-you-roll-the-perfect-bowl/">“How Many More Palindrome Dates Will You See,” FiveThirtyEight</a></p>
+</blockquote>
+<p><strong>My approach:</strong></p>
+<p>I took a simple brute-force approach. Within a dataframe and using a little code from R’s <code>tidyverse</code> I…</p>
+<ol style="list-style-type: decimal">
+<li>created a column<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> containing each date from now until the end of the century</li>
+<li>created another column that contains the reverse of this</li>
+<li>filtered to only rows where the columns equal the same value</li>
+<li>counted the number of rows</li>
+</ol>
+<table>
+<thead>
+<tr class="header">
+<th align="left">dates</th>
+<th align="left">dates_rev</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">12022021</td>
+<td align="left">12022021</td>
+</tr>
+<tr class="even">
+<td align="left">03022030</td>
+<td align="left">03022030</td>
+</tr>
+<tr class="odd">
+<td align="left">04022040</td>
+<td align="left">04022040</td>
+</tr>
+<tr class="even">
+<td align="left">05022050</td>
+<td align="left">05022050</td>
+</tr>
+<tr class="odd">
+<td align="left">06022060</td>
+<td align="left">06022060</td>
+</tr>
+<tr class="even">
+<td align="left">07022070</td>
+<td align="left">07022070</td>
+</tr>
+<tr class="odd">
+<td align="left">08022080</td>
+<td align="left">08022080</td>
+</tr>
+<tr class="even">
+<td align="left">09022090</td>
+<td align="left">09022090</td>
+</tr>
+</tbody>
+</table>
+<p>Which shows there will be eight more pallindromic dates in the century – one in each decade remaining.</p>
+</div>
+<div id="riddler-classic" class="section level1">
+<h1>Riddler Classic</h1>
+<blockquote>
+Also on Super Bowl Sunday, math professor Jim Propp made a rather interesting observation:
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+I told my kid (who’d asked about absolute value signs) “They’re just like parentheses so there’s never any ambiguity,” but then I realized that things are more complicated; for instance |-1|-2|-3| could be 5 or -5. Has anyone encountered ambiguities like this in the wild?
+</p>
+— James Propp (<span class="citation">@JimPropp</span>) <a href="https://twitter.com/JimPropp/status/1224177172362989571?ref_src=twsrc%5Etfw">February 3, 2020</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>At first glance, this might look like one of those annoying memes about order of operations that goes viral every few years — but it’s not.</p>
+<p>When you write lengthy mathematical expressions using parentheses, it’s always clear which “open” parenthesis corresponds to which “close” parenthesis. For example, in the expression (1+2(3−4)+5), the closing parenthesis after the 4 pairs with the opening parenthesis before the 3, and not with the opening parenthesis before the 1.</p>
+<p>But pairings of other mathematical symbols can be more ambiguous. Take the absolute value symbols in Jim’s example, which are vertical bars, regardless of whether they mark the opening or closing of the absolute value. As Jim points out, |−1|−2|−3| has two possible interpretations:</p>
+<p>The two left bars are a pair and the two right bars are a pair. In this case, we have 1−2·3 = 1−6 = −5.
+The two outer bars are a pair and the two inner bars are a pair. In this case, we have |−1·2−3| = |−2−3| = |−5| = 5.
+Of course, if we gave each pair of bars a different height (as is done in mathematical typesetting), this wouldn’t be an issue. But for the purposes of this problem, assume the bars are indistinguishable.</p>
+<p>How many different values can the expression |−1|−2|−3|−4|−5|−6|−7|−8|−9| have?</p>
+</blockquote>
+<blockquote>
+<p>– <a href="https://fivethirtyeight.com/contributors/zach-wissner-gross/">Zach Wissner-Gross</a>, <a href="https://fivethirtyeight.com/features/can-you-roll-the-perfect-bowl/">“How Many More Palindrome Dates Will You See,” FiveThirtyEight</a></p>
+</blockquote>
+<p><strong>My approach:</strong></p>
+<p>The question is how many ways can you interpret the expression above. As hinted at by the author, the ambiguity in the expression becomes resolved based on where the parentheses are placed. Hence the question is how many different ways can we arrange the parentheses?</p>
+<p><em>Constraints on placing parentheses:</em></p>
+<ul>
+<li>Parentheses form pairs, hence there must be an equal numbers of left-closed and right-closed parentheses, i.e. <code>)</code> and <code>(</code></li>
+<li>We need to avoid adding meaningless parentheses (that don’t lessen ambiguity). Hence like those on the left of this expression should not count as placing a parentheses:</li>
+</ul>
+<p>|(-1)|(-2)|(-3)| <span class="math inline">\(\Leftrightarrow\)</span> |-1|-2|-3|</p>
+<p>Hence, we will say…</p>
+<ul>
+<li>A bar can only have a single parentheses placed next to it (either a right or left closed)</li>
+<li>Right-closed will be placed to the left of a bar and left closed to the right of a bar, i.e. <code>|)</code> and <code>(|</code></li>
+<li>We can ignore the left and right most bars and say that a left-closed parenthese has to go on the left, and a right closed parentheses on the right, hence we can start the problem like “(|-1|-2|-3|)”</li>
+</ul>
+<p>With these rules we can tackle the first part of the problem and think of each interior bar as representing a place-holder, the collection of which must be filled by an equal number of <code>)</code> and <code>(</code> .</p>
+<p>|−1 _ −2 _ −3 _ −4 _ −5 _ −6 _ −7 _ −8 _−9|</p>
+<p>This can be represented as a combinatorics<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> problem that can be represented by <span class="math inline">\(6 \choose 3\)</span>.</p>
+<p>We could use the <code>combinat</code> package in R to generate all these combinations.</p>
+<p><strong>However</strong>, there is a problem; some of the combinations created could result in configurations with open parentheses. For example, even on a shorter version of this problem, the rules above would not safeguard from configurations such as:</p>
+<div id="htmlwidget-1" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"html":"<ul>\n  <li><span class='match'>(<\/span>|-1|<span class='match'>)<\/span>-2|<span class='match'>)<\/span>-3<span class='match'>(<\/span>|-4<span class='match'>(<\/span>|-5|<span class='match'>)<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<p>that go against the rules of parentheses.</p>
+<p><em>You might take one of these approaches:</em></p>
+<ul>
+<li>plug all combinations into a calculator and throw-out those that return an error</li>
+<li>define additional rules about the configuration of parentheses that will filter out those configurations, like the one above, that would break (more effort)</li>
+</ul>
+<p>I ended-up doing it both ways (was a good way to verify my work). See <a href="#define-more-rules">Define more rules</a> in the <a href="#appendix">Appendix</a> if you want to see how you might take the latter approach. For now, I’ll go the easy route and start computing our expressions.</p>
+<p>One thing I needed to do was make it so our mathematical solutions, i.e.:</p>
+<div id="htmlwidget-2" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"html":"<ul>\n  <li><span class='match'>(<\/span>|-1<span class='match'>(<\/span>|-2<span class='match'>(<\/span>|-3<span class='match'>(<\/span>|-4<span class='match'>(<\/span>|-5|<span class='match'>)<\/span>-6|<span class='match'>)<\/span>-7|<span class='match'>)<\/span>-8|<span class='match'>)<\/span>-9|<span class='match'>)<\/span><\/li>\n  <li><span class='match'>(<\/span>|-1<span class='match'>(<\/span>|-2<span class='match'>(<\/span>|-3<span class='match'>(<\/span>|-4|<span class='match'>)<\/span>-5<span class='match'>(<\/span>|-6|<span class='match'>)<\/span>-7|<span class='match'>)<\/span>-8|<span class='match'>)<\/span>-9|<span class='match'>)<\/span><\/li>\n  <li>...<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<p>Could be represented as meaningful expressions within the R programming language, i.e.:</p>
+<div id="htmlwidget-3" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3">{"x":{"html":"<ul>\n  <li>abs<span class='match'>(<\/span>-1*abs<span class='match'>(<\/span>-2*abs<span class='match'>(<\/span>-3*abs<span class='match'>(<\/span>-4*abs<span class='match'>(<\/span>-5<span class='match'>)<\/span>-6<span class='match'>)<\/span>-7<span class='match'>)<\/span>-8<span class='match'>)<\/span>-9<span class='match'>)<\/span><\/li>\n  <li>abs<span class='match'>(<\/span>-1*abs<span class='match'>(<\/span>-2*abs<span class='match'>(<\/span>-3*abs<span class='match'>(<\/span>-4<span class='match'>)<\/span>-5*abs<span class='match'>(<\/span>-6<span class='match'>)<\/span>-7<span class='match'>)<\/span>-8<span class='match'>)<\/span>-9<span class='match'>)<\/span><\/li>\n  <li>...<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<p>I made an equation <code>create_solve_expr_df()</code> that creates the expressions and computes the solutions. See the <a href="github%20page%20link">raw Rmd file</a> on my github to see the code<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> I wrote to accomplish this.</p>
+<p>After creating all possible configurations, I need to actually compute each viable expression to check if any of the configurations resulted in duplicate solutions.</p>
+<p><em>Number of different configurations of parentheses:</em></p>
+<pre class="r"><code>solution_9 %&gt;% 
+  nrow()</code></pre>
+<pre><code>## [1] 42</code></pre>
+<p><strong>There are 42 individual configurations.</strong> However we need to check if all of the evaluated solutions are unique.</p>
+<pre class="r"><code>solution_9 %&gt;% 
+  distinct(evaluated) %&gt;% 
+  nrow()</code></pre>
+<pre><code>## [1] 39</code></pre>
+<p><em>Given these particular inputs, there are only 39 unique solutions</em>, meaning that three configurations of parentheses led to duplicate solutions.</p>
+</div>
+<div id="appendix" class="section level1">
+<h1>Appendix</h1>
+<div id="on-duplicates" class="section level2">
+<h2>On duplicates</h2>
+<p>You might wonder if a different set of inputs to the expression <span class="math inline">\(|x_1|x_2|x_3|...|x_9|\)</span><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> would lead to 39 unique solutions, or if there would be 42 unique solutions – one for each configuration. (I.e. whether the duplicates were specific to the integer inputs -1, -2, -3, -4, -5, -6, -7, -8, -9 into the expression, or would have occurred regardless of input).</p>
+<p>To verify that you could in fact get 42 unique solutions, I passed in random negative numbers with decimals to see if the function would output unique values for all configurations, or if there would again be duplicates.</p>
+<pre class="r"><code>set.seed(123)
+solution_rand9 &lt;- create_solve_expr_df(-runif(9))
+
+solution_rand9 %&gt;% 
+  nrow()</code></pre>
+<pre><code>## [1] 42</code></pre>
+<pre><code>## [1] 42</code></pre>
+<p>This led to an equal number of configurations and unique solutions – no duplicates. Hence the fact there were duplicates in our problem was specific to the inputs of -1 to -9 not something that would result when inputting any 9 numbers into this expression. I also found this to be the case on longer expressions up to length 17 i.e. <span class="math inline">\(|x_1|x_2|x_3|...|x_17|\)</span>.</p>
+</div>
+<div id="more-than-9-numbers" class="section level2">
+<h2>More than 9 numbers</h2>
+<p>With the above set-up you could calculate the number of configurations for any length of input. Though I found that once I started getting into problems into the 20’s things take a long-time to process. See below for a chart of unique solutions from 1 to 17<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<p><img src="/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="define-more-rules" class="section level2">
+<h2>Define more rules</h2>
+<p>We could define a few more rules about the configuration of our parentheses.</p>
+<ul>
+<li>Counting from left to right, the number of <code>)</code> should never exceed the number of <code>(</code></li>
+<li>Counting from right to left, the number of <code>(</code> should never exceed the number of <code>)</code></li>
+</ul>
+<p>I couldn’t immediately think of a clean way of representing this using combinatorics, so instead decided to run a simulation on our existing subset of combinations from <span class="math inline">\(6 choose 3\)</span> that would filter out examples that break the above rules.</p>
+<p>My set-up took inspiration from David Robinson’s approach to a different <a href="https://www.youtube.com/watch?v=TDzd73z8thU">FiveThirtyEight “Riddler” problem</a>.</p>
+<pre><code>## # A tibble: 1 x 1
+##   num_possible_combinations
+##                       &lt;int&gt;
+## 1                        42</code></pre>
+<ul>
+<li>Gives the number of meaningful configurations of parentheses
+<ul>
+<li>Would still need to go and make these all</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>vector<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="khanacademy.org">Khan Academy</a> if you want to brush up on your combinatorics skills.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>The code isn’t <em>the most</em> attractive. The dataframe set-up could be cleaner. Also I’d like to go back and rewrite the expression part of this using <code>rlang</code> and some of the cool things you can do with manipulating environments and expressions in R… but alas… hacked this solution together by just stitching together text…<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>Note that <span class="math inline">\(x_n &lt; 0\)</span>.<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>Note also that this problem requires that there be an odd number of inputs and that they all be negative.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+
+    </div>
+  </article>
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//bryanshalloway.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+
+    
+  </body>
+</html>
+

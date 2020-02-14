@@ -6,10 +6,22 @@
     <description>Recent content on Bryan&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 06 Feb 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 13 Feb 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Riddler Solutions: Palindrome debts and ambiguous absolut value signs</title>
+      <link>/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/</link>
+      <pubDate>Thu, 13 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/</guid>
+      <description>This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-07, Riddler Express and Riddler Classic. Code for figures and solutions can be found on my github page.
+Riddler ExpressThe riddle:
+From James Anderson comes a palindromic puzzle of calendars:
+This past Sunday was Groundhog Day. Also, there was a football game. But to top it all off, the date, 02/02/2020, was palindromic, meaning it reads the same forwards and backwards (if you ignore the slashes).</description>
+    </item>
     
     <item>
       <title>About</title>
@@ -21,7 +33,7 @@
     </item>
     
     <item>
-      <title>FiveThirtyEight Riddler Solutions: Perfect Bowl &amp; Magnetic Volume</title>
+      <title>Riddler Solutions: Perfect Bowl &amp; Magnetic Volume</title>
       <link>/2020/02/06/maximizing-magnetic-volume-the-perfect-bowl/</link>
       <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
       
