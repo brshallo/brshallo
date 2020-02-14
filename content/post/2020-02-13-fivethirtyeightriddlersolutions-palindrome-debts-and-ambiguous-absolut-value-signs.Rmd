@@ -88,6 +88,8 @@ How many different values can the expression |−1|−2|−3|−4|−5|−6|−7
 
 The question is how many ways can you interpret the expression above. As hinted at by the author, the ambiguity in the expression becomes resolved based on where the parentheses are placed. Hence the question is how many different ways can we arrange the parentheses?
 
+![Potential parentheses placements](/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs_files/solutions_cropped.gif){width="100%"}
+
 *Constraints on placing parentheses:*
 
 * Parentheses form pairs, hence there must be an equal numbers of left-closed and right-closed parentheses, i.e. `)` and `(`
@@ -310,3 +312,26 @@ combn(seq_len(length(x) - 1), (length(x) - 1) / 2, simplify = FALSE) %>%
 
 * Gives the number of meaningful configurations of parentheses 
     * Would still need to go and make these all 
+
+## Creating gif 
+
+I used `gganimate` to create the gif of the different parentheses combinations.
+
+```{r, eval = FALSE, echo = TRUE}
+library(gganimate)
+
+set.seed(1234)
+p <- solution_9 %>% 
+  mutate(comb_index = row_number()) %>% 
+  sample_n(42) %>% 
+  select(comb_index, equation) %>% 
+  ggplot()+
+  coord_cartesian(xlim = c(-.050, 0.050), ylim = c(-0.1, 0.1))+
+  geom_text(aes(x = 0, y = 0, label = equation), size = 6)+
+  ggforce::theme_no_axes()+
+  theme(legend.position = "none", panel.border = element_blank())
+
+p + transition_states(comb_index)
+gganimate::anim_save(here::here("static/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs_files/solutions.gif"))
+```
+

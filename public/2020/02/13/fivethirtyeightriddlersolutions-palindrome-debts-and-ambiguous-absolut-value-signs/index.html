@@ -168,6 +168,10 @@ Of course, if we gave each pair of bars a different height (as is done in mathem
 </blockquote>
 <p><strong>My approach:</strong></p>
 <p>The question is how many ways can you interpret the expression above. As hinted at by the author, the ambiguity in the expression becomes resolved based on where the parentheses are placed. Hence the question is how many different ways can we arrange the parentheses?</p>
+<div class="figure">
+<img src="/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs_files/solutions_cropped.gif" alt="Potential parentheses placements" style="width:100.0%" />
+<p class="caption">Potential parentheses placements</p>
+</div>
 <p><em>Constraints on placing parentheses:</em></p>
 <ul>
 <li>Parentheses form pairs, hence there must be an equal numbers of left-closed and right-closed parentheses, i.e. <code>)</code> and <code>(</code></li>
@@ -252,6 +256,25 @@ solution_rand9 %&gt;%
 <li>Would still need to go and make these all</li>
 </ul></li>
 </ul>
+</div>
+<div id="creating-gif" class="section level2">
+<h2>Creating gif</h2>
+<p>I used <code>gganimate</code> to create the gif of the different parentheses combinations.</p>
+<pre class="r"><code>library(gganimate)
+
+set.seed(1234)
+p &lt;- solution_9 %&gt;% 
+  mutate(comb_index = row_number()) %&gt;% 
+  sample_n(42) %&gt;% 
+  select(comb_index, equation) %&gt;% 
+  ggplot()+
+  coord_cartesian(xlim = c(-.050, 0.050), ylim = c(-0.1, 0.1))+
+  geom_text(aes(x = 0, y = 0, label = equation), size = 6)+
+  ggforce::theme_no_axes()+
+  theme(legend.position = &quot;none&quot;, panel.border = element_blank())
+
+p + transition_states(comb_index)
+gganimate::anim_save(here::here(&quot;static/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs_files/solutions.gif&quot;))</code></pre>
 </div>
 </div>
 <div class="footnotes">
