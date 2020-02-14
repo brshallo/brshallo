@@ -180,7 +180,7 @@ I ended-up doing it both ways (was a good way to verify my work). See [Define mo
 solution_9 <- create_solve_expr_df(-1:-9)
 ```
 
-One thing I needed to do was make it so our mathematical solutions, i.e.:
+One thing I needed to do was make it so our mathematical expressions, i.e.:
 
 ```{r, echo = FALSE}
 solution_9 %>% 
@@ -200,7 +200,7 @@ solution_9 %>%
   str_view_all("\\)|\\(")
 ```
 
-I made an equation `create_solve_expr_df()` that creates the expressions and computes the solutions.  See the [raw Rmd file](https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs.Rmd) on my github to see the code^[The code isn't *the most* attractive. The dataframe set-up could be cleaner.  Also I'd like to go back and rewrite the expression part of this using `rlang` and some of the cool things you can do with manipulating environments and expressions in R... but alas... hacked this solution together by just stitching together text...] I wrote to accomplish this.
+I made an equation `create_solve_expr_df()` that creates the expressions and computes the solutions.  See the [raw Rmd file](https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs.Rmd) on my github to see my code^[The code isn't *the most* attractive. The dataframe set-up could be cleaner.  Also I'd like to go back and rewrite the expression part of this using `rlang` and some of the cool things you can do with manipulating environments and expressions in R... but alas... hacked this solution together by just stitching together text...].
 
 After creating all possible configurations, I need to actually compute each viable expression to check if any of the configurations resulted in duplicate solutions.
 
@@ -242,13 +242,13 @@ solution_rand9 %>%
   nrow()
 ```
 
-This led to an equal number of configurations and unique solutions -- no duplicates. Hence the fact there were duplicates in our problem was specific to the inputs of -1 to -9 not something that would result when inputting any 9 numbers into this expression. I also found this to be the case on longer expressions up to length 17 i.e. $|x_1|x_2|x_3|...|x_17|$.
+This led to an equal number of expressions and unique solutions -- no duplicates. Hence the fact there were duplicates in our problem was specific to the inputs of -1 to -9 not something that would result when inputting any 9 numbers into this expression. I also found this to be the case on longer expressions.
 
 ## More than 9 numbers
 
-With the above set-up you could calculate the number of configurations for any length of input. Though I found that once I started getting into problems into the 20's things take a long-time to process. See below for a chart of unique solutions from 1 to 17^[Note also that this problem requires that there be an odd number of inputs and that they all be negative.]
+With the above set-up you could calculate the number of configurations for any length of input. Though I found that the computational time required increases quickly (once I started getting into problems into the 20's things take a long-time to process). See below for a chart of unique solutions from 1 to 15^[Note also that this problem requires that there be an odd number of inputs and that they all be negative.]
 
-```{r}
+```{r, cache = TRUE}
 num_solutions <- tibble(start = -1L, end = seq.int(-3L, -15L, by = -2L)) %>% 
   mutate(vec = map2(start, end, ~.x:.y),
          num_solutions = map(vec, create_solve_expr_df, out_nconfigs = TRUE)) %>% 
@@ -258,7 +258,7 @@ num_solutions <- tibble(start = -1L, end = seq.int(-3L, -15L, by = -2L)) %>%
 ```{r}
 num_solutions %>% 
   ggplot(aes(x = abs(end)))+
-  geom_line(aes(y = n_configs, colour = "num config"))+
+  geom_line(aes(y = n_configs, colour = "num expr"))+
   geom_line(aes(y = n_unique, colour = "num unique"))+
   labs(title = "Number of potential interpretations grows exponentially", 
        x = "Length of expression",

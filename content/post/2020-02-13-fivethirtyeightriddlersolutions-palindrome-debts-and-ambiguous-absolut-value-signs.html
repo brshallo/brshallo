@@ -129,13 +129,13 @@ Of course, if we gave each pair of bars a different height (as is done in mathem
 <li>define additional rules about the configuration of parentheses that will filter out those configurations, like the one above, that would break (more effort)</li>
 </ul>
 <p>I ended-up doing it both ways (was a good way to verify my work). See <a href="#define-more-rules">Define more rules</a> in the <a href="#appendix">Appendix</a> if you want to see how you might take the latter approach. For now, I’ll go the easy route and start computing our expressions.</p>
-<p>One thing I needed to do was make it so our mathematical solutions, i.e.:</p>
+<p>One thing I needed to do was make it so our mathematical expressions, i.e.:</p>
 <div id="htmlwidget-2" style="width:960px;height:100%;" class="str_view html-widget"></div>
 <script type="application/json" data-for="htmlwidget-2">{"x":{"html":"<ul>\n  <li><span class='match'>(<\/span>|-1<span class='match'>(<\/span>|-2<span class='match'>(<\/span>|-3<span class='match'>(<\/span>|-4<span class='match'>(<\/span>|-5|<span class='match'>)<\/span>-6|<span class='match'>)<\/span>-7|<span class='match'>)<\/span>-8|<span class='match'>)<\/span>-9|<span class='match'>)<\/span><\/li>\n  <li><span class='match'>(<\/span>|-1<span class='match'>(<\/span>|-2<span class='match'>(<\/span>|-3<span class='match'>(<\/span>|-4|<span class='match'>)<\/span>-5<span class='match'>(<\/span>|-6|<span class='match'>)<\/span>-7|<span class='match'>)<\/span>-8|<span class='match'>)<\/span>-9|<span class='match'>)<\/span><\/li>\n  <li>...<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <p>Could be represented as meaningful expressions within the R programming language, i.e.:</p>
 <div id="htmlwidget-3" style="width:960px;height:100%;" class="str_view html-widget"></div>
 <script type="application/json" data-for="htmlwidget-3">{"x":{"html":"<ul>\n  <li>abs<span class='match'>(<\/span>-1*abs<span class='match'>(<\/span>-2*abs<span class='match'>(<\/span>-3*abs<span class='match'>(<\/span>-4*abs<span class='match'>(<\/span>-5<span class='match'>)<\/span>-6<span class='match'>)<\/span>-7<span class='match'>)<\/span>-8<span class='match'>)<\/span>-9<span class='match'>)<\/span><\/li>\n  <li>abs<span class='match'>(<\/span>-1*abs<span class='match'>(<\/span>-2*abs<span class='match'>(<\/span>-3*abs<span class='match'>(<\/span>-4<span class='match'>)<\/span>-5*abs<span class='match'>(<\/span>-6<span class='match'>)<\/span>-7<span class='match'>)<\/span>-8<span class='match'>)<\/span>-9<span class='match'>)<\/span><\/li>\n  <li>...<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
-<p>I made an equation <code>create_solve_expr_df()</code> that creates the expressions and computes the solutions. See the <a href="https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs.Rmd">raw Rmd file</a> on my github to see the code<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> I wrote to accomplish this.</p>
+<p>I made an equation <code>create_solve_expr_df()</code> that creates the expressions and computes the solutions. See the <a href="https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs.Rmd">raw Rmd file</a> on my github to see my code<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
 <p>After creating all possible configurations, I need to actually compute each viable expression to check if any of the configurations resulted in duplicate solutions.</p>
 <p><em>Number of different configurations of parentheses:</em></p>
 <pre class="r"><code>solution_9 %&gt;% 
@@ -161,11 +161,11 @@ solution_rand9 %&gt;%
   nrow()</code></pre>
 <pre><code>## [1] 42</code></pre>
 <pre><code>## [1] 42</code></pre>
-<p>This led to an equal number of configurations and unique solutions – no duplicates. Hence the fact there were duplicates in our problem was specific to the inputs of -1 to -9 not something that would result when inputting any 9 numbers into this expression. I also found this to be the case on longer expressions up to length 17 i.e. <span class="math inline">\(|x_1|x_2|x_3|...|x_17|\)</span>.</p>
+<p>This led to an equal number of expressions and unique solutions – no duplicates. Hence the fact there were duplicates in our problem was specific to the inputs of -1 to -9 not something that would result when inputting any 9 numbers into this expression. I also found this to be the case on longer expressions.</p>
 </div>
 <div id="more-than-9-numbers" class="section level2">
 <h2>More than 9 numbers</h2>
-<p>With the above set-up you could calculate the number of configurations for any length of input. Though I found that once I started getting into problems into the 20’s things take a long-time to process. See below for a chart of unique solutions from 1 to 17<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<p>With the above set-up you could calculate the number of configurations for any length of input. Though I found that the computational time required increases quickly (once I started getting into problems into the 20’s things take a long-time to process). See below for a chart of unique solutions from 1 to 15<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
 <p><img src="/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
 <div id="define-more-rules" class="section level2">
