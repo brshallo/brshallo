@@ -1,6 +1,6 @@
 ---
 title: 'Riddler Solutions: Palindrome debts and ambiguous absolute value
-  signs'
+  bars'
 author: Bryan Shalloway
 date: '2020-02-13'
 slug: fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs
