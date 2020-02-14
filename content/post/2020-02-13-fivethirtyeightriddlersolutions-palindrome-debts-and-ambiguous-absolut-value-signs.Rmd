@@ -277,9 +277,9 @@ We could define a few more rules about the configuration of our parentheses.
 * Counting from left to right, the number of `)` should never exceed the number of `(`
 * Counting from right to left, the number of `(` should never exceed the number of `)`
 
-I couldn't immediately think of a clean way of representing this using combinatorics, so instead decided to run a simulation on our existing subset of combinations from $6 choose 3$ that would filter out examples that break the above rules. 
+I couldn't immediately think of a clean way of representing this using combinatorics, so instead decided to run a simulation on our existing subset of combinations from $6 \choose 3$ that would filter out examples that break the above rules. 
 
-My set-up took inspiration from David Robinson's approach to a different [FiveThirtyEight "Riddler" problem](https://www.youtube.com/watch?v=TDzd73z8thU).
+[My set-up](https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs.Rmd) took inspiration from David Robinson's approach to a different [FiveThirtyEight "Riddler" problem](https://www.youtube.com/watch?v=TDzd73z8thU).
 
 ```{r}
 library(combinat)
@@ -311,7 +311,7 @@ combn(seq_len(length(x) - 1), (length(x) - 1) / 2, simplify = FALSE) %>%
 ```
 
 * Gives the number of meaningful configurations of parentheses 
-    * Would still need to go and make these all 
+    * Would still need to go and evaluate all of these for the given inputs (-1 to -9)
 
 ## Creating gif 
 

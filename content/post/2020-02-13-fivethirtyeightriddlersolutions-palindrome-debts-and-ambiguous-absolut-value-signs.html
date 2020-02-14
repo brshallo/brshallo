@@ -179,8 +179,8 @@ solution_rand9 %&gt;%
 <li>Counting from left to right, the number of <code>)</code> should never exceed the number of <code>(</code></li>
 <li>Counting from right to left, the number of <code>(</code> should never exceed the number of <code>)</code></li>
 </ul>
-<p>I couldn’t immediately think of a clean way of representing this using combinatorics, so instead decided to run a simulation on our existing subset of combinations from <span class="math inline">\(6 choose 3\)</span> that would filter out examples that break the above rules.</p>
-<p>My set-up took inspiration from David Robinson’s approach to a different <a href="https://www.youtube.com/watch?v=TDzd73z8thU">FiveThirtyEight “Riddler” problem</a>.</p>
+<p>I couldn’t immediately think of a clean way of representing this using combinatorics, so instead decided to run a simulation on our existing subset of combinations from <span class="math inline">\(6 \choose 3\)</span> that would filter out examples that break the above rules.</p>
+<p><a href="https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs.Rmd">My set-up</a> took inspiration from David Robinson’s approach to a different <a href="https://www.youtube.com/watch?v=TDzd73z8thU">FiveThirtyEight “Riddler” problem</a>.</p>
 <pre><code>## # A tibble: 1 x 1
 ##   num_possible_combinations
 ##                       &lt;int&gt;
@@ -188,7 +188,7 @@ solution_rand9 %&gt;%
 <ul>
 <li>Gives the number of meaningful configurations of parentheses
 <ul>
-<li>Would still need to go and make these all</li>
+<li>Would still need to go and evaluate all of these for the given inputs (-1 to -9)</li>
 </ul></li>
 </ul>
 </div>
