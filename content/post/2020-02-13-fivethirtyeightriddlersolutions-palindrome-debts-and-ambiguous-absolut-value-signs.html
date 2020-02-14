@@ -17,7 +17,7 @@ tags:
 <script src="/rmarkdown-libs/str_view-binding/str_view.js"></script>
 
 
-<p>This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-07, <a href="#riddler-express">Riddler Express</a> and <a href="#riddler-classic">Riddler Classic</a>. Code for figures and solutions can be found on my github page.</p>
+<p>This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-07, <a href="#riddler-express">Riddler Express</a> and <a href="#riddler-classic">Riddler Classic</a>. Code for figures and solutions can be found on <a href="https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs.Rmd">my github page</a>.</p>
 <div id="riddler-express" class="section level1">
 <h1>Riddler Express</h1>
 <p>The riddle:</p>
@@ -116,7 +116,7 @@ Of course, if we gave each pair of bars a different height (as is done in mathem
 <li>We can ignore the left and right most bars and say that a left-closed parenthese has to go on the left, and a right closed parentheses on the right, hence we can start the problem like “(|-1|-2|-3|)”</li>
 </ul>
 <p>With these rules we can tackle the first part of the problem and think of each interior bar as representing a place-holder, the collection of which must be filled by an equal number of <code>)</code> and <code>(</code> .</p>
-<p>|−1 _ −2 _ −3 _ −4 _ −5 _ −6 _ −7 _ −8 _−9|</p>
+<p>(|−1 _ −2 _ −3 _ −4 _ −5 _ −6 _ −7 _ −8 _−9|)</p>
 <p>This can be represented as a combinatorics<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> problem that can be represented by <span class="math inline">\(6 \choose 3\)</span>.</p>
 <p>We could use the <code>combinat</code> package in R to generate all these combinations.</p>
 <p><strong>However</strong>, there is a problem; some of the combinations created could result in configurations with open parentheses. For example, even on a shorter version of this problem, the rules above would not safeguard from configurations such as:</p>
@@ -135,7 +135,7 @@ Of course, if we gave each pair of bars a different height (as is done in mathem
 <p>Could be represented as meaningful expressions within the R programming language, i.e.:</p>
 <div id="htmlwidget-3" style="width:960px;height:100%;" class="str_view html-widget"></div>
 <script type="application/json" data-for="htmlwidget-3">{"x":{"html":"<ul>\n  <li>abs<span class='match'>(<\/span>-1*abs<span class='match'>(<\/span>-2*abs<span class='match'>(<\/span>-3*abs<span class='match'>(<\/span>-4*abs<span class='match'>(<\/span>-5<span class='match'>)<\/span>-6<span class='match'>)<\/span>-7<span class='match'>)<\/span>-8<span class='match'>)<\/span>-9<span class='match'>)<\/span><\/li>\n  <li>abs<span class='match'>(<\/span>-1*abs<span class='match'>(<\/span>-2*abs<span class='match'>(<\/span>-3*abs<span class='match'>(<\/span>-4<span class='match'>)<\/span>-5*abs<span class='match'>(<\/span>-6<span class='match'>)<\/span>-7<span class='match'>)<\/span>-8<span class='match'>)<\/span>-9<span class='match'>)<\/span><\/li>\n  <li>...<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
-<p>I made an equation <code>create_solve_expr_df()</code> that creates the expressions and computes the solutions. See the <a href="github%20page%20link">raw Rmd file</a> on my github to see the code<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> I wrote to accomplish this.</p>
+<p>I made an equation <code>create_solve_expr_df()</code> that creates the expressions and computes the solutions. See the <a href="https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs.Rmd">raw Rmd file</a> on my github to see the code<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> I wrote to accomplish this.</p>
 <p>After creating all possible configurations, I need to actually compute each viable expression to check if any of the configurations resulted in duplicate solutions.</p>
 <p><em>Number of different configurations of parentheses:</em></p>
 <pre class="r"><code>solution_9 %&gt;% 
