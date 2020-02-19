@@ -1,6 +1,6 @@
 ---
-title: 'Riddler Solutions: Palindrome dates and ambiguous absolute value
-  bars'
+title: 'Riddler Solutions: Palindrome Dates & Ambiguous Absolute Value
+  Bars'
 author: Bryan Shalloway
 date: '2020-02-13'
 slug: fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs
@@ -66,6 +66,8 @@ tibble(
 Which shows there will be eight more pallindromic dates in the century -- one in each decade remaining.
 
 # Riddler Classic
+
+The riddle:
 
 >Also on Super Bowl Sunday, math professor Jim Propp made a rather interesting observation:
 ><blockquote class="twitter-tweet"><p lang="en" dir="ltr">I told my kid (who’d asked about absolute value signs) “They’re just like parentheses so there’s never any ambiguity,” but then I realized that things are more complicated; for instance |-1|-2|-3| could be 5 or -5. Has anyone encountered ambiguities like this in the wild?</p>&mdash; James Propp (@JimPropp) <a href="https://twitter.com/JimPropp/status/1224177172362989571?ref_src=twsrc%5Etfw">February 3, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -262,7 +264,7 @@ num_solutions %>%
   ggplot(aes(x = abs(end)))+
   geom_line(aes(y = n_configs, colour = "num expr"))+
   geom_line(aes(y = n_unique, colour = "num unique"))+
-  labs(title = "Number of potential interpretations grows exponentially", 
+  labs(title = "Number of potential interpretations grows", 
        x = "Length of expression",
        y = "Number of solutions",
        caption = "Num unique represents number of unique solutions \ngiven integer inputs of form -1, -2, ... -n")+
