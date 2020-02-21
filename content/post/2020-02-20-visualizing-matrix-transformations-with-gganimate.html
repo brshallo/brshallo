@@ -355,15 +355,24 @@ p_rotation &lt;- ggplot(aes(), data = filter(grid_all, time &lt;= 2))+
   geom_segment(aes(x = x, y = y, group = id, xend = xend, yend = yend, colour = vec), arrow = arrow(length = unit(0.02, &quot;npc&quot;)), size = 1.2, data = filter(basis_all, time &lt;= 2 ))+
   scale_x_continuous(breaks = x_breaks, minor_breaks = NULL)+
   scale_y_continuous(breaks = y_breaks, minor_breaks = NULL)+
-  coord_fixed(xlim = c(-10, 10), ylim = c(-10, 10))+
+  coord_fixed()+
   ggforce::geom_circle(aes(x0 = 0, y0 = 0, r = 5), data = circle_df)+
   theme_minimal()+
   theme(axis.text = element_blank(),
         axis.title = element_blank(),
-        legend.position = &quot;none&quot;)</code></pre>
-<pre class="r"><code>p_rotation + gganimate::transition_states(time, wrap = FALSE)</code></pre>
-<p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-22-1.gif" /><!-- --></p>
-<p>However we can see this doesn’t happen (the grid scrunches up and the exterior segments cut into the circle)<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</p>
+        legend.position = &quot;none&quot;)
+
+p_rotation + gganimate::transition_states(time, wrap = FALSE)</code></pre>
+<p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-21-1.gif" /><!-- --></p>
+<p>However we can see this doesn’t happen (the grid scrunches up and the exterior segments cut into the circle). The reason this occurs is that during the animation the coordinates follow a straight line path to their new location as explained:</p>
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+The problem is that coords are tweened linearly which doesn't match a rotation where the tweening should be done on the radians (or, better, tween the transformation matrix instead). There is no support for this in gganimate yet because I haven't figured out the right interface
+</p>
+— Thomas Lin Pedersen (<span class="citation">@thomasp85</span>) <a href="https://twitter.com/thomasp85/status/1230773860321988608?ref_src=twsrc%5Etfw">February 21, 2020</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>One fix (irrespective of tweening method in <code>gganimate</code>) could be to make incremental layers (so that the lack of a true rotation wasn’t noticable).</p>
 </div>
 <div id="problem-of-jittery-points-during-rotation" class="section level3">
 <h3>Problem of jittery points during rotation</h3>
@@ -371,7 +380,7 @@ p_rotation &lt;- ggplot(aes(), data = filter(grid_all, time &lt;= 2))+
 <p><em>For example:</em></p>
 <pre class="r"><code>points_start &lt;- crossing(x = c(-3.5:3.5), y = c(-3.5:3.5)) %&gt;% 
   mutate(id = nrow(grid_start) + nrow(basis_start) + row_number())
-
+ 
 points_trans &lt;- points_start %&gt;% 
   transform_df_coords(x, y, m = rotate_trans)
 
@@ -390,13 +399,13 @@ p_points &lt;- p_rotation +
   geom_point(aes(x, y), data = points_all, colour = &quot;royalblue3&quot;)
 
 p_points + gganimate::transition_states(time, wrap = FALSE)</code></pre>
-<p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-23-1.gif" /><!-- --></p>
+<p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-22-1.gif" /><!-- --></p>
 </div>
 <div id="miscellaneous-notes" class="section level3">
 <h3>Miscellaneous notes</h3>
 <ul>
-<li>I could not figure out how to add <a href="https://ggplot2.tidyverse.org/reference/geom_polygon.html">multiple polygons</a> via <code>geom_polygon()</code> in a way that kept smooth transitions<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>. I should open an issue.</li>
-<li>Would be nice to add <code>title</code> of image as the matrix transformation being conducted<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a></li>
+<li>I could not figure out how to add <a href="https://ggplot2.tidyverse.org/reference/geom_polygon.html">multiple polygons</a> via <code>geom_polygon()</code> in a way that kept smooth transitions<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>. I should open an issue.</li>
+<li>Would be nice to add <code>title</code> of image as the matrix transformation being conducted<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a></li>
 <li>May be better to render to video (rather than gif) so could pause to view</li>
 <li>In general, could make more elegant / sophisticated… especially regarding how transformations are applied across layers
 <ul>
@@ -440,8 +449,7 @@ y_breaks &lt;-
 <li id="fn9"><p>If wrap = TRUE (default) the reverse looping of the image is inaccurate as the transformation back to the original basis actually represents a transformation by the inverse of the <code>transformation matrix</code>. Though leaving it in would look cooler.<a href="#fnref9" class="footnote-back">↩</a></p></li>
 <li id="fn10"><p>Could functionalize more… or make a shiny app, or do more with, see <a href="#problems-and-potential-improvements">Problems and potential improvements</a> for notes…<a href="#fnref10" class="footnote-back">↩</a></p></li>
 <li id="fn11"><p>Can largely skim over<a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>I will investigate what can be fixed or open an issue. Am still new to using <code>gganimate</code> so guessing / hoping 🤞 is simple fix.<a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p>Seems issue has to do with <code>group</code> needing to apply both to the polygon at a given time as well as points on the polygon across time.<a href="#fnref13" class="footnote-back">↩</a></p></li>
-<li id="fn14"><p>Would require latex title which I don’t know if is supported by <code>gganimate</code><a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p>Seems issue has to do with <code>group</code> needing to apply both to the polygon at a given time as well as points on the polygon across time.<a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>Would require latex title which I don’t know if is supported by <code>gganimate</code><a href="#fnref13" class="footnote-back">↩</a></p></li>
 </ol>
 </div>

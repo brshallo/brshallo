@@ -363,19 +363,21 @@ p_rotation <- ggplot(aes(), data = filter(grid_all, time <= 2))+
   geom_segment(aes(x = x, y = y, group = id, xend = xend, yend = yend, colour = vec), arrow = arrow(length = unit(0.02, "npc")), size = 1.2, data = filter(basis_all, time <= 2 ))+
   scale_x_continuous(breaks = x_breaks, minor_breaks = NULL)+
   scale_y_continuous(breaks = y_breaks, minor_breaks = NULL)+
-  coord_fixed(xlim = c(-10, 10), ylim = c(-10, 10))+
+  coord_fixed()+
   ggforce::geom_circle(aes(x0 = 0, y0 = 0, r = 5), data = circle_df)+
   theme_minimal()+
   theme(axis.text = element_blank(),
         axis.title = element_blank(),
         legend.position = "none")
-```
 
-```{r}
 p_rotation + gganimate::transition_states(time, wrap = FALSE)
 ```
 
-However we can see this doesn't happen (the grid scrunches up and the exterior segments cut into the circle)^[I will investigate what can be fixed or open an issue. Am still new to using `gganimate` so guessing / hoping `r emo::ji("crossed_fingers")` is simple fix.].
+However we can see this doesn't happen (the grid scrunches up and the exterior segments cut into the circle). The reason this occurs is that during the animation the coordinates follow a straight line path to their new location as explained: 
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">The problem is that coords are tweened linearly which doesn&#39;t match a rotation where the tweening should be done on the radians (or, better, tween the transformation matrix instead). There is no support for this in gganimate yet because I haven&#39;t figured out the right interface</p>&mdash; Thomas Lin Pedersen (@thomasp85) <a href="https://twitter.com/thomasp85/status/1230773860321988608?ref_src=twsrc%5Etfw">February 21, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+One fix (irrespective of tweening method in `gganimate`) could be to make incremental layers (so that the lack of a true rotation wasn't noticable).
 
 ### Problem of jittery points during rotation
 
@@ -385,7 +387,7 @@ Beyond the squishing, it appears coordinate points (added via `geom_point()`) al
 ```{r}
 points_start <- crossing(x = c(-3.5:3.5), y = c(-3.5:3.5)) %>% 
   mutate(id = nrow(grid_start) + nrow(basis_start) + row_number())
-
+ 
 points_trans <- points_start %>% 
   transform_df_coords(x, y, m = rotate_trans)
 
