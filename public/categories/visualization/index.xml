@@ -18,7 +18,8 @@
       
       <guid>/2020/02/20/visualizing-matrix-transformations-with-gganimate/</guid>
       <description>I highly recommend the fantastic video series Essence of Linear Algebra by Grant Sanderson. In this post I’ll walk through how you can use gganimate and the tidyverse to (very loosely) recreate some of the visualizations shown in that series. Specifically those on matrix transformations and changing the basis vectors1.
-This post is an offshoot of an (upcoming) post of my solutions to this week’s FiveThirtyEight Riddler. To support my solution, I was trying to visualize matrix transformations.</description>
+
+This post is an offshoot of an (upcoming) post of my solutions to this week’s FiveThirtyEight Riddler. To support my solution, I was trying to visualize matrix transformations.</description>
     </item>
     
   </channel>
