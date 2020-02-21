@@ -6,10 +6,37 @@
     <description>Recent content in Tags on Bryan&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 13 Feb 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 20 Feb 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>linear algebra</title>
+      <link>/tags/linear-algebra/</link>
+      <pubDate>Thu, 20 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/linear-algebra/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>math</title>
+      <link>/tags/math/</link>
+      <pubDate>Thu, 20 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/math/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>riddles</title>
+      <link>/tags/riddles/</link>
+      <pubDate>Thu, 20 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/riddles/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>combinatorics</title>
@@ -17,15 +44,6 @@
       <pubDate>Thu, 13 Feb 2020 00:00:00 +0000</pubDate>
       
       <guid>/tags/combinatorics/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>math</title>
-      <link>/tags/math/</link>
-      <pubDate>Thu, 13 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/math/</guid>
       <description></description>
     </item>
     
@@ -44,15 +62,6 @@
       <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
       
       <guid>/tags/geometry/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>riddles</title>
-      <link>/tags/riddles/</link>
-      <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/riddles/</guid>
       <description></description>
     </item>
     

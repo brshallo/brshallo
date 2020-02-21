@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.57.2" />
+
+
+<title>Visualizing Matrix Transformations with gganimate - Bryan&#39;s website</title>
+<meta property="og:title" content="Visualizing Matrix Transformations with gganimate - Bryan&#39;s website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/bryan_edit.jpg"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://twitter.com/brshallo">Twitter</a></li>
+    
+    <li><a href="https://github.com/brshallo">GitHub</a></li>
+    
+    <li><a href="https://www.linkedin.com/in/bryanshalloway/">LinkedIn</a></li>
+    
+    <li><a href="https://www.youtube.com/channel/UCDVMC4-VRU-tR2Z4nYc1mDA">YouTube</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">10 min read</span>
+    
+
+    <h1 class="article-title">Visualizing Matrix Transformations with gganimate</h1>
+
+    
+    <span class="article-date">2020-02-20</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p>I highly recommend the fantastic video series <a href="https://www.youtube.com/watch?v=fNk_zzaMoSs&amp;list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab">Essence of Linear Algebra</a> by <a href="https://twitter.com/3blue1brown">Grant Sanderson</a>. In this post I’ll walk through how you can use <code>gganimate</code> and the <code>tidyverse</code> to (very loosely) recreate some of the visualizations shown in that series. Specifically those on matrix transformations and changing the basis vectors<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/kYB8IZa5AuE?start=234" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+</iframe>
+This post is an offshoot of an (upcoming) post of my solutions to this week’s <a href="https://fivethirtyeight.com/features/can-you-solve-this-rather-pedestrian-puzzle/">FiveThirtyEight Riddler</a>. To support my solution, I was trying to visualize matrix transformations. I reached-out to <a href="https://twitter.com/thomasp85">Thomas Lin Peterson</a>:
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+I do not. Would love to see it, though🙂
+</p>
+— Thomas Lin Pedersen (<span class="citation">@thomasp85</span>) <a href="https://twitter.com/thomasp85/status/1230171239077105666?ref_src=twsrc%5Etfw">February 19, 2020</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>… figured I’d share what I’ve patched together so far 😄 (will just be looking at transformations by 2x2 matrices).</p>
+<p>If you are not interested in walking through the R code, skip to <a href="#visualizations">Visualizations</a>.</p>
+<div id="helper-functions" class="section level1">
+<h1>Helper functions</h1>
+<p><code>construct_grid()</code>: given vectors of x and y intercepts, return a dataframe with columns <code>x</code>, <code>y</code>, <code>xend</code>, <code>yend</code> (meant for input into <code>geom_segment()</code>).</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre class="r"><code>construct_grid &lt;- function(xintercepts = -5:5, yintercepts = -5:5){
+  bind_rows(
+    crossing(x = xintercepts,
+             y = min(yintercepts),
+             yend = max(yintercepts)) %&gt;%
+      mutate(xend = x),
+    crossing(y = yintercepts,
+             x = min(xintercepts),
+             xend = max(xintercepts)) %&gt;%
+      mutate(yend = y)
+  ) %&gt;% 
+    select(x, y, xend, yend)
+}</code></pre>
+<p><em>Use with <code>geom_segment()</code> to make simple grids:</em></p>
+<pre class="r"><code>construct_grid() %&gt;% 
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend))+
+  geom_segment()+
+  coord_fixed()+
+  ggforce::theme_no_axes()+
+  theme(panel.border = element_blank())</code></pre>
+<p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><code>transform_df_coords()</code>: Given dataframe, column names of coordinates<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>, and a transformation matrix, return dataframe with transformed coordinates.</p>
+<pre class="r"><code>transform_df_coords &lt;- function(df, ..., m = diag(length(df))){
+  
+  df_names &lt;- names(df)
+  
+  df_coords &lt;- df %&gt;% 
+    select(...)
+  
+  df_coords_names &lt;- names(df_coords)
+  
+  df_matrix &lt;- df_coords %&gt;% 
+    as.matrix() %&gt;% 
+    t()
+  
+  df_coords_new &lt;- (m %*% df_matrix) %&gt;% 
+    t() %&gt;% 
+    as_tibble() %&gt;% 
+    set_names(df_coords_names)
+  
+  df_other &lt;- df %&gt;% 
+    select(-one_of(df_coords_names))
+  
+  bind_cols(df_coords_new, df_other) %&gt;% 
+    select(df_names)
+}</code></pre>
+<p><code>transform_df_coords()</code> is just matrix multiplication, but facilitates applying matrix transformations on a dataframe where each row (in specified columns) represents a coordinate point.</p>
+<p><em>Example in</em> <span class="math inline">\(\mathbb{R}^2\)</span>:</p>
+<pre class="r"><code>transform_df_coords(tibble(x = 1:4, y = 1:4), x, y, m = matrix(1:4, nrow = 2)) %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">x</th>
+<th align="right">y</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">4</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="right">12</td>
+</tr>
+<tr class="odd">
+<td align="right">12</td>
+<td align="right">18</td>
+</tr>
+<tr class="even">
+<td align="right">16</td>
+<td align="right">24</td>
+</tr>
+</tbody>
+</table>
+<p>Again, this is the same as:</p>
+<p><span class="math display">\[ \left(\begin{array}{cc} 1 &amp; 3\\ 2 &amp; 4 \end{array}\right)
+\left(\begin{array}{cc} 1 &amp; 2 &amp; 3 &amp; 4 \\ 1 &amp; 2 &amp; 3 &amp; 4 \end{array}\right) 
+= \left(\begin{array}{cc} 4 &amp; 8 &amp; 12 &amp; 16 \\ 6 &amp; 12 &amp; 18 &amp; 24 \end{array}\right)\]</span></p>
+<p>(Just with a ‘tidy’ dataframe as output.)</p>
+<p><em>Also works with more dimensions, see example in</em> <span class="math inline">\(\mathbb{R}^3\)</span>:</p>
+<pre class="r"><code>transform_df_coords(tibble(x = 1:5, y = 1:5, z = 1:5), x, y, z, m = matrix(1:9, nrow = 3)) %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">x</th>
+<th align="right">y</th>
+<th align="right">z</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">12</td>
+<td align="right">15</td>
+<td align="right">18</td>
+</tr>
+<tr class="even">
+<td align="right">24</td>
+<td align="right">30</td>
+<td align="right">36</td>
+</tr>
+<tr class="odd">
+<td align="right">36</td>
+<td align="right">45</td>
+<td align="right">54</td>
+</tr>
+<tr class="even">
+<td align="right">48</td>
+<td align="right">60</td>
+<td align="right">72</td>
+</tr>
+<tr class="odd">
+<td align="right">60</td>
+<td align="right">75</td>
+<td align="right">90</td>
+</tr>
+</tbody>
+</table>
+<p>However for our visualizations, we only care about examples in 2 dimensions (when we are applying a 2x2 matrix transformation).</p>
+</div>
+<div id="construct-objects-for-graph" class="section level1">
+<h1>Construct objects for graph</h1>
+<p>For a simple animation I will build dataframes that contain the coordinates for the following objects<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>:</p>
+<ul>
+<li>a <em>starting grid</em> and a <em>transformed grid</em></li>
+<li>a <em>starting basis vector</em> and a <em>transformed basis vector</em></li>
+</ul>
+<p>To play nicely with <code>gganimate</code> the start and transformed objects need to have additional properties<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>:</p>
+<ul>
+<li>a field that groups like objects across the animation (e.g. <code>id</code> column)</li>
+<li>a field that designates transitions between <em>start</em> and <em>transformed</em> states (e.g. <code>time</code> column)</li>
+</ul>
+<p>For my example I will be applying the following matrix transformation to our basis vectors<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.
+<span class="math display">\[ \left(\begin{array}{cc} 0.5 &amp; 0.5\\ 0.5 &amp; -0.25 \end{array}\right)\]</span></p>
+<p><em>Define transformation matrix:</em></p>
+<pre class="r"><code># same as above examples using `matrix()` but I find inputting into tribble more
+# intuitive for 2x2 matrix
+transformation_matrix &lt;- tribble(~ x, ~ y,
+                                 0.5, 0.5,
+                                 0.5, -0.25) %&gt;% 
+  as.matrix()</code></pre>
+<p><em>Construct grids:</em></p>
+<pre class="r"><code>grid_start &lt;- construct_grid() %&gt;% 
+  mutate(id = row_number())
+
+grid_trans &lt;- grid_start %&gt;% 
+  # need to `transform_df_coords()` twice as each segment is made up of 2 points
+  transform_df_coords(x, y, m = transformation_matrix) %&gt;% 
+  transform_df_coords(xend, yend, m = transformation_matrix)
+
+grid_all &lt;- bind_rows(
+  mutate(grid_start, time = 1),
+  mutate(grid_trans, time = 2)
+)</code></pre>
+<p><em>Construct basis vectors:</em></p>
+<pre class="r"><code>basis_start &lt;- tibble(
+  x = c(0, 0),
+  y = c(0, 0),
+  xend = c(1, 0),
+  yend = c(0, 1),
+  # `vec` is unnecessary, will just use to differentiate colors
+  vec = c(&quot;i&quot;, &quot;j&quot;)
+) %&gt;% 
+  mutate(id = nrow(grid_start) + row_number())
+
+basis_trans &lt;- basis_start %&gt;% 
+  transform_df_coords(x, y, m = transformation_matrix) %&gt;% 
+  transform_df_coords(xend, yend, m = transformation_matrix)
+
+basis_all &lt;- bind_rows(
+  mutate(basis_start, time = 1),
+  mutate(basis_trans, time = 2)
+)</code></pre>
+</div>
+<div id="build-visualization" class="section level1">
+<h1>Build visualization</h1>
+<p><em>Define breaks in grid:</em></p>
+<pre class="r"><code># If you just want to use the starting grid for the breaks, could do
+x_breaks &lt;- unique(grid_start$x)
+y_breaks &lt;- unique(grid_start$y)</code></pre>
+<p><em>Define visualization:</em></p>
+<pre class="r"><code>p &lt;- ggplot(aes(x = x, y = y, group = id), data = grid_all)+
+  geom_segment(aes(xend = xend, yend = yend))+
+  geom_segment(aes(xend = xend, yend = yend, colour = vec), data = basis_all, arrow = arrow(length = unit(0.02, &quot;npc&quot;)), size = 1.2)+
+  scale_x_continuous(breaks = x_breaks, minor_breaks = NULL)+
+  scale_y_continuous(breaks = y_breaks, minor_breaks = NULL)+
+  coord_fixed()+
+  theme_minimal()+
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        legend.position = &quot;none&quot;)</code></pre>
+<div id="visualizations" class="section level2">
+<h2>Visualizations</h2>
+<p><em>Static image:</em></p>
+<pre class="r"><code>p</code></pre>
+<p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><em>Animation</em><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>:</p>
+<pre class="r"><code>p + gganimate::transition_states(time, wrap = FALSE)</code></pre>
+<p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-13-1.gif" /><!-- --></p>
+<p>And there it is. To view a different matrix transformation, simply change the <code>transformation_matrix</code> defined above and re-run the code chunks<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
+</div>
+</div>
+<div id="appendix" class="section level1">
+<h1>Appendix</h1>
+<p>The code used to construct images within the appendix is very similar to code already shown (so can largely be skimmed over).</p>
+<div id="multiple-matrix-transformations" class="section level2">
+<h2>Multiple matrix transformations</h2>
+<p>I love how the “Essence of Linear Algebra” series explains how matrix transformations can be thought-of / broken-down sequentially. The same visualization can be set-up here – you just need to add-in the additional layer.</p>
+<p>E.g. say, we want to apply a <em>rotation</em> and then a <em>sheer</em>:</p>
+<pre class="r"><code>rotate_trans &lt;- tribble(~ x, ~ y,
+                        cos(pi / 4), -sin(pi / 4),
+                        sin(pi / 4), cos(pi / 4)) %&gt;%
+  as.matrix()
+
+sheer_trans &lt;- tribble(~ x, ~ y,
+                      1, 0,
+                      0.5, 1) %&gt;%
+  as.matrix()</code></pre>
+<p>I.e.</p>
+<p><span class="math display">\[\begin{bmatrix}
+1 &amp; 0\\
+0.5 &amp; 1 \\
+\end{bmatrix}
+\begin{bmatrix}
+\dfrac{\sqrt{2}}{2} &amp; -\dfrac{\sqrt{2}}{2}\\
+\dfrac{\sqrt{2}}{2} &amp; \dfrac{\sqrt{2}}{2} \\
+\end{bmatrix}X\]</span></p>
+<p><em>Construct grids:</em></p>
+<pre class="r"><code>grid_start &lt;- construct_grid() %&gt;% 
+  mutate(id = row_number())
+
+grid_trans &lt;- grid_start %&gt;% 
+  # need to `transform_df_coords()` twice as each segment is made up of 2 points
+  transform_df_coords(x, y, m = rotate_trans) %&gt;% 
+  transform_df_coords(xend, yend, m = rotate_trans)
+
+grid_trans2 &lt;- grid_trans %&gt;% 
+  # need to `transform_df_coords()` twice as each segment is made up of 2 points
+  transform_df_coords(x, y, m = sheer_trans) %&gt;% 
+  transform_df_coords(xend, yend, m = sheer_trans)
+
+grid_all &lt;- bind_rows(
+  mutate(grid_start, time = 1),
+  mutate(grid_trans, time = 2),
+  mutate(grid_trans2, time = 3)
+)</code></pre>
+<p><em>Basis vectors:</em></p>
+<pre class="r"><code>basis_start &lt;- tibble(
+  x = c(0, 0),
+  y = c(0, 0),
+  xend = c(1, 0),
+  yend = c(0, 1),
+  # `vec` is unnecessary, will just use to differentiate colors
+  vec = c(&quot;i&quot;, &quot;j&quot;)
+) %&gt;% 
+  mutate(id = nrow(grid_start) + row_number())
+
+basis_trans &lt;- basis_start %&gt;% 
+  # need to `transform_df_coords()` twice as each segment is made up of 2 points
+  transform_df_coords(x, y, m = rotate_trans) %&gt;% 
+  transform_df_coords(xend, yend, m = rotate_trans)
+
+basis_trans2 &lt;- basis_trans %&gt;% 
+  # need to `transform_df_coords()` twice as each segment is made up of 2 points
+  transform_df_coords(x, y, m = sheer_trans) %&gt;% 
+  transform_df_coords(xend, yend, m = sheer_trans)
+
+basis_all &lt;- bind_rows(
+  mutate(basis_start, time = 1),
+  mutate(basis_trans, time = 2),
+  mutate(basis_trans2, time = 3)
+)</code></pre>
+<p><em>Define visualization:</em></p>
+<pre class="r"><code>p_mult &lt;- ggplot(aes(x = x, y = y, group = id), data = grid_all)+
+  geom_segment(aes(xend = xend, yend = yend))+
+  geom_segment(aes(xend = xend, yend = yend, colour = vec), data = basis_all, arrow = arrow(length = unit(0.02, &quot;npc&quot;)), size = 1.2)+
+  scale_x_continuous(breaks = x_breaks, minor_breaks = NULL)+
+  scale_y_continuous(breaks = y_breaks, minor_breaks = NULL)+
+  coord_fixed()+
+  theme_minimal()+
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        legend.position = &quot;none&quot;)</code></pre>
+<p><em>Static image:</em></p>
+<pre class="r"><code>p_mult</code></pre>
+<p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><em>Animation:</em></p>
+<pre class="r"><code>p_mult + 
+  gganimate::transition_states(time, wrap = FALSE)</code></pre>
+<p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-19-1.gif" /><!-- --></p>
+<p>Notice that we see the transformatioins done sequentailly. We could also have just inputted the single (simplified) matrix transformation:</p>
+<p><span class="math display">\[\begin{bmatrix}
+0.71 &amp; -0.71\\
+1.06 &amp; 0.35 \\
+\end{bmatrix}
+X\]</span></p>
+<p>But thinking of the matrix transformations separately can be helpful!</p>
+</div>
+<div id="problems-and-potential-improvements" class="section level2">
+<h2>Problems and potential improvements</h2>
+<p>I have no (current) plans of fleshing this out further. (Though I think a ggplot extension – e.g. <code>ggbasis</code>, <code>gglineartrans</code> – or something could be cool.) In this section I’ll give a few notes regarding short-term things I’d change or fix-up (if I were to keep working on this – maybe I’ll get to a couple of these).</p>
+<div id="problem-of-squeezing-during-rotation" class="section level3">
+<h3>Problem of squeezing during rotation</h3>
+<p>You might notice that something about the rotation transformation looks a little off. During the animation, the grid becomes artificially and temporarily squished in at some points. We can better see this by placing a circle on the interior of our grid and looking at the rotation of the exterior segments. The exterior segments of the grid <em>should</em> remain tangent to our circle at all points.</p>
+<pre class="r"><code>circle_df &lt;- tibble(x0 = 0, y0 = 0, r = 5)
+
+p_rotation &lt;- ggplot(aes(), data = filter(grid_all, time &lt;= 2))+
+  geom_segment(aes(x = x, y = y, group = id, xend = xend, yend = yend))+
+  geom_segment(aes(x = x, y = y, group = id, xend = xend, yend = yend, colour = vec), arrow = arrow(length = unit(0.02, &quot;npc&quot;)), size = 1.2, data = filter(basis_all, time &lt;= 2 ))+
+  scale_x_continuous(breaks = x_breaks, minor_breaks = NULL)+
+  scale_y_continuous(breaks = y_breaks, minor_breaks = NULL)+
+  coord_fixed(xlim = c(-10, 10), ylim = c(-10, 10))+
+  ggforce::geom_circle(aes(x0 = 0, y0 = 0, r = 5), data = circle_df)+
+  theme_minimal()+
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        legend.position = &quot;none&quot;)</code></pre>
+<pre class="r"><code>p_rotation + gganimate::transition_states(time, wrap = FALSE)</code></pre>
+<p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-21-1.gif" /><!-- --></p>
+<p>However we can see this doesn’t happen (the grid scrunches up and the exterior segments cut into the circle)<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
+</div>
+<div id="problem-of-jittery-points-during-rotation" class="section level3">
+<h3>Problem of jittery points during rotation</h3>
+<p>Beyond the squishing, it appears coordinate points (added via <code>geom_point()</code>) also look a little jittery during rotations.</p>
+<p><em>For example:</em></p>
+<pre class="r"><code>points_start &lt;- crossing(x = c(-3.5:3.5), y = c(-3.5:3.5)) %&gt;% 
+  mutate(id = nrow(grid_start) + nrow(basis_start) + row_number())
+
+points_trans &lt;- points_start %&gt;% 
+  transform_df_coords(x, y, m = rotate_trans)
+
+points_all &lt;- bind_rows(
+  mutate(points_start, time = 1),
+  mutate(points_trans, time = 2))
+
+p_points &lt;- p +
+  geom_point(data = points_all, colour = &quot;royalblue3&quot;)
+
+p_points + gganimate::transition_states(time, wrap = FALSE)
+
+# maybe just my eyes... maybe need to increase framerate... or something
+
+p_points &lt;- p_rotation +
+  geom_point(aes(x, y), data = points_all, colour = &quot;royalblue3&quot;)
+
+p_points + gganimate::transition_states(time, wrap = FALSE)</code></pre>
+<p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-22-1.gif" /><!-- --></p>
+</div>
+<div id="miscellaneous-notes" class="section level3">
+<h3>Miscellaneous notes</h3>
+<ul>
+<li>I could not figure out how to add <a href="https://ggplot2.tidyverse.org/reference/geom_polygon.html">multiple polygons</a> via <code>geom_polygon()</code> in a way that kept smooth transitions<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>. I should open an issue.</li>
+<li>Would be nice to add <code>title</code> of image as the matrix transformation being conducted<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a></li>
+<li>May be better to render to video (rather than gif) so could pause to view</li>
+<li>In general, could make more elegant / sophisticated… especially regarding how transformations are applied across layers</li>
+</ul>
+</div>
+</div>
+<div id="note-on-scales" class="section level2">
+<h2>Note on scales</h2>
+<p>May want to make breaks extend across entire range (rather than just over x, y ranges of <code>grid_start</code>).</p>
+<p><em>Expand breaks in scales:</em></p>
+<pre class="r"><code>x_breaks &lt;-
+  seq(
+    from = 
+      floor(min(c(grid_all$x, grid_all$xend))), 
+    to = 
+      ceiling(max(c(grid_all$x, grid_all$xend))), 
+    by = 1)
+
+y_breaks &lt;-
+  seq(
+    from = 
+      floor(min(c(grid_all$y, grid_all$yend))), 
+    to = 
+      ceiling(max(c(grid_all$y, grid_all$yend))), 
+    by = 1)</code></pre>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Which are shown throughout the series and most notably in chapters 3 and 13<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>/ vectors<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>You could add additional objects to the image – just need to ensure you create <em>start</em> and <em>transformed</em> versions of each object.<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>Creating these is not needed if you just wanted to create static images for the below examples.<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>No real reason for choosing this transformation, just thought it looked cool.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>If wrap = TRUE (default) the reverse looping of the image is inaccurate as the transformation back to the original basis actually represents a transformation by the inverse of the <code>transformation matrix</code>. Though leaving it in would look cooler.<a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>Could functionalize more… or make a shiny app, or do more with, see <a href="#problems-and-potential-improvements">Problems and potential improvements</a> for notes…<a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>I will investigate what can be fixed or open an issue. Am still new to using <code>gganimate</code> so guessing / hoping 🤞 is simple fix.<a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>Seems issue has to do with <code>group</code> needing to apply both to the polygon at a given time as well as points on the polygon across time.<a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p>Would require latex title which I don’t know if is supported by <code>gganimate</code><a href="#fnref10" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+
+    </div>
+  </article>
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//bryanshalloway.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+
+    
+  </body>
+</html>
+

@@ -6,10 +6,20 @@
     <description>Recent content in math on Bryan&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 13 Feb 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 20 Feb 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/math/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Visualizing Matrix Transformations with gganimate</title>
+      <link>/2020/02/20/visualizing-matrix-transformations-with-gganimate/</link>
+      <pubDate>Thu, 20 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/02/20/visualizing-matrix-transformations-with-gganimate/</guid>
+      <description>I highly recommend the fantastic video series Essence of Linear Algebra by Grant Sanderson. In this post I’ll walk through how you can use gganimate and the tidyverse to (very loosely) recreate some of the visualizations shown in that series. Specifically those on matrix transformations and changing the basis vectors1.
+This post is an offshoot of an (upcoming) post of my solutions to this week’s FiveThirtyEight Riddler. To support my solution, I was trying to visualize matrix transformations.</description>
+    </item>
     
     <item>
       <title>Riddler Solutions: Palindrome Dates &amp; Ambiguous Absolute Value Bars</title>
