@@ -23,6 +23,7 @@ I highly recommend the fantastic video series [Essence of Linear Algebra](https:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/kYB8IZa5AuE?start=234" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
   
+  
 This post is an offshoot of an (upcoming) post of my solutions to this week's [FiveThirtyEight Riddler](https://fivethirtyeight.com/features/can-you-solve-this-rather-pedestrian-puzzle/). To support my solution, I was trying to visualize matrix transformations. I reached-out to [Thomas Lin Peterson](https://twitter.com/thomasp85):
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">I do not. Would love to see it, though🙂</p>&mdash; Thomas Lin Pedersen (@thomasp85) <a href="https://twitter.com/thomasp85/status/1230171239077105666?ref_src=twsrc%5Etfw">February 19, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
