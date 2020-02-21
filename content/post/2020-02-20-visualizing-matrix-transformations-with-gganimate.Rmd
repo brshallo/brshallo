@@ -93,7 +93,7 @@ transform_df_coords <- function(df, ..., m = diag(length(df))){
 }
 ```
 
-`transform_df_coords()` is just matrix multiplication, but facilitates applying matrix transformations on a dataframe where each row (in specified columns) represents a coordinate point.
+`transform_df_coords()` is just matrix multiplication, but facilitates applying matrix transformations on a dataframe where each row (in specified columns) represents a vector / coordinate point^[I'm guessing there is a better / more elegant function already out there for 'tidy matrix multiplication' or something... but couldn't immediately think of anything.].
 
 *Example in*  $\mathbb{R}^2$:
 ```{r}
@@ -325,7 +325,7 @@ p_mult +
   gganimate::transition_states(time, wrap = FALSE)
 ```
 
-Notice that we see the transformatioins done sequentailly. We could also have just inputted the single (simplified) matrix transformation:
+Notice that we see the transformations done sequentially. We could also have just inputted the single (simplified) matrix transformation:
 
 $$\begin{bmatrix}
 0.71 & -0.71\\

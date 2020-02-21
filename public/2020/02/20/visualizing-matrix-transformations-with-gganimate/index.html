@@ -142,7 +142,7 @@ I do not. Would love to see it, though🙂
   bind_cols(df_coords_new, df_other) %&gt;% 
     select(df_names)
 }</code></pre>
-<p><code>transform_df_coords()</code> is just matrix multiplication, but facilitates applying matrix transformations on a dataframe where each row (in specified columns) represents a coordinate point.</p>
+<p><code>transform_df_coords()</code> is just matrix multiplication, but facilitates applying matrix transformations on a dataframe where each row (in specified columns) represents a vector / coordinate point<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
 <p><em>Example in</em> <span class="math inline">\(\mathbb{R}^2\)</span>:</p>
 <pre class="r"><code>transform_df_coords(tibble(x = 1:4, y = 1:4), x, y, m = matrix(1:4, nrow = 2)) %&gt;% 
   knitr::kable()</code></pre>
@@ -220,17 +220,17 @@ I do not. Would love to see it, though🙂
 </div>
 <div id="construct-objects-for-graph" class="section level1">
 <h1>Construct objects for graph</h1>
-<p>For a simple animation I will build dataframes that contain the coordinates for the following objects<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>:</p>
+<p>For a simple animation I will build dataframes that contain the coordinates for the following objects<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>:</p>
 <ul>
 <li>a <em>starting grid</em> and a <em>transformed grid</em></li>
 <li>a <em>starting basis vector</em> and a <em>transformed basis vector</em></li>
 </ul>
-<p>To play nicely with <code>gganimate</code> the start and transformed objects need to have additional properties<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>:</p>
+<p>To play nicely with <code>gganimate</code> the start and transformed objects need to have additional properties<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>:</p>
 <ul>
 <li>a field that groups like objects across the animation (e.g. <code>id</code> column)</li>
 <li>a field that designates transitions between <em>start</em> and <em>transformed</em> states (e.g. <code>time</code> column)</li>
 </ul>
-<p>For my example I will be applying the following matrix transformation to our basis vectors<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.
+<p>For my example I will be applying the following matrix transformation to our basis vectors<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>.
 <span class="math display">\[ \left(\begin{array}{cc} 0.5 &amp; 0.5\\ 0.5 &amp; -0.25 \end{array}\right)\]</span></p>
 <p><em>Define transformation matrix:</em></p>
 <pre class="r"><code># same as above examples using `matrix()` but I find inputting into tribble more
@@ -294,10 +294,10 @@ y_breaks &lt;- unique(grid_start$y)</code></pre>
 <p><em>Static image:</em></p>
 <pre class="r"><code>p</code></pre>
 <p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<p><em>Animation</em><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>:</p>
+<p><em>Animation</em><a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>:</p>
 <pre class="r"><code>p + gganimate::transition_states(time, wrap = FALSE)</code></pre>
 <p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-13-1.gif" /><!-- --></p>
-<p>And there it is. To view a different matrix transformation, simply change the <code>transformation_matrix</code> defined above and re-run the code chunks<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
+<p>And there it is. To view a different matrix transformation, simply change the <code>transformation_matrix</code> defined above and re-run the code chunks<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
 </div>
 </div>
 <div id="appendix" class="section level1">
@@ -388,7 +388,7 @@ basis_all &lt;- bind_rows(
 <pre class="r"><code>p_mult + 
   gganimate::transition_states(time, wrap = FALSE)</code></pre>
 <p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-19-1.gif" /><!-- --></p>
-<p>Notice that we see the transformatioins done sequentailly. We could also have just inputted the single (simplified) matrix transformation:</p>
+<p>Notice that we see the transformations done sequentially. We could also have just inputted the single (simplified) matrix transformation:</p>
 <p><span class="math display">\[\begin{bmatrix}
 0.71 &amp; -0.71\\
 1.06 &amp; 0.35 \\
@@ -417,7 +417,7 @@ p_rotation &lt;- ggplot(aes(), data = filter(grid_all, time &lt;= 2))+
         legend.position = &quot;none&quot;)</code></pre>
 <pre class="r"><code>p_rotation + gganimate::transition_states(time, wrap = FALSE)</code></pre>
 <p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-21-1.gif" /><!-- --></p>
-<p>However we can see this doesn’t happen (the grid scrunches up and the exterior segments cut into the circle)<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
+<p>However we can see this doesn’t happen (the grid scrunches up and the exterior segments cut into the circle)<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>.</p>
 </div>
 <div id="problem-of-jittery-points-during-rotation" class="section level3">
 <h3>Problem of jittery points during rotation</h3>
@@ -449,8 +449,8 @@ p_points + gganimate::transition_states(time, wrap = FALSE)</code></pre>
 <div id="miscellaneous-notes" class="section level3">
 <h3>Miscellaneous notes</h3>
 <ul>
-<li>I could not figure out how to add <a href="https://ggplot2.tidyverse.org/reference/geom_polygon.html">multiple polygons</a> via <code>geom_polygon()</code> in a way that kept smooth transitions<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>. I should open an issue.</li>
-<li>Would be nice to add <code>title</code> of image as the matrix transformation being conducted<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a></li>
+<li>I could not figure out how to add <a href="https://ggplot2.tidyverse.org/reference/geom_polygon.html">multiple polygons</a> via <code>geom_polygon()</code> in a way that kept smooth transitions<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>. I should open an issue.</li>
+<li>Would be nice to add <code>title</code> of image as the matrix transformation being conducted<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a></li>
 <li>May be better to render to video (rather than gif) so could pause to view</li>
 <li>In general, could make more elegant / sophisticated… especially regarding how transformations are applied across layers</li>
 </ul>
@@ -482,14 +482,15 @@ y_breaks &lt;-
 <ol>
 <li id="fn1"><p>Which are shown throughout the series and most notably in chapters 3 and 13<a href="#fnref1" class="footnote-back">↩</a></p></li>
 <li id="fn2"><p>/ vectors<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>You could add additional objects to the image – just need to ensure you create <em>start</em> and <em>transformed</em> versions of each object.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>Creating these is not needed if you just wanted to create static images for the below examples.<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>No real reason for choosing this transformation, just thought it looked cool.<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>If wrap = TRUE (default) the reverse looping of the image is inaccurate as the transformation back to the original basis actually represents a transformation by the inverse of the <code>transformation matrix</code>. Though leaving it in would look cooler.<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>Could functionalize more… or make a shiny app, or do more with, see <a href="#problems-and-potential-improvements">Problems and potential improvements</a> for notes…<a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>I will investigate what can be fixed or open an issue. Am still new to using <code>gganimate</code> so guessing / hoping 🤞 is simple fix.<a href="#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p>Seems issue has to do with <code>group</code> needing to apply both to the polygon at a given time as well as points on the polygon across time.<a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p>Would require latex title which I don’t know if is supported by <code>gganimate</code><a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>I’m guessing there is a better / more elegant function already out there for ‘tidy matrix multiplication’ or something… but couldn’t immediately think of anything.<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>You could add additional objects to the image – just need to ensure you create <em>start</em> and <em>transformed</em> versions of each object.<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>Creating these is not needed if you just wanted to create static images for the below examples.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>No real reason for choosing this transformation, just thought it looked cool.<a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>If wrap = TRUE (default) the reverse looping of the image is inaccurate as the transformation back to the original basis actually represents a transformation by the inverse of the <code>transformation matrix</code>. Though leaving it in would look cooler.<a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>Could functionalize more… or make a shiny app, or do more with, see <a href="#problems-and-potential-improvements">Problems and potential improvements</a> for notes…<a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>I will investigate what can be fixed or open an issue. Am still new to using <code>gganimate</code> so guessing / hoping 🤞 is simple fix.<a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p>Seems issue has to do with <code>group</code> needing to apply both to the polygon at a given time as well as points on the polygon across time.<a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p>Would require latex title which I don’t know if is supported by <code>gganimate</code><a href="#fnref11" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
 
