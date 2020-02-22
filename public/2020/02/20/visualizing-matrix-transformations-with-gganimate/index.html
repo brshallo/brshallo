@@ -66,7 +66,7 @@
 
   <article class="article">
     
-    <span class="article-duration">11 min read</span>
+    <span class="article-duration">12 min read</span>
     
 
     <h1 class="article-title">Visualizing Matrix Transformations with gganimate</h1>
@@ -315,7 +315,7 @@ y_breaks &lt;- unique(grid_start$y)</code></pre>
 <p>The code used to construct images within the appendix is very similar to code already shown<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>.</p>
 <div id="multiple-matrix-transformations" class="section level2">
 <h2>Multiple matrix transformations</h2>
-<p>I love how the “Essence of Linear Algebra” series explains how matrix transformations can be thought-of / broken-down sequentially. The same visualization can be set-up here – you just need to add-in the additional layer.</p>
+<p>I love how the “Essence of Linear Algebra” series explains how matrix transformations can be thought-of / broken-down sequentially. The same visualization can (kind-of) be set-up here – you just need to add-in an additional layer.</p>
 <p>E.g. say, we want to apply a <em>rotation</em> and then a <em>sheer</em>:</p>
 <pre class="r"><code>rotate_trans &lt;- tribble(~ x, ~ y,
                         cos(pi / 4), -sin(pi / 4),
@@ -335,6 +335,7 @@ sheer_trans &lt;- tribble(~ x, ~ y,
 \dfrac{\sqrt{2}}{2} &amp; -\dfrac{\sqrt{2}}{2}\\
 \dfrac{\sqrt{2}}{2} &amp; \dfrac{\sqrt{2}}{2} \\
 \end{bmatrix}X\]</span></p>
+<p>I say <em>kind-of</em> animate these because <code>gganimate</code> transforms coordinates linearly, hence while a transformation may result in a rotation, the in-between states (where <code>gganimate</code> fills in the gaps) will not look like a pure rotation. See <a href="#potential-improvements">Potential improvements</a> for additional notes.</p>
 <p><em>Construct grids:</em></p>
 <pre class="r"><code>grid_start &lt;- construct_grid() %&gt;% 
   mutate(id = row_number())
@@ -406,9 +407,9 @@ basis_all &lt;- bind_rows(
 X\]</span></p>
 <p>But thinking of the matrix transformations separately can be helpful!</p>
 </div>
-<div id="problems-and-potential-improvements" class="section level2">
-<h2>Problems and potential improvements</h2>
-<p>I have no (current) plans of fleshing this out further. (Though I think a ggplot extension – e.g. <code>ggbasis</code>, <code>gglineartrans</code> – or something could be cool.) In this section I’ll give a few notes regarding short-term things I’d change or fix-up (if I were to keep working on this – maybe I’ll get to a couple of these).</p>
+<div id="potential-improvements" class="section level2">
+<h2>Potential improvements</h2>
+<p>I have no (current) plans of fleshing this out further. (Though I think a ggplot extension – e.g. <code>ggbasis</code>, <code>gglineartrans</code> – or something could be cool.) In this section I’ll give a few notes regarding short-term things I’d change or fix-up (if I were to keep working on this – maybe I’ll get to a couple of these). Really I should dive into <code>tweenr</code> and <code>transformr</code> packages and associated concepts to get these worked out further.</p>
 <div id="problem-of-squeezing-during-rotation" class="section level3">
 <h3>Problem of squeezing during rotation</h3>
 <p>You might notice that something about the rotation transformation looks a little off. During the animation, the grid becomes artificially and temporarily squished in at some points. We can better see this by placing a circle on the interior of our grid and looking at the rotation of the exterior segments. The exterior segments of the grid <em>should</em> remain tangent to our circle at all points.</p>
@@ -436,7 +437,10 @@ The problem is that coords are tweened linearly which doesn't match a rotation w
 — Thomas Lin Pedersen (<span class="citation">@thomasp85</span>) <a href="https://twitter.com/thomasp85/status/1230773860321988608?ref_src=twsrc%5Etfw">February 21, 2020</a>
 </blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<p>One fix (irrespective of tweening method in <code>gganimate</code>) could be to make incremental layers (so that the lack of a true rotation wasn’t noticable).</p>
+<p>Transformations that you <em>could</em> conceptualize of as rotations will be animated as linear changes to coordinates. As a more extreme example, see animation of a matrix transformation for a 180 rotation:</p>
+<pre class="r"><code>animate_matrix_transformation(m = matrix(c(-1, 0, 0, 1), nrow = 2))</code></pre>
+<p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/transform_180degrees.gif" /></p>
+<p>One fix (irrespective of tweening method in <code>gganimate</code>) could be to set specific coordinates at each frame (so that the lack of a true rotation wouldn’t noticable)<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</p>
 </div>
 <div id="problem-of-jittery-points-during-rotation" class="section level3">
 <h3>Problem of jittery points during rotation</h3>
@@ -463,13 +467,13 @@ p_points &lt;- p_rotation +
   geom_point(aes(x, y), data = points_all, colour = &quot;royalblue3&quot;)
 
 p_points + gganimate::transition_states(time, wrap = FALSE)</code></pre>
-<p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-22-1.gif" /><!-- --></p>
+<p><img src="/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-23-1.gif" /><!-- --></p>
 </div>
 <div id="miscellaneous-notes" class="section level3">
 <h3>Miscellaneous notes</h3>
 <ul>
-<li>I could not figure out how to add <a href="https://ggplot2.tidyverse.org/reference/geom_polygon.html">multiple polygons</a> via <code>geom_polygon()</code> in a way that kept smooth transitions<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>. I should open an issue.</li>
-<li>Would be nice to add <code>title</code> of image as the matrix transformation being conducted<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a></li>
+<li>I could not figure out how to add <a href="https://ggplot2.tidyverse.org/reference/geom_polygon.html">multiple polygons</a> via <code>geom_polygon()</code> in a way that kept smooth transitions<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>. Would likely need to explore <code>tweenr</code>, <code>transformr</code>….</li>
+<li>Would be nice to add <code>title</code> of image as the matrix transformation being conducted<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a></li>
 <li>May be better to render to video (rather than gif) so could pause to view</li>
 <li>In general, could make more elegant / sophisticated… especially regarding how transformations are applied across layers
 <ul>
@@ -502,8 +506,8 @@ y_breaks &lt;-
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Which are shown throughout the series and most notably in chapters 3 and 13<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>See section <a href="#problems-and-potential-improvements">Problems and potential improvements</a> for notes on a couple potential updates I’ll make… not positive I’ll keep the gist code updated.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>Which are shown throughout the series and most notably in chapters 3 and 13.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>See section [Problems and potential improvements] for notes on a couple potential updates I’ll make… not positive I’ll keep the gist code updated.<a href="#fnref2" class="footnote-back">↩</a></p></li>
 <li id="fn3"><p>And may not care about understanding how to do multiple transformations, adding additional layers, etc.<a href="#fnref3" class="footnote-back">↩</a></p></li>
 <li id="fn4"><p>/ vectors<a href="#fnref4" class="footnote-back">↩</a></p></li>
 <li id="fn5"><p>I’m guessing there is a better / more elegant function already out there for ‘tidy matrix multiplication’ or something… but couldn’t immediately think of anything.<a href="#fnref5" class="footnote-back">↩</a></p></li>
@@ -511,10 +515,11 @@ y_breaks &lt;-
 <li id="fn7"><p>Creating these is not needed if you just wanted to create static images for the below examples.<a href="#fnref7" class="footnote-back">↩</a></p></li>
 <li id="fn8"><p>No real reason for choosing this transformation, just thought it looked cool.<a href="#fnref8" class="footnote-back">↩</a></p></li>
 <li id="fn9"><p>If wrap = TRUE (default) the reverse looping of the image is inaccurate as the transformation back to the original basis actually represents a transformation by the inverse of the <code>transformation matrix</code>. Though leaving it in would look cooler.<a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p>Could functionalize more… or make a shiny app, or do more with, see <a href="#problems-and-potential-improvements">Problems and potential improvements</a> for notes…<a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p>Could functionalize more… or make a shiny app, or do more with, see [Problems and potential improvements] for notes…<a href="#fnref10" class="footnote-back">↩</a></p></li>
 <li id="fn11"><p>Can largely skim over<a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>Seems issue has to do with <code>group</code> needing to apply both to the polygon at a given time as well as points on the polygon across time.<a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p>Would require latex title which I don’t know if is supported by <code>gganimate</code><a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p>Though this gets into decomposing the rotation, etc. components of the matrix transformation of interest for each frame.<a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>Seems issue has to do with <code>group</code> needing to apply both to the polygon at a given time as well as points on the polygon across time.<a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p>Would require latex title which I don’t know if is supported by <code>gganimate</code><a href="#fnref14" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
 
