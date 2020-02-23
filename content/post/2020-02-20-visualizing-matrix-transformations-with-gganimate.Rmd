@@ -28,6 +28,8 @@ This post is an offshoot of an (upcoming) post of my solutions to this week's [F
 
 ... figured I'd share what I've patched together so far `r emo::ji("party_popper")` (will just be looking at transformations by 2x2 matrices).
 
+In this post (unlike in those previous) I've exposed most of the code directly in the blog, but the raw RMD file is also on my [github page](https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-20-visualizing-matrix-transformations-with-gganimate.Rmd).
+
 # Quick start
 
 I made a [gist](https://gist.github.com/brshallo/6a125f9c96dac5445cebb97cc62bfc9c)^[See section [Problems and potential improvements] for notes on a couple potential updates I'll make... not positive I'll keep the gist code updated.] containing the functions needed to produce a simple animation of a 2x2 matrix transformation. If you are reading this post with the sole goal of creating an animation like the one below^[And may not care about understanding how to do multiple transformations, adding additional layers, etc.], you can copy and run this code chunk to render a 2x2 matrix transformation gif (the input to argument `m` can be any *2x2* matrix of interest).
@@ -234,6 +236,10 @@ And there it is. To view a different matrix transformation, simply change the `t
 
 The code used to construct images within the appendix is very similar to code already shown^[Can largely skim over].
 
+## On changes
+
+In the few days after sharing this post on 2020-02-20, I made several changes to the images and notes (especially those within the appendix) that I think better clarified points or corrected mistakes.
+
 ## Multiple matrix transformations
 
 I love how the "Essence of Linear Algebra" series explains how matrix transformations can be thought-of / broken-down sequentially. The same visualization can (kind-of) be set-up here -- you just need to add-in an additional layer.
@@ -241,14 +247,14 @@ I love how the "Essence of Linear Algebra" series explains how matrix transforma
 E.g. say, we want to apply a *rotation* and then a *sheer*: 
 ```{r}
 rotate_trans <- tribble(~ x, ~ y,
-                        cos(pi / 4), -sin(pi / 4),
-                        sin(pi / 4), cos(pi / 4)) %>%
+                        cos(pi / 2), -sin(pi / 2),
+                        sin(pi / 2), cos(pi / 2)) %>%
   as.matrix()
 
 sheer_trans <- tribble(~ x, ~ y,
                       1, 0,
                       0.5, 1) %>%
-  as.matrix()
+  as.matrix() 
 ```
 
 I.e.
@@ -258,8 +264,8 @@ $$\begin{bmatrix}
 0.5 & 1 \\
 \end{bmatrix}
 \begin{bmatrix}
-\dfrac{\sqrt{2}}{2} & -\dfrac{\sqrt{2}}{2}\\
-\dfrac{\sqrt{2}}{2} & \dfrac{\sqrt{2}}{2} \\
+0 & -1\\
+1 & 0 \\
 \end{bmatrix}X$$
 
 I say *kind-of* animate these because `gganimate` transforms coordinates linearly, hence while a transformation may result in a rotation, the in-between states (where `gganimate` fills in the gaps) will not look like a pure rotation. See [Potential improvements] for additional notes.
@@ -283,7 +289,7 @@ grid_all <- bind_rows(
   mutate(grid_start, time = 1),
   mutate(grid_trans, time = 2),
   mutate(grid_trans2, time = 3)
-)
+) 
 ```
 
 *Basis vectors:*
@@ -312,7 +318,7 @@ basis_all <- bind_rows(
   mutate(basis_start, time = 1),
   mutate(basis_trans, time = 2),
   mutate(basis_trans2, time = 3)
-)
+) 
 ```
 
 *Define visualization:*
@@ -326,18 +332,18 @@ p_mult <- ggplot(aes(x = x, y = y, group = id), data = grid_all)+
   theme_minimal()+
   theme(axis.text = element_blank(),
         axis.title = element_blank(),
-        legend.position = "none")
+        legend.position = "none") 
 ```
 
 *Static image:*
 ```{r}
-p_mult
+p_mult 
 ```
 
 *Animation:*
 ```{r}
 p_mult + 
-  gganimate::transition_states(time, wrap = FALSE)
+  gganimate::transition_states(time, wrap = FALSE) 
 ```
 
 Notice that we see the transformations done sequentially. We could also have just inputted the single (simplified) matrix transformation:
@@ -356,7 +362,7 @@ I have no (current) plans of fleshing this out further. (Though I think a ggplot
 
 ### Problem of squeezing during rotation
 
-You might notice that something about the rotation transformation looks a little off. During the animation, the grid becomes artificially and temporarily squished in at some points. We can better see this by placing a circle on the interior of our grid and looking at the rotation of the exterior segments. The exterior segments of the grid *should* remain tangent to our circle at all points.
+You might notice that something about the rotation transformation looks a little off. During the animation, the grid becomes temporarily squished in at some points. We can better see this by placing a circle on the interior of our grid and looking at the rotation of the exterior segments. The exterior segments of the grid *should* remain tangent to our circle at all points.
 ```{r}
 circle_df <- tibble(x0 = 0, y0 = 0, r = 5)
 
@@ -372,14 +378,14 @@ p_rotation <- ggplot(aes(), data = filter(grid_all, time <= 2))+
         axis.title = element_blank(),
         legend.position = "none")
 
-p_rotation + gganimate::transition_states(time, wrap = FALSE)
+p_rotation + gganimate::transition_states(time, wrap = FALSE) 
 ```
 
 However we can see this doesn't happen (the grid scrunches up and the exterior segments cut into the circle). The reason this occurs is that during the animation the coordinates follow a straight line path to their new location as explained: 
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">The problem is that coords are tweened linearly which doesn&#39;t match a rotation where the tweening should be done on the radians (or, better, tween the transformation matrix instead). There is no support for this in gganimate yet because I haven&#39;t figured out the right interface</p>&mdash; Thomas Lin Pedersen (@thomasp85) <a href="https://twitter.com/thomasp85/status/1230773860321988608?ref_src=twsrc%5Etfw">February 21, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-Transformations that you *could* conceptualize of as rotations will be animated as linear changes to coordinates. As a more extreme example, see animation of a matrix transformation for a 180 rotation: 
+Transformations that you *could* conceptualize of as rotations will be animated as linear changes to coordinates. As a more extreme example, see animation of a matrix transformation for a $180^\circ$ rotation: 
 
 ```{r, eval = FALSE}
 animate_matrix_transformation(m = matrix(c(-1, 0, 0, 1), nrow = 2))
@@ -387,7 +393,7 @@ animate_matrix_transformation(m = matrix(c(-1, 0, 0, 1), nrow = 2))
 
 ![](/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/transform_180degrees.gif)
 
-One fix (irrespective of tweening method in `gganimate`) could be to set specific coordinates at each frame (so that the lack of a true rotation wouldn't noticable)^[Though this gets into decomposing the rotation, etc. components of the matrix transformation of interest for each frame.].
+One fix (irrespective of tweening method in `gganimate`) could be to set specific coordinates at each frame (so that the lack of a true rotation wouldn't be noticable)^[Though this gets into decomposing the rotation, etc. components of the matrix transformation of interest for each frame.].
 
 ### Problem of jittery points during rotation
 
@@ -415,7 +421,7 @@ p_points + gganimate::transition_states(time, wrap = FALSE)
 p_points <- p_rotation +
   geom_point(aes(x, y), data = points_all, colour = "royalblue3")
 
-p_points + gganimate::transition_states(time, wrap = FALSE)
+p_points + gganimate::transition_states(time, wrap = FALSE) 
 ```
 
 ### Miscellaneous notes
@@ -424,7 +430,7 @@ p_points + gganimate::transition_states(time, wrap = FALSE)
 * Would be nice to add `title` of image as the matrix transformation being conducted^[Would require latex title which I don't know if is supported by `gganimate`]
 * May be better to render to video (rather than gif) so could pause to view
 * In general, could make more elegant / sophisticated... especially regarding how transformations are applied across layers
-    * Would be nice if was set-up to apply the transformations across all (or specified layers) of a ggplot object.
+    * Would be nice if was set-up to apply the transformations across all (or specified layers).
 
 ## Note on scales
 
