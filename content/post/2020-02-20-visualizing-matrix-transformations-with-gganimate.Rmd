@@ -30,6 +30,8 @@ This post is an offshoot of an (upcoming) post of my solutions to this week's [F
 
 In this post (unlike in those previous) I've exposed most of the code directly in the blog, but the raw RMD file is also on my [github page](https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-20-visualizing-matrix-transformations-with-gganimate.Rmd).
 
+I also wrote a follow-up to this blog post that can be found [here](https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/), which walks through [animatrixr](https://github.com/brshallo/animatrixr): a rudimentary package I wrote for piping together matrix transformations for animations. This first post provides some documentation on some of the functions that ended-up within `animatrixr`, but you might also just start directly on the follow-up post.
+
 # Quick start
 
 I made a [gist](https://gist.github.com/brshallo/6a125f9c96dac5445cebb97cc62bfc9c)^[See section [Problems and potential improvements] for notes on a couple potential updates I'll make... not positive I'll keep the gist code updated.] containing the functions needed to produce a simple animation of a 2x2 matrix transformation. If you are reading this post with the sole goal of creating an animation like the one below^[And may not care about understanding how to do multiple transformations, adding additional layers, etc.], you can copy and run this code chunk to render a 2x2 matrix transformation gif (the input to argument `m` can be any *2x2* matrix of interest).

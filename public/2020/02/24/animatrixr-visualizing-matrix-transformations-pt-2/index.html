@@ -93,7 +93,7 @@
 </div>
 <div id="animatrixr-and-multiple-matrix-transformations" class="section level1">
 <h1><code>animatrixr</code> and multiple matrix transformations</h1>
-<p>Sanderson discusses the value in sometimes decomposing a matrix transformation and thinking of its parts sequentially. I created a <strong>toy</strong> package <code>animatrixr</code> for building chained matrix transformations that are then animated with <code>gganimate</code><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+<p>Sanderson discusses the value in sometimes decomposing a matrix transformation and thinking of its parts sequentially. I created a <strong>toy</strong> package <code>animatrixr</code> for building chained matrix transformations that can then be animated using <code>gganimate</code><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
 <p>The function <code>animatrixr::add_transformation()</code> lets you chain together matrix transformations with R’s pipe operator <code>%&gt;%</code>.</p>
 <p>For example, let’s consider three matrix transformations: horizontal sheer –&gt; vertical sheer –&gt; reflection across x-axis:</p>
 <pre class="r"><code>library(dplyr)
