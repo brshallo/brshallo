@@ -6,10 +6,20 @@
     <description>Recent content in math on Bryan&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 20 Feb 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 24 Feb 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/math/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>animatrixr &amp; Visualizing Matrix Transformations pt. 2</title>
+      <link>/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</link>
+      <pubDate>Mon, 24 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</guid>
+      <description>This post is a continuation on my post from last week on Visualizing Matrix Transformations with gganimate. Both posts are largely inspired by Grant Sanderson’s beautiful video series The Essence of Linear Algebra and wanting to continue messing around with Thomas Lin Peterson’s fantastic gganimate package in R.
+As with the last post, I’ll describe trying to (very loosely) recreate a small part of the visualizations showing the geometry of matrix multiplication and changing basis vectors (using gganimate in R).</description>
+    </item>
     
     <item>
       <title>Visualizing Matrix Transformations with gganimate</title>
