@@ -35,7 +35,7 @@ This post expands on these topics.
 
 # `animatrixr` and multiple matrix transformations
 
-Sanderson discusses the value in sometimes decomposing a matrix transformation and thinking of its parts sequentially. I created a **toy** package `animatrixr` for building chained matrix transformations that can be visualized with `gganimate`^[Provides a cleaner approach for doing this compared to the clunky method I walked through in my post last week.]. 
+Sanderson discusses the value in sometimes decomposing a matrix transformation and thinking of its parts sequentially. I created a **toy** package `animatrixr` for building chained matrix transformations that are then animated with `gganimate`^[Provides a cleaner approach for doing this compared to the clunky method I walked through in my post last week.]. 
 
 The function `animatrixr::add_transformation()` lets you chain together matrix transformations with R's pipe operator `%>%`.
 
