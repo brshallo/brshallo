@@ -242,8 +242,9 @@ code {
 }
 .footer-links-kudos img {
   position: relative;
-  top: 6px;
   margin-left: 2px;
+
+  display: inline;
 }
 
 @media (min-width: 600px) {
