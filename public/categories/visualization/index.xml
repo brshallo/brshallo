@@ -17,7 +17,7 @@
       <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/03/04/riddler-solutions-pedestrian-puzzles/</guid>
-      <description>Riddler expressRiddler classicAppendixTime to centerTransform city, prettyThis post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, Riddler Express and Riddler Classic. I used animatrixr (a toy package I wrote) to help with some of the visualizations and computations for this post. For more details on animating matrix transformations see my posts here and here.
+      <description>Riddler expressRiddler classicAppendixTime to centerTransform grid, rotate firstTransform city, prettyThis post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, Riddler Express and Riddler Classic. I used animatrixr1 to help with some of the visualizations and computations for this post. For more details on animating matrix transformations see my posts here and here.
 Riddler expressThe riddle:
 Riddler City is a large circular metropolis, with countless square city blocks that each have a side length of 1 km.</description>
     </item>
