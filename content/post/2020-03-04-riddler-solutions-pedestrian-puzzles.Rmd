@@ -13,7 +13,7 @@ tags:
   - math
   - r
   - riddles
-thumbnail: https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-13-1.gif
+thumbnail: https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif
 ---
 
 This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, [Riddler Express] and [Riddler Classic]. I used [animatrixr](https://github.com/brshallo/animatrixr)^[A toy package I wrote.] to help with some of the visualizations and computations for this post. For more details on animating matrix transformations see my posts [here](https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/) and [here](https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/).
@@ -64,7 +64,7 @@ I first calculated the [Manhattan Distance](https://en.wikipedia.org/wiki/Taxica
 
 $$ M = \left(\begin{array}{cc} 0.5 & -0.5\\0.5  & 0.5 \end{array}\right)$$
 
-![](/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty.gif)
+![](/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif)
 
 See [Transform city, pretty] in the [Appendix] for code used to create above visualization.
 
@@ -280,14 +280,15 @@ p_pretty <- bind_rows(start_grid, end_grid) %>%
   scale_x_continuous(breaks = -3L:3L, minor_breaks = NULL)+
   scale_y_continuous(breaks = -3L:3L, minor_breaks = NULL)+
   coord_fixed(xlim = c(-3, 3), ylim = c(-3, 3))+
-  ggforce::theme_no_axes()+
+  theme_minimal()+
   theme(axis.text = element_blank(),
         axis.title = element_blank(),
-        legend.position = "none")
+        legend.position = "none",
+        panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 p_pretty + 
   gganimate::transition_states(time)
 ```
 
-![](/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty.gif)
+![](/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif)
 

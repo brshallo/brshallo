@@ -117,7 +117,7 @@ df_start &lt;- crossing(x = -radius:radius, y = -radius:radius) %&gt;%
 <p><em>II. Calculate Manhattan Distances</em></p>
 <p>I first calculated the <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">Manhattan Distance</a> in each scenario, which is just the shortest number of city blocks that would need to be traveled to get between points. To calculate the Manhattan Distance on the new scenario, I first needed to find what the residences coordinates would be in the new sidewalk grid. The new coordinate system could be thought of simply as a rotated and shrunken version of the existing grid, which can be represented as applying the matrix transformation:</p>
 <p><span class="math display">\[ M = \left(\begin{array}{cc} 0.5 &amp; -0.5\\0.5  &amp; 0.5 \end{array}\right)\]</span></p>
-<p><img src="/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty.gif" /></p>
+<p><img src="/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif" /></p>
 <p>See <a href="#transform-city-pretty">Transform city, pretty</a> in the <a href="#appendix">Appendix</a> for code used to create above visualization.</p>
 <p>Our residences are not changing locations, they would just have different coordinates specific to the new sidewalks – hence we will actually apply the inverse<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> of this transformation to our starting coordinates. This will give us the position of our residences on the new (transformed) coordinate grid.</p>
 <p><span class="math display">\[ M^{-1} = \left(\begin{array}{cc} 1 &amp; 1\\-1  &amp; 1 \end{array}\right)\]</span></p>
@@ -357,14 +357,15 @@ p_pretty &lt;- bind_rows(start_grid, end_grid) %&gt;%
   scale_x_continuous(breaks = -3L:3L, minor_breaks = NULL)+
   scale_y_continuous(breaks = -3L:3L, minor_breaks = NULL)+
   coord_fixed(xlim = c(-3, 3), ylim = c(-3, 3))+
-  ggforce::theme_no_axes()+
+  theme_minimal()+
   theme(axis.text = element_blank(),
         axis.title = element_blank(),
-        legend.position = &quot;none&quot;)
+        legend.position = &quot;none&quot;,
+        panel.border = element_rect(colour = &quot;black&quot;, fill=NA, size=1))
 
 p_pretty + 
   gganimate::transition_states(time)</code></pre>
-<p><img src="/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty.gif" /></p>
+<p><img src="/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif" /></p>
 </div>
 </div>
 <div class="footnotes">
