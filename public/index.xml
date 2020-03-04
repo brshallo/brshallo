@@ -17,8 +17,7 @@
       <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/03/04/riddler-solutions-pedestrian-puzzles/</guid>
-      <description>Riddler expressRiddler classicAppendixTime to centerTransform grid, rotate firstTransform city, prettyThis post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, Riddler Express and Riddler Classic. I created a toy package animatrixr to help with some of the visualizations and computations for my solutions and wrote two preliminary posts on animating matrix transformations that can be found here and here.
-Riddler expressThe riddle:</description>
+      <description>Riddler expressRiddler classicAppendixTime to centerTransform grid, rotate firstTransform city, prettyThis post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, Riddler Express and Riddler Classic. I created a toy package animatrixr to help with some of the visualizations and computations for my solutions and wrote a couple preliminary posts on animating matrix transformations that can be found here and here.</description>
     </item>
     
     <item>
@@ -32,14 +31,14 @@ As with the last post, I’ll describe trying to (very loosely) recreate a small
     </item>
     
     <item>
-      <title>Visualizing Matrix Transformations with gganimate</title>
+      <title>Visualizing Matrix Transformations</title>
       <link>/2020/02/20/visualizing-matrix-transformations-with-gganimate/</link>
       <pubDate>Thu, 20 Feb 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/02/20/visualizing-matrix-transformations-with-gganimate/</guid>
       <description>I highly recommend the fantastic video series Essence of Linear Algebra by Grant Sanderson. In this post I’ll walk through how you can use gganimate and the tidyverse to (very loosely) recreate some of the visualizations shown in that series. Specifically those on matrix transformations and changing the basis vectors1.
 
-This post is an offshoot of an (upcoming) post of my solutions to this week’s FiveThirtyEight Riddler. To support my solution, I was trying to visualize matrix transformations.</description>
+This post is an offshoot of a post of my solutions to this week’s FiveThirtyEight Riddler. To support my solution, I was trying to visualize matrix transformations.</description>
     </item>
     
     <item>

@@ -16,7 +16,7 @@ tags:
 thumbnail: https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif
 ---
 
-This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, [Riddler Express] and [Riddler Classic]. I created a *toy* package [animatrixr](https://github.com/brshallo/animatrixr) to help with some of the visualizations and computations for my solutions and wrote two preliminary posts on animating matrix transformations that can be found [here](https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/) and [here](https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/).
+This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, [Riddler Express] and [Riddler Classic]. I created a *toy* package [animatrixr](https://github.com/brshallo/animatrixr) to help with some of the visualizations and computations for my solutions and wrote a couple preliminary posts on animating matrix transformations that can be found [here](https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/) and [here](https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/).
 
 # Riddler express
 
@@ -33,14 +33,14 @@ The mayor of Riddler City has tasked you with resolving this dispute in a mathem
 
 **My approach:**
 
-I. Create hypothetical verison of city  
+I. Create hypothetical simulation of city  
 II. For each scenario, calculate Manhattan Distances from center for all points  
 III. Make distances comparable by scaling by unit length of a city block  
 IV. Compare distances between scenarios for all points; compute proportion that have shorter path with new diagonal sidewalks 
 
 *I. Create hypothetical city*
 
-I first created a hypothetical 100 unit diameter version of this city^[Is large enough to get a reasonable approximation for the answer.]. I added residences at every point on a 100x100 grid and then removed those points that had a euclidian distance^[I.e. straight line distance.] greater than 50 units from the center.
+I first created a hypothetical 100 unit diameter version of this city^[Is large enough to get a reasonable approximation for the answer.]. I added residences at every point on a 100x100 grid and then removed those points that had a euclidean distance^[I.e. straight line distance.] greater than 50 units from the center.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
@@ -66,7 +66,7 @@ $$ M = \left(\begin{array}{cc} 0.5 & -0.5\\0.5  & 0.5 \end{array}\right)$$
 
 ![](/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif)
 
-(See [Transform city, pretty] in the [Appendix] for code used to create above visualization.)
+(See [Transform city, pretty] in the [Appendix] to view the code used to create the above visualization.)
 
 Our residences are not changing locations, they would just have different coordinates specific to the new sidewalks -- hence we will actually apply the inverse^[In R, you can use the `solve()` function to give you the inverse of a matrix.] of this transformation to our starting coordinates. This will give us the position of our residences on the new (transformed) coordinate grid.
 
@@ -138,13 +138,13 @@ Under this second proposal, now what fraction of the employees would have a shor
 
 **My approach:**
 
-The Barcelona distance is just a combination of the Manhattan lengths of both the original and diagonal sidewalk grids (though with the unit lengths scaled differently)^[We have already done most of the computations we'll need and can follow similar steps to those taken in the [Riddler Express] solution.]. The unit lengths (i.e. length of an individual city block, or in this case, part of a city block) for the horizontal and diagonal components will depend on what proportion^[In the diagram below, we will actually have it be a function of one-half of the inverse of the proportion -- this is because there are two diagonoals adjoining each horizontal component.] of a side is horizontal vs diagonal (corresponding with the original vs transformed grid from the [Riddler Express] solution)^[This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, *x*, of a triangle created by a diagonal.].  
+The Barcelona distance is just a combination of the Manhattan lengths of both the original and diagonal sidewalk grids (though with the unit lengths scaled differently)^[We have already done most of the computations we'll need and can follow similar steps to those taken in the [Riddler Express] solution.]. The unit lengths^[I.e. length of an individual city block, or in this case, component of a city block.] for the horizontal and diagonal components will depend on what proportion^[In the diagram below, we will actually have it be a function of one-half of the inverse of the proportion -- this is because there are two diagonals adjoining each horizontal component.] of a side is horizontal vs diagonal (corresponding with the original vs transformed grid from the [Riddler Express] solution)^[This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, *x*, of a triangle created by a diagonal.].  
 
 We can define our relevant side lengths as a function of x:
 
 ![](/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/barcelona_dist.jpg){width="50%"}
 
-$$x : \frac{inverse\;of\;proportion\;horizontal}{2}$$
+$$x : \frac{inverse\;of\;proportion\;horizontal}{2},$$
 $$0 < x < 0.5$$
 $$diagonal\;length = \sqrt{2}x$$
 $$horizontal\;length = 1 - 2x$$
@@ -173,7 +173,7 @@ df_dists_abc %>%
   knitr::kable()
 ```
 
-In the case (when x is set to 0.25) we see the the proportion that is closer to City Hall (i.e. the center of our city^[The origin of our coordinate systems.]) is again 50%. 
+In the case (when x is set to 0.25) we see the proportion that is closer to City Hall (i.e. the center of our city^[The origin of our coordinate systems.]) is again 50%. 
 
 If we visualize in which locations the new Barcelona sidewalks have a shorter travel distance, we will see a similar result to that found in the [Riddler Express] solution.
 
@@ -188,7 +188,7 @@ df_dists_abc %>%
 
 *We need to verify that '50% have a shorter walk' is our solution regardless of what we set for x.*
 
-To accomplish this, I wrote a function `summarise_proportion()`, that will output the 'Proportion Barcelona sidewalk distance is shorter' across any given x between 0 and 0.5 (the possible values x).
+To accomplish this, I wrote a function `summarise_proportion()`, that will output the 'Proportion Barcelona sidewalk distance is shorter' across any given x between 0 and 0.5 (the possible values of x).
 
 ```{r}
 summarise_proportion <- function(x, df_start = df_dists, out_data = FALSE){
@@ -210,7 +210,7 @@ summarise_proportion <- function(x, df_start = df_dists, out_data = FALSE){
 }
 ```
 
-Specifically I evaluated this for *x* set to each of $0.01, 0.05, 0.09,  ... 0.49$.
+Specifically I evaluated this 'proportion shorter' for *x* set to each of $0.01, 0.05, 0.09,  ... 0.49$.
 
 ```{r}
 x_vec <- seq(from = 0.01, to = 0.49, by = 0.04)
