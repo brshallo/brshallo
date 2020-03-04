@@ -16,7 +16,7 @@ tags:
 thumbnail: https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif
 ---
 
-This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, [Riddler Express] and [Riddler Classic]. I used [animatrixr](https://github.com/brshallo/animatrixr)^[A toy package I wrote.] to help with some of the visualizations and computations for this post. For more details on animating matrix transformations see my posts [here](https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/) and [here](https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/).
+This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, [Riddler Express] and [Riddler Classic]. I created a *toy* package [animatrixr](https://github.com/brshallo/animatrixr) to help with some of the visualizations and computations for my solutions and wrote two preliminary posts on animating matrix transformations that can be found [here](https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/) and [here](https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/).
 
 # Riddler express
 
@@ -35,7 +35,7 @@ The mayor of Riddler City has tasked you with resolving this dispute in a mathem
 
 I. Create hypothetical verison of city  
 II. For each scenario, calculate Manhattan Distances from center for all points  
-III. Make distances comparable by scaling by unit length of a city block
+III. Make distances comparable by scaling by unit length of a city block  
 IV. Compare distances between scenarios for all points; compute proportion that have shorter path with new diagonal sidewalks 
 
 *I. Create hypothetical city*
@@ -66,7 +66,7 @@ $$ M = \left(\begin{array}{cc} 0.5 & -0.5\\0.5  & 0.5 \end{array}\right)$$
 
 ![](/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif)
 
-See [Transform city, pretty] in the [Appendix] for code used to create above visualization.
+(See [Transform city, pretty] in the [Appendix] for code used to create above visualization.)
 
 Our residences are not changing locations, they would just have different coordinates specific to the new sidewalks -- hence we will actually apply the inverse^[In R, you can use the `solve()` function to give you the inverse of a matrix.] of this transformation to our starting coordinates. This will give us the position of our residences on the new (transformed) coordinate grid.
 
@@ -80,7 +80,7 @@ df_trans <- df_start %>%
   transform_df_coords(x_trans, y_trans, m = matrix(c(1, -1, 1, 1), nrow = 2))
 ```
 
-We will then calculate the Manhattan lengths of the points on both the new and old coordinate systems -- which (because we are comparing distance from the origin: 0,0) can be computed as $Manhattan\;Length = |x| + |y|$. 
+We will then calculate the Manhattan lengths of the points on both the new and old coordinate systems -- which (because we are comparing distance from the origin: 0,0) can be computed as: $Manhattan\;Length = |x| + |y|$. 
 
 ```{r}
 df_units <- df_trans %>% 
