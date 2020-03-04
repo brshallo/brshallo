@@ -321,6 +321,8 @@ code {
   }
 }
 
+/* Custom CSS */
+
 img {
   display: block;
   margin: 0 0 1rem;
@@ -328,3 +330,25 @@ img {
   max-width: 100%;
 }
 
+.thumbnail {
+  height: 5.1em;
+  width: 6.8em;
+  float: left;
+  overflow: hidden;
+  margin: 5px 8px 5px 0;
+  box-shadow: 0 0 8px #666;
+}
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.summary {
+  font-weight: 100;
+  font-size: small;
+}
+
+.summaryt {
+  opacity: 0.4;
+}

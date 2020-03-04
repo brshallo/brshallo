@@ -10,13 +10,16 @@ tags:
   - combinatorics
   - math
   - rstats
+output:
+  blogdown::html_page:
+    toc: true
 ---
 
 This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-07, [Riddler Express] and [Riddler Classic]. Code for figures and solutions can be found on [my github page](https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs.Rmd).
 
 # Riddler Express
 
-The riddle:
+**The riddle:**
 
 >From James Anderson comes a palindromic puzzle of calendars:
 >
@@ -67,7 +70,7 @@ Which shows there will be eight more pallindromic dates in the century -- one in
 
 # Riddler Classic
 
-The riddle:
+**The riddle:**
 
 >Also on Super Bowl Sunday, math professor Jim Propp made a rather interesting observation:
 ><blockquote class="twitter-tweet"><p lang="en" dir="ltr">I told my kid (who’d asked about absolute value signs) “They’re just like parentheses so there’s never any ambiguity,” but then I realized that things are more complicated; for instance |-1|-2|-3| could be 5 or -5. Has anyone encountered ambiguities like this in the wild?</p>&mdash; James Propp (@JimPropp) <a href="https://twitter.com/JimPropp/status/1224177172362989571?ref_src=twsrc%5Etfw">February 3, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>

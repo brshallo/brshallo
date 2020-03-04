@@ -38,10 +38,10 @@ This post is an offshoot of an (upcoming) post of my solutions to this week’s 
       <pubDate>Thu, 13 Feb 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/</guid>
-      <description>This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-07, Riddler Express and Riddler Classic. Code for figures and solutions can be found on my github page.
+      <description>Riddler ExpressRiddler ClassicAppendixOn duplicatesMore than 9 numbersDefine more rulesCreating gifThis post contains solutions to FiveThirtyEight’s two riddles released 2020-02-07, Riddler Express and Riddler Classic. Code for figures and solutions can be found on my github page.
 Riddler ExpressThe riddle:
 From James Anderson comes a palindromic puzzle of calendars:
-This past Sunday was Groundhog Day. Also, there was a football game. But to top it all off, the date, 02/02/2020, was palindromic, meaning it reads the same forwards and backwards (if you ignore the slashes).</description>
+This past Sunday was Groundhog Day. Also, there was a football game.</description>
     </item>
     
     <item>
@@ -50,10 +50,9 @@ This past Sunday was Groundhog Day. Also, there was a football game. But to top 
       <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/02/06/maximizing-magnetic-volume-the-perfect-bowl/</guid>
-      <description>This post contains solutions to FiveThirtyEight’s two riddles released 2020-01-31, Riddler Express and Riddler Classic. Code for figures and solutions can be found on my github page.
+      <description>Riddler ExpressRiddler ClassicArea of the base of the pyramidHeight of the pyramidEncode functions and calculate volumesAppendixThis post contains solutions to FiveThirtyEight’s two riddles released 2020-01-31, Riddler Express and Riddler Classic. Code for figures and solutions can be found on my github page.
 Riddler ExpressThe riddle:
-At the recent World Indoor Bowls Championships in Great Yarmouth, England, one of the rolls by Nick Brett went viral. Here it is in all its glory:12/10 on the mindblowing scale 🤯 #SCtop10
-(via @BBCSport) pic.twitter.com/6pN6ybzVel— SportsCenter (@SportsCenter) January 23, 2020In order for Nick’s green bowl to split the two red bowls, he needed expert precision in both the speed of the roll and its final angle of approach.</description>
+At the recent World Indoor Bowls Championships in Great Yarmouth, England, one of the rolls by Nick Brett went viral.</description>
     </item>
     
   </channel>

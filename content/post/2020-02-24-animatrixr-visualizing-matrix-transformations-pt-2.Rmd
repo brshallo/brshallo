@@ -12,6 +12,9 @@ tags:
   - math
   - gganimate
   - r
+output:
+  blogdown::html_page:
+    toc: false
 ---
 
 ```{r setup, echo=FALSE}

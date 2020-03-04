@@ -11,6 +11,9 @@ tags:
   - math
   - riddles
   - linear algebra
+output:
+  blogdown::html_page:
+    toc: false
 ---
 
 

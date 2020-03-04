@@ -10,17 +10,32 @@ tags:
   - combinatorics
   - math
   - rstats
+output:
+  blogdown::html_page:
+    toc: true
 ---
 
 <script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
 <link href="/rmarkdown-libs/str_view/str_view.css" rel="stylesheet" />
 <script src="/rmarkdown-libs/str_view-binding/str_view.js"></script>
 
+<div id="TOC">
+<ul>
+<li><a href="#riddler-express">Riddler Express</a></li>
+<li><a href="#riddler-classic">Riddler Classic</a></li>
+<li><a href="#appendix">Appendix</a><ul>
+<li><a href="#on-duplicates">On duplicates</a></li>
+<li><a href="#more-than-9-numbers">More than 9 numbers</a></li>
+<li><a href="#define-more-rules">Define more rules</a></li>
+<li><a href="#creating-gif">Creating gif</a></li>
+</ul></li>
+</ul>
+</div>
 
 <p>This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-07, <a href="#riddler-express">Riddler Express</a> and <a href="#riddler-classic">Riddler Classic</a>. Code for figures and solutions can be found on <a href="https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs.Rmd">my github page</a>.</p>
 <div id="riddler-express" class="section level1">
 <h1>Riddler Express</h1>
-<p>The riddle:</p>
+<p><strong>The riddle:</strong></p>
 <blockquote>
 <p>From James Anderson comes a palindromic puzzle of calendars:</p>
 <p>This past Sunday was Groundhog Day. Also, there was a football game. But to top it all off, the date, 02/02/2020, was palindromic, meaning it reads the same forwards and backwards (if you ignore the slashes).</p>
@@ -81,7 +96,7 @@ tags:
 </div>
 <div id="riddler-classic" class="section level1">
 <h1>Riddler Classic</h1>
-<p>The riddle:</p>
+<p><strong>The riddle:</strong></p>
 <blockquote>
 Also on Super Bowl Sunday, math professor Jim Propp made a rather interesting observation:
 <blockquote class="twitter-tweet">

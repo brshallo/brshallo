@@ -10,6 +10,9 @@ tags:
   - riddles
   - rstats
 slug: maximizing-magnetic-volume-the-perfect-bowl
+output:
+  blogdown::html_page:
+    toc: true
 ---
 
 This post contains solutions to FiveThirtyEight's two riddles released 2020-01-31, [Riddler Express] and [Riddler Classic]. Code for figures and solutions can be found on my [github page](https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl.Rmd).
@@ -17,7 +20,7 @@ This post contains solutions to FiveThirtyEight's two riddles released 2020-01-3
 
 # Riddler Express
 
-The riddle:
+**The riddle:**
 
 >At the recent World Indoor Bowls Championships in Great Yarmouth, England, one of the rolls by Nick Brett went viral. Here it is in all its glory:
 ><blockquote class="twitter-tweet"><p lang="en" dir="ltr">12/10 on the mindblowing scale 🤯 <a href="https://twitter.com/hashtag/SCtop10?src=hash&amp;ref_src=twsrc%5Etfw">#SCtop10</a><br><br>(via <a href="https://twitter.com/BBCSport?ref_src=twsrc%5Etfw">@BBCSport</a>) <a href="https://t.co/6pN6ybzVel">pic.twitter.com/6pN6ybzVel</a></p>&mdash; SportsCenter (@SportsCenter) <a href="https://twitter.com/SportsCenter/status/1220355057503363072?ref_src=twsrc%5Etfw">January 23, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -96,8 +99,7 @@ ggplot(aes(fill = colour), data = circles_moving) +
 
 # Riddler Classic
 
-The riddle:
-
+T**The riddle:**
 >From Robert Berger comes a question of maximizing magnetic volume:
 
 >Robert’s daughter has a set of Magna-Tiles, which, as their name implies, are tiles with magnets on the edges that can be used to build various polygons and polyhedra. Some of the tiles are identical isosceles triangles with one 30 degree angle and two 75 degree angles. If you were to arrange 12 of these tiles with their 30 degree angles in the center, they would lay flat and form a regular dodecagon. If you were to put fewer (between three and 11) of those tiles together in a similar way, they would form a pyramid whose base is a regular polygon. Robert has graciously provided a photo of the resulting pyramids when three and 11 tiles are used:

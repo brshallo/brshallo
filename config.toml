@@ -9,10 +9,10 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 [permalinks]
     post = "/:year/:month/:day/:slug/"
 
-[[menu.main]]
-    name = "About"
-    url = "/about/"
-    weight = 1
+#[[menu.main]]
+#    name = "About"
+#    url = "/about/"
+#    weight = 1
 [[menu.main]]
     name = "Twitter"
     url = "https://twitter.com/brshallo"
@@ -32,7 +32,8 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     weight = 5
 
 [params]
-    description = "A personal website built through Hugo and blogdown."
+    summary_length = 200
+    description = "Bryan Shalloway's website built through Hugo and blogdown."
 
     # options for highlight.js (version, additional languages, and theme)
     highlightjsVersion = "9.12.0"
@@ -48,7 +49,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
     [params.logo]
     url = "bryan_edit.jpg"
-    width = 50
-    height = 50
+    width = 60
+    height = 60
     alt = "Logo"
 
