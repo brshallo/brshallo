@@ -13,6 +13,7 @@ tags:
   - math
   - r
   - riddles
+thumbnail: https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-13-1.gif
 ---
 
 This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, [Riddler Express] and [Riddler Classic]. I used [animatrixr](https://github.com/brshallo/animatrixr) (a toy package I wrote) to help with some of the visualizations and computations for this post. For more details on animating matrix transformations see my posts [here](https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/) and [here](https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/).
@@ -22,7 +23,7 @@ This post contains solutions to FiveThirtyEight’s two riddles released 2020-02
 **The riddle:**
 
 >Riddler City is a large circular metropolis, with countless square city blocks that each have a side length of 1 km. A small section of the city, composed of 36 blocks, is shown in the diagram below:
-[](https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-9.41.05-PM.png?w=1150)
+>[](https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-9.41.05-PM.png?w=1150)
 At the very center of the city lies Riddler City Hall. Its many employees all walk to and from work, and their homes are evenly scattered across the city. The sidewalks they walk along have always been adjacent to the streets — but that may be changing.
 Recently, several city hall employees submitted a petition, requesting that the sidewalks should no longer lie alongside the streets. Instead, they want the sidewalks to cut diagonally across the city, connecting nearby street intersections. These proposed sidewalks are represented by the thicker blue lines in the diagram below:
 [](https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-9.52.37-PM.png?w=1150)
@@ -32,10 +33,10 @@ The mayor of Riddler City has tasked you with resolving this dispute in a mathem
 
 **My approach:**
 
-I. Create hypothetical verison of city
-II. For each scenario, calculate Manhattan Distances from center for all points
-III. Make distances comparable by scaling by unit length
-IV. Compare distances between scenarios for all points, compute proportion that now have shorter path
+I. Create hypothetical verison of city  
+II. For each scenario, calculate Manhattan Distances from center for all points  
+III. Make distances comparable by scaling by unit length  
+IV. Compare distances between scenarios for all points, compute proportion that now have shorter path  
 
 *I. Build City*
 
@@ -250,14 +251,14 @@ This suggests that if the city were square shaped (rather than circular) that th
 ## Transform city, pretty
 
 ```{r}
-start_grid <- animatrixr::construct_grid(-12:12, -12:12) %>% 
+start_grid <- animatrixr::construct_grid(-8:8, -8:8) %>% 
   mutate(index = row_number(),
          time = 1L)
 
 end_grid <- animatrixr::transform_segment(start_grid,  m = matrix(c(0.5, 0.5,-0.5, 0.5), nrow = 2)) %>% 
   mutate(time = 2L)
 
-house_points <- crossing(x = -5:5, y = -5:5) %>% 
+house_points <- crossing(x = -3:3, y = -3:3) %>% 
   mutate(symbol = emo::ji("house"))
 
 city_hall <- tibble(x = 0, y = 0)
@@ -268,9 +269,9 @@ p <- bind_rows(start_grid, end_grid) %>%
   geom_text(aes(x = x, y = y, label = symbol), data = house_points, size = 8)+
   geom_label(aes(x = x, y = y, label = "Riddler\nCity Hall"), data = city_hall, size = 8, color = "brown")+
   scale_colour_gradient(low = "black", high = "royalblue3")+
-  scale_x_continuous(breaks = -5L:5L, minor_breaks = NULL)+
-  scale_y_continuous(breaks = -5L:5L, minor_breaks = NULL)+
-  coord_fixed(xlim = c(-5, 5), ylim = c(-5, 5))+
+  scale_x_continuous(breaks = -3L:3L, minor_breaks = NULL)+
+  scale_y_continuous(breaks = -3L:3L, minor_breaks = NULL)+
+  coord_fixed(xlim = c(-3, 3), ylim = c(-3, 3))+
   ggforce::theme_no_axes()+
   theme(axis.text = element_blank(),
         axis.title = element_blank(),

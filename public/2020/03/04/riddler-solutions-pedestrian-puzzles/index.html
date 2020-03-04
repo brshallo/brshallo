@@ -101,9 +101,9 @@ The mayor of Riddler City has tasked you with resolving this dispute in a mathem
 <p>– <a href="https://fivethirtyeight.com/contributors/zach-wissner-gross/">Zach Wissner-Gross</a>, <a href="https://fivethirtyeight.com/features/can-you-solve-this-rather-pedestrian-puzzle/">“Can You Solve this Rather Pedestrian Puzzle,” FiveThirtyEight</a></p>
 </blockquote>
 <p><strong>My approach:</strong></p>
-<p>I. Create hypothetical verison of city
-II. For each scenario, calculate Manhattan Distances from center for all points
-III. Make distances comparable by scaling by unit length
+<p>I. Create hypothetical verison of city<br />
+II. For each scenario, calculate Manhattan Distances from center for all points<br />
+III. Make distances comparable by scaling by unit length<br />
 IV. Compare distances between scenarios for all points, compute proportion that now have shorter path</p>
 <p><em>I. Build City</em></p>
 <p>I first created a hypothetical 100 unit diameter version of this city<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. I added residences at every point on a 100x100 grid and then removed those points that had a euclidian distance<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> greater than 50 units from the center.</p>
@@ -332,14 +332,14 @@ df_summary %&gt;%
 </div>
 <div id="transform-city-pretty" class="section level2">
 <h2>Transform city, pretty</h2>
-<pre class="r"><code>start_grid &lt;- animatrixr::construct_grid(-12:12, -12:12) %&gt;% 
+<pre class="r"><code>start_grid &lt;- animatrixr::construct_grid(-8:8, -8:8) %&gt;% 
   mutate(index = row_number(),
          time = 1L)
 
 end_grid &lt;- animatrixr::transform_segment(start_grid,  m = matrix(c(0.5, 0.5,-0.5, 0.5), nrow = 2)) %&gt;% 
   mutate(time = 2L)
 
-house_points &lt;- crossing(x = -5:5, y = -5:5) %&gt;% 
+house_points &lt;- crossing(x = -3:3, y = -3:3) %&gt;% 
   mutate(symbol = emo::ji(&quot;house&quot;))
 
 city_hall &lt;- tibble(x = 0, y = 0)
@@ -350,9 +350,9 @@ p &lt;- bind_rows(start_grid, end_grid) %&gt;%
   geom_text(aes(x = x, y = y, label = symbol), data = house_points, size = 8)+
   geom_label(aes(x = x, y = y, label = &quot;Riddler\nCity Hall&quot;), data = city_hall, size = 8, color = &quot;brown&quot;)+
   scale_colour_gradient(low = &quot;black&quot;, high = &quot;royalblue3&quot;)+
-  scale_x_continuous(breaks = -5L:5L, minor_breaks = NULL)+
-  scale_y_continuous(breaks = -5L:5L, minor_breaks = NULL)+
-  coord_fixed(xlim = c(-5, 5), ylim = c(-5, 5))+
+  scale_x_continuous(breaks = -3L:3L, minor_breaks = NULL)+
+  scale_y_continuous(breaks = -3L:3L, minor_breaks = NULL)+
+  coord_fixed(xlim = c(-3, 3), ylim = c(-3, 3))+
   ggforce::theme_no_axes()+
   theme(axis.text = element_blank(),
         axis.title = element_blank(),
