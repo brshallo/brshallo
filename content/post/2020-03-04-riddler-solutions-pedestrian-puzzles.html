@@ -1,0 +1,317 @@
+---
+title: 'Riddler Solutions: Pedestrian Puzzles'
+author: Bryan Shalloway
+date: '2020-03-04'
+slug: riddler-solutions-pedestrian-puzzles
+categories:
+  - math
+  - visualization
+  - rstats
+  - r
+tags:
+  - geometry
+  - math
+  - r
+  - riddles
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#riddler-express">Riddler express</a></li>
+<li><a href="#riddler-classic">Riddler classic</a></li>
+<li><a href="#appendix">Appendix</a><ul>
+<li><a href="#time-to-center">Time to center</a></li>
+<li><a href="#transform-city-pretty">Transform city, pretty</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p>This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, <a href="#riddler-express">Riddler Express</a> and <a href="#riddler-classic">Riddler Classic</a>. I used <a href="https://github.com/brshallo/animatrixr">animatrixr</a> (a toy package I wrote) to help with some of the visualizations and computations for this post. For more details on animating matrix transformations see my posts <a href="https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/">here</a> and <a href="https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/">here</a>.</p>
+<div id="riddler-express" class="section level1">
+<h1>Riddler express</h1>
+<p><strong>The riddle:</strong></p>
+<blockquote>
+<p>Riddler City is a large circular metropolis, with countless square city blocks that each have a side length of 1 km. A small section of the city, composed of 36 blocks, is shown in the diagram below:
+<a href="https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-9.41.05-PM.png?w=1150"></a>
+At the very center of the city lies Riddler City Hall. Its many employees all walk to and from work, and their homes are evenly scattered across the city. The sidewalks they walk along have always been adjacent to the streets — but that may be changing.
+Recently, several city hall employees submitted a petition, requesting that the sidewalks should no longer lie alongside the streets. Instead, they want the sidewalks to cut diagonally across the city, connecting nearby street intersections. These proposed sidewalks are represented by the thicker blue lines in the diagram below:
+<a href="https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-9.52.37-PM.png?w=1150"></a>
+The mayor of Riddler City has tasked you with resolving this dispute in a mathematical manner. She would like you to answer the following question: What fraction of the city hall employees would have a shorter walk home (that is, to the street intersection nearest to their home) if the city replaced its traditional sidewalks with these diagonal sidewalks?</p>
+<p>– <a href="https://fivethirtyeight.com/contributors/zach-wissner-gross/">Zach Wissner-Gross</a>, <a href="https://fivethirtyeight.com/features/can-you-solve-this-rather-pedestrian-puzzle/">“Can You Solve this Rather Pedestrian Puzzle,” FiveThirtyEight</a></p>
+</blockquote>
+<p><strong>My approach:</strong></p>
+<p>I. Create hypothetical verison of city
+II. For each scenario, calculate Manhattan Distances from center for all points
+III. Make distances comparable by scaling by unit length
+IV. Compare distances between scenarios for all points, compute proportion that now have shorter path</p>
+<p><em>I. Build City</em></p>
+<p>I first created a hypothetical 100 unit diameter version of this city<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. I added residences at every point on a 100x100 grid and then removed those points that had a euclidian distance<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> greater than 50 units from the center.</p>
+<pre class="r"><code>library(tidyverse)
+library(animatrixr)</code></pre>
+<pre class="r"><code>radius &lt;- 50
+df_start &lt;- crossing(x = -radius:radius, y = -radius:radius) %&gt;% 
+  #Removes points with euclidian distance from center &gt; radius:
+  filter(sqrt(x^2 + y^2) &lt;= radius)</code></pre>
+<p><em>II. Calculate Manhattan Distances</em></p>
+<p>I first calculated the <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">Manhattan Distance</a> in each scenario, which is just the shortest number of blocks that would need to be traveled to get between points. To calculate the Manhattan Distance on the new scenario, I first needed to find what the residences coordinates would be under the new grid.</p>
+<p>The new coordinate system could be thought of simply as a rotation and shrinking, which can be represented as applying the matrix transformation on the starting grid:</p>
+<p><span class="math display">\[ M = \left(\begin{array}{cc} 0.5 &amp; -0.5\\0.5  &amp; 0.5 \end{array}\right)\]</span></p>
+<pre class="r"><code>add_transformation(
+  m = matrix(c(0.5, 0.5,-0.5, 0.5), nrow = 2), 
+  seq_fun = seq_matrix_rotate_first) %&gt;% 
+  animate_matrix()</code></pre>
+<p><img src="/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-1-1.gif" /><!-- --></p>
+<p>For a prettier visualization that shows the houses in the visualization, see <a href="#transform-city-pretty">Transform city, pretty</a> in the <a href="#appendix">Appendix</a>.</p>
+<p>Because our residences are not changing, we just have a new coordinate system, we will actually apply the inverse<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> of this transformation on our starting coordinates. This will give us the position of our residences on the new (transformed) coordinate grid.</p>
+<p><span class="math display">\[ M^{-1} = \left(\begin{array}{cc} 1 &amp; 1\\-1  &amp; 1 \end{array}\right)\]</span></p>
+<pre class="r"><code>df_trans &lt;- df_start %&gt;% 
+  mutate(x_trans = x,
+         y_trans = y) %&gt;% 
+  # x_trans, y_trans represent the coordinates on the new plane
+  transform_df_coords(x_trans, y_trans, m = matrix(c(1, -1, 1, 1), nrow = 2))</code></pre>
+<p>We will then calculate the Manhattan lengths of the points on both the new and old coordinate systems – which (because we are comparing distance from the origin: 0,0) can be computed as <span class="math inline">\(Manhattan\;Length = |x| + |y|\)</span>.</p>
+<pre class="r"><code>df_units &lt;- df_trans %&gt;% 
+  mutate(a_units = abs(x) + abs(y),
+         b_units = abs(x_trans) + abs(y_trans))</code></pre>
+<p><em>IV: Multiply Manhattan lengths by length of a block:</em></p>
+<p>The length of a block under the new and old scenarios are different (new scenario has shorter blocks), hence our current Manhattan lengths are not comparable. If we set the length of a single block on the original coordinate system as being 1 unit, then you can use the Pythagorean Theorem to find that the length of a block on the new sidewalks would be <span class="math inline">\(\frac{\sqrt{2}}{2}\)</span>. We simply multiply our Manhattan lengths in each of our scenarios by their respective unit lengths (either 1 or ~0.7071). The scaled distances can now be compared.</p>
+<pre class="r"><code>df_dists &lt;- df_units %&gt;% 
+  mutate(a_dist = 1 * a_units,
+         b_dist = (sqrt(2) / 2) * b_units)</code></pre>
+<p><em>V. Aggregate proportion difference:</em></p>
+<p>Finally, we compute the proportion that have a shorter distance under the new sidewalks compared to the old sidewalks:</p>
+<pre class="r"><code>df_dists %&gt;% 
+  summarise(prop_shorter = (sum(b_dist &lt; a_dist)/ n()) %&gt;% round(2)) %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">prop_shorter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.5</td>
+</tr>
+</tbody>
+</table>
+<p><em>Riddler express solution:</em> New sidewalks would be faster for 50% of people.</p>
+<p>We can visualize which resident’s the new sidewalks would be faster for:</p>
+<pre class="r"><code>df_dists %&gt;% 
+  mutate(diagonal_faster = a_dist &lt; b_dist) %&gt;% 
+  ggplot(aes(x = x, y = y))+
+  geom_point(aes(colour = diagonal_faster))+
+  coord_fixed()+
+  ggforce::theme_no_axes()</code></pre>
+<p><img src="/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="riddler-classic" class="section level1">
+<h1>Riddler classic</h1>
+<p><strong>The riddle:</strong></p>
+<blockquote>
+<p>From David Lewis comes an additional, original twist on Riddler City’s urban planning:</p>
+<p>The mayor ultimately decided not to pursue diagonal sidewalks, but the petitioners haven’t given up yet. One of them recently visited Barcelona and was inspired by its octagonal city blocks.</p>
+<p>Now, there’s a second petition on the mayor’s desk, asking that the grid layout of the city’s sidewalks be replaced with an octagonal pattern, represented by the thicker blue lines in the diagram below:
+<a href="https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-10.03.57-PM.png?w=1150"></a>
+Under this second proposal, now what fraction of the employees would have a shorter walk home if the city replaced its traditional sidewalks with these new sidewalks?</p>
+</blockquote>
+<p><strong>My approach:</strong></p>
+<p>The Barcelona distance is just a combination of the Manhattan lengths of both the original and transformed (diagonal) grids (though with the unit lengths scaled differently). we have already done most of the computations we’ll need and can follow similar steps to those taken in the <a href="#riddler-express">Riddler Express</a> solution.</p>
+<p>The unit lengths (i.e. individual city block length) for the horizontal and diagonal components will depend on what proportion<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> of a side is horizontal vs diagonal (corresponding with the original vs transformed grid from the <a href="#riddler-express">Riddler Express</a> solution)<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.</p>
+<p>We can define our relevant side lengths as a function of x:</p>
+<p><strong>IMAGE OF DIAGRAM</strong></p>
+<p><span class="math display">\[x : \frac{proportion\;horizontal}{2}\]</span>
+<span class="math display">\[0 &lt; x &lt; 0.5\]</span>
+<span class="math display">\[diagonal\;length = \sqrt{2}\]</span>
+<span class="math display">\[horizontal\;length = 1 - 2x\]</span></p>
+<p>Note that if we set x = 0, the distance from each location would be equivalent to the distances in our starting (horizontal) grid, and if we set x = 0.5, the distances would be equal to those in our transformed (diagonal) grid<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>.</p>
+<p>I’ll start by setting x = 0.25. Hence the Manhattan length of our horizontal component will be scaled by <span class="math inline">\(\frac{1}{2}\)</span>, and our diagonal component will be scaled by <span class="math inline">\(\frac{\sqrt{2}}{4}\)</span>. After scaling our components, we simply add them together to get our Barcelona distance.</p>
+<pre class="r"><code>x &lt;- 0.25
+side_length &lt;- 1 - 2*x
+side_length_trans &lt;- sqrt(2)*x
+
+df_dists_abc &lt;- df_dists %&gt;% 
+  mutate(c_dist_a = a_units * side_length,
+         c_dist_b = b_units * side_length_trans,
+         c_dist = c_dist_a + c_dist_b)</code></pre>
+<p>Finally, for all points, we compare the travel distance on the new Barcelona grid compared to on the original horizontal grid and compute the percentage that have a shorter distance under the new sidewalks.</p>
+<pre class="r"><code>df_dists_abc %&gt;% 
+  summarise(prop_shorter = (sum(c_dist &lt; a_dist)/ n()) %&gt;% round(2)) %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">prop_shorter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.5</td>
+</tr>
+</tbody>
+</table>
+<p>In the case (when x is set to 0.25) we see the the proportion that is closer to City Hall (I.e. the center of our city<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>) is again 50%.</p>
+<p>If we visualize in which locations the new Barcelona sidewalks have a shorter travel distance, we will see a similar result to that found in the <a href="#riddler-express">Riddler Express</a> solution.</p>
+<pre class="r"><code>df_dists_abc %&gt;% 
+  mutate(barcelona_faster = c_dist &lt; a_dist) %&gt;% 
+  ggplot(aes(x = x, y = y))+
+  geom_point(aes(colour = barcelona_faster))+
+  coord_fixed()+
+  ggforce::theme_no_axes()</code></pre>
+<p><img src="/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><em>We need to verify that 50% is our solution regardless of what we set for x.</em></p>
+<p>To accomplish this, I wrote a function <code>summarise_proportion()</code>, that will output the ‘Proportion Barcelona sidewalk distance is shorter’ across any <em>x</em>.</p>
+<pre class="r"><code>summarise_proportion &lt;- function(x, df_start = df_dists, out_data = FALSE){
+
+  x &lt;- 0.25
+  side_length &lt;- 1 - 2*x
+  side_length_trans &lt;- sqrt(2)*x
+  
+  df_dists_out &lt;- df_dists %&gt;% 
+    mutate(c_dist_a = a_units * side_length,
+           c_dist_b = b_units * side_length_trans,
+           c_dist = c_dist_a + c_dist_b)
+  
+  if(out_data) return(df_dists_out)
+  
+  df_dists_out %&gt;%
+    summarise(prop_shorter = (sum(c_dist &lt; a_dist)/ n())) %&gt;%  
+    pluck(&quot;prop_shorter&quot;)
+}</code></pre>
+<p>Then calculated the proportion the new route is faster for <em>x</em> set to <span class="math inline">\(0.01, 0.05, 0.09, ... 0.49\)</span>.</p>
+<pre class="r"><code>x_vec &lt;- seq(from = 0.01, to = 0.49, by = 0.04)
+
+df_summary &lt;- tibble(x = x_vec) %&gt;% 
+  mutate(prop_shorter = map_dbl(x, summarise_proportion, df_start = df_dists) %&gt;% round(2))
+
+df_summary %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">x</th>
+<th align="right">prop_shorter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.01</td>
+<td align="right">0.5</td>
+</tr>
+<tr class="even">
+<td align="right">0.05</td>
+<td align="right">0.5</td>
+</tr>
+<tr class="odd">
+<td align="right">0.09</td>
+<td align="right">0.5</td>
+</tr>
+<tr class="even">
+<td align="right">0.13</td>
+<td align="right">0.5</td>
+</tr>
+<tr class="odd">
+<td align="right">0.17</td>
+<td align="right">0.5</td>
+</tr>
+<tr class="even">
+<td align="right">0.21</td>
+<td align="right">0.5</td>
+</tr>
+<tr class="odd">
+<td align="right">0.25</td>
+<td align="right">0.5</td>
+</tr>
+<tr class="even">
+<td align="right">0.29</td>
+<td align="right">0.5</td>
+</tr>
+<tr class="odd">
+<td align="right">0.33</td>
+<td align="right">0.5</td>
+</tr>
+<tr class="even">
+<td align="right">0.37</td>
+<td align="right">0.5</td>
+</tr>
+<tr class="odd">
+<td align="right">0.41</td>
+<td align="right">0.5</td>
+</tr>
+<tr class="even">
+<td align="right">0.45</td>
+<td align="right">0.5</td>
+</tr>
+<tr class="odd">
+<td align="right">0.49</td>
+<td align="right">0.5</td>
+</tr>
+</tbody>
+</table>
+<p>For all of these, <em>the new ‘Barcelona grid’ is faster for 50% of people</em>.</p>
+</div>
+<div id="appendix" class="section level1">
+<h1>Appendix</h1>
+<div id="time-to-center" class="section level2">
+<h2>Time to center</h2>
+<p>Visualize the distance to the center based on where people are in the city for each of the potential city grids.</p>
+<pre class="r"><code>df_dists_abc %&gt;% 
+  select(x, y, a_dist, b_dist, c_dist) %&gt;% 
+  pivot_longer(cols = c(a_dist, b_dist, c_dist), names_to = &quot;grid&quot;, values_to = &quot;distance&quot;) %&gt;% 
+  mutate(grid = fct_recode(grid, 
+                           &quot;rectangular&quot; = &quot;a_dist&quot;,
+                           &quot;diagonal&quot; = &quot;b_dist&quot;,
+                           &quot;barcelona.25&quot; = &quot;c_dist&quot;)) %&gt;% 
+  ggplot(aes(x = x, y = y, colour = distance))+
+  geom_point()+
+  facet_wrap(~grid)+
+  coord_fixed()</code></pre>
+<p><img src="/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>This suggests that if the city were square shaped (rather than circular) that the transformed (diagonal and Barcelona) sidewalks would have greater than 50% of the residents with a shorter travel distance to the center of the city.</p>
+</div>
+<div id="transform-city-pretty" class="section level2">
+<h2>Transform city, pretty</h2>
+<pre class="r"><code>start_grid &lt;- animatrixr::construct_grid(-12:12, -12:12) %&gt;% 
+  mutate(index = row_number(),
+         time = 1L)
+
+end_grid &lt;- animatrixr::transform_segment(start_grid,  m = matrix(c(0.5, 0.5,-0.5, 0.5), nrow = 2)) %&gt;% 
+  mutate(time = 2L)
+
+house_points &lt;- crossing(x = -5:5, y = -5:5) %&gt;% 
+  mutate(symbol = emo::ji(&quot;house&quot;))
+
+city_hall &lt;- tibble(x = 0, y = 0)
+
+p &lt;- bind_rows(start_grid, end_grid) %&gt;% 
+  ggplot()+
+  geom_segment(aes(x = x, y = y, xend = xend, yend = yend, group = index, colour = time))+
+  geom_text(aes(x = x, y = y, label = symbol), data = house_points, size = 8)+
+  geom_label(aes(x = x, y = y, label = &quot;Riddler\nCity Hall&quot;), data = city_hall, size = 8, color = &quot;brown&quot;)+
+  scale_colour_gradient(low = &quot;black&quot;, high = &quot;royalblue3&quot;)+
+  scale_x_continuous(breaks = -5L:5L, minor_breaks = NULL)+
+  scale_y_continuous(breaks = -5L:5L, minor_breaks = NULL)+
+  coord_fixed(xlim = c(-5, 5), ylim = c(-5, 5))+
+  ggforce::theme_no_axes()+
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        legend.position = &quot;none&quot;)
+
+p + 
+  gganimate::transition_states(time)</code></pre>
+<p><img src="/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-13-1.gif" /><!-- --></p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Is large enough to get a reasonable approximation for the answer.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>I.e. straight line distance.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>In R, you can use the <code>solve()</code> function to give you the inverse of a matrix.<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>In the diagram below, we will actually have it be a function of one-half of the proportion – this is because there are two diagonoals adjoining each horizontal component.<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, <em>x</em>, of a triangle created by a diagonal.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>Note that we are not taking into account the tiny differences that emerge regarding starting location for each resident (i.e. which point within a Barcelona square should they start). If we make the grid arbitrarily large, these differences become inconsequential – hence we can ignore them.<a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>The origin of our graph<a href="#fnref7" class="footnote-back">↩</a></p></li>
+</ol>
+</div>

@@ -6,10 +6,21 @@
     <description>Recent content in riddles on Bryan&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 20 Feb 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 04 Mar 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/riddles/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Riddler Solutions: Pedestrian Puzzles</title>
+      <link>/2020/03/04/riddler-solutions-pedestrian-puzzles/</link>
+      <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/03/04/riddler-solutions-pedestrian-puzzles/</guid>
+      <description>Riddler expressRiddler classicAppendixTime to centerTransform city, prettyThis post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, Riddler Express and Riddler Classic. I used animatrixr (a toy package I wrote) to help with some of the visualizations and computations for this post. For more details on animating matrix transformations see my posts here and here.
+Riddler expressThe riddle:
+Riddler City is a large circular metropolis, with countless square city blocks that each have a side length of 1 km.</description>
+    </item>
     
     <item>
       <title>Visualizing Matrix Transformations with gganimate</title>
