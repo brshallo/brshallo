@@ -23,10 +23,10 @@ This post contains solutions to FiveThirtyEight’s two riddles released 2020-02
 **The riddle:**
 
 >Riddler City is a large circular metropolis, with countless square city blocks that each have a side length of 1 km. A small section of the city, composed of 36 blocks, is shown in the diagram below:
->[](https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-9.41.05-PM.png?w=1150)
+![](https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-9.41.05-PM.png?w=1150){width="50%"}
 At the very center of the city lies Riddler City Hall. Its many employees all walk to and from work, and their homes are evenly scattered across the city. The sidewalks they walk along have always been adjacent to the streets — but that may be changing.
 Recently, several city hall employees submitted a petition, requesting that the sidewalks should no longer lie alongside the streets. Instead, they want the sidewalks to cut diagonally across the city, connecting nearby street intersections. These proposed sidewalks are represented by the thicker blue lines in the diagram below:
-[](https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-9.52.37-PM.png?w=1150)
+![](https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-9.52.37-PM.png?w=1150){width="50%"}
 The mayor of Riddler City has tasked you with resolving this dispute in a mathematical manner. She would like you to answer the following question: What fraction of the city hall employees would have a shorter walk home (that is, to the street intersection nearest to their home) if the city replaced its traditional sidewalks with these diagonal sidewalks?
 >
 >-- [Zach Wissner-Gross](https://fivethirtyeight.com/contributors/zach-wissner-gross/), ["Can You Solve this Rather Pedestrian Puzzle," FiveThirtyEight](https://fivethirtyeight.com/features/can-you-solve-this-rather-pedestrian-puzzle/)
@@ -35,10 +35,10 @@ The mayor of Riddler City has tasked you with resolving this dispute in a mathem
 
 I. Create hypothetical verison of city  
 II. For each scenario, calculate Manhattan Distances from center for all points  
-III. Make distances comparable by scaling by unit length  
-IV. Compare distances between scenarios for all points, compute proportion that now have shorter path  
+III. Make distances comparable by scaling by unit length of a city block
+IV. Compare distances between scenarios for all points; compute proportion that have shorter path with new diagonal sidewalks 
 
-*I. Build City*
+*I. Create hypothetical city*
 
 I first created a hypothetical 100 unit diameter version of this city^[Is large enough to get a reasonable approximation for the answer.]. I added residences at every point on a 100x100 grid and then removed those points that had a euclidian distance^[I.e. straight line distance.] greater than 50 units from the center.
 
@@ -60,22 +60,22 @@ df_start <- crossing(x = -radius:radius, y = -radius:radius) %>%
 
 *II. Calculate Manhattan Distances*
 
-I first calculated the [Manhattan Distance](https://en.wikipedia.org/wiki/Taxicab_geometry) in each scenario, which is just the shortest number of blocks that would need to be traveled to get between points. To calculate the Manhattan Distance on the new scenario, I first needed to find what the residences coordinates would be under the new grid. 
-
-The new coordinate system could be thought of simply as a rotation and shrinking, which can be represented as applying the matrix transformation on the starting grid:
+I first calculated the [Manhattan Distance](https://en.wikipedia.org/wiki/Taxicab_geometry) in each scenario, which is just the shortest number of blocks that would need to be traveled to get between points. To calculate the Manhattan Distance on the new scenario, I first needed to find what the residences coordinates would be under the new grid. The new coordinate system could be thought of simply as a rotation and shrinking, which can be represented as applying the matrix transformation on the starting grid:
 
 $$ M = \left(\begin{array}{cc} 0.5 & -0.5\\0.5  & 0.5 \end{array}\right)$$
 
-```{r}
+```{r, eval = FALSE}
 add_transformation(
   m = matrix(c(0.5, 0.5,-0.5, 0.5), nrow = 2), 
   seq_fun = seq_matrix_rotate_first) %>% 
   animate_matrix()
 ```
 
-For a prettier visualization that shows the houses in the visualization, see [Transform city, pretty] in the [Appendix].
+![](/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_rotate_shrink.gif)
 
-Because our residences are not changing, we just have a new coordinate system, we will actually apply the inverse^[In R, you can use the `solve()` function to give you the inverse of a matrix.] of this transformation on our starting coordinates. This will give us the position of our residences on the new (transformed) coordinate grid.
+For a visualization that overlays the residences in our city see [Transform city, pretty] in the [Appendix].
+
+Our residences are not changing locations, we just have a new coordinate system -- hence we will actually apply the inverse^[In R, you can use the `solve()` function to give you the inverse of a matrix.] of this transformation to our starting coordinates. This will give us the position of our residences on the new (transformed) coordinate grid.
 
 $$ M^{-1} = \left(\begin{array}{cc} 1 & 1\\-1  & 1 \end{array}\right)$$
 
@@ -115,12 +115,12 @@ df_dists %>%
   knitr::kable()
 ```
 
-*Riddler express solution:* New sidewalks would be faster for 50% of people.
+*Riddler express solution:* new diagonal sidewalks would be faster for 50% of people.
 
 We can visualize which resident's the new sidewalks would be faster for:
 ```{r}
 df_dists %>% 
-  mutate(diagonal_faster = a_dist < b_dist) %>% 
+  mutate(diagonal_faster = b_dist < a_dist) %>% 
   ggplot(aes(x = x, y = y))+
   geom_point(aes(colour = diagonal_faster))+
   coord_fixed()+
@@ -136,8 +136,10 @@ df_dists %>%
 >The mayor ultimately decided not to pursue diagonal sidewalks, but the petitioners haven’t given up yet. One of them recently visited Barcelona and was inspired by its octagonal city blocks.
 >
 >Now, there’s a second petition on the mayor’s desk, asking that the grid layout of the city’s sidewalks be replaced with an octagonal pattern, represented by the thicker blue lines in the diagram below:
-[](https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-10.03.57-PM.png?w=1150)
+![](https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-10.03.57-PM.png?w=1150){width="50%"}
 Under this second proposal, now what fraction of the employees would have a shorter walk home if the city replaced its traditional sidewalks with these new sidewalks?
+>
+>-- [Zach Wissner-Gross](https://fivethirtyeight.com/contributors/zach-wissner-gross/), ["Can You Solve this Rather Pedestrian Puzzle," FiveThirtyEight](https://fivethirtyeight.com/features/can-you-solve-this-rather-pedestrian-puzzle/)
 
 **My approach:**
 
@@ -147,7 +149,7 @@ The unit lengths (i.e. individual city block length) for the horizontal and diag
 
 We can define our relevant side lengths as a function of x:
 
-__IMAGE OF DIAGRAM__
+![](/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/barcelona_dist.jpg){width=70%"}
 
 $$x : \frac{proportion\;horizontal}{2}$$
 $$0 < x < 0.5$$
@@ -250,7 +252,7 @@ This suggests that if the city were square shaped (rather than circular) that th
 
 ## Transform city, pretty
 
-```{r}
+```{r, eval = FALSE}
 start_grid <- animatrixr::construct_grid(-8:8, -8:8) %>% 
   mutate(index = row_number(),
          time = 1L)
@@ -263,7 +265,7 @@ house_points <- crossing(x = -3:3, y = -3:3) %>%
 
 city_hall <- tibble(x = 0, y = 0)
 
-p <- bind_rows(start_grid, end_grid) %>% 
+p_pretty <- bind_rows(start_grid, end_grid) %>% 
   ggplot()+
   geom_segment(aes(x = x, y = y, xend = xend, yend = yend, group = index, colour = time))+
   geom_text(aes(x = x, y = y, label = symbol), data = house_points, size = 8)+
@@ -277,6 +279,8 @@ p <- bind_rows(start_grid, end_grid) %>%
         axis.title = element_blank(),
         legend.position = "none")
 
-p + 
+p_pretty + 
   gganimate::transition_states(time)
 ```
+
+![](/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty.gif)
