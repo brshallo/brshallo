@@ -60,7 +60,7 @@ df_start <- crossing(x = -radius:radius, y = -radius:radius) %>%
 
 *II. Calculate Manhattan Distances*
 
-I first calculated the [Manhattan Distance](https://en.wikipedia.org/wiki/Taxicab_geometry) in each scenario, which is just the shortest number of city blocks that would need to be traveled to get between points. To calculate the Manhattan Distance on the new scenario, I first needed to find what the residences coordinates would be in the new sidewalk grid. The new coordinate system could be thought of simply as a rotated and shrunken version of the existing grid, which can be represented as applying the matrix transformation:
+For both scenarios, we need to calculate the [Manhattan length](https://en.wikipedia.org/wiki/Taxicab_geometry)^[The Manhattan Length is just the shortest number of city blocks between points.] between the origin and every point. To calculate the Manhattan length on the new scenario, we first need to find what the residence's coordinates would be in the new sidewalk grid. The new coordinate system could be thought of simply as a rotated and shrunken version of the existing grid^[I highly recommend the Essence of Linear Algebra video series, particularly chapter 3 (on Matrix Transformations) and [13](https://www.youtube.com/watch?v=P2LTAUO1TdA) (on Change of basis).], which can be represented as applying the matrix transformation:
 
 $$ M = \left(\begin{array}{cc} 0.5 & -0.5\\0.5  & 0.5 \end{array}\right)$$
 

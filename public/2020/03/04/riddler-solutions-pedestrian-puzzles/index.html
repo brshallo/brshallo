@@ -115,11 +115,11 @@ df_start &lt;- crossing(x = -radius:radius, y = -radius:radius) %&gt;%
   #Removes points with euclidian distance from center &gt; radius:
   filter(sqrt(x^2 + y^2) &lt;= radius)</code></pre>
 <p><em>II. Calculate Manhattan Distances</em></p>
-<p>I first calculated the <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">Manhattan Distance</a> in each scenario, which is just the shortest number of city blocks that would need to be traveled to get between points. To calculate the Manhattan Distance on the new scenario, I first needed to find what the residences coordinates would be in the new sidewalk grid. The new coordinate system could be thought of simply as a rotated and shrunken version of the existing grid, which can be represented as applying the matrix transformation:</p>
+<p>For both scenarios, we need to calculate the <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">Manhattan length</a><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> between the origin and every point. To calculate the Manhattan length on the new scenario, we first need to find what the residence’s coordinates would be in the new sidewalk grid. The new coordinate system could be thought of simply as a rotated and shrunken version of the existing grid<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>, which can be represented as applying the matrix transformation:</p>
 <p><span class="math display">\[ M = \left(\begin{array}{cc} 0.5 &amp; -0.5\\0.5  &amp; 0.5 \end{array}\right)\]</span></p>
 <p><img src="/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif" /></p>
 <p>(See <a href="#transform-city-pretty">Transform city, pretty</a> in the <a href="#appendix">Appendix</a> to view the code used to create the above visualization.)</p>
-<p>Our residences are not changing locations, they would just have different coordinates specific to the new sidewalks – hence we will actually apply the inverse<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> of this transformation to our starting coordinates. This will give us the position of our residences on the new (transformed) coordinate grid.</p>
+<p>Our residences are not changing locations, they would just have different coordinates specific to the new sidewalks – hence we will actually apply the inverse<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> of this transformation to our starting coordinates. This will give us the position of our residences on the new (transformed) coordinate grid.</p>
 <p><span class="math display">\[ M^{-1} = \left(\begin{array}{cc} 1 &amp; 1\\-1  &amp; 1 \end{array}\right)\]</span></p>
 <pre class="r"><code>df_trans &lt;- df_start %&gt;% 
   mutate(x_trans = x,
@@ -175,14 +175,14 @@ Under this second proposal, now what fraction of the employees would have a shor
 <p>– <a href="https://fivethirtyeight.com/contributors/zach-wissner-gross/">Zach Wissner-Gross</a>, <a href="https://fivethirtyeight.com/features/can-you-solve-this-rather-pedestrian-puzzle/">“Can You Solve this Rather Pedestrian Puzzle,” FiveThirtyEight</a></p>
 </blockquote>
 <p><strong>My approach:</strong></p>
-<p>The Barcelona distance is just a combination of the Manhattan lengths of both the original and diagonal sidewalk grids (though with the unit lengths scaled differently)<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. The unit lengths<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> for the horizontal and diagonal components will depend on what proportion<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> of a side is horizontal vs diagonal (corresponding with the original vs transformed grid from the <a href="#riddler-express">Riddler Express</a> solution)<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
+<p>The Barcelona distance is just a combination of the Manhattan lengths of both the original and diagonal sidewalk grids (though with the unit lengths scaled differently)<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>. The unit lengths<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> for the horizontal and diagonal components will depend on what proportion<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> of a side is horizontal vs diagonal (corresponding with the original vs transformed grid from the <a href="#riddler-express">Riddler Express</a> solution)<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
 <p>We can define our relevant side lengths as a function of x:</p>
 <p><img src="/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/barcelona_dist.jpg" style="width:50.0%" /></p>
 <p><span class="math display">\[x : \frac{inverse\;of\;proportion\;horizontal}{2},\]</span>
 <span class="math display">\[0 &lt; x &lt; 0.5\]</span>
 <span class="math display">\[diagonal\;length = \sqrt{2}x\]</span>
 <span class="math display">\[horizontal\;length = 1 - 2x\]</span></p>
-<p><em>I’ll start by setting x = 0.25.</em> Hence the Manhattan length of our horizontal component will be scaled by <span class="math inline">\(\frac{1}{2}\)</span>, and our diagonal component will be scaled by <span class="math inline">\(\frac{\sqrt{2}}{4}\)</span>. After scaling our components, we simply add them together to get our Barcelona distance<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> <a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
+<p><em>I’ll start by setting x = 0.25.</em> Hence the Manhattan length of our horizontal component will be scaled by <span class="math inline">\(\frac{1}{2}\)</span>, and our diagonal component will be scaled by <span class="math inline">\(\frac{\sqrt{2}}{4}\)</span>. After scaling our components, we simply add them together to get our Barcelona distance<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> <a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</p>
 <pre class="r"><code>x &lt;- 0.25
 side_length &lt;- 1 - 2*x
 side_length_trans &lt;- sqrt(2)*x
@@ -207,7 +207,7 @@ df_dists_abc &lt;- df_dists %&gt;%
 </tr>
 </tbody>
 </table>
-<p>In the case (when x is set to 0.25) we see the proportion that is closer to City Hall (i.e. the center of our city<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>) is again 50%.</p>
+<p>In the case (when x is set to 0.25) we see the proportion that is closer to City Hall (i.e. the center of our city<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>) is again 50%.</p>
 <p>If we visualize in which locations the new Barcelona sidewalks have a shorter travel distance, we will see a similar result to that found in the <a href="#riddler-express">Riddler Express</a> solution.</p>
 <pre class="r"><code>df_dists_abc %&gt;% 
   mutate(barcelona_faster = c_dist &lt; a_dist) %&gt;% 
@@ -374,14 +374,16 @@ p_pretty +
 <li id="fn1"><p>And wrote a couple preliminary posts on animating matrix transformations that can be found <a href="https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/">here</a> and <a href="https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/">here</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
 <li id="fn2"><p>Is large enough to get a reasonable approximation for the answer.<a href="#fnref2" class="footnote-back">↩</a></p></li>
 <li id="fn3"><p>I.e. straight line distance.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>In R, you can use the <code>solve()</code> function to give you the inverse of a matrix.<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>We have already done most of the computations we’ll need and can follow similar steps to those taken in the <a href="#riddler-express">Riddler Express</a> solution.<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>I.e. length of an individual city block, or in this case, component of a city block.<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>In the diagram below, we will actually have it be a function of one-half of the inverse of the proportion – this is because there are two diagonals adjoining each horizontal component.<a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, <em>x</em>, of a triangle created by a diagonal.<a href="#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p>Note that if we were to set x = 0, the distance from each location would be equivalent to the distances in our starting (horizontal) grid, and if we set x = 0.5, the distances would be equal to those in our transformed (diagonal) grid.<a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p>Note that we are not taking into account the tiny differences that emerge regarding starting location for each resident (i.e. which point within a Barcelona square should they start). If we make the grid arbitrarily large, these differences become inconsequential – hence we can ignore them.<a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p>The origin of our coordinate systems.<a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>The Manhattan Length is just the shortest number of city blocks between points.<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>I highly recommend the Essence of Linear Algebra video series, particularly chapter 3 (on Matrix Transformations) and <a href="https://www.youtube.com/watch?v=P2LTAUO1TdA">13</a> (on Change of basis).<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>In R, you can use the <code>solve()</code> function to give you the inverse of a matrix.<a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>We have already done most of the computations we’ll need and can follow similar steps to those taken in the <a href="#riddler-express">Riddler Express</a> solution.<a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>I.e. length of an individual city block, or in this case, component of a city block.<a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>In the diagram below, we will actually have it be a function of one-half of the inverse of the proportion – this is because there are two diagonals adjoining each horizontal component.<a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p>This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, <em>x</em>, of a triangle created by a diagonal.<a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p>Note that if we were to set x = 0, the distance from each location would be equivalent to the distances in our starting (horizontal) grid, and if we set x = 0.5, the distances would be equal to those in our transformed (diagonal) grid.<a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p>Note that we are not taking into account the tiny differences that emerge regarding starting location for each resident (i.e. which point within a Barcelona square should they start). If we make the grid arbitrarily large, these differences become inconsequential – hence we can ignore them.<a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>The origin of our coordinate systems.<a href="#fnref13" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
 
