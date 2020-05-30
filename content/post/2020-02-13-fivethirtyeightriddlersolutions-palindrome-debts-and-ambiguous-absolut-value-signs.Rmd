@@ -114,7 +114,7 @@ With these rules we can tackle the first part of the problem and think of each i
 
 This can be represented as a combinatorics^[[Khan Academy](khanacademy.org) if you want to brush up on your combinatorics skills.] problem that can be represented by $6 \choose 3$.
 
-We could use the `combinat` package in R to generate all these combinations. 
+We could use the `combn()` function in R to generate all these combinations. 
 
 ```{r build-function, echo = FALSE}
 create_solve_expr_df <- function(x = -1:-7, out_nofilt = FALSE, out_nconfigs = FALSE){
@@ -287,7 +287,6 @@ I couldn't immediately think of a clean way of representing this using combinato
 [My set-up](https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs.Rmd) took inspiration from David Robinson's approach to a different [FiveThirtyEight "Riddler" problem](https://www.youtube.com/watch?v=TDzd73z8thU).
 
 ```{r}
-library(combinat)
 library(tidyverse)
 
 x <- -1:-9

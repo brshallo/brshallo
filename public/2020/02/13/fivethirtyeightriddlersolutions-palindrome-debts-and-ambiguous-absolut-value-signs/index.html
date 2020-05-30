@@ -198,7 +198,7 @@ Of course, if we gave each pair of bars a different height (as is done in mathem
 <p>With these rules we can tackle the first part of the problem and think of each interior bar as representing a place-holder, the collection of which must be filled by an equal number of <code>)</code> and <code>(</code> .</p>
 <p>(|−1 _ −2 _ −3 _ −4 _ −5 _ −6 _ −7 _ −8 _−9|)</p>
 <p>This can be represented as a combinatorics<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> problem that can be represented by <span class="math inline">\(6 \choose 3\)</span>.</p>
-<p>We could use the <code>combinat</code> package in R to generate all these combinations.</p>
+<p>We could use the <code>combn()</code> function in R to generate all these combinations.</p>
 <p><strong>However</strong>, there is a problem; some of the combinations created could result in configurations with open parentheses. For example, even on a shorter version of this problem, the rules above would not safeguard from configurations such as:</p>
 <div id="htmlwidget-1" style="width:960px;height:100%;" class="str_view html-widget"></div>
 <script type="application/json" data-for="htmlwidget-1">{"x":{"html":"<ul>\n  <li><span class='match'>(<\/span>|-1|<span class='match'>)<\/span>-2|<span class='match'>)<\/span>-3<span class='match'>(<\/span>|-4<span class='match'>(<\/span>|-5|<span class='match'>)<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
