@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Bryan&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 04 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 31 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Tidy 2-way Column Combinations</title>
+      <link>/2020/05/31/tidy-2-way-column-combinations/</link>
+      <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/05/31/tidy-2-way-column-combinations/</guid>
+      <description>Data for examplesOverviewI. Nest and pivotII. Expand combinationsIII. Filter redundanciesIV. Perform operation(s)V. Bind back to dataFunctionalizeShould you be using dataframes?AppendixInteractions example, tidymodelsExpand via joinNested tibblesPivot and then summariseSay you want to map arbitrary operations across all two-way1 combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create interaction terms, ratios, etc.</description>
+    </item>
     
     <item>
       <title>Riddler Solutions: Pedestrian Puzzles</title>

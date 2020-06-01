@@ -1,0 +1,291 @@
+---
+title: Tidy 2-way Column Combinations
+author: Bryan Shalloway
+date: '2020-05-31'
+slug: tidy-2-way-column-combinations
+categories:
+  - r
+  - rstats
+  - programming
+tags:
+  - r
+  - rstats
+output:
+  blogdown::html_page:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+Say you want to map arbitrary operations across all two-way[^twoway] combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create interaction terms, ratios, etc. I've ended-up doing these *operations on sets of column combinations* in a variety of ways[^1]. In this post I'll walk through an example[^examples] primarily using R's `tidyverse` packages, especially `purrr`. Note that I am using `dplyr` 0.8.3[^dplyr]. 
+
+[^twoway]: Will focus on two-way example in this post, but could perhaps use similar methods to make more generalizable solution across n-way examples.
+
+[^1]: Sometimes without any really good reason as to why to use one approach or another. It isn't clear (at least to me) the recommended way of doing these type of operations within the tidyverse -- hence the diversity of my approaches. 
+
+[^examples]: I'll also reference related approaches / small tweaks (putting those materials in the [Appendix]. This is by no means an exhaustive list (e.g. don't have an example with a `for` loop). Also, the source code of my post on [Ambiguous Absolute Value](https://www.bryanshalloway.com/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/) signs shows a little more complex / messy approach with a combinations problem.
+
+[^dplyr]: The new `dplyr` 1.0.0. contains new functions that would have been potentially useful for several of these operations. I highly recommend checking these updates out in the various [recent posts](https://www.tidyverse.org/blog/) by Hadley Wickham. Some of the major updates (potentially relevant to the types of operations I'll be discussing in my post):
+    
+    * new approach for across-column operations (replacing `_at()`, `_if()`, `_all()` variants with `across()` function)
+    * brought-back rowwise operations
+    * emphasize ability to output tibbles / multiple columns in core `dplyr` verbs... This is something I had only taken advantage of occassionally in the past ([example](https://stackoverflow.com/a/54725732/9059865)), but will look to use more going forward.]
+
+```{r}
+library(tidyverse)
+```
+
+# Data for examples
+
+I'll use the ames housing dataset for my examples.
+
+```{r}
+library(AmesHousing)
+ames <- make_ames()
+```
+
+Specifically, I'll focus on ten numeric columns that, based on a small sample, show the highest correlation^[Using [corrr](https://corrr.tidymodels.org/) package.] with `Sale_Price`[^technical]. 
+
+[^technical]: For technical reasons, I also converted all integer types to doubles -- was getting integer overflow problems in later operations before changing. I also standardized the variables, which may be important for certain types of combinations of variables. [Thread](https://stackoverflow.com/questions/8804779/what-is-integer-overflow-in-r-and-how-can-it-happen) on integer overflow in R.
+
+```{r}
+set.seed(2020)
+ames_cols <- ames %>% 
+  select_if(is.numeric) %>% 
+  sample_n(1000) %>% 
+  corrr::correlate() %>% 
+  corrr::focus(Sale_Price) %>% 
+  arrange(-abs(Sale_Price)) %>% 
+  head(10) %>% 
+  pull(rowname)
+
+ames_subset <- select(ames, ames_cols) %>% 
+  mutate_all(as.double) %>% 
+  # standardize variables
+  mutate_all(~(. - mean(.)) / sd(.))
+```
+
+# Overview 
+
+I'll break this process down into a few steps:
+
+I. Nest and pivot
+II. Expand combinations
+III. Filter redundancies
+IV. Perform operations
+V. Bind back to data
+
+## I. Nest and pivot
+
+There are a variety of ways to nest lists into columns within a dataframe. If you are new to the concept of using lists as columns within dataframes, I've given previous [talks](https://www.youtube.com/watch?v=gme4Fb9JVjk&t=218s) and would recommend the chapters on "Iteration" and "Many Models" in [R for Data Science](https://r4ds.had.co.nz/iteration.html). 
+
+After nesting, I pivot^[Note that this part of the problem is one where I actually find using `tidyr::gather()` easier -- but I've been forcing myself to switch over to using the `pivot_()` functions over `spread()` and `gather()`.] the columns leaving a two column dataframe. 
+
+    * `var` represents our variable name
+    * `vector` containing a list of vectors of our data
+
+```{r}
+df_lists <- ames_subset %>% 
+  summarise_all(list) %>% 
+  pivot_longer(cols = everything(), 
+               names_to = "var", 
+               values_to = "vector") %>% 
+  print()
+```
+
+See [Pivot and then summarise] for a nearly identical approach with ith just an altered order of steps. Also see [Nested tibbles] for how you could create a list-column of tibbles^[The more common approach.] rather than vectors. 
+
+## II. Expand combinations
+
+You can then use `tidyr::nesting()` within `tidyr::expand()` to make all 2-way combinations.
+```{r}
+df_lists_comb <- expand(df_lists,
+                        nesting(var, vector),
+                        nesting(var2 = var, vector2 = vector)) %>% 
+  print()
+```
+
+See [Expand via joins] for an alternative approach using the `dplyr::*_join()` operations.
+
+## III. Filter redundancies
+
+Filter-out redundant columns and arrange / nicen-up the column order.
+```{r}
+df_lists_comb <- df_lists_comb %>% 
+  filter(!(var == var2)) %>% 
+  arrange(var, var2) %>% 
+  select(contains("var"), everything()) %>% 
+  mutate(vars = paste0(var, ".", var2)) %>% 
+  print()
+```
+
+If your operation of interest is associative^[E.g. muliplication or addition... not subtraction or division.], apply a filter to remove additional redundant combinations. 
+```{r}
+c_sort_collapse <- function(...){
+  c(...) %>% 
+    sort() %>% 
+    str_c(collapse = ".")
+}
+
+df_lists_comb_as <- df_lists_comb %>% 
+  mutate(vars = map2_chr(.x = var, .y = var2, .f = c_sort_collapse)) %>%
+  distinct(vars, .keep_all = TRUE)
+```
+
+## IV. Perform operation(s)
+
+*Example with summary statistic (that outputs vector of length 1):*
+
+At this point you can easily map any operation across each of the combinations of vectors now represented by each row in your data. For example, let's say we want to compute the p-value for the correlation of each combination and then plot these into a bar graph.
+
+```{r}
+df_lists_comb_as %>% 
+  mutate(cor_pvalue = map2(vector, vector2, cor.test) %>% map_dbl("p.value"),
+         vars = fct_reorder(vars, -cor_pvalue)) %>% 
+  arrange(cor_pvalue) %>% 
+  head(10) %>% 
+  ggplot(aes(x = vars, y = -log(cor_pvalue)))+
+  geom_col()+
+  coord_flip()+
+  theme_bw()+
+  labs(title = "We are confident that garage area and # of garage cars are correlated",
+       x = "Negative log of p-value of correlation coefficient",
+       y = "Variable combinations")
+```
+
+*Example with transformation (that outputs vector of length equal to length of input vector):*
+
+Back to our feature engineering example, perhaps we want to calculate the difference and quotient of each combination of our variables.
+```{r}
+new_features <- df_lists_comb %>% 
+  mutate(difference = map2(vector, vector2, `-`),
+         ratio = map2(vector, vector2, `/`)) %>% 
+  select(-c(vector, vector2)) %>% 
+  pivot_longer(cols = -contains("var")) %>% 
+  mutate(name_vars = str_c(var, name, var2, sep = "_")) %>% 
+  select(name_vars, everything(), -c(var, var2, vars, name)) %>% 
+  pivot_wider(values_from = value,
+              names_from = name_vars) %>% 
+  unnest(cols = everything())
+```
+
+## V. Bind back to data
+
+Which is then binded back onto the original dataset.
+```{r}
+ames_data_features <- bind_cols(ames_subset, new_features)
+```
+
+At which point any further exploring, feature engineering, model buliding, etc., may be done.
+
+## Functionalize
+
+I put these steps together into a few small functions you can find at [this gist](https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1). Steps I. - III and V. are essentially direct copies of the code above. The approach I took with Step V. may take more effort to follow^[Requires understanding a little `rlang` Could likely have done more simply in general.]. 
+```{r}
+devtools::source_gist("https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1")
+```
+
+```{r}
+# just to show can use other funs
+difference_squared <- function(x, y) (x - y)^2
+
+ames_data_features_example <- ames %>% 
+  keep(is.numeric) %>% 
+  mutate_all(as.double) %>% 
+  mutate_all(~(. - mean(.)) / sd(.))
+
+ames_data_features_example <- operations_combinations(
+  df = ames_data_features_example,
+  one_of(ames_cols),
+  funs = list("/", "-", "difference_squared"),
+  funs_names = list("ratio", "difference", "diffsqd")
+)
+```
+
+*Example:*
+
+Here's just a brief example for what it could look like to, for example, check the p-value of the correlation of each of your features with `Sale_Price`.
+
+To keep things simple, I'm going to filter out any columns with NA's or infinite values.
+```{r}
+features_keep <- ames_data_features_example %>% 
+  summarise_all(~sum(is.na(.) | is.infinite(.))) %>% 
+  gather() %>% # gather() is an older less feature-full version of pivot_longer()
+  filter(value == 0) %>% 
+  pull(key)
+
+ames_sp_features_subset <- select(ames_data_features_example,
+                                  features_keep)
+```
+
+Calculate p.values and plot.
+```{r}
+ames_sp_features_subset %>% 
+  select(-Sale_Price) %>% 
+  summarise_all(~cor.test(., ames_sp_features_subset$Sale_Price)$p.value) %>% 
+  gather() %>% 
+  ggplot(aes(x = -log(value)))+
+  geom_histogram()+
+  scale_x_log10()+
+  labs(title = "Distribution of correlations with Sale_Price",
+     x = "Negative log of p-value of correlation coefficient")
+```
+
+If doing feature engineering would be nice to fit into `tidymodels` or related framework. See [Interactions example, tidymodels] for notes on a related book chapter.
+
+# Should you be using dataframes?
+
+Combinatorial growth is very fast^[Non-technical article discussing combinatorial explosion in context of company user growth targets: [Exponential Growth Isn't Cool. Combinatorial Growth Is.](https://medium.com/@TorBair/exponential-growth-isn-t-cool-combinatorial-growth-is-85a0b1fdb6a5).]. As you increase either the number of variables you want to combine or the number of variables involved in each combination, you will quickly bump into computational limitations.
+
+Operations directly with matrices are generally more efficient than with dataframes^[Though it's relevant to note that all tidyverse functions are optimized in the backend to be computationally efficient.]. Hence, if you are doing operations across combinations of lots of variables it may not make sense to do the operations directly within dataframes. If this is the case, but you prefer to stick with a tidyverse aesthetic (which uses dataframes as a cornerstone), you might:
+
+* Use heuristics that reduces the number of variables or opeartions you need to perform (e.g. take a sample, use a preliminary filter, a step-wise like iteration, etc.)
+* Improve your code or consider parralelizing
+* Look for packages that abstract the storage and computationally heavy operations away, and then return back an output in a convenient form^[For tidyverse packages, this is often returned into or in the form of a dataframe.]. Much (if not most) of the `tidyverse` (and the R programming language generally) is about creating a smooth interface between the analyst/scientist and the back-end complexity of the operations they are performing[^2]
+    * explore other software or packages that solve your problem
+* Use matrices^[Depending on the complexity, may just need to brush-up on your linear algebra.]
+
+[^2]: Projects like [sparklyr](https://spark.rstudio.com/), [DBI](https://db.rstudio.com/dbi/), [reticulate](https://github.com/rstudio/reticulate), [tidymodels](https://www.tidymodels.org/), and [brms](https://github.com/paul-buerkner/brms) (to name a few) represent cases where this *interface* role of R is most apparent.
+
+# Appendix
+
+## Interactions example, tidymodels
+
+A good example for creating and evaluating interaction terms^[I.e. multiplying two variables together] specifically is in [The Brute-Force Approach to Identifying Predictive Interactions, Simple Screening](http://www.feat.engineering/complete-enumeration.html#complete-enumeration-simple-screening) section of *Max Kuhn* and *Kjell Johnson's* (free) online book "Feature Engineering and Selection".
+
+The [source code](https://github.com/topepo/FES/blob/master/07_Detecting_Interaction_Effects/7_04_The_Brute-Force_Approach_to_Identifying_Predictive_Interactions/ames_pairwise.R) shows another approach for combining variables. The author uses `combn()` to create all combinations of variable names[^tidymodels] which are then turned into formulas and passed into `recipes::step_interact()`, specifying the new columns to be created^[Created upon the recipe being *baked* or *juiced* -- if you have not checked it out, [recipes](https://github.com/tidymodels/recipes) is AWESOME!]) for each interaction term in each associated model being evaluated. The code uses a mix of packages and styles and is not a purely tidyverse approach -- `tidymodels` has also gone through a lot of development since "Feature Engineering and Selection..." was published in 2019[^futurewriteup]. 
+
+[^futurewriteup]: Maybe at a future date I'll make a post writing out the example here using the newer approaches now available in `tidymodels`. [Gist](https://gist.github.com/brshallo/674ff06608c1a55fefb8d5dc49896d65) of `combn_ttible()`... starting place for if I ever get to that write-up.]
+
+## Expand via join
+
+You can take advantage of join^[Could also have used `right_join()` or `full_join()`.] behavior to create all possible row combinations within the table as well. In this case, the output will be the same as shown when using `expand()` (except for row order).
+```{r, eval = FALSE}
+left_join(mutate(df_lists, id = 1),
+          mutate(df_lists, id = 1) %>% rename_at(vars(-one_of("id")), paste0, "2")) %>%
+  select(-id)
+```
+
+## Nested tibbles
+
+Creates list of tibbles rather than list of vectors.
+```{r, eval = FALSE}
+ames_subset %>% 
+  pivot_longer(everything(), names_to = "var", values_to = "list") %>% 
+  group_by(var) %>% 
+  nest()
+```
+
+## Pivot and then summarise
+
+(Almost) equivalent, just run in a different, this would also work(arrangement order will just be different):
+```{r, eval = FALSE}
+ames_test %>% 
+  pivot_longer(cols = everything(), 
+             names_to = "var", 
+             values_to = "vector") %>% 
+  group_by(var) %>% 
+  summarise_all(list)
+```
