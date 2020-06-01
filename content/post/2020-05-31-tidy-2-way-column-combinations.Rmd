@@ -70,12 +70,12 @@ ames_subset <- select(ames, ames_cols) %>%
 # Overview 
 
 I'll break this process down into a few steps:
-
-I. Nest and pivot
-II. Expand combinations
-III. Filter redundancies
-IV. Perform operations
-V. Bind back to data
+  
+I. Nest and pivot  
+II. Expand combinations  
+III. Filter redundancies  
+IV. Perform operations  
+V. Bind back to data  
 
 ## I. Nest and pivot
 
