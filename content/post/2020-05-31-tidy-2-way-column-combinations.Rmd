@@ -27,7 +27,7 @@ I. Nest and pivot
 II. Expand combinations  
 III. Filter redundancies  
 IV. Map function(s)  
-V. Reshape, re-pivot & unnest  
+V. Return to normal dataframe  
 VI. Bind back to data  
 
 **Relevant software and style:**
@@ -195,7 +195,7 @@ new_features_prep1 <- df_lists_comb %>%
          ratio = map2(vector, vector2, `/`))
 ```
 
-## V. Reshape, re-pivot & unnest
+## V. Return to normal dataframe
 
 These steps put our data back into a more traditional form consistent with our starting dataframe/tibble.
 
@@ -215,7 +215,7 @@ new_features_prep2 <- new_features_prep1 %>%
 
 At the end of each line of code above is a number corresponding with the following explanations:
 
-1. if we had done just one operation, this step would not be needed, but we did multiple operations and hence created multiple list-columns (`difference` and `ratio`) which we need to get into a single list-column
+1. if we had done just one operation, this step would not be needed, but we did multiple operations, created multiple list-columns (`difference` and `ratio`) which we need to get into a single list-column
 2. create new variable name that combines constituent variable names with name of transformation
 3. remove old columns
 

@@ -24,7 +24,7 @@ output:
 <li><a href="#ii.-expand-combinations">II. Expand combinations</a></li>
 <li><a href="#iii.-filter-redundancies">III. Filter redundancies</a></li>
 <li><a href="#iv.-map-functions">IV. Map function(s)</a></li>
-<li><a href="#v.-reshape-re-pivot-unnest">V. Reshape, re-pivot &amp; unnest</a></li>
+<li><a href="#v.-return-to-normal-dataframe">V. Return to normal dataframe</a></li>
 <li><a href="#vi.-bind-back-to-data">VI. Bind back to data</a></li>
 </ul></li>
 <li><a href="#functionalize">Functionalize</a></li>
@@ -46,7 +46,7 @@ output:
 II. Expand combinations<br />
 III. Filter redundancies<br />
 IV. Map function(s)<br />
-V. Reshape, re-pivot &amp; unnest<br />
+V. Return to normal dataframe<br />
 VI. Bind back to data</p>
 <p><strong>Relevant software and style:</strong></p>
 <p>I will primarily be using R’s <code>tidyverse</code> packages. I make frequent use of lists as columns within dataframes – if you are new to these, see my previous <a href="https://www.youtube.com/watch?v=gme4Fb9JVjk">talk</a> and the resources<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> I link to in the description.</p>
@@ -210,8 +210,8 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
   mutate(difference = map2(vector, vector2, `-`),
          ratio = map2(vector, vector2, `/`))</code></pre>
 </div>
-<div id="v.-reshape-re-pivot-unnest" class="section level2">
-<h2>V. Reshape, re-pivot &amp; unnest</h2>
+<div id="v.-return-to-normal-dataframe" class="section level2">
+<h2>V. Return to normal dataframe</h2>
 <p>These steps put our data back into a more traditional form consistent with our starting dataframe/tibble.</p>
 <p><strong>Reshape:</strong></p>
 <p>First revert to a form similar to where we were at the end of <a href="#i.-nest-and-pivot">I. Nest and pivot</a> where we had two columns:</p>
@@ -225,7 +225,7 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
   select(name_vars, value) # 3</code></pre>
 <p>At the end of each line of code above is a number corresponding with the following explanations:</p>
 <ol style="list-style-type: decimal">
-<li>if we had done just one operation, this step would not be needed, but we did multiple operations and hence created multiple list-columns (<code>difference</code> and <code>ratio</code>) which we need to get into a single list-column</li>
+<li>if we had done just one operation, this step would not be needed, but we did multiple operations, created multiple list-columns (<code>difference</code> and <code>ratio</code>) which we need to get into a single list-column</li>
 <li>create new variable name that combines constituent variable names with name of transformation</li>
 <li>remove old columns</li>
 </ol>
