@@ -100,8 +100,7 @@
 </ul>
 </div>
 
-<p>Say you want to map an operation or list of operations across all two-way<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
-<p>In some cases there may be an excellent pairwise implementation already available, e.g. R’s <code>cor()</code> function for computing correlations<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. In other cases one may not exist or is not easy to use<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. In this post I’ll walk through an example<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> explaining code and steps for setting-up arbitrary pairwise operations across sets of variables.</p>
+<p>Say you want to map an operation or list of operations across all two-way<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. In some cases there may be an excellent pairwise implementation already available, e.g. R’s <code>cor()</code> function for computing correlations<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. In other cases one may not exist or is not easy to use<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. In this post I’ll walk through an example<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> explaining code and steps for setting-up arbitrary pairwise operations across sets of variables.</p>
 <p><em>I’ll break my approach down into several steps:</em></p>
 <p>I. Nest and pivot<br />
 II. Expand combinations<br />
@@ -137,7 +136,7 @@ ames_subset &lt;- select(ames, ames_cols) %&gt;%
 <h1>Overview</h1>
 <div id="i.-nest-and-pivot" class="section level2">
 <h2>I. Nest and pivot</h2>
-<p>There are a variety of ways to make lists into columns within a dataframe. In the example below, I use <code>summarise_all(ames_subset, list)</code> to create a one row dataframe where each column is a list containing a single element and each individual element corresponds with a numeric vector of length 2930.</p>
+<p>There are a variety of ways to make lists into columns within a dataframe. In the example below, I use <code>summarise_all(.tbl = ames_subset, .funs = list)</code> to create a one row dataframe where each column is a list containing a single element and each individual element corresponds with a numeric vector of length 2930.</p>
 <p>After nesting, I pivot<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> the columns leaving a dataframe with two columns:</p>
 <ul>
 <li><code>var</code> the variable names</li>
@@ -166,7 +165,7 @@ ames_subset &lt;- select(ames, ames_cols) %&gt;%
 </div>
 <div id="ii.-expand-combinations" class="section level2">
 <h2>II. Expand combinations</h2>
-<p>I then use <code>tidyr::nesting()</code> within <code>tidyr::expand()</code> to make all 2-way combinations.</p>
+<p>I then use <code>tidyr::nesting()</code> within <code>tidyr::expand()</code> to make all 2-way combinations of our variables.</p>
 <pre class="r"><code>df_lists_comb &lt;- expand(df_lists,
                         nesting(var, vector),
                         nesting(var2 = var, vector2 = vector)) %&gt;% 
@@ -321,27 +320,29 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
   funs_names = list(&quot;ratio&quot;, &quot;difference&quot;),
   associative = FALSE
 )</code></pre>
-<p>Perhaps you want to calculate some measure of association between your new features and <code>Sale_price</code>. To keep things simple, I’m going to first remove any columns that contain any NA’s or infinite values. I’ll also use a random sample of just 1500 rows.</p>
+<p>Perhaps you want to calculate some measure of association between your new features and a target of interest. To keep things simple, I’ll remove any columns that contain any NA’s or infinite values.</p>
 <pre class="r"><code>features_keep &lt;- ames_data_features_example %&gt;% 
+  select(-Sale_Price) %&gt;% 
   keep(is.numeric) %&gt;% 
   summarise_all(~sum(is.na(.) | is.infinite(.))) %&gt;% 
   gather() %&gt;% # gather() is an older version of pivot_longer() w/ fewer parameters
   filter(value == 0) %&gt;% 
-  pull(key)
-
-set.seed(1234)
-ames_sp_features_subset &lt;- ames_data_features_example %&gt;% 
-  select(features_keep) %&gt;% 
-  sample_n(1500)</code></pre>
-<p>Specifically, maybe you want to see the statistical significance of the correlation of each feature with <code>Sale_Price</code>. I’ll calculate these across variables and then plot them on a histogram.</p>
-<pre class="r"><code>select(ames_sp_features_subset, -Sale_Price) %&gt;% 
-  summarise_all(~cor.test(., ames_sp_features_subset$Sale_Price)$p.value) %&gt;% 
+  pull(key)</code></pre>
+<p>Maybe, for some reason, you want to see the statistical significance of the correlation of each feature with <code>Sale_Price</code> when weighting by <code>Lot_Area</code>. I’ll calculate these across variables (and a random sample of 1500 observations) then plot them on a histogram.</p>
+<pre class="r"><code>set.seed(1234)
+ames_data_features_example %&gt;% 
+  sample_n(1500) %&gt;% 
+  summarise_at(
+    .vars = features_keep[!(features_keep %in% c(&quot;Sale_Price&quot;, &quot;Lot_Area&quot;))],
+    .funs = ~weights::wtd.cor(., Sale_Price, weight = Lot_Area)[1]) %&gt;% 
   gather() %&gt;% 
-  ggplot(aes(x = -log(value)))+
+  ggplot(aes(x = value))+
+  geom_vline(xintercept = 0, colour = &quot;lightgray&quot;, size = 2)+
   geom_histogram()+
   scale_x_continuous(labels = scales::comma)+
   labs(title = &quot;Distribution of correlations with Sale_Price&quot;,
-     x = &quot;Negative log of p-value of correlation coefficient&quot;)</code></pre>
+       subtitle = &quot;Weighted by Lot Area&quot;,
+       x = &quot;Weighted correlation coefficient&quot;)</code></pre>
 <p><img src="/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 <p>If doing predictive modeling or inference you may want to fit any transformations and analysis into a <code>tidymodels</code> pipeline or other framework. For some brief notes on this see <a href="#interactions-example-tidymodels">Interactions example, tidymodels</a>.</p>
 </div>
@@ -428,30 +429,37 @@ ames_sp_features_subset &lt;- ames_data_features_example %&gt;%
 ## [9] tidyverse_1.2.1
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.4        lubridate_1.7.4   lattice_0.20-35  
-##  [4] prettyunits_1.0.2 ps_1.3.0          rprojroot_1.3-2  
-##  [7] assertthat_0.2.1  digest_0.6.25     utf8_1.1.4       
-## [10] R6_2.4.1          cellranger_1.1.0  backports_1.1.5  
-## [13] evaluate_0.14     httr_1.4.0        blogdown_0.15    
-## [16] pillar_1.4.2      rlang_0.4.5       progress_1.2.2   
-## [19] curl_3.3          readxl_1.3.1      rstudioapi_0.10  
-## [22] callr_3.2.0       AmesHousing_0.0.3 rmarkdown_1.13   
-## [25] desc_1.2.0        labeling_0.3      devtools_2.0.0   
-## [28] munsell_0.5.0     broom_0.5.2       compiler_3.5.1   
-## [31] modelr_0.1.4      xfun_0.8          pkgconfig_2.0.3  
-## [34] pkgbuild_1.0.2    htmltools_0.3.6   tidyselect_0.2.5 
-## [37] bookdown_0.11     corrr_0.4.2       fansi_0.4.0      
-## [40] crayon_1.3.4      withr_2.1.2       grid_3.5.1       
-## [43] nlme_3.1-137      jsonlite_1.6.1    gtable_0.3.0     
-## [46] lifecycle_0.1.0   magrittr_1.5      scales_1.1.0     
-## [49] cli_1.9.9.9000    stringi_1.4.6     farver_2.0.1     
-## [52] fs_1.3.2          remotes_2.1.0     testthat_2.0.0   
-## [55] xml2_1.2.0        ellipsis_0.3.0    generics_0.0.2   
-## [58] vctrs_0.2.4       tools_3.5.1       glue_1.3.1       
-## [61] hms_0.5.2         processx_3.3.1    pkgload_1.0.2    
-## [64] yaml_2.2.0        colorspace_1.4-1  sessioninfo_1.1.1
-## [67] rvest_0.3.4       memoise_1.1.0     knitr_1.23       
-## [70] haven_2.1.0       usethis_1.4.0</code></pre>
+##  [1] nlme_3.1-137        fs_1.3.2            usethis_1.4.0      
+##  [4] lubridate_1.7.4     devtools_2.0.0      RColorBrewer_1.1-2 
+##  [7] progress_1.2.2      httr_1.4.0          rprojroot_1.3-2    
+## [10] tools_3.5.1         backports_1.1.5     utf8_1.1.4         
+## [13] R6_2.4.1            rpart_4.1-13        Hmisc_4.1-1        
+## [16] colorspace_1.4-1    nnet_7.3-12         withr_2.1.2        
+## [19] gridExtra_2.3       tidyselect_0.2.5    prettyunits_1.0.2  
+## [22] processx_3.3.1      curl_3.3            compiler_3.5.1     
+## [25] cli_1.9.9.9000      rvest_0.3.4         htmlTable_1.12     
+## [28] mice_3.8.0          xml2_1.2.0          desc_1.2.0         
+## [31] labeling_0.3        bookdown_0.11       checkmate_1.8.5    
+## [34] scales_1.1.0        corrr_0.4.2         callr_3.2.0        
+## [37] digest_0.6.25       foreign_0.8-70      rmarkdown_1.13     
+## [40] base64enc_0.1-3     pkgconfig_2.0.3     htmltools_0.3.6    
+## [43] sessioninfo_1.1.1   htmlwidgets_1.3     rlang_0.4.5        
+## [46] readxl_1.3.1        rstudioapi_0.10     farver_2.0.1       
+## [49] generics_0.0.2      jsonlite_1.6.1      gtools_3.8.1       
+## [52] acepack_1.4.1       magrittr_1.5        Formula_1.2-3      
+## [55] Matrix_1.2-14       Rcpp_1.0.4          munsell_0.5.0      
+## [58] fansi_0.4.0         lifecycle_0.1.0     weights_1.0.1      
+## [61] stringi_1.4.6       yaml_2.2.0          pkgbuild_1.0.2     
+## [64] grid_3.5.1          gdata_2.18.0        crayon_1.3.4       
+## [67] lattice_0.20-35     haven_2.1.0         splines_3.5.1      
+## [70] hms_0.5.2           knitr_1.23          ps_1.3.0           
+## [73] pillar_1.4.2        pkgload_1.0.2       glue_1.3.1         
+## [76] evaluate_0.14       blogdown_0.15       latticeExtra_0.6-28
+## [79] data.table_1.12.8   remotes_2.1.0       modelr_0.1.4       
+## [82] vctrs_0.2.4         testthat_2.0.0      cellranger_1.1.0   
+## [85] gtable_0.3.0        assertthat_0.2.1    xfun_0.8           
+## [88] broom_0.5.2         AmesHousing_0.0.3   survival_2.42-3    
+## [91] memoise_1.1.0       cluster_2.0.7-1     ellipsis_0.3.0</code></pre>
 </div>
 </div>
 <div class="footnotes">

@@ -19,9 +19,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-Say you want to map an operation or list of operations across all two-way[^twoway] combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc^[Though this "throw everything and the kitchen-sink" approach may not always be a good idea.]. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables[^1]. 
-
-In some cases there may be an excellent pairwise implementation already available, e.g. R's `cor()` function for computing correlations^[Or the tidymodels implementation `corrr::correlate()` in the [corrr](https://corrr.tidymodels.org/) package.]. In other cases one may not exist or is not easy to use^[or is not in a style you prefer]. In this post I'll walk through an example[^examples] explaining code and steps for setting-up arbitrary pairwise operations across sets of variables. 
+Say you want to map an operation or list of operations across all two-way[^twoway] combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc^[Though this "throw everything and the kitchen-sink" approach may not always be a good idea.]. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables[^1]. In some cases there may be an excellent pairwise implementation already available, e.g. R's `cor()` function for computing correlations^[Or the tidymodels implementation `corrr::correlate()` in the [corrr](https://corrr.tidymodels.org/) package.]. In other cases one may not exist or is not easy to use^[or is not in a style you prefer]. In this post I'll walk through an example[^examples] explaining code and steps for setting-up arbitrary pairwise operations across sets of variables. 
 
 *I'll break my approach down into several steps:*
 
@@ -91,7 +89,7 @@ ames_subset <- select(ames, ames_cols) %>%
 
 ## I. Nest and pivot
 
-There are a variety of ways to make lists into columns within a dataframe. In the example below, I use `summarise_all(ames_subset, list)` to create a one row dataframe where each column is a list containing a single element and each individual element corresponds with a numeric vector of length 2930. 
+There are a variety of ways to make lists into columns within a dataframe. In the example below, I use `summarise_all(.tbl = ames_subset, .funs = list)` to create a one row dataframe where each column is a list containing a single element and each individual element corresponds with a numeric vector of length 2930. 
 
 After nesting, I pivot^[Note that this part of the problem is one where I actually find using `tidyr::gather()` easier -- but I've been forcing myself to switch over to using the `pivot_()` functions over `spread()` and `gather()`.] the columns leaving a dataframe with two columns: 
 
@@ -111,7 +109,7 @@ See [Pivot and then summarise] for a nearly identical approach with just an alte
 
 ## II. Expand combinations
 
-I then use `tidyr::nesting()` within `tidyr::expand()` to make all 2-way combinations.
+I then use `tidyr::nesting()` within `tidyr::expand()` to make all 2-way combinations of our variables.
 ```{r}
 df_lists_comb <- expand(df_lists,
                         nesting(var, vector),
@@ -265,31 +263,33 @@ ames_data_features_example <- operations_combinations(
 )
 ```
 
-Perhaps you want to calculate some measure of association between your new features and `Sale_price`. To keep things simple, I'm going to first remove any columns that contain any NA's or infinite values. I'll also use a random sample of just 1500 rows.
+Perhaps you want to calculate some measure of association between your new features and a target of interest. To keep things simple, I'll remove any columns that contain any NA's or infinite values.
 ```{r}
 features_keep <- ames_data_features_example %>% 
+  select(-Sale_Price) %>% 
   keep(is.numeric) %>% 
   summarise_all(~sum(is.na(.) | is.infinite(.))) %>% 
   gather() %>% # gather() is an older version of pivot_longer() w/ fewer parameters
   filter(value == 0) %>% 
   pull(key)
-
-set.seed(1234)
-ames_sp_features_subset <- ames_data_features_example %>% 
-  select(features_keep) %>% 
-  sample_n(1500)
 ```
 
-Specifically, maybe you want to see the statistical significance of the correlation of each feature with `Sale_Price`. I'll calculate these across variables and then plot them on a histogram.
+Maybe, for some reason, you want to see the statistical significance of the correlation of each feature with `Sale_Price` when weighting by `Lot_Area`. I'll calculate these across variables (and a random sample of 1500 observations) then plot them on a histogram.
 ```{r}
-select(ames_sp_features_subset, -Sale_Price) %>% 
-  summarise_all(~cor.test(., ames_sp_features_subset$Sale_Price)$p.value) %>% 
+set.seed(1234)
+ames_data_features_example %>% 
+  sample_n(1500) %>% 
+  summarise_at(
+    .vars = features_keep[!(features_keep %in% c("Sale_Price", "Lot_Area"))],
+    .funs = ~weights::wtd.cor(., Sale_Price, weight = Lot_Area)[1]) %>% 
   gather() %>% 
-  ggplot(aes(x = -log(value)))+
+  ggplot(aes(x = value))+
+  geom_vline(xintercept = 0, colour = "lightgray", size = 2)+
   geom_histogram()+
   scale_x_continuous(labels = scales::comma)+
   labs(title = "Distribution of correlations with Sale_Price",
-     x = "Negative log of p-value of correlation coefficient")
+       subtitle = "Weighted by Lot Area",
+       x = "Weighted correlation coefficient")
 ```
 
 If doing predictive modeling or inference you may want to fit any transformations and analysis into a `tidymodels` pipeline or other framework. For some brief notes on this see [Interactions example, tidymodels].
