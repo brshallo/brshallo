@@ -19,7 +19,9 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-Say you want to map an operation or list of operations across all two-way[^twoway] combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc.^[Though this "throw everything and the kitchen-sink" approach may not always be a good idea.]. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables[^1]. In some cases there may be an excellent pairwise implementation already available, e.g. R's `cor()` function for computing correlations^[Or the tidymodels implementation `corrr::correlate()` in the [corrr](https://corrr.tidymodels.org/) package.]. In other cases one may not exist, is not easy to use, or is not in a style you prefer. In this post I'll walk through an example[^examples] explaining code and steps for setting-up arbitrary pairwise operations across sets of variables. 
+Say you want to map an operation or list of operations across all two-way[^twoway] combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc^[Though this "throw everything and the kitchen-sink" approach may not always be a good idea.]. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables[^1]. 
+
+In some cases there may be an excellent pairwise implementation already available, e.g. R's `cor()` function for computing correlations^[Or the tidymodels implementation `corrr::correlate()` in the [corrr](https://corrr.tidymodels.org/) package.]. In other cases one may not exist or is not easy to use^[or is not in a style you prefer]. In this post I'll walk through an example[^examples] explaining code and steps for setting-up arbitrary pairwise operations across sets of variables. 
 
 *I'll break my approach down into several steps:*
 
@@ -34,7 +36,7 @@ VI. Bind back to data
 
 I will primarily be using R's `tidyverse` packages. I make frequent use of lists as columns within dataframes -- if you are new to these, see my previous [talk](https://www.youtube.com/watch?v=gme4Fb9JVjk) and the resources^[In particular, the chapters on "Iteration" and "Many Models" in [R for Data Science](https://r4ds.had.co.nz/iteration.html)] I link to in the description. 
 
-Throughout this post, wherever I write "dataframe" I really mean "tibble" (a dataframe with minor changes to default options and slightly prettier printing behavior). Also note that I am using `dplyr` 0.8.3 rather than the newly released 1.0.0[^dplyr].
+Throughout this post, wherever I write "dataframe" I really mean "tibble" (a dataframe with minor changes to default options and prettier printing behavior). Also note that I am using `dplyr` 0.8.3 rather than the newly released 1.0.0[^dplyr].
 
 [^twoway]: Will focus on two-way example in this post, but could use similar methods to make more generalizable solution across n-way examples. If I were to do this, the code below would change. E.g.
 
@@ -150,7 +152,7 @@ df_lists_comb_as <- df_lists_comb %>%
 
 ## IV. Map function(s)
 
-Each row of your dataframe now contains the relevant combinations of vectors and is ready to have any arbitrary function(s) mapped across them.
+Each row of your dataframe now contains the relevant combinations of variables and is ready to have any arbitrary function(s) mapped across them.
 
 **Example with summary statistic^[Function(s) that output vectors of length 1 (or less than length of input vectors).]:**
 
@@ -188,7 +190,7 @@ You could use this approach to calculate any pairwise summary statistic. For exa
 
 **Example with transformations^[Function(s) that output vector of length equal to length of input vectors.]:**
 
-Back to the feature engineering example, perhaps we want to calculate the difference and quotient of each combination of our variables.
+Back to the feature engineering example, perhaps we want to create new features of the difference and quotient of each combination of our variables.
 ```{r}
 new_features_prep1 <- df_lists_comb %>% 
   mutate(difference = map2(vector, vector2, `-`),
@@ -254,9 +256,9 @@ devtools::source_gist("https://gist.github.com/brshallo/f92a5820030e21cfed8f823a
 
 `operations_combinations()` takes in your dataframe, the set of numeric columns to create pairwise combinations from, and a list of functions^[Must have two vectors as input, but do not need to be infix functions.] to apply.
 
-# Example, creating & evaluating features
+# Example creating & evaluating features
 
-Let's use the new `operations_combinations()` function to create new columns for the differences and quotients between all pairwise combinations of our features of interest.
+Let's use the new `operations_combinations()` function to create new columns for the differences and quotients between all pairwise combinations of our variables of interest.
 ```{r}
 ames_data_features_example <- operations_combinations(
   df = mutate_if(ames, is.numeric, as.double),
@@ -272,7 +274,7 @@ Perhaps you want to calculate some measure of association between your new featu
 features_keep <- ames_data_features_example %>% 
   keep(is.numeric) %>% 
   summarise_all(~sum(is.na(.) | is.infinite(.))) %>% 
-  gather() %>% # gather() is an older version of pivot_longer() w/ fewer features
+  gather() %>% # gather() is an older version of pivot_longer() w/ fewer parameters
   filter(value == 0) %>% 
   pull(key)
 
@@ -294,7 +296,7 @@ select(ames_sp_features_subset, -Sale_Price) %>%
      x = "Negative log of p-value of correlation coefficient")
 ```
 
-If doing predictive modeling or inference you probably want to fit any computation and analysis into a `tidymodels` process or other framework. For some brief notes on this see [Interactions example, tidymodels].
+If doing predictive modeling or inference you may want to fit any transformations and analysis into a `tidymodels` pipeline or other framework. For some brief notes on this see [Interactions example, tidymodels].
 
 # When is this approach inappropriate?
 
