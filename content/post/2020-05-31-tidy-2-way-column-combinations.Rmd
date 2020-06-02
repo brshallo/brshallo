@@ -26,7 +26,7 @@ Say you want to map an operation or list of operations across all two-way[^twowa
 I. Nest and pivot  
 II. Expand combinations  
 III. Filter redundancies  
-IV. Perform operation(s)  
+IV. Map function(s)  
 V. Reshape, re-pivot & unnest  
 VI. Bind back to data  
 
@@ -128,8 +128,8 @@ Filter-out redundant columns, sort the rows, better organize the columns.
 df_lists_comb <- df_lists_comb %>% 
   filter(!(var == var2)) %>% 
   arrange(var, var2) %>% 
-  select(contains("var"), everything()) %>% 
   mutate(vars = paste0(var, ".", var2)) %>% 
+  select(contains("var"), everything()) %>% 
   print()
 ```
 
@@ -142,15 +142,19 @@ c_sort_collapse <- function(...){
 }
 
 df_lists_comb_as <- df_lists_comb %>% 
-  mutate(vars = map2_chr(.x = var, .y = var2, .f = c_sort_collapse)) %>%
+  mutate(vars = map2_chr(.x = var, 
+                         .y = var2, 
+                         .f = c_sort_collapse)) %>%
   distinct(vars, .keep_all = TRUE)
 ```
 
-## IV. Perform operation(s)
+## IV. Map function(s)
+
+Each row of your dataframe now contains the relevant combinations of vectors and is ready to have any arbitrary function(s) mapped across them.
 
 **Example with summary statistic^[Function(s) that output vectors of length 1 (or less than length of input vectors).]:**
 
-At this point you can map any operation across each of the combinations of vectors contained in each row of your data. For example, let's say we want to compute the p-value of the correlation coefficient for each pair[^psych].
+For example, let's say we want to compute the p-value of the correlation coefficient for each pair[^psych].
 
 [^psych]: Note that the pairwise implementation `psych::corr.test()` could have been used on your original subsetted dataframe, see [stack overflow thread](https://stackoverflow.com/questions/13112238/a-matrix-version-of-cor-test).
 
@@ -176,11 +180,11 @@ pairs_cor_pvalues %>%
   labs(title = "We are confident that garage area and # of garage cars are correlated",
        y = "Negative log of p-value of correlation coefficient",
        x = "Variable combinations",
-       fill = "Too large to\nmeaningfully\ndifferentiate:")+
+       fill = "Too high to\nmeaningfully\ndifferentiate:")+
   theme(plot.title.position = "plot")
 ```
 
-You could use this approach to calculate any summary statistic. For example, see [gist](https://gist.github.com/brshallo/dc3c1f2f34519ca2a8a68024bc3a22e5) where I calculate the K-S statistics across each combination of a group of distributions.
+You could use this approach to calculate any pairwise summary statistic. For example, see [gist](https://gist.github.com/brshallo/dc3c1f2f34519ca2a8a68024bc3a22e5) where I calculate the K-S statistic across each combination of a group of distributions.
 
 **Example with transformations^[Function(s) that output vector of length equal to length of input vectors.]:**
 
@@ -202,7 +206,7 @@ The goal is to get our dataframe back into a form similar to where it was at the
 * one with our variable names 
 * a second containing a list-column of vectors
 
-*In this section at the end of each line of code is a number corresponding with the explanations below:*
+*At the end of each line of code in this section is a number corresponding with the explanations below:*
 
 1. if we had done just one operation, this step would not be needed, but we did multiple operations and hence created multiple list-columns (`difference` and `ratio`) which we need to get into a single list-column
 2. create new variable name that combines constituent variable names with name of transformation
@@ -280,9 +284,7 @@ ames_sp_features_subset <- ames_data_features_example %>%
   sample_n(1500)
 ```
 
-Next maybe you are interested in seeing the p-value of the correlation coefficient of each of your features with `Sale_Price`.
-
-Calculate p.values and plot these on a histogram.
+Next maybe you are interested in seeing the p-value of the correlation coefficient of each of your features with `Sale_Price`. I'll calculate these across variables and then plot them on a histogram.
 ```{r}
 ames_sp_features_subset %>% 
   select(-Sale_Price) %>% 
@@ -290,12 +292,12 @@ ames_sp_features_subset %>%
   gather() %>% 
   ggplot(aes(x = -log(value)))+
   geom_histogram()+
-  scale_x_log10()+
+  scale_x_log10(labels = scales::comma)+
   labs(title = "Distribution of correlations with Sale_Price",
      x = "Negative log of p-value of correlation coefficient")
 ```
 
-If doing predictive modeling or inference you might fit this into a `tidymodels` pipeline or other framework. For some brief notes on this see [Interactions example, tidymodels].
+If doing predictive modeling or inference you might fit this type of approach into a `tidymodels` pipeline or other framework. For some brief notes on this see [Interactions example, tidymodels].
 
 # When is this approach innapropriate?
 

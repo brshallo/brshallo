@@ -83,7 +83,7 @@
 <li><a href="#i.-nest-and-pivot">I. Nest and pivot</a></li>
 <li><a href="#ii.-expand-combinations">II. Expand combinations</a></li>
 <li><a href="#iii.-filter-redundancies">III. Filter redundancies</a></li>
-<li><a href="#iv.-perform-operations">IV. Perform operation(s)</a></li>
+<li><a href="#iv.-map-functions">IV. Map function(s)</a></li>
 <li><a href="#v.-reshape-re-pivot-unnest">V. Reshape, re-pivot &amp; unnest</a></li>
 <li><a href="#vi.-bind-back-to-data">VI. Bind back to data</a></li>
 </ul></li>
@@ -104,7 +104,7 @@
 <p>I. Nest and pivot<br />
 II. Expand combinations<br />
 III. Filter redundancies<br />
-IV. Perform operation(s)<br />
+IV. Map function(s)<br />
 V. Reshape, re-pivot &amp; unnest<br />
 VI. Bind back to data</p>
 <p><strong>Relevant software and style:</strong></p>
@@ -192,22 +192,22 @@ ames_subset &lt;- select(ames, ames_cols) %&gt;%
 <pre class="r"><code>df_lists_comb &lt;- df_lists_comb %&gt;% 
   filter(!(var == var2)) %&gt;% 
   arrange(var, var2) %&gt;% 
-  select(contains(&quot;var&quot;), everything()) %&gt;% 
   mutate(vars = paste0(var, &quot;.&quot;, var2)) %&gt;% 
+  select(contains(&quot;var&quot;), everything()) %&gt;% 
   print()</code></pre>
 <pre><code>## # A tibble: 90 x 5
-##    var         var2          vector       vector2     vars                 
-##    &lt;chr&gt;       &lt;chr&gt;         &lt;list&gt;       &lt;list&gt;      &lt;chr&gt;                
-##  1 Fireplaces  First_Flr_SF  &lt;dbl [2,930~ &lt;dbl [2,93~ Fireplaces.First_Flr~
-##  2 Fireplaces  Full_Bath     &lt;dbl [2,930~ &lt;dbl [2,93~ Fireplaces.Full_Bath 
-##  3 Fireplaces  Garage_Area   &lt;dbl [2,930~ &lt;dbl [2,93~ Fireplaces.Garage_Ar~
-##  4 Fireplaces  Garage_Cars   &lt;dbl [2,930~ &lt;dbl [2,93~ Fireplaces.Garage_Ca~
-##  5 Fireplaces  Gr_Liv_Area   &lt;dbl [2,930~ &lt;dbl [2,93~ Fireplaces.Gr_Liv_Ar~
-##  6 Fireplaces  Total_Bsmt_SF &lt;dbl [2,930~ &lt;dbl [2,93~ Fireplaces.Total_Bsm~
-##  7 Fireplaces  TotRms_AbvGrd &lt;dbl [2,930~ &lt;dbl [2,93~ Fireplaces.TotRms_Ab~
-##  8 Fireplaces  Year_Built    &lt;dbl [2,930~ &lt;dbl [2,93~ Fireplaces.Year_Built
-##  9 Fireplaces  Year_Remod_A~ &lt;dbl [2,930~ &lt;dbl [2,93~ Fireplaces.Year_Remo~
-## 10 First_Flr_~ Fireplaces    &lt;dbl [2,930~ &lt;dbl [2,93~ First_Flr_SF.Firepla~
+##    var         var2          vars                   vector      vector2    
+##    &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;                  &lt;list&gt;      &lt;list&gt;     
+##  1 Fireplaces  First_Flr_SF  Fireplaces.First_Flr_~ &lt;dbl [2,93~ &lt;dbl [2,93~
+##  2 Fireplaces  Full_Bath     Fireplaces.Full_Bath   &lt;dbl [2,93~ &lt;dbl [2,93~
+##  3 Fireplaces  Garage_Area   Fireplaces.Garage_Area &lt;dbl [2,93~ &lt;dbl [2,93~
+##  4 Fireplaces  Garage_Cars   Fireplaces.Garage_Cars &lt;dbl [2,93~ &lt;dbl [2,93~
+##  5 Fireplaces  Gr_Liv_Area   Fireplaces.Gr_Liv_Area &lt;dbl [2,93~ &lt;dbl [2,93~
+##  6 Fireplaces  Total_Bsmt_SF Fireplaces.Total_Bsmt~ &lt;dbl [2,93~ &lt;dbl [2,93~
+##  7 Fireplaces  TotRms_AbvGrd Fireplaces.TotRms_Abv~ &lt;dbl [2,93~ &lt;dbl [2,93~
+##  8 Fireplaces  Year_Built    Fireplaces.Year_Built  &lt;dbl [2,93~ &lt;dbl [2,93~
+##  9 Fireplaces  Year_Remod_A~ Fireplaces.Year_Remod~ &lt;dbl [2,93~ &lt;dbl [2,93~
+## 10 First_Flr_~ Fireplaces    First_Flr_SF.Fireplac~ &lt;dbl [2,93~ &lt;dbl [2,93~
 ## # ... with 80 more rows</code></pre>
 <p>If your operation of interest is associative<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>, apply a filter to remove additional redundant combinations.</p>
 <pre class="r"><code>c_sort_collapse &lt;- function(...){
@@ -217,31 +217,34 @@ ames_subset &lt;- select(ames, ames_cols) %&gt;%
 }
 
 df_lists_comb_as &lt;- df_lists_comb %&gt;% 
-  mutate(vars = map2_chr(.x = var, .y = var2, .f = c_sort_collapse)) %&gt;%
+  mutate(vars = map2_chr(.x = var, 
+                         .y = var2, 
+                         .f = c_sort_collapse)) %&gt;%
   distinct(vars, .keep_all = TRUE)</code></pre>
 </div>
-<div id="iv.-perform-operations" class="section level2">
-<h2>IV. Perform operation(s)</h2>
+<div id="iv.-map-functions" class="section level2">
+<h2>IV. Map function(s)</h2>
+<p>Each row of your dataframe now contains the relevant combinations of vectors and is ready to have any arbitrary function(s) mapped across them.</p>
 <p><strong>Example with summary statistic<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>:</strong></p>
-<p>At this point you can map any operation across each of the combinations of vectors contained in each row of your data. For example, let’s say we want to compute the p-value of the correlation coefficient for each pair<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>.</p>
+<p>For example, let’s say we want to compute the p-value of the correlation coefficient for each pair<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>.</p>
 <pre class="r"><code>pairs_cor_pvalues &lt;- df_lists_comb_as %&gt;% 
   mutate(cor_pvalue = map2(vector, vector2, cor.test) %&gt;% map_dbl(&quot;p.value&quot;),
          vars = fct_reorder(vars, -cor_pvalue)) %&gt;% 
   arrange(cor_pvalue) %&gt;% 
   print()</code></pre>
 <pre><code>## # A tibble: 45 x 6
-##    var        var2       vector     vector2    vars              cor_pvalue
-##    &lt;chr&gt;      &lt;chr&gt;      &lt;list&gt;     &lt;list&gt;     &lt;fct&gt;                  &lt;dbl&gt;
-##  1 First_Flr~ Total_Bsm~ &lt;dbl [2,9~ &lt;dbl [2,9~ First_Flr_SF.Tot~  0.       
-##  2 Full_Bath  Gr_Liv_Ar~ &lt;dbl [2,9~ &lt;dbl [2,9~ Full_Bath.Gr_Liv~  0.       
-##  3 Garage_Ar~ Garage_Ca~ &lt;dbl [2,9~ &lt;dbl [2,9~ Garage_Area.Gara~  0.       
-##  4 Gr_Liv_Ar~ TotRms_Ab~ &lt;dbl [2,9~ &lt;dbl [2,9~ Gr_Liv_Area.TotR~  0.       
-##  5 Year_Built Year_Remo~ &lt;dbl [2,9~ &lt;dbl [2,9~ Year_Built.Year_~  7.85e-301
-##  6 First_Flr~ Gr_Liv_Ar~ &lt;dbl [2,9~ &lt;dbl [2,9~ First_Flr_SF.Gr_~  8.17e-244
-##  7 Garage_Ca~ Year_Built &lt;dbl [2,9~ &lt;dbl [2,9~ Garage_Cars.Year~  1.57e-219
-##  8 Full_Bath  TotRms_Ab~ &lt;dbl [2,9~ &lt;dbl [2,9~ Full_Bath.TotRms~  1.24e-210
-##  9 First_Flr~ Garage_Ar~ &lt;dbl [2,9~ &lt;dbl [2,9~ First_Flr_SF.Gar~  8.16e-178
-## 10 Garage_Ca~ Gr_Liv_Ar~ &lt;dbl [2,9~ &lt;dbl [2,9~ Garage_Cars.Gr_L~  4.80e-175
+##    var        var2       vars              vector     vector2    cor_pvalue
+##    &lt;chr&gt;      &lt;chr&gt;      &lt;fct&gt;             &lt;list&gt;     &lt;list&gt;          &lt;dbl&gt;
+##  1 First_Flr~ Total_Bsm~ First_Flr_SF.Tot~ &lt;dbl [2,9~ &lt;dbl [2,9~  0.       
+##  2 Full_Bath  Gr_Liv_Ar~ Full_Bath.Gr_Liv~ &lt;dbl [2,9~ &lt;dbl [2,9~  0.       
+##  3 Garage_Ar~ Garage_Ca~ Garage_Area.Gara~ &lt;dbl [2,9~ &lt;dbl [2,9~  0.       
+##  4 Gr_Liv_Ar~ TotRms_Ab~ Gr_Liv_Area.TotR~ &lt;dbl [2,9~ &lt;dbl [2,9~  0.       
+##  5 Year_Built Year_Remo~ Year_Built.Year_~ &lt;dbl [2,9~ &lt;dbl [2,9~  7.85e-301
+##  6 First_Flr~ Gr_Liv_Ar~ First_Flr_SF.Gr_~ &lt;dbl [2,9~ &lt;dbl [2,9~  8.17e-244
+##  7 Garage_Ca~ Year_Built Garage_Cars.Year~ &lt;dbl [2,9~ &lt;dbl [2,9~  1.57e-219
+##  8 Full_Bath  TotRms_Ab~ Full_Bath.TotRms~ &lt;dbl [2,9~ &lt;dbl [2,9~  1.24e-210
+##  9 First_Flr~ Garage_Ar~ First_Flr_SF.Gar~ &lt;dbl [2,9~ &lt;dbl [2,9~  8.16e-178
+## 10 Garage_Ca~ Gr_Liv_Ar~ Garage_Cars.Gr_L~ &lt;dbl [2,9~ &lt;dbl [2,9~  4.80e-175
 ## # ... with 35 more rows</code></pre>
 <p>For fun, let’s plot the most significant associations onto a bar graph.</p>
 <pre class="r"><code>pairs_cor_pvalues %&gt;% 
@@ -256,10 +259,10 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
   labs(title = &quot;We are confident that garage area and # of garage cars are correlated&quot;,
        y = &quot;Negative log of p-value of correlation coefficient&quot;,
        x = &quot;Variable combinations&quot;,
-       fill = &quot;Too large to\nmeaningfully\ndifferentiate:&quot;)+
+       fill = &quot;Too high to\nmeaningfully\ndifferentiate:&quot;)+
   theme(plot.title.position = &quot;plot&quot;)</code></pre>
 <p><img src="/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p>You could use this approach to calculate any summary statistic. For example, see <a href="https://gist.github.com/brshallo/dc3c1f2f34519ca2a8a68024bc3a22e5">gist</a> where I calculate the K-S statistics across each combination of a group of distributions.</p>
+<p>You could use this approach to calculate any pairwise summary statistic. For example, see <a href="https://gist.github.com/brshallo/dc3c1f2f34519ca2a8a68024bc3a22e5">gist</a> where I calculate the K-S statistic across each combination of a group of distributions.</p>
 <p><strong>Example with transformations<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>:</strong></p>
 <p>Back to the feature engineering example, perhaps we want to calculate the difference and quotient of each combination of our variables.</p>
 <pre class="r"><code>new_features_prep1 &lt;- df_lists_comb %&gt;% 
@@ -275,7 +278,7 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
 <li>one with our variable names</li>
 <li>a second containing a list-column of vectors</li>
 </ul>
-<p><em>In this section at the end of each line of code is a number corresponding with the explanations below:</em></p>
+<p><em>At the end of each line of code in this section is a number corresponding with the explanations below:</em></p>
 <ol style="list-style-type: decimal">
 <li>if we had done just one operation, this step would not be needed, but we did multiple operations and hence created multiple list-columns (<code>difference</code> and <code>ratio</code>) which we need to get into a single list-column</li>
 <li>create new variable name that combines constituent variable names with name of transformation</li>
@@ -345,19 +348,18 @@ set.seed(1234)
 ames_sp_features_subset &lt;- ames_data_features_example %&gt;% 
   select(features_keep) %&gt;% 
   sample_n(1500)</code></pre>
-<p>Next maybe you are interested in seeing the p-value of the correlation coefficient of each of your features with <code>Sale_Price</code>.</p>
-<p>Calculate p.values and plot these on a histogram.</p>
+<p>Next maybe you are interested in seeing the p-value of the correlation coefficient of each of your features with <code>Sale_Price</code>. I’ll calculate these across variables and then plot them on a histogram.</p>
 <pre class="r"><code>ames_sp_features_subset %&gt;% 
   select(-Sale_Price) %&gt;% 
   summarise_all(~cor.test(., ames_sp_features_subset$Sale_Price)$p.value) %&gt;% 
   gather() %&gt;% 
   ggplot(aes(x = -log(value)))+
   geom_histogram()+
-  scale_x_log10()+
+  scale_x_log10(labels = scales::comma)+
   labs(title = &quot;Distribution of correlations with Sale_Price&quot;,
      x = &quot;Negative log of p-value of correlation coefficient&quot;)</code></pre>
 <p><img src="/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
-<p>If doing predictive modeling or inference you might fit this into a <code>tidymodels</code> pipeline or other framework. For some brief notes on this see <a href="#interactions-example-tidymodels">Interactions example, tidymodels</a>.</p>
+<p>If doing predictive modeling or inference you might fit this type of approach into a <code>tidymodels</code> pipeline or other framework. For some brief notes on this see <a href="#interactions-example-tidymodels">Interactions example, tidymodels</a>.</p>
 </div>
 <div id="when-is-this-approach-innapropriate" class="section level1">
 <h1>When is this approach innapropriate?</h1>
