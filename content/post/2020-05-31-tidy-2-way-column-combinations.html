@@ -214,7 +214,6 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
 <div id="v.-return-to-normal-dataframe" class="section level2">
 <h2>V. Return to normal dataframe</h2>
 <p>These steps put our data back into a more traditional form consistent with our starting dataframe/tibble.</p>
-<p><strong>Reshape:</strong></p>
 <p>First revert to a form similar to where we were at the end of <a href="#i.-nest-and-pivot">I. Nest and pivot</a> where we had two columns:</p>
 <ul>
 <li>one with our variable names</li>
@@ -230,7 +229,6 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
 <li>create new variable name that combines constituent variable names with name of transformation</li>
 <li>remove old columns</li>
 </ol>
-<p><strong>Re-pivot and unnest:</strong></p>
 <p>Next we simply apply the inverse of those operations performed in <a href="#i.-nest-and-pivot">I. Nest and pivot</a>.</p>
 <pre class="r"><code>new_features &lt;- new_features_prep2 %&gt;% 
   pivot_wider(values_from = value,

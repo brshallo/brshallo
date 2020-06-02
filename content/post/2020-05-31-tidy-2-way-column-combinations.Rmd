@@ -201,8 +201,6 @@ new_features_prep1 <- df_lists_comb %>%
 
 These steps put our data back into a more traditional form consistent with our starting dataframe/tibble.
 
-**Reshape:**
-
 First revert to a form similar to where we were at the end of [I. Nest and pivot] where we had two columns:
 
 * one with our variable names 
@@ -220,8 +218,6 @@ At the end of each line of code above is a number corresponding with the followi
 1. if we had done just one operation, this step would not be needed, but we did multiple operations, created multiple list-columns (`difference` and `ratio`) which we need to get into a single list-column
 2. create new variable name that combines constituent variable names with name of transformation
 3. remove old columns
-
-**Re-pivot and unnest:**
 
 Next we simply apply the inverse of those operations performed in [I. Nest and pivot].
 
