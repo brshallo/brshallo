@@ -28,6 +28,7 @@ output:
 <li><a href="#vi.-bind-back-to-data">VI. Bind back to data</a></li>
 </ul></li>
 <li><a href="#functionalize">Functionalize</a></li>
+<li><a href="#example-creating-evaluating-features">Example, creating &amp; evaluating features</a></li>
 <li><a href="#when-is-this-approach-innapropriate">When is this approach innapropriate?</a></li>
 <li><a href="#appendix">Appendix</a><ul>
 <li><a href="#interactions-example-tidymodels">Interactions example, tidymodels</a></li>
@@ -67,9 +68,9 @@ ames_cols &lt;- ames %&gt;%
   pull(rowname)
 
 ames_subset &lt;- select(ames, ames_cols) %&gt;% 
-  mutate_all(as.double) %&gt;% 
-  # standardize variables
-  mutate_all(~(. - mean(.)) / sd(.))</code></pre>
+  # Could normalize data or do other prep 
+  # but is not pertinent for examples
+  mutate_all(as.double)</code></pre>
 </div>
 <div id="overview" class="section level1">
 <h1>Overview</h1>
@@ -213,36 +214,21 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
 <h2>V. Reshape, re-pivot &amp; unnest</h2>
 <p>These steps put our data back into a more traditional form consistent with our starting dataframe/tibble.</p>
 <p><strong>Reshape:</strong></p>
-<p>The goal is to get our dataframe back into a form similar to where it was at the end of <a href="#i.-nest-and-pivot">I. Nest and pivot</a> where we had two columns:</p>
+<p>First revert to a form similar to where we were at the end of <a href="#i.-nest-and-pivot">I. Nest and pivot</a> where we had two columns:</p>
 <ul>
 <li>one with our variable names</li>
 <li>a second containing a list-column of vectors</li>
 </ul>
-<p><em>At the end of each line of code in this section is a number corresponding with the explanations below:</em></p>
+<pre class="r"><code>new_features_prep2 &lt;- new_features_prep1 %&gt;% 
+  pivot_longer(cols = c(difference, ratio)) %&gt;% # 1
+  mutate(name_vars = str_c(var, name, var2, sep = &quot;.&quot;)) %&gt;% # 2
+  select(name_vars, value) # 3</code></pre>
+<p>At the end of each line of code above is a number corresponding with the following explanations:</p>
 <ol style="list-style-type: decimal">
 <li>if we had done just one operation, this step would not be needed, but we did multiple operations and hence created multiple list-columns (<code>difference</code> and <code>ratio</code>) which we need to get into a single list-column</li>
 <li>create new variable name that combines constituent variable names with name of transformation</li>
 <li>remove old columns</li>
 </ol>
-<pre class="r"><code>new_features_prep2 &lt;- new_features_prep1 %&gt;% 
-  pivot_longer(cols = c(difference, ratio)) %&gt;% # 1
-  mutate(name_vars = str_c(var, name, var2, sep = &quot;.&quot;)) %&gt;% # 2
-  select(name_vars, value) %&gt;% # 3
-  print()</code></pre>
-<pre><code>## # A tibble: 180 x 2
-##    name_vars                          value        
-##    &lt;chr&gt;                              &lt;list&gt;       
-##  1 Fireplaces.difference.First_Flr_SF &lt;dbl [2,930]&gt;
-##  2 Fireplaces.ratio.First_Flr_SF      &lt;dbl [2,930]&gt;
-##  3 Fireplaces.difference.Full_Bath    &lt;dbl [2,930]&gt;
-##  4 Fireplaces.ratio.Full_Bath         &lt;dbl [2,930]&gt;
-##  5 Fireplaces.difference.Garage_Area  &lt;dbl [2,930]&gt;
-##  6 Fireplaces.ratio.Garage_Area       &lt;dbl [2,930]&gt;
-##  7 Fireplaces.difference.Garage_Cars  &lt;dbl [2,930]&gt;
-##  8 Fireplaces.ratio.Garage_Cars       &lt;dbl [2,930]&gt;
-##  9 Fireplaces.difference.Gr_Liv_Area  &lt;dbl [2,930]&gt;
-## 10 Fireplaces.ratio.Gr_Liv_Area       &lt;dbl [2,930]&gt;
-## # ... with 170 more rows</code></pre>
 <p><strong>Re-pivot and unnest:</strong></p>
 <p>Next we simply apply the inverse of those operations performed in <a href="#i.-nest-and-pivot">I. Nest and pivot</a>.</p>
 <pre class="r"><code>new_features &lt;- new_features_prep2 %&gt;% 
@@ -265,20 +251,20 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
 <p>I put these steps into a few functions found at <a href="https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1">this gist</a><a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>.</p>
 <pre class="r"><code>devtools::source_gist(&quot;https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1&quot;)</code></pre>
 <p><code>operations_combinations()</code> takes in your dataframe, the set of numeric columns to create pairwise combinations from, and a list of functions<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a> to apply.</p>
-<pre class="r"><code>ames_data_features_example &lt;- ames %&gt;% 
-  keep(is.numeric) %&gt;% 
-  mutate_all(as.double) %&gt;% 
-  mutate_all(~(. - mean(.)) / sd(.))
-
-ames_data_features_example &lt;- operations_combinations(
-  df = ames_data_features_example,
+</div>
+<div id="example-creating-evaluating-features" class="section level1">
+<h1>Example, creating &amp; evaluating features</h1>
+<p>Let’s use the new <code>operations_combinations()</code> function to create new columns for the differences and quotients between all pairwise combinations of our features of interest.</p>
+<pre class="r"><code>ames_data_features_example &lt;- operations_combinations(
+  df = mutate_if(ames, is.numeric, as.double),
   one_of(ames_cols),
   funs = list(&quot;/&quot;, &quot;-&quot;),
   funs_names = list(&quot;ratio&quot;, &quot;difference&quot;),
   associative = FALSE
 )</code></pre>
-<p>To keep things simple, I’m going to remove any columns that contain any NA’s or infinite values. I’ll also use a random sample of just 1500 rows.</p>
+<p>Perhaps you want to calculate some measure of association between your new featurs and <code>Sale_price</code>. To keep things simple, I’m going to first remove any columns that contain any NA’s or infinite values. I’ll also use a random sample of just 1500 rows.</p>
 <pre class="r"><code>features_keep &lt;- ames_data_features_example %&gt;% 
+  keep(is.numeric) %&gt;% 
   summarise_all(~sum(is.na(.) | is.infinite(.))) %&gt;% 
   gather() %&gt;% # gather() is an older version of pivot_longer() w/ fewer features
   filter(value == 0) %&gt;% 
@@ -288,23 +274,22 @@ set.seed(1234)
 ames_sp_features_subset &lt;- ames_data_features_example %&gt;% 
   select(features_keep) %&gt;% 
   sample_n(1500)</code></pre>
-<p>Next maybe you are interested in seeing the p-value of the correlation coefficient of each of your features with <code>Sale_Price</code>. I’ll calculate these across variables and then plot them on a histogram.</p>
-<pre class="r"><code>ames_sp_features_subset %&gt;% 
-  select(-Sale_Price) %&gt;% 
+<p>Specifically, maybe you want to see the statistical significance of the correlation of each feature with <code>Sale_Price</code>. I’ll calculate these across variables and then plot them on a histogram.</p>
+<pre class="r"><code>select(ames_sp_features_subset, -Sale_Price) %&gt;% 
   summarise_all(~cor.test(., ames_sp_features_subset$Sale_Price)$p.value) %&gt;% 
   gather() %&gt;% 
   ggplot(aes(x = -log(value)))+
   geom_histogram()+
-  scale_x_log10(labels = scales::comma)+
+  scale_x_continuous(labels = scales::comma)+
   labs(title = &quot;Distribution of correlations with Sale_Price&quot;,
      x = &quot;Negative log of p-value of correlation coefficient&quot;)</code></pre>
 <p><img src="/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
-<p>If doing predictive modeling or inference you might fit this type of approach into a <code>tidymodels</code> pipeline or other framework. For some brief notes on this see <a href="#interactions-example-tidymodels">Interactions example, tidymodels</a>.</p>
+<p>If doing predictive modeling or inference you probably want to fit any computation and analysis into a <code>tidymodels</code> process or other framework. For some brief notes on this see <a href="#interactions-example-tidymodels">Interactions example, tidymodels</a>.</p>
 </div>
 <div id="when-is-this-approach-innapropriate" class="section level1">
 <h1>When is this approach innapropriate?</h1>
 <p>Combinatorial growth is very fast<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>. As you increase either the number of variables in your pool or the size of each set, you will quickly bump into computational limitations.</p>
-<p>Tidyverse packages are optimized to be computationally efficient. However operations with matrices or other specialized formats<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a> are generally faster<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a> than with dataframes/tibbles. If you are running into computational challenges but prefer to stick with a tidyverse aesthetic (which uses dataframes as a cornerstone), you might:</p>
+<p>Tidyverse packages are optimized to be efficient. However operations with matrices or other specialized formats<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a> are generally faster<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a> than with dataframes/tibbles. If you are running into computational challenges but prefer to stick with a tidyverse aesthetic (which uses dataframes as a cornerstone), you might:</p>
 <ul>
 <li>Use heuristics to reduce the number of variables or operations you need to perform (e.g. take a sample, use a preliminary filter, a step-wise like iteration, etc.)</li>
 <li>Look for packages that abstract the storage and computationally heavy operations away<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a> and then return back an output in a convenient form<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a></li>
@@ -432,7 +417,7 @@ ames_sp_features_subset &lt;- ames_data_features_example %&gt;%
 <li>emphasize ability to output tibbles / multiple columns in core <code>dplyr</code> verbs… This is something I had only taken advantage of occassionally in the past (<a href="https://stackoverflow.com/a/54725732/9059865">example</a>), but will look to use more going forward.]</li>
 </ul>
 <a href="#fnref7" class="footnote-back">↩</a></li>
-<li id="fn8"><p>For technical reasons, I also converted all integer types to doubles – was getting integer overflow problems in later operations before changing. <a href="https://stackoverflow.com/questions/8804779/what-is-integer-overflow-in-r-and-how-can-it-happen">Thread</a> on integer overflow in R. In this post I’m not taking a disciplined approach to feature engineering, however I did standardize the variables so that variable combinations would at least be starting on a similar scale.<a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>For technical reasons, I also converted all integer types to doubles – was getting integer overflow problems in later operations before changing. <a href="https://stackoverflow.com/questions/8804779/what-is-integer-overflow-in-r-and-how-can-it-happen">Thread</a> on integer overflow in R. In this post I’m not taking a disciplined approach to feature engineering. For example it may make sense to normalize the variables so that variable combinations would be starting on a similar scale. This could be done using <code>recipes::step_normalize()</code> or with code like <code>dplyr::mutate_all(df, ~(. - mean(.)) / sd(.))</code> .<a href="#fnref8" class="footnote-back">↩</a></p></li>
 <li id="fn9"><p>Note that this part of the problem is one where I actually find using <code>tidyr::gather()</code> easier – but I’ve been forcing myself to switch over to using the <code>pivot_()</code> functions over <code>spread()</code> and <code>gather()</code>.<a href="#fnref9" class="footnote-back">↩</a></p></li>
 <li id="fn10"><p>The more common approach.<a href="#fnref10" class="footnote-back">↩</a></p></li>
 <li id="fn11"><p>As switching these would be more computationally efficient – see [When is this approach inappropriate?] for notes related to this.<a href="#fnref11" class="footnote-back">↩</a></p></li>

@@ -66,7 +66,7 @@ ames <- AmesHousing::make_ames()
 
 Specifically, I'll focus on ten numeric columns that, based on a random sample of 1000 rows, show the highest correlation with `Sale_Price`[^technical]. 
 
-[^technical]: For technical reasons, I also converted all integer types to doubles -- was getting integer overflow problems in later operations before changing. [Thread](https://stackoverflow.com/questions/8804779/what-is-integer-overflow-in-r-and-how-can-it-happen) on integer overflow in R. In this post I'm not taking a disciplined approach to feature engineering, however I did standardize the variables so that variable combinations would at least be starting on a similar scale. 
+[^technical]: For technical reasons, I also converted all integer types to doubles -- was getting integer overflow problems in later operations before changing. [Thread](https://stackoverflow.com/questions/8804779/what-is-integer-overflow-in-r-and-how-can-it-happen) on integer overflow in R. In this post I'm not taking a disciplined approach to feature engineering. For example it may make sense to normalize the variables so that variable combinations would be starting on a similar scale. This could be done using `recipes::step_normalize()` or with code like `dplyr::mutate_all(df, ~(. - mean(.)) / sd(.))` .
 
 ```{r}
 set.seed(2020)
@@ -80,9 +80,9 @@ ames_cols <- ames %>%
   pull(rowname)
 
 ames_subset <- select(ames, ames_cols) %>% 
-  mutate_all(as.double) %>% 
-  # standardize variables
-  mutate_all(~(. - mean(.)) / sd(.))
+  # Could normalize data or do other prep 
+  # but is not pertinent for examples
+  mutate_all(as.double)
 ```
 
 # Overview 
@@ -201,24 +201,23 @@ These steps put our data back into a more traditional form consistent with our s
 
 **Reshape:**
 
-The goal is to get our dataframe back into a form similar to where it was at the end of [I. Nest and pivot] where we had two columns:
+First revert to a form similar to where we were at the end of [I. Nest and pivot] where we had two columns:
 
 * one with our variable names 
 * a second containing a list-column of vectors
-
-*At the end of each line of code in this section is a number corresponding with the explanations below:*
-
-1. if we had done just one operation, this step would not be needed, but we did multiple operations and hence created multiple list-columns (`difference` and `ratio`) which we need to get into a single list-column
-2. create new variable name that combines constituent variable names with name of transformation
-3. remove old columns
 
 ```{r}
 new_features_prep2 <- new_features_prep1 %>% 
   pivot_longer(cols = c(difference, ratio)) %>% # 1
   mutate(name_vars = str_c(var, name, var2, sep = ".")) %>% # 2
-  select(name_vars, value) %>% # 3
-  print()
+  select(name_vars, value) # 3
 ```
+
+At the end of each line of code above is a number corresponding with the following explanations:
+
+1. if we had done just one operation, this step would not be needed, but we did multiple operations and hence created multiple list-columns (`difference` and `ratio`) which we need to get into a single list-column
+2. create new variable name that combines constituent variable names with name of transformation
+3. remove old columns
 
 **Re-pivot and unnest:**
 
@@ -255,14 +254,12 @@ devtools::source_gist("https://gist.github.com/brshallo/f92a5820030e21cfed8f823a
 
 `operations_combinations()` takes in your dataframe, the set of numeric columns to create pairwise combinations from, and a list of functions^[Must have two vectors as input, but do not need to be infix functions.] to apply.
 
-```{r}
-ames_data_features_example <- ames %>% 
-  keep(is.numeric) %>% 
-  mutate_all(as.double) %>% 
-  mutate_all(~(. - mean(.)) / sd(.))
+# Example, creating & evaluating features
 
+Let's use the new `operations_combinations()` function to create new columns for the differences and quotients between all pairwise combinations of our features of interest.
+```{r}
 ames_data_features_example <- operations_combinations(
-  df = ames_data_features_example,
+  df = mutate_if(ames, is.numeric, as.double),
   one_of(ames_cols),
   funs = list("/", "-"),
   funs_names = list("ratio", "difference"),
@@ -270,9 +267,10 @@ ames_data_features_example <- operations_combinations(
 )
 ```
 
-To keep things simple, I'm going to remove any columns that contain any NA's or infinite values. I'll also use a random sample of just 1500 rows.
+Perhaps you want to calculate some measure of association between your new featurs and `Sale_price`. To keep things simple, I'm going to first remove any columns that contain any NA's or infinite values. I'll also use a random sample of just 1500 rows.
 ```{r}
 features_keep <- ames_data_features_example %>% 
+  keep(is.numeric) %>% 
   summarise_all(~sum(is.na(.) | is.infinite(.))) %>% 
   gather() %>% # gather() is an older version of pivot_longer() w/ fewer features
   filter(value == 0) %>% 
@@ -284,26 +282,25 @@ ames_sp_features_subset <- ames_data_features_example %>%
   sample_n(1500)
 ```
 
-Next maybe you are interested in seeing the p-value of the correlation coefficient of each of your features with `Sale_Price`. I'll calculate these across variables and then plot them on a histogram.
+Specifically, maybe you want to see the statistical significance of the correlation of each feature with `Sale_Price`. I'll calculate these across variables and then plot them on a histogram.
 ```{r}
-ames_sp_features_subset %>% 
-  select(-Sale_Price) %>% 
+select(ames_sp_features_subset, -Sale_Price) %>% 
   summarise_all(~cor.test(., ames_sp_features_subset$Sale_Price)$p.value) %>% 
   gather() %>% 
   ggplot(aes(x = -log(value)))+
   geom_histogram()+
-  scale_x_log10(labels = scales::comma)+
+  scale_x_continuous(labels = scales::comma)+
   labs(title = "Distribution of correlations with Sale_Price",
      x = "Negative log of p-value of correlation coefficient")
 ```
 
-If doing predictive modeling or inference you might fit this type of approach into a `tidymodels` pipeline or other framework. For some brief notes on this see [Interactions example, tidymodels].
+If doing predictive modeling or inference you probably want to fit any computation and analysis into a `tidymodels` process or other framework. For some brief notes on this see [Interactions example, tidymodels].
 
 # When is this approach innapropriate?
 
 Combinatorial growth is very fast^[Non-technical article discussing combinatorial explosion in context of company user growth targets: [Exponential Growth Isn't Cool. Combinatorial Growth Is.](https://medium.com/@TorBair/exponential-growth-isn-t-cool-combinatorial-growth-is-85a0b1fdb6a5).]. As you increase either the number of variables in your pool or the size of each set, you will quickly bump into computational limitations.
 
-Tidyverse packages are optimized to be computationally efficient. However operations with matrices or other specialized formats^[E.g. [data.table](https://github.com/Rdatatable/data.table) dataframes] are generally faster^[Hence, if you are doing operations across combinations of lots of variables it may not make sense to do the operations directly within dataframes.] than with dataframes/tibbles. If you are running into computational challenges but prefer to stick with a tidyverse aesthetic (which uses dataframes as a cornerstone), you might:
+Tidyverse packages are optimized to be efficient. However operations with matrices or other specialized formats^[E.g. [data.table](https://github.com/Rdatatable/data.table) dataframes] are generally faster^[Hence, if you are doing operations across combinations of lots of variables it may not make sense to do the operations directly within dataframes.] than with dataframes/tibbles. If you are running into computational challenges but prefer to stick with a tidyverse aesthetic (which uses dataframes as a cornerstone), you might:
 
 * Use heuristics to reduce the number of variables or operations you need to perform (e.g. take a sample, use a preliminary filter, a step-wise like iteration, etc.)
 * Look for packages that abstract the storage and computationally heavy operations away[^2] and then return back an output in a convenient form^[For tidyverse packages, this is often returned into or in the form of a dataframe.]
