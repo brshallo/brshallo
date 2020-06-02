@@ -64,7 +64,7 @@
 
   <article class="article">
     
-    <span class="article-duration">14 min read</span>
+    <span class="article-duration">16 min read</span>
     
 
     <h1 class="article-title">Tidy Pairwise Operations</h1>
@@ -84,7 +84,8 @@
 <li><a href="#ii.-expand-combinations">II. Expand combinations</a></li>
 <li><a href="#iii.-filter-redundancies">III. Filter redundancies</a></li>
 <li><a href="#iv.-perform-operations">IV. Perform operation(s)</a></li>
-<li><a href="#v.-bind-back-to-data">V. Bind back to data</a></li>
+<li><a href="#v.-reshape-re-pivot-unnest">V. Reshape, re-pivot &amp; unnest</a></li>
+<li><a href="#vi.-bind-back-to-data">VI. Bind back to data</a></li>
 </ul></li>
 <li><a href="#functionalize">Functionalize</a></li>
 <li><a href="#when-is-this-approach-innapropriate">When is this approach innapropriate?</a></li>
@@ -98,22 +99,23 @@
 </ul>
 </div>
 
-<p>Say you want to map an operation or list of operations across all two-way<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. In some cases there may be an excellent pairwise implementation already available, e.g. R’s <code>cor()</code> function for computing correlations across your variables. In other cases one may not exist or may not be easy to use. In this post I’ll walk through an example<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> explaining code and steps for setting-up arbitrary pairwise operations across sets of variables.</p>
+<p>Say you want to map an operation or list of operations across all two-way<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. In some cases there may be an excellent pairwise implementation already available, e.g. R’s <code>cor()</code> function for computing correlations<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. In other cases one may not exist, is not easy to use, or is not in a style you prefer. In this post I’ll walk through an example<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> explaining code and steps for setting-up arbitrary pairwise operations across sets of variables.</p>
 <p><em>I’ll break my approach down into several steps:</em></p>
 <p>I. Nest and pivot<br />
 II. Expand combinations<br />
 III. Filter redundancies<br />
-IV. Perform operations<br />
-V. Bind back to data</p>
+IV. Perform operation(s)<br />
+V. Reshape, re-pivot &amp; unnest<br />
+VI. Bind back to data</p>
 <p><strong>Relevant software and style:</strong></p>
-<p>I will primarily be using R’s <code>tidyverse</code> packages. I make frequent use of lists as columns within dataframes – if you are new to these, see my previous <a href="https://www.youtube.com/watch?v=gme4Fb9JVjk">talk</a> and the resources<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> I link to in the description.</p>
-<p>Throughout this post, wherever I write “dataframe” I really mean “tibble” (a dataframe with minor changes to default options and slightly prettier printing behavior). Also note that I am using <code>dplyr</code> 0.8.3 rather than the newly released 1.0.0<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>.</p>
+<p>I will primarily be using R’s <code>tidyverse</code> packages. I make frequent use of lists as columns within dataframes – if you are new to these, see my previous <a href="https://www.youtube.com/watch?v=gme4Fb9JVjk">talk</a> and the resources<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> I link to in the description.</p>
+<p>Throughout this post, wherever I write “dataframe” I really mean “tibble” (a dataframe with minor changes to default options and slightly prettier printing behavior). Also note that I am using <code>dplyr</code> 0.8.3 rather than the newly released 1.0.0<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
 <div id="data" class="section level1">
 <h1>Data</h1>
 <p>I’ll use the ames housing dataset across examples.</p>
 <pre class="r"><code>ames &lt;- AmesHousing::make_ames()</code></pre>
-<p>Specifically, I’ll focus on ten numeric columns that, based on a random sample of 1000 rows, show the highest correlation<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> with <code>Sale_Price</code><a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
+<p>Specifically, I’ll focus on ten numeric columns that, based on a random sample of 1000 rows, show the highest correlation with <code>Sale_Price</code><a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
 <pre class="r"><code>set.seed(2020)
 ames_cols &lt;- ames %&gt;% 
   select_if(is.numeric) %&gt;% 
@@ -133,10 +135,11 @@ ames_subset &lt;- select(ames, ames_cols) %&gt;%
 <h1>Overview</h1>
 <div id="i.-nest-and-pivot" class="section level2">
 <h2>I. Nest and pivot</h2>
-<p>There are a variety of ways to make lists into columns within a dataframe. In the example below, I use <code>summarise_all(ames_subset, list)</code> to create a one row dataframe where each column corresponds with a list containing a single element – those individual elements being numeric vectors of length 2930. After nesting, I pivot<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> the columns leaving a two column dataframe.</p>
+<p>There are a variety of ways to make lists into columns within a dataframe. In the example below, I use <code>summarise_all(ames_subset, list)</code> to create a one row dataframe where each column is a list containing a single element and each individual element corresponds with a numeric vector of length 2930.</p>
+<p>After nesting, I pivot<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> the columns leaving a dataframe with two columns:</p>
 <ul>
-<li><code>var</code> contains the variable name</li>
-<li><code>vector</code> contains a list where each element holds the associated vector of our data</li>
+<li><code>var</code> the variable names</li>
+<li><code>vector</code> a list where each element contains the associated vector</li>
 </ul>
 <pre class="r"><code>df_lists &lt;- ames_subset %&gt;% 
   summarise_all(list) %&gt;% 
@@ -157,7 +160,7 @@ ames_subset &lt;- select(ames, ames_cols) %&gt;%
 ##  8 Year_Remod_Add &lt;dbl [2,930]&gt;
 ##  9 TotRms_AbvGrd  &lt;dbl [2,930]&gt;
 ## 10 Fireplaces     &lt;dbl [2,930]&gt;</code></pre>
-<p>See <a href="#pivot-and-then-summarise">Pivot and then summarise</a> for a nearly identical approach with just an altered order of steps. Also see <a href="#nested-tibbles">Nested tibbles</a> for how you could create a list-column of tibbles<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> rather than vectors.</p>
+<p>See <a href="#pivot-and-then-summarise">Pivot and then summarise</a> for a nearly identical approach with just an altered order of steps. Also see <a href="#nested-tibbles">Nested tibbles</a> for how you could create a list-column of dataframes<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> rather than vectors.</p>
 </div>
 <div id="ii.-expand-combinations" class="section level2">
 <h2>II. Expand combinations</h2>
@@ -181,7 +184,7 @@ ames_subset &lt;- select(ames, ames_cols) %&gt;%
 ## 10 Fireplaces &lt;dbl [2,930]&gt; Year_Remod_Add &lt;dbl [2,930]&gt;
 ## # ... with 90 more rows</code></pre>
 <p>See <a href="#expand-via-join">Expand via join</a> for an alternative approach using the <code>dplyr::*_join()</code> operations.</p>
-<p><em>You could make a strong case that this step should have been after <a href="#iii.-filter-redundancies">III. Filter redundancies</a><a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>. However putting it beforehand makes the required code easier to write and to follow.</em></p>
+<p><em>You could make a strong case that this step should be after <a href="#iii.-filter-redundancies">III. Filter redundancies</a><a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>. However putting it beforehand makes the required code easier to write and to read.</em></p>
 </div>
 <div id="iii.-filter-redundancies" class="section level2">
 <h2>III. Filter redundancies</h2>
@@ -220,11 +223,28 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
 <div id="iv.-perform-operations" class="section level2">
 <h2>IV. Perform operation(s)</h2>
 <p><strong>Example with summary statistic<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>:</strong></p>
-<p>At this point you can easily map any operation across each of the combinations of vectors now represented by each row in your data. For example, let’s say we want to compute the p-value for the correlation of each combination<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a> and then plot the smallest of these onto a bar graph.</p>
-<pre class="r"><code>df_lists_comb_as %&gt;% 
+<p>At this point you can map any operation across each of the combinations of vectors contained in each row of your data. For example, let’s say we want to compute the p-value of the correlation coefficient for each pair<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>.</p>
+<pre class="r"><code>pairs_cor_pvalues &lt;- df_lists_comb_as %&gt;% 
   mutate(cor_pvalue = map2(vector, vector2, cor.test) %&gt;% map_dbl(&quot;p.value&quot;),
          vars = fct_reorder(vars, -cor_pvalue)) %&gt;% 
   arrange(cor_pvalue) %&gt;% 
+  print()</code></pre>
+<pre><code>## # A tibble: 45 x 6
+##    var        var2       vector     vector2    vars              cor_pvalue
+##    &lt;chr&gt;      &lt;chr&gt;      &lt;list&gt;     &lt;list&gt;     &lt;fct&gt;                  &lt;dbl&gt;
+##  1 First_Flr~ Total_Bsm~ &lt;dbl [2,9~ &lt;dbl [2,9~ First_Flr_SF.Tot~  0.       
+##  2 Full_Bath  Gr_Liv_Ar~ &lt;dbl [2,9~ &lt;dbl [2,9~ Full_Bath.Gr_Liv~  0.       
+##  3 Garage_Ar~ Garage_Ca~ &lt;dbl [2,9~ &lt;dbl [2,9~ Garage_Area.Gara~  0.       
+##  4 Gr_Liv_Ar~ TotRms_Ab~ &lt;dbl [2,9~ &lt;dbl [2,9~ Gr_Liv_Area.TotR~  0.       
+##  5 Year_Built Year_Remo~ &lt;dbl [2,9~ &lt;dbl [2,9~ Year_Built.Year_~  7.85e-301
+##  6 First_Flr~ Gr_Liv_Ar~ &lt;dbl [2,9~ &lt;dbl [2,9~ First_Flr_SF.Gr_~  8.17e-244
+##  7 Garage_Ca~ Year_Built &lt;dbl [2,9~ &lt;dbl [2,9~ Garage_Cars.Year~  1.57e-219
+##  8 Full_Bath  TotRms_Ab~ &lt;dbl [2,9~ &lt;dbl [2,9~ Full_Bath.TotRms~  1.24e-210
+##  9 First_Flr~ Garage_Ar~ &lt;dbl [2,9~ &lt;dbl [2,9~ First_Flr_SF.Gar~  8.16e-178
+## 10 Garage_Ca~ Gr_Liv_Ar~ &lt;dbl [2,9~ &lt;dbl [2,9~ Garage_Cars.Gr_L~  4.80e-175
+## # ... with 35 more rows</code></pre>
+<p>For fun, let’s plot the most significant associations onto a bar graph.</p>
+<pre class="r"><code>pairs_cor_pvalues %&gt;% 
   head(15) %&gt;% 
   mutate(cor_pvalue_nlog = -log(cor_pvalue)) %&gt;% 
   ggplot(aes(x = vars, 
@@ -236,42 +256,73 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
   labs(title = &quot;We are confident that garage area and # of garage cars are correlated&quot;,
        y = &quot;Negative log of p-value of correlation coefficient&quot;,
        x = &quot;Variable combinations&quot;,
-       fill = &quot;Too large\nto estimate:&quot;)+
+       fill = &quot;Too large to\nmeaningfully\ndifferentiate:&quot;)+
   theme(plot.title.position = &quot;plot&quot;)</code></pre>
-<p><img src="/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>You could use this approach to calculate any summary statistic. For example, see <a href="https://gist.github.com/brshallo/dc3c1f2f34519ca2a8a68024bc3a22e5">gist</a> where I calculate the K-S statistics across each combination of a group of distributions.</p>
 <p><strong>Example with transformations<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>:</strong></p>
 <p>Back to the feature engineering example, perhaps we want to calculate the difference and quotient of each combination of our variables.</p>
-<pre class="r"><code>new_features &lt;- df_lists_comb %&gt;% 
+<pre class="r"><code>new_features_prep1 &lt;- df_lists_comb %&gt;% 
   mutate(difference = map2(vector, vector2, `-`),
-         ratio = map2(vector, vector2, `/`)) %&gt;% 
-  select(-c(vector, vector2)) %&gt;% 
-  pivot_longer(cols = -contains(&quot;var&quot;)) %&gt;% 
-  mutate(name_vars = str_c(var, name, var2, sep = &quot;.&quot;)) %&gt;% 
-  select(name_vars, everything(), -c(var, var2, vars, name)) %&gt;% 
-  pivot_wider(values_from = value,
-              names_from = name_vars) %&gt;% 
-  unnest(cols = everything())</code></pre>
+         ratio = map2(vector, vector2, `/`))</code></pre>
 </div>
-<div id="v.-bind-back-to-data" class="section level2">
-<h2>V. Bind back to data</h2>
-<p>I then bind the new features back onto the original data – adding a lot more columns.</p>
-<pre class="r"><code>ames_data_features &lt;- bind_cols(ames_subset, new_features)
-
-dim(ames_data_features)</code></pre>
-<pre><code>## [1] 2930  190</code></pre>
+<div id="v.-reshape-re-pivot-unnest" class="section level2">
+<h2>V. Reshape, re-pivot &amp; unnest</h2>
+<p>These steps put our data back into a more traditional form consistent with our starting dataframe/tibble.</p>
+<p><strong>Reshape:</strong></p>
+<p>The goal is to get our dataframe back into a form similar to where it was at the end of <a href="#i.-nest-and-pivot">I. Nest and pivot</a> where we had two columns:</p>
+<ul>
+<li>one with our variable names</li>
+<li>a second containing a list-column of vectors</li>
+</ul>
+<p><em>In this section at the end of each line of code is a number corresponding with the explanations below:</em></p>
+<ol style="list-style-type: decimal">
+<li>if we had done just one operation, this step would not be needed, but we did multiple operations and hence created multiple list-columns (<code>difference</code> and <code>ratio</code>) which we need to get into a single list-column</li>
+<li>create new variable name that combines constituent variable names with name of transformation</li>
+<li>remove old columns</li>
+</ol>
+<pre class="r"><code>new_features_prep2 &lt;- new_features_prep1 %&gt;% 
+  pivot_longer(cols = c(difference, ratio)) %&gt;% # 1
+  mutate(name_vars = str_c(var, name, var2, sep = &quot;.&quot;)) %&gt;% # 2
+  select(name_vars, value) %&gt;% # 3
+  print()</code></pre>
+<pre><code>## # A tibble: 180 x 2
+##    name_vars                          value        
+##    &lt;chr&gt;                              &lt;list&gt;       
+##  1 Fireplaces.difference.First_Flr_SF &lt;dbl [2,930]&gt;
+##  2 Fireplaces.ratio.First_Flr_SF      &lt;dbl [2,930]&gt;
+##  3 Fireplaces.difference.Full_Bath    &lt;dbl [2,930]&gt;
+##  4 Fireplaces.ratio.Full_Bath         &lt;dbl [2,930]&gt;
+##  5 Fireplaces.difference.Garage_Area  &lt;dbl [2,930]&gt;
+##  6 Fireplaces.ratio.Garage_Area       &lt;dbl [2,930]&gt;
+##  7 Fireplaces.difference.Garage_Cars  &lt;dbl [2,930]&gt;
+##  8 Fireplaces.ratio.Garage_Cars       &lt;dbl [2,930]&gt;
+##  9 Fireplaces.difference.Gr_Liv_Area  &lt;dbl [2,930]&gt;
+## 10 Fireplaces.ratio.Gr_Liv_Area       &lt;dbl [2,930]&gt;
+## # ... with 170 more rows</code></pre>
+<p><strong>Re-pivot and unnest:</strong></p>
+<p>Next we simply apply the inverse of those operations performed in <a href="#i.-nest-and-pivot">I. Nest and pivot</a>.</p>
+<pre class="r"><code>new_features &lt;- new_features_prep2 %&gt;% 
+  pivot_wider(values_from = value,
+              names_from = name_vars) %&gt;%
+  unnest(cols = everything())</code></pre>
+<p>The new features will add a good number of columns onto our original dataset<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
+<pre class="r"><code>dim(new_features)</code></pre>
+<pre><code>## [1] 2930  180</code></pre>
+</div>
+<div id="vi.-bind-back-to-data" class="section level2">
+<h2>VI. Bind back to data</h2>
+<p>I then bind the new features back onto the original subsetted dataframe.</p>
+<pre class="r"><code>ames_data_features &lt;- bind_cols(ames_subset, new_features)</code></pre>
 <p>At which point I could do further exploring, feature engineering, model building, etc.</p>
 </div>
 </div>
 <div id="functionalize" class="section level1">
 <h1>Functionalize</h1>
-<p>I put these steps (for the transformation of pairwise columns operation) into a few functions found at <a href="https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1">this gist</a><a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
+<p>I put these steps into a few functions found at <a href="https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1">this gist</a><a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>.</p>
 <pre class="r"><code>devtools::source_gist(&quot;https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1&quot;)</code></pre>
-<p><code>operations_combinations()</code> takes in your dataframe, the set of columns to create pairwise combinations from, and a list of two-argument functions to apply.</p>
-<pre class="r"><code># just to show can input other (non-infix) functions
-difference_squared &lt;- function(x, y) (x - y)^2
-
-ames_data_features_example &lt;- ames %&gt;% 
+<p><code>operations_combinations()</code> takes in your dataframe, the set of numeric columns to create pairwise combinations from, and a list of functions<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a> to apply.</p>
+<pre class="r"><code>ames_data_features_example &lt;- ames %&gt;% 
   keep(is.numeric) %&gt;% 
   mutate_all(as.double) %&gt;% 
   mutate_all(~(. - mean(.)) / sd(.))
@@ -279,8 +330,9 @@ ames_data_features_example &lt;- ames %&gt;%
 ames_data_features_example &lt;- operations_combinations(
   df = ames_data_features_example,
   one_of(ames_cols),
-  funs = list(&quot;/&quot;, &quot;-&quot;, &quot;difference_squared&quot;),
-  funs_names = list(&quot;ratio&quot;, &quot;difference&quot;, &quot;diffsqd&quot;)
+  funs = list(&quot;/&quot;, &quot;-&quot;),
+  funs_names = list(&quot;ratio&quot;, &quot;difference&quot;),
+  associative = FALSE
 )</code></pre>
 <p>To keep things simple, I’m going to remove any columns that contain any NA’s or infinite values. I’ll also use a random sample of just 1500 rows.</p>
 <pre class="r"><code>features_keep &lt;- ames_data_features_example %&gt;% 
@@ -290,11 +342,11 @@ ames_data_features_example &lt;- operations_combinations(
   pull(key)
 
 set.seed(1234)
-ames_sp_features_subset &lt;- select(ames_data_features_example,
-                                  features_keep) %&gt;% 
+ames_sp_features_subset &lt;- ames_data_features_example %&gt;% 
+  select(features_keep) %&gt;% 
   sample_n(1500)</code></pre>
-<p>Next maybe you are interested in seeing the p-value of the correlation of each of your features with <code>Sale_Price</code>.</p>
-<p>Calculate p.values and plot.</p>
+<p>Next maybe you are interested in seeing the p-value of the correlation coefficient of each of your features with <code>Sale_Price</code>.</p>
+<p>Calculate p.values and plot these on a histogram.</p>
 <pre class="r"><code>ames_sp_features_subset %&gt;% 
   select(-Sale_Price) %&gt;% 
   summarise_all(~cor.test(., ames_sp_features_subset$Sale_Price)$p.value) %&gt;% 
@@ -304,45 +356,45 @@ ames_sp_features_subset &lt;- select(ames_data_features_example,
   scale_x_log10()+
   labs(title = &quot;Distribution of correlations with Sale_Price&quot;,
      x = &quot;Negative log of p-value of correlation coefficient&quot;)</code></pre>
-<p><img src="/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 <p>If doing predictive modeling or inference you might fit this into a <code>tidymodels</code> pipeline or other framework. For some brief notes on this see <a href="#interactions-example-tidymodels">Interactions example, tidymodels</a>.</p>
 </div>
 <div id="when-is-this-approach-innapropriate" class="section level1">
 <h1>When is this approach innapropriate?</h1>
-<p>Combinatorial growth is very fast<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>. As you increase either the number of variables in your pool or the size of each set, you will quickly bump into computational limitations.</p>
-<p>Tidyverse packages are optimized to be computationally efficient. However operations with matrices or other specialized formats<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a> are generally faster<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a> than with dataframes/tibbles. If you are running into computational challenges but prefer to stick with a tidyverse aesthetic (which uses dataframes as a cornerstone), you might:</p>
+<p>Combinatorial growth is very fast<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>. As you increase either the number of variables in your pool or the size of each set, you will quickly bump into computational limitations.</p>
+<p>Tidyverse packages are optimized to be computationally efficient. However operations with matrices or other specialized formats<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a> are generally faster<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a> than with dataframes/tibbles. If you are running into computational challenges but prefer to stick with a tidyverse aesthetic (which uses dataframes as a cornerstone), you might:</p>
 <ul>
 <li>Use heuristics to reduce the number of variables or operations you need to perform (e.g. take a sample, use a preliminary filter, a step-wise like iteration, etc.)</li>
-<li>Look for packages that abstract the storage and computationally heavy operations away<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a> and then return back an output in a convenient form<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a></li>
-<li>Improve the efficiency of your code (e.g. <strong>filter redundancies</strong> before <em>rather than</em> after <strong>expanding combinations</strong>)<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a></li>
+<li>Look for packages that abstract the storage and computationally heavy operations away<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a> and then return back an output in a convenient form<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a></li>
+<li>Improve the efficiency of your code (e.g. <em>filter redundancies</em> before rather than after <em>expanding combinations</em>)<a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a></li>
 <li>Consider parralelizing</li>
-<li>Use matrices<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a></li>
+<li>Use matrices<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a></li>
 </ul>
-<p>For example, you <em>could</em> use an approach like the one I walk through to calculate the pairwise correlations between each of your variables. However, the <code>cor()</code> function would do this much more efficiently (or you could also use the <code>corrr</code> package within the <code>tidymodels</code> suite which calls <code>cor()</code> in the back-end<a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a>).</p>
+<p>For example, you <em>could</em> use an approach like the one I walk through to calculate the pairwise correlations between each of your variables. However, the <code>cor()</code> function would do this much more efficiently (or you could also use the <code>corrr</code> package within the <code>tidymodels</code> suite which calls <code>cor()</code> in the back-end<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a>).</p>
 <p>However, for many operations…</p>
 <ul>
 <li>there may not be an efficient pairwise implementation available / accessible</li>
 <li>the slower computation may not matter or can be mitigated in some way</li>
 </ul>
-<p>These situations<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a> are where the approaches I walked through are most appropriate.</p>
+<p>These situations<a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a> are where the approach I walked through is most appropriate.</p>
 </div>
 <div id="appendix" class="section level1">
 <h1>Appendix</h1>
 <div id="interactions-example-tidymodels" class="section level2">
 <h2>Interactions example, tidymodels</h2>
-<p>A good example for creating and evaluating interaction terms<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a> is in <a href="http://www.feat.engineering/complete-enumeration.html#complete-enumeration-simple-screening">The Brute-Force Approach to Identifying Predictive Interactions, Simple Screening</a> section of <em>Max Kuhn</em> and <em>Kjell Johnson’s</em> (free) online book “Feature Engineering and Selection: A Practical Approach for Predictive Models”.</p>
+<p>A good example for creating and evaluating interaction terms<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a> is in <a href="http://www.feat.engineering/complete-enumeration.html#complete-enumeration-simple-screening">The Brute-Force Approach to Identifying Predictive Interactions, Simple Screening</a> section of <em>Max Kuhn</em> and <em>Kjell Johnson’s</em> (free) online book “Feature Engineering and Selection: A Practical Approach for Predictive Models”.</p>
 <p>The <a href="https://github.com/topepo/FES/blob/master/07_Detecting_Interaction_Effects/7_04_The_Brute-Force_Approach_to_Identifying_Predictive_Interactions/ames_pairwise.R">source code</a> shows another approach for combining variables. The author uses…</p>
 <ul>
 <li><code>combn()</code> to create all combinations of variable names which are then…</li>
-<li>turned into formulas and passed into <code>recipes::step_interact()</code>, specifying the new columns to be created<a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a>…</li>
+<li>turned into formulas and passed into <code>recipes::step_interact()</code>, specifying the new columns to be created<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a>…</li>
 <li>for each interaction term…</li>
 <li>in each associated model being evaluated</li>
 </ul>
-<p>The example uses a mix of packages and styles and is not a purely tidy approach – <code>tidymodels</code> has also gone through a lot of development since “Feature Engineering and Selection…” was published in 2019<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a>. Section 11.2 on <a href="http://www.feat.engineering/greedy-simple-filters.html">Greedy Search Methods, Simple Filters</a> is also highly relevant.</p>
+<p>The example uses a mix of packages and styles and is not a purely tidy approach – <code>tidymodels</code> has also gone through a lot of development since “Feature Engineering and Selection…” was published in 2019<a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a>. Section 11.2 on <a href="http://www.feat.engineering/greedy-simple-filters.html">Greedy Search Methods, Simple Filters</a> is also highly relevant.</p>
 </div>
 <div id="expand-via-join" class="section level2">
 <h2>Expand via join</h2>
-<p>You can take advantage of join<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a> behavior to create all possible row combinations. In this case, the output will be the same as shown when using <code>expand()</code> (except row order will be different).</p>
+<p>You can take advantage of join<a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a> behavior to create all possible row combinations. In this case, the output will be the same as shown when using <code>expand()</code> (except row order will be different).</p>
 <pre class="r"><code>left_join(mutate(df_lists, id = 1),
           mutate(df_lists, id = 1) %&gt;% rename_at(vars(-one_of(&quot;id&quot;)), paste0, &quot;2&quot;)) %&gt;%
   select(-id)</code></pre>
@@ -428,38 +480,40 @@ ames_sp_features_subset &lt;- select(ames_data_features_example,
 <a href="#fnref1" class="footnote-back">↩</a></li>
 <li id="fn2"><p>Though this “throw everything and the kitchen-sink” approach may not always be a good idea.<a href="#fnref2" class="footnote-back">↩</a></p></li>
 <li id="fn3"><p>I’ve done this type of operation in a variety of ways. Sometimes without any really good reason as to why I used one approach or another. It isn’t completely clear (at least to me) the recommended way of doing these type of operations within the tidyverse – hence the diversity of my approaches in the past and deciding to document the typical steps in the approach I take… via writing this post.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>I’ll also reference related approaches / small tweaks (putting those materials in the <a href="#appendix">Appendix</a>. This is by no means an exhaustive list (e.g. don’t have an example with a <code>for</code> loop or with a <code>%do%</code> operator). The source code of my post on <a href="https://www.bryanshalloway.com/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/">Ambiguous Absolute Value</a> signs shows a related but more complex / messy approach on a combinatorics problem.<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>In particular, the chapters on “Iteration” and “Many Models” in <a href="https://r4ds.had.co.nz/iteration.html">R for Data Science</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>The new <code>dplyr</code> 1.0.0. contains new functions that would have been potentially useful for several of these operations. I highly recommend checking these updates out in the various <a href="https://www.tidyverse.org/blog/">recent posts</a> by Hadley Wickham. Some of the major updates (potentially relevant to the types of operations I’ll be discussing in my post):</p>
+<li id="fn4"><p>Or the tidymodels implementation <code>corrr::correlate()</code> in the <a href="https://corrr.tidymodels.org/">corrr</a> package.<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>I’ll also reference related approaches / small tweaks (putting those materials in the <a href="#appendix">Appendix</a>. This is by no means an exhaustive list (e.g. don’t have an example with a <code>for</code> loop or with a <code>%do%</code> operator). The source code of my post on <a href="https://www.bryanshalloway.com/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/">Ambiguous Absolute Value</a> signs shows a related but more complex / messy approach on a combinatorics problem.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>In particular, the chapters on “Iteration” and “Many Models” in <a href="https://r4ds.had.co.nz/iteration.html">R for Data Science</a><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>The new <code>dplyr</code> 1.0.0. contains new functions that would have been potentially useful for several of these operations. I highly recommend checking these updates out in the various <a href="https://www.tidyverse.org/blog/">recent posts</a> by Hadley Wickham. Some of the major updates (potentially relevant to the types of operations I’ll be discussing in my post):</p>
 <ul>
 <li>new approach for across-column operations (replacing <code>_at()</code>, <code>_if()</code>, <code>_all()</code> variants with <code>across()</code> function)</li>
 <li>brought-back rowwise operations</li>
 <li>emphasize ability to output tibbles / multiple columns in core <code>dplyr</code> verbs… This is something I had only taken advantage of occassionally in the past (<a href="https://stackoverflow.com/a/54725732/9059865">example</a>), but will look to use more going forward.]</li>
 </ul>
-<a href="#fnref6" class="footnote-back">↩</a></li>
-<li id="fn7"><p>Using <a href="https://corrr.tidymodels.org/">corrr</a> package.<a href="#fnref7" class="footnote-back">↩</a></p></li>
+<a href="#fnref7" class="footnote-back">↩</a></li>
 <li id="fn8"><p>For technical reasons, I also converted all integer types to doubles – was getting integer overflow problems in later operations before changing. <a href="https://stackoverflow.com/questions/8804779/what-is-integer-overflow-in-r-and-how-can-it-happen">Thread</a> on integer overflow in R. In this post I’m not taking a disciplined approach to feature engineering, however I did standardize the variables so that variable combinations would at least be starting on a similar scale.<a href="#fnref8" class="footnote-back">↩</a></p></li>
 <li id="fn9"><p>Note that this part of the problem is one where I actually find using <code>tidyr::gather()</code> easier – but I’ve been forcing myself to switch over to using the <code>pivot_()</code> functions over <code>spread()</code> and <code>gather()</code>.<a href="#fnref9" class="footnote-back">↩</a></p></li>
 <li id="fn10"><p>The more common approach.<a href="#fnref10" class="footnote-back">↩</a></p></li>
 <li id="fn11"><p>As switching these would be more computationally efficient – see [When is this approach inappropriate?] for notes related to this.<a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>E.g. multiplication or addition… not subtraction or division.<a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p>I.e. has the same output regardless of the order of the variables. E.g. multiplication or addition but not subtraction or division.<a href="#fnref12" class="footnote-back">↩</a></p></li>
 <li id="fn13"><p>Function(s) that output vectors of length 1 (or less than length of input vectors).<a href="#fnref13" class="footnote-back">↩</a></p></li>
-<li id="fn14"><p>Note that you could also have used <code>psych::corr.test()</code> on your original dataframe to accomplish this, see <a href="https://stackoverflow.com/questions/13112238/a-matrix-version-of-cor-test">stack overflow thread</a>.<a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p>Note that the pairwise implementation <code>psych::corr.test()</code> could have been used on your original subsetted dataframe, see <a href="https://stackoverflow.com/questions/13112238/a-matrix-version-of-cor-test">stack overflow thread</a>.<a href="#fnref14" class="footnote-back">↩</a></p></li>
 <li id="fn15"><p>Function(s) that output vector of length equal to length of input vectors.<a href="#fnref15" class="footnote-back">↩</a></p></li>
-<li id="fn16"><p>Steps I - III and V are essentially direct copies of the code above. The approach I took with Step V may take more effort to follow as requires understanding a little <code>rlang</code> and could likely have been done more simply.<a href="#fnref16" class="footnote-back">↩</a></p></li>
-<li id="fn17"><p>Non-technical article discussing combinatorial explosion in context of company user growth targets: <a href="https://medium.com/@TorBair/exponential-growth-isn-t-cool-combinatorial-growth-is-85a0b1fdb6a5">Exponential Growth Isn’t Cool. Combinatorial Growth Is.</a>.<a href="#fnref17" class="footnote-back">↩</a></p></li>
-<li id="fn18"><p>E.g. <a href="https://github.com/Rdatatable/data.table">data.table</a> dataframes<a href="#fnref18" class="footnote-back">↩</a></p></li>
-<li id="fn19"><p>Hence, if you are doing operations across combinations of lots of variables it may not make sense to do the operations directly within dataframes.<a href="#fnref19" class="footnote-back">↩</a></p></li>
-<li id="fn20"><p>Much (if not most) of the <code>tidyverse</code> (and the R programming language generally) is about creating a smooth interface between the analyst/scientist and the back-end complexity of the operations they are performing. Projects like <a href="https://spark.rstudio.com/">sparklyr</a>, <a href="https://db.rstudio.com/dbi/">DBI</a>, <a href="https://github.com/rstudio/reticulate">reticulate</a>, <a href="https://www.tidymodels.org/">tidymodels</a>, and <a href="https://github.com/paul-buerkner/brms">brms</a> (to name a few) represent cases where this <em>interface</em> role of R is most apparent.<a href="#fnref20" class="footnote-back">↩</a></p></li>
-<li id="fn21"><p>For tidyverse packages, this is often returned into or in the form of a dataframe.<a href="#fnref21" class="footnote-back">↩</a></p></li>
-<li id="fn22"><p>Could make better use of <code>combn()</code> function to help.<a href="#fnref22" class="footnote-back">↩</a></p></li>
-<li id="fn23"><p>Depending on the complexity may just need to brush-up on your linear algebra.<a href="#fnref23" class="footnote-back">↩</a></p></li>
-<li id="fn24"><p>and can also be used to run the operation on databases that may have larger data than you could fit on your computer<a href="#fnref24" class="footnote-back">↩</a></p></li>
-<li id="fn25"><p>Likely more common for many, if not most, analysts and data scientists.<a href="#fnref25" class="footnote-back">↩</a></p></li>
-<li id="fn26"><p>I.e. multiplying two variables together<a href="#fnref26" class="footnote-back">↩</a></p></li>
-<li id="fn27"><p>Created upon the recipe being <em>baked</em> or <em>juiced</em> – if you have not checked it out, <a href="https://github.com/tidymodels/recipes">recipes</a> is AWESOME!<a href="#fnref27" class="footnote-back">↩</a></p></li>
-<li id="fn28"><p>Maybe at a future date I’ll make a post writing out the example here using the newer approaches now available in <code>tidymodels</code>. <a href="https://gist.github.com/brshallo/674ff06608c1a55fefb8d5dc49896d65">Gist</a> of <code>combn_ttible()</code>… starting place for if I ever get to that write-up.<a href="#fnref28" class="footnote-back">↩</a></p></li>
-<li id="fn29"><p>Could also have used <code>right_join()</code> or <code>full_join()</code>.<a href="#fnref29" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p>Did not print this output because cluttered-up page with so many column names.<a href="#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn17"><p>Steps I - III and V &amp; VI are essentially direct copies of the code above. The approach I took with Step IV may take more effort to follow as it requires understanding a little <code>rlang</code> and could likely have been done more simply.<a href="#fnref17" class="footnote-back">↩</a></p></li>
+<li id="fn18"><p>Must have two vectors as input, but do not need to be infix functions.<a href="#fnref18" class="footnote-back">↩</a></p></li>
+<li id="fn19"><p>Non-technical article discussing combinatorial explosion in context of company user growth targets: <a href="https://medium.com/@TorBair/exponential-growth-isn-t-cool-combinatorial-growth-is-85a0b1fdb6a5">Exponential Growth Isn’t Cool. Combinatorial Growth Is.</a>.<a href="#fnref19" class="footnote-back">↩</a></p></li>
+<li id="fn20"><p>E.g. <a href="https://github.com/Rdatatable/data.table">data.table</a> dataframes<a href="#fnref20" class="footnote-back">↩</a></p></li>
+<li id="fn21"><p>Hence, if you are doing operations across combinations of lots of variables it may not make sense to do the operations directly within dataframes.<a href="#fnref21" class="footnote-back">↩</a></p></li>
+<li id="fn22"><p>Much (if not most) of the <code>tidyverse</code> (and the R programming language generally) is about creating a smooth interface between the analyst/scientist and the back-end complexity of the operations they are performing. Projects like <a href="https://spark.rstudio.com/">sparklyr</a>, <a href="https://db.rstudio.com/dbi/">DBI</a>, <a href="https://github.com/rstudio/reticulate">reticulate</a>, <a href="https://www.tidymodels.org/">tidymodels</a>, and <a href="https://github.com/paul-buerkner/brms">brms</a> (to name a few) represent cases where this <em>interface</em> role of R is most apparent.<a href="#fnref22" class="footnote-back">↩</a></p></li>
+<li id="fn23"><p>For tidyverse packages, this is often returned into or in the form of a dataframe.<a href="#fnref23" class="footnote-back">↩</a></p></li>
+<li id="fn24"><p>Could make better use of <code>combn()</code> function to help.<a href="#fnref24" class="footnote-back">↩</a></p></li>
+<li id="fn25"><p>Depending on the complexity may just need to brush-up on your linear algebra.<a href="#fnref25" class="footnote-back">↩</a></p></li>
+<li id="fn26"><p>and can also be used to run the operation on databases that may have larger data than you could fit on your computer<a href="#fnref26" class="footnote-back">↩</a></p></li>
+<li id="fn27"><p>Likely more common for many, if not most, analysts and data scientists.<a href="#fnref27" class="footnote-back">↩</a></p></li>
+<li id="fn28"><p>I.e. multiplying two variables together<a href="#fnref28" class="footnote-back">↩</a></p></li>
+<li id="fn29"><p>Created upon the recipe being <em>baked</em> or <em>juiced</em> – if you have not checked it out, <a href="https://github.com/tidymodels/recipes">recipes</a> is AWESOME!<a href="#fnref29" class="footnote-back">↩</a></p></li>
+<li id="fn30"><p>Maybe at a future date I’ll make a post writing out the example here using the newer approaches now available in <code>tidymodels</code>. <a href="https://gist.github.com/brshallo/674ff06608c1a55fefb8d5dc49896d65">Gist</a> of <code>combn_ttible()</code>… starting place for if I ever get to that write-up.<a href="#fnref30" class="footnote-back">↩</a></p></li>
+<li id="fn31"><p>Could also have used <code>right_join()</code> or <code>full_join()</code>.<a href="#fnref31" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
 
