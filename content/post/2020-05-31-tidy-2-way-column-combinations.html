@@ -29,7 +29,7 @@ output:
 </ul></li>
 <li><a href="#functionalize">Functionalize</a></li>
 <li><a href="#example-creating-evaluating-features">Example, creating &amp; evaluating features</a></li>
-<li><a href="#when-is-this-approach-innapropriate">When is this approach innapropriate?</a></li>
+<li><a href="#when-is-this-approach-inappropriate">When is this approach inappropriate?</a></li>
 <li><a href="#appendix">Appendix</a><ul>
 <li><a href="#interactions-example-tidymodels">Interactions example, tidymodels</a></li>
 <li><a href="#expand-via-join">Expand via join</a></li>
@@ -262,7 +262,7 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
   funs_names = list(&quot;ratio&quot;, &quot;difference&quot;),
   associative = FALSE
 )</code></pre>
-<p>Perhaps you want to calculate some measure of association between your new featurs and <code>Sale_price</code>. To keep things simple, I’m going to first remove any columns that contain any NA’s or infinite values. I’ll also use a random sample of just 1500 rows.</p>
+<p>Perhaps you want to calculate some measure of association between your new features and <code>Sale_price</code>. To keep things simple, I’m going to first remove any columns that contain any NA’s or infinite values. I’ll also use a random sample of just 1500 rows.</p>
 <pre class="r"><code>features_keep &lt;- ames_data_features_example %&gt;% 
   keep(is.numeric) %&gt;% 
   summarise_all(~sum(is.na(.) | is.infinite(.))) %&gt;% 
@@ -286,8 +286,8 @@ ames_sp_features_subset &lt;- ames_data_features_example %&gt;%
 <p><img src="/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 <p>If doing predictive modeling or inference you probably want to fit any computation and analysis into a <code>tidymodels</code> process or other framework. For some brief notes on this see <a href="#interactions-example-tidymodels">Interactions example, tidymodels</a>.</p>
 </div>
-<div id="when-is-this-approach-innapropriate" class="section level1">
-<h1>When is this approach innapropriate?</h1>
+<div id="when-is-this-approach-inappropriate" class="section level1">
+<h1>When is this approach inappropriate?</h1>
 <p>Combinatorial growth is very fast<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>. As you increase either the number of variables in your pool or the size of each set, you will quickly bump into computational limitations.</p>
 <p>Tidyverse packages are optimized to be efficient. However operations with matrices or other specialized formats<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a> are generally faster<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a> than with dataframes/tibbles. If you are running into computational challenges but prefer to stick with a tidyverse aesthetic (which uses dataframes as a cornerstone), you might:</p>
 <ul>
@@ -420,7 +420,7 @@ ames_sp_features_subset &lt;- ames_data_features_example %&gt;%
 <li id="fn8"><p>For technical reasons, I also converted all integer types to doubles – was getting integer overflow problems in later operations before changing. <a href="https://stackoverflow.com/questions/8804779/what-is-integer-overflow-in-r-and-how-can-it-happen">Thread</a> on integer overflow in R. In this post I’m not taking a disciplined approach to feature engineering. For example it may make sense to normalize the variables so that variable combinations would be starting on a similar scale. This could be done using <code>recipes::step_normalize()</code> or with code like <code>dplyr::mutate_all(df, ~(. - mean(.)) / sd(.))</code> .<a href="#fnref8" class="footnote-back">↩</a></p></li>
 <li id="fn9"><p>Note that this part of the problem is one where I actually find using <code>tidyr::gather()</code> easier – but I’ve been forcing myself to switch over to using the <code>pivot_()</code> functions over <code>spread()</code> and <code>gather()</code>.<a href="#fnref9" class="footnote-back">↩</a></p></li>
 <li id="fn10"><p>The more common approach.<a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p>As switching these would be more computationally efficient – see [When is this approach inappropriate?] for notes related to this.<a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p>As switching these would be more computationally efficient – see <a href="#when-is-this-approach-inappropriate">When is this approach inappropriate?</a> for notes related to this.<a href="#fnref11" class="footnote-back">↩</a></p></li>
 <li id="fn12"><p>I.e. has the same output regardless of the order of the variables. E.g. multiplication or addition but not subtraction or division.<a href="#fnref12" class="footnote-back">↩</a></p></li>
 <li id="fn13"><p>Function(s) that output vectors of length 1 (or less than length of input vectors).<a href="#fnref13" class="footnote-back">↩</a></p></li>
 <li id="fn14"><p>Note that the pairwise implementation <code>psych::corr.test()</code> could have been used on your original subsetted dataframe, see <a href="https://stackoverflow.com/questions/13112238/a-matrix-version-of-cor-test">stack overflow thread</a>.<a href="#fnref14" class="footnote-back">↩</a></p></li>
