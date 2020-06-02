@@ -38,7 +38,7 @@ output:
 </ul>
 </div>
 
-<p>Say you want to map an operation or list of operations across all two-way<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. In some cases there may be an excellent pairwise implementation already available, e.g. R’s <code>cor()</code> function for computing correlations across your variables. In other cases one may not exist or may not be easy to use. In this post I’ll walk through an example<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> explaining the code and steps for setting-up arbitrary pairwise operations across sets of variables.</p>
+<p>Say you want to map an operation or list of operations across all two-way<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. In some cases there may be an excellent pairwise implementation already available, e.g. R’s <code>cor()</code> function for computing correlations across your variables. In other cases one may not exist or may not be easy to use. In this post I’ll walk through an example<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> explaining code and steps for setting-up arbitrary pairwise operations across sets of variables.</p>
 <p><em>I’ll break my approach down into several steps:</em></p>
 <p>I. Nest and pivot<br />
 II. Expand combinations<br />
@@ -101,7 +101,6 @@ ames_subset &lt;- select(ames, ames_cols) %&gt;%
 </div>
 <div id="ii.-expand-combinations" class="section level2">
 <h2>II. Expand combinations</h2>
-<p>You could make a strong case that this step should be after <a href="#iii.-filter-redundancies">III. Filter redundancies</a><a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> however I found that putting it beforehand made my example easier to follow.</p>
 <p>I then use <code>tidyr::nesting()</code> within <code>tidyr::expand()</code> to make all 2-way combinations.</p>
 <pre class="r"><code>df_lists_comb &lt;- expand(df_lists,
                         nesting(var, vector),
@@ -122,6 +121,7 @@ ames_subset &lt;- select(ames, ames_cols) %&gt;%
 ## 10 Fireplaces &lt;dbl [2,930]&gt; Year_Remod_Add &lt;dbl [2,930]&gt;
 ## # ... with 90 more rows</code></pre>
 <p>See <a href="#expand-via-join">Expand via join</a> for an alternative approach using the <code>dplyr::*_join()</code> operations.</p>
+<p><em>You could make a strong case that this step should have been after <a href="#iii.-filter-redundancies">III. Filter redundancies</a><a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>. However putting it beforehand makes the required code easier to write and to follow.</em></p>
 </div>
 <div id="iii.-filter-redundancies" class="section level2">
 <h2>III. Filter redundancies</h2>
@@ -180,7 +180,7 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
   theme(plot.title.position = &quot;plot&quot;)</code></pre>
 <p><img src="/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>You could use this approach to calculate any summary statistic. For example, see <a href="https://gist.github.com/brshallo/dc3c1f2f34519ca2a8a68024bc3a22e5">gist</a> where I calculate the K-S statistics across each combination of a group of distributions.</p>
-<p><strong>Example with transformation<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>:</strong></p>
+<p><strong>Example with transformations<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>:</strong></p>
 <p>Back to the feature engineering example, perhaps we want to calculate the difference and quotient of each combination of our variables.</p>
 <pre class="r"><code>new_features &lt;- df_lists_comb %&gt;% 
   mutate(difference = map2(vector, vector2, `-`),
@@ -195,14 +195,17 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
 </div>
 <div id="v.-bind-back-to-data" class="section level2">
 <h2>V. Bind back to data</h2>
-<p>Which I then bind back onto the original dataset.</p>
-<pre class="r"><code>ames_data_features &lt;- bind_cols(ames_subset, new_features)</code></pre>
-<p>At which point any further exploring, feature engineering, model building, etc., may be done.</p>
+<p>I then bind the new features back onto the original data – adding a lot more columns.</p>
+<pre class="r"><code>ames_data_features &lt;- bind_cols(ames_subset, new_features)
+
+dim(ames_data_features)</code></pre>
+<pre><code>## [1] 2930  190</code></pre>
+<p>At which point I could do further exploring, feature engineering, model building, etc.</p>
 </div>
 </div>
 <div id="functionalize" class="section level1">
 <h1>Functionalize</h1>
-<p>I put these steps (for the transformation of pairwise columns operation) into a few small functions found at <a href="https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1">this gist</a><a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
+<p>I put these steps (for the transformation of pairwise columns operation) into a few functions found at <a href="https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1">this gist</a><a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
 <pre class="r"><code>devtools::source_gist(&quot;https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1&quot;)</code></pre>
 <p><code>operations_combinations()</code> takes in your dataframe, the set of columns to create pairwise combinations from, and a list of two-argument functions to apply.</p>
 <pre class="r"><code># just to show can input other (non-infix) functions
@@ -219,7 +222,7 @@ ames_data_features_example &lt;- operations_combinations(
   funs = list(&quot;/&quot;, &quot;-&quot;, &quot;difference_squared&quot;),
   funs_names = list(&quot;ratio&quot;, &quot;difference&quot;, &quot;diffsqd&quot;)
 )</code></pre>
-<p>To keep things simple, I’m going to remove any columns that contain NA’s or infinite values in any of the features. I’ll also take a random sample of 1500 rows.</p>
+<p>To keep things simple, I’m going to remove any columns that contain any NA’s or infinite values. I’ll also use a random sample of just 1500 rows.</p>
 <pre class="r"><code>features_keep &lt;- ames_data_features_example %&gt;% 
   summarise_all(~sum(is.na(.) | is.infinite(.))) %&gt;% 
   gather() %&gt;% # gather() is an older version of pivot_longer() w/ fewer features
@@ -230,7 +233,7 @@ set.seed(1234)
 ames_sp_features_subset &lt;- select(ames_data_features_example,
                                   features_keep) %&gt;% 
   sample_n(1500)</code></pre>
-<p>Next, for example, you might be interested in seeing the p-value of the correlation of each of your features with <code>Sale_Price</code>.</p>
+<p>Next maybe you are interested in seeing the p-value of the correlation of each of your features with <code>Sale_Price</code>.</p>
 <p>Calculate p.values and plot.</p>
 <pre class="r"><code>ames_sp_features_subset %&gt;% 
   select(-Sale_Price) %&gt;% 

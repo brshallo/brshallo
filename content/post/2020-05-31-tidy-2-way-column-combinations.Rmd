@@ -19,7 +19,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-Say you want to map an operation or list of operations across all two-way[^twoway] combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc.^[Though this "throw everything and the kitchen-sink" approach may not always be a good idea.]. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables[^1]. In some cases there may be an excellent pairwise implementation already available, e.g. R's `cor()` function for computing correlations across your variables. In other cases one may not exist or may not be easy to use. In this post I'll walk through an example[^examples] explaining the code and steps for setting-up arbitrary pairwise operations across sets of variables. 
+Say you want to map an operation or list of operations across all two-way[^twoway] combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc.^[Though this "throw everything and the kitchen-sink" approach may not always be a good idea.]. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables[^1]. In some cases there may be an excellent pairwise implementation already available, e.g. R's `cor()` function for computing correlations across your variables. In other cases one may not exist or may not be easy to use. In this post I'll walk through an example[^examples] explaining code and steps for setting-up arbitrary pairwise operations across sets of variables. 
 
 *I'll break my approach down into several steps:*
 
@@ -106,8 +106,6 @@ See [Pivot and then summarise] for a nearly identical approach with just an alte
 
 ## II. Expand combinations
 
-You could make a strong case that this step should be after [III. Filter redundancies]^[As switching these would be more computationally efficient -- see [When is this approach inappropriate?] for notes related to this.] however I found that putting it beforehand made my example easier to follow.
-
 I then use `tidyr::nesting()` within `tidyr::expand()` to make all 2-way combinations.
 ```{r}
 df_lists_comb <- expand(df_lists,
@@ -117,6 +115,8 @@ df_lists_comb <- expand(df_lists,
 ```
 
 See [Expand via join] for an alternative approach using the `dplyr::*_join()` operations.
+
+*You could make a strong case that this step should have been after [III. Filter redundancies]^[As switching these would be more computationally efficient -- see [When is this approach inappropriate?] for notes related to this.]. However putting it beforehand makes the required code easier to write and to follow.*
 
 ## III. Filter redundancies
 
@@ -173,7 +173,7 @@ df_lists_comb_as %>%
 
 You could use this approach to calculate any summary statistic. For example, see [gist](https://gist.github.com/brshallo/dc3c1f2f34519ca2a8a68024bc3a22e5) where I calculate the K-S statistics across each combination of a group of distributions.
 
-**Example with transformation^[Function(s) that output vector of length equal to length of input vectors.]:**
+**Example with transformations^[Function(s) that output vector of length equal to length of input vectors.]:**
 
 Back to the feature engineering example, perhaps we want to calculate the difference and quotient of each combination of our variables.
 ```{r}
@@ -191,16 +191,18 @@ new_features <- df_lists_comb %>%
 
 ## V. Bind back to data
 
-Which I then bind back onto the original dataset.
+I then bind the new features back onto the original data -- adding a lot more columns.
 ```{r}
 ames_data_features <- bind_cols(ames_subset, new_features)
+
+dim(ames_data_features)
 ```
 
-At which point any further exploring, feature engineering, model building, etc., may be done.
+At which point I could do further exploring, feature engineering, model building, etc.
 
 # Functionalize
 
-I put these steps (for the transformation of pairwise columns operation) into a few small functions found at [this gist](https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1)^[Steps I - III and V are essentially direct copies of the code above. The approach I took with Step V may take more effort to follow as requires understanding a little `rlang` and could likely have been done more simply.]. 
+I put these steps (for the transformation of pairwise columns operation) into a few functions found at [this gist](https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1)^[Steps I - III and V are essentially direct copies of the code above. The approach I took with Step V may take more effort to follow as requires understanding a little `rlang` and could likely have been done more simply.]. 
 
 ```{r}
 devtools::source_gist("https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1")
@@ -225,7 +227,7 @@ ames_data_features_example <- operations_combinations(
 )
 ```
 
-To keep things simple, I'm going to remove any columns that contain NA's or infinite values in any of the features. I'll also take a random sample of 1500 rows.
+To keep things simple, I'm going to remove any columns that contain any NA's or infinite values. I'll also use a random sample of just 1500 rows.
 ```{r}
 features_keep <- ames_data_features_example %>% 
   summarise_all(~sum(is.na(.) | is.infinite(.))) %>% 
@@ -239,7 +241,7 @@ ames_sp_features_subset <- select(ames_data_features_example,
   sample_n(1500)
 ```
 
-Next, for example, you might be interested in seeing the p-value of the correlation of each of your features with `Sale_Price`.
+Next maybe you are interested in seeing the p-value of the correlation of each of your features with `Sale_Price`.
 
 Calculate p.values and plot.
 ```{r}
