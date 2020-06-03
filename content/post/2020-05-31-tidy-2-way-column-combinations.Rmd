@@ -30,6 +30,8 @@ IV. Map function(s)
 V. Return to normal dataframe  
 VI. Bind back to data  
 
+If your interest is only in computing summary statistics (as opposed to modifying your existing dataframe with new columns / features),then only steps I - IV are needed.
+
 **Relevant software and style:**
 
 I will primarily be using R's `tidyverse` packages. I make frequent use of lists as columns within dataframes -- if you are new to these, see my previous [talk](https://www.youtube.com/watch?v=gme4Fb9JVjk) and the resources^[In particular, the chapters on "Iteration" and "Many Models" in [R for Data Science](https://r4ds.had.co.nz/iteration.html)] I link to in the description. 
@@ -107,6 +109,22 @@ df_lists <- ames_subset %>%
 
 See [Pivot and then summarise] for a nearly identical approach with just an altered order of steps. Also see [Nested tibbles] for how you could create a list-column of dataframes^[The more common approach.] rather than vectors. 
 
+### What if my variables are across rows not columns?
+
+For example, pretend you want to see if `Sale_Price` is different across `Mo_Sold`. Perhaps you started by doing an F-test, found that to be significant, and now want to do pairwise t-tests across the samples of `Sale_Price` for each `Mo_Sold`. To set this up, you will want a `group_by()` rather than a `pivot_longer()` step. E.g.
+
+```{r}
+ames %>% 
+  group_by(Mo_Sold) %>% 
+  summarise(Sale_Price = list(Sale_Price)) 
+```
+
+At which point your data[^yourdata] is in fundamentally the same form as shown in the prior code chunk (so you can move onto [II. Expand combinations]).
+
+*If the combinations you want to make are across both rows and columns, you may want to use both `pivot_longer()` and `group_by()` steps and may simply need to make a few small modifications.*
+
+[^yourdata]: If your variables are across rows it is very likely concerned with getting summary metrics rather than creating new features -- as if your data is across rows there is nothing guaranteeing you have the same number of observations or that they are lined-up appropriately.
+
 ## II. Expand combinations
 
 I then use `tidyr::nesting()` within `tidyr::expand()` to make all 2-way combinations of our variables.
@@ -119,7 +137,7 @@ df_lists_comb <- expand(df_lists,
 
 See [Expand via join] for an alternative approach using the `dplyr::*_join()` operations.
 
-*You could make a strong case that this step should be after [III. Filter redundancies]^[As switching these would be more computationally efficient -- see [When is this approach inappropriate?] for notes related to this.]. However putting it beforehand makes the required code easier to write and to read.*
+*You could make a strong case that this step should be after [III. Filter redundancies]^[As switching these would be more computationally efficient -- see [When is this approach inappropriate?] for notes related to this. Switching the order here would suggest using approaches with the`combn()` function.]. However putting it beforehand makes the required code easier to write and to read.*
 
 ## III. Filter redundancies
 
@@ -185,6 +203,8 @@ pairs_cor_pvalues %>%
 ```
 
 You could use this approach to calculate any pairwise summary statistic. For example, see [gist](https://gist.github.com/brshallo/dc3c1f2f34519ca2a8a68024bc3a22e5) where I calculate the K-S statistic across each combination of a group of distributions.
+
+*If you only care about computing summary statistics on your pairwise combinations, (and not adding new columns onto your original dataframe) you can stop here.*
 
 **Example with transformations^[Function(s) that output vector of length equal to length of input vectors.]:**
 
