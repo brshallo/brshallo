@@ -1,7 +1,7 @@
 ---
 title: Tidy Pairwise Operations
 author: Bryan Shalloway
-date: '2020-05-31'
+date: '2020-06-03'
 slug: tidy-2-way-column-combinations
 categories:
   - r
@@ -19,7 +19,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-Say you want to map an operation or list of operations across all two-way[^twoway] combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc^[Though this "throw everything and the kitchen-sink" approach may not always be a good idea.]. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables[^1]. In some cases there may be an excellent pairwise implementation already available, e.g. R's `cor()` function for computing correlations^[Or the tidymodels implementation `corrr::correlate()` in the [corrr](https://corrr.tidymodels.org/) package.]. In other cases one may not exist or is not easy to use^[or is not in a style you prefer]. In this post I'll walk through an example[^examples] explaining code and steps for setting-up arbitrary pairwise operations across sets of variables. 
+Say you want to map an operation or list of operations across all two-way[^twoway] combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc^[Though this "throw everything and the kitchen-sink" approach may not always be a good idea.]. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables[^1]. In some cases there may be a pairwise implementation already available, e.g. R's `cor()` function for computing correlations^[Or the tidymodels implementation `corrr::correlate()` in the [corrr](https://corrr.tidymodels.org/) package.]. In other cases one may not exist or is not easy to use^[or is not in a style you prefer]. In this post I'll walk through an example[^examples] explaining code and steps for setting-up arbitrary pairwise operations across sets of variables. 
 
 *I'll break my approach down into several steps:*
 
@@ -30,13 +30,13 @@ IV. Map function(s)
 V. Return to normal dataframe  
 VI. Bind back to data  
 
-If your interest is only in computing summary statistics (as opposed to modifying your existing dataframe with new columns / features),then only steps I - IV are needed.
+If your interest is only in computing summary statistics (as opposed to modifying an existing dataframe with new columns / features),then only steps I - IV are needed.
 
 **Relevant software and style:**
 
-I will primarily be using R's `tidyverse` packages. I make frequent use of lists as columns within dataframes -- if you are new to these, see my previous [talk](https://www.youtube.com/watch?v=gme4Fb9JVjk) and the resources^[In particular, the chapters on "Iteration" and "Many Models" in [R for Data Science](https://r4ds.had.co.nz/iteration.html)] I link to in the description. 
+I will primarily be using R's `tidyverse` packages. I make frequent use of lists as columns within dataframes -- if you are new to these, see my previous [talk](https://www.youtube.com/watch?v=gme4Fb9JVjk) and the resources^[In particular, the chapters on "Iteration" and "Many Models" in [R for Data Science](https://r4ds.had.co.nz/iteration.html). I would also recommend Rebecca Barter's [Learn to purrr](http://www.rebeccabarter.com/blog/2019-08-19_purrr/) blog post.] I link to in the description. 
 
-Throughout this post, wherever I write "dataframe" I really mean "tibble" (a dataframe with minor changes to default options and prettier printing behavior). Also note that I am using `dplyr` 0.8.3 rather than the newly released 1.0.0[^dplyr].
+Throughout this post, wherever I write "dataframe" I really mean "tibble" (a dataframe with minor changes to default options and printing behavior). Also note that I am using `dplyr` 0.8.3 rather than the newly released 1.0.0[^dplyr].
 
 [^twoway]: Will focus on two-way example in this post, but could use similar methods to make more generalizable solution across n-way examples. If I were to do this, the code below would change. E.g.
 
@@ -91,7 +91,7 @@ ames_subset <- select(ames, ames_cols) %>%
 
 ## I. Nest and pivot
 
-There are a variety of ways to make lists into columns within a dataframe. In the example below, I use `summarise_all(.tbl = ames_subset, .funs = list)` to create a one row dataframe where each column is a list containing a single element and each individual element corresponds with a numeric vector of length 2930. 
+There are a variety of ways to make lists into columns within a dataframe. In the example below, I first use `summarise_all(.tbl = ames_subset, .funs = list)` to create a one row dataframe where each column is a list containing a single element and each individual element corresponds with a numeric vector of length 2930. 
 
 After nesting, I pivot^[Note that this part of the problem is one where I actually find using `tidyr::gather()` easier -- but I've been forcing myself to switch over to using the `pivot_()` functions over `spread()` and `gather()`.] the columns leaving a dataframe with two columns: 
 
@@ -119,15 +119,15 @@ ames %>%
   summarise(Sale_Price = list(Sale_Price)) 
 ```
 
-At which point your data is in fundamentally the same form as shown in the prior code chunk (at least for if we only care about computing summary metrics that don't require vectors of equal length[^yourdata]) so you can move onto [II. Expand combinations].
+At which point your data is in fundamentally the same form as was created in the previous code chunk (at least for if we only care about computing summary metrics that don't require vectors of equal length[^yourdata]) so you can move onto [II. Expand combinations].
 
-*If the combinations you want to make are across both rows and columns, you may want to use both `pivot_longer()` and `group_by()` steps and may simply need to make a few small modifications.*
+*If the variables needed for your combinations of interest are across both rows and columns, you may want to use both `pivot_longer()` and `group_by()` steps and may need to make a few small modifications.*
 
 [^yourdata]: If your variables are across rows you are likely concerned with getting summary metrics rather than creating new features -- as if your data is across rows there is nothing guaranteeing you have the same number of observations or that they are lined-up appropriately. If you *are* interested in creating new features, you should probably have first reshaped your data to ensure each column represented a variable.
 
 ## II. Expand combinations
 
-I then use `tidyr::nesting()` within `tidyr::expand()` to make all 2-way combinations of our variables.
+I then use `tidyr::nesting()` within `tidyr::expand()` to make all 2-way combinations of our rows.
 ```{r}
 df_lists_comb <- expand(df_lists,
                         nesting(var, vector),
@@ -217,9 +217,9 @@ new_features_prep1 <- df_lists_comb %>%
 
 ## V. Return to normal dataframe
 
-These steps put our data back into a more traditional form consistent with our starting dataframe/tibble.
+The next set of steps will put our data back into a more traditional form consistent with our starting dataframe/tibble.
 
-First revert to a form similar to where we were at the end of [I. Nest and pivot] where we had two columns:
+First let's revert our data to a form similar to where it was at the end of [I. Nest and pivot] where we had two columns:
 
 * one with our variable names 
 * a second containing a list-column of vectors
@@ -262,7 +262,7 @@ At which point I could do further exploring, feature engineering, model building
 
 # Functionalize
 
-I put these steps into a few functions found at [this gist](https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1)^[Steps I - III and V & VI are essentially direct copies of the code above. The approach I took with Step IV may take more effort to follow as it requires understanding a little `rlang` and could likely have been done more simply.]. 
+I put these steps into a few (unpolished) functions found at [this gist](https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1)^[Steps I - III and V & VI are essentially direct copies of the code above. The approach I took with Step IV may take more effort to follow as it requires understanding a little `rlang` and could likely have been done more simply.]. 
 
 ```{r}
 devtools::source_gist("https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1")
@@ -283,15 +283,12 @@ ames_data_features_example <- operations_combinations(
 )
 ```
 
-Perhaps you want to calculate some measure of association between your new features and a target of interest. To keep things simple, I'll remove any columns that contain any NA's or infinite values.
+Perhaps you want to calculate some measure of association between your features and a target of interest. To keep things simple, I'll remove any columns that contain any NA's or infinite values.
 ```{r}
 features_keep <- ames_data_features_example %>% 
-  select(-Sale_Price) %>% 
   keep(is.numeric) %>% 
-  summarise_all(~sum(is.na(.) | is.infinite(.))) %>% 
-  gather() %>% # gather() is an older version of pivot_longer() w/ fewer parameters
-  filter(value == 0) %>% 
-  pull(key)
+  keep(~sum(is.na(.) | is.infinite(.)) == 0) %>% 
+  colnames()
 ```
 
 Maybe, for some reason, you want to see the statistical significance of the correlation of each feature with `Sale_Price` when weighting by `Lot_Area`. I'll calculate these across variables (and a random sample of 1500 observations) then plot them on a histogram.
@@ -302,7 +299,7 @@ ames_data_features_example %>%
   summarise_at(
     .vars = features_keep[!(features_keep %in% c("Sale_Price", "Lot_Area"))],
     .funs = ~weights::wtd.cor(., Sale_Price, weight = Lot_Area)[1]) %>% 
-  gather() %>% 
+  gather() %>% # gather() is an older version of pivot_longer() w/ fewer parameters
   ggplot(aes(x = value))+
   geom_vline(xintercept = 0, colour = "lightgray", size = 2)+
   geom_histogram()+
@@ -322,13 +319,13 @@ Tidyverse packages are optimized to be efficient. However operations with matric
 
 * Use heuristics to reduce the number of variables or operations you need to perform (e.g. take a sample, use a preliminary filter, a step-wise like iteration, etc.)
 * Look for packages that abstract the storage and computationally heavy operations away[^2] and then return back an output in a convenient form^[For tidyverse packages, this is often returned into or in the form of a dataframe.]
-* Improve the efficiency of your code (e.g. *filter redundancies* before rather than after *expanding combinations*)^[Could make better use of `combn()` function to help.]
+* Improve the efficiency of your code (e.g. filter redundancies before rather than after expanding combinations)^[Could make better use of `combn()` function to help.]
 * Consider parralelizing
 * Use matrices^[Depending on the complexity may just need to brush-up on your linear algebra.]
 
 [^2]: Much (if not most) of the `tidyverse` (and the R programming language generally) is about creating a smooth interface between the analyst/scientist and the back-end complexity of the operations they are performing. Projects like [sparklyr](https://spark.rstudio.com/), [DBI](https://db.rstudio.com/dbi/), [reticulate](https://github.com/rstudio/reticulate), [tidymodels](https://www.tidymodels.org/), and [brms](https://github.com/paul-buerkner/brms) (to name a few) represent cases where this *interface* role of R is most apparent.
 
-For example, you *could* use an approach like the one I walk through to calculate the pairwise correlations between each of your variables. However, the `cor()` function would do this much more efficiently (or you could also use the `corrr` package within the `tidymodels` suite which calls `cor()` in the back-end^[and can also be used to run the operation on databases that may have larger data than you could fit on your computer]).
+For example, you *could* use an approach like the one I walk through to calculate pairwise correlations between each of your variables. However, the `cor()` function would do this much more efficiently if called on a matrix or traditional dataframe structure (or you could also use the `corrr` package within the `tidymodels` suite which calls `cor()` in the back-end^[`corrr` can also be used to run the operation on databases that may have larger data than you could fit on your computer.]).
 
 However, for many operations...
 
