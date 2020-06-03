@@ -119,11 +119,11 @@ ames %>%
   summarise(Sale_Price = list(Sale_Price)) 
 ```
 
-At which point your data[^yourdata] is in fundamentally the same form as shown in the prior code chunk (so you can move onto [II. Expand combinations]).
+At which point your data is in fundamentally the same form as shown in the prior code chunk (at least for if we only care about computing summary metrics that don't require vectors of equal length[^yourdata]) so you can move onto [II. Expand combinations].
 
 *If the combinations you want to make are across both rows and columns, you may want to use both `pivot_longer()` and `group_by()` steps and may simply need to make a few small modifications.*
 
-[^yourdata]: If your variables are across rows it is very likely concerned with getting summary metrics rather than creating new features -- as if your data is across rows there is nothing guaranteeing you have the same number of observations or that they are lined-up appropriately.
+[^yourdata]: If your variables are across rows you are likely concerned with getting summary metrics rather than creating new features -- as if your data is across rows there is nothing guaranteeing you have the same number of observations or that they are lined-up appropriately. If you *are* interested in creating new features, you should probably have first reshaped your data to ensure each column represented a variable.
 
 ## II. Expand combinations
 
