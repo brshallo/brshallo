@@ -322,7 +322,7 @@ ames_data_features_example %&gt;%
 <li>Consider parralelizing</li>
 <li>Use matrices<a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a></li>
 </ul>
-<p>For example, you <em>could</em> use an approach like the one I walk through to calculate pairwise correlations between each of your variables. However, the <code>cor()</code> function would do this much more efficiently if called on a matrix or traditional dataframe structure (or you could also use the <code>corrr</code> package within the <code>tidymodels</code> suite which calls <code>cor()</code> in the back-end<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a>).</p>
+<p>There is sometimes an urge to do <em>everything</em> in a tidy way, which is not necessary. For example, you <em>could</em> use an approach like the one I walk through to calculate pairwise correlations between each of your variables. However, the <code>cor()</code> function would do this much more efficiently if called on a matrix or traditional dataframe without list-columns (though you could also use the <code>corrr</code> package within the <code>tidymodels</code> suite which calls <code>cor()</code> in the back-end<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a>).</p>
 <p>However, for many operations…</p>
 <ul>
 <li>there may not be an efficient pairwise implementation available / accessible</li>

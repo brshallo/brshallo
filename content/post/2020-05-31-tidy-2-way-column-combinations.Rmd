@@ -325,7 +325,7 @@ Tidyverse packages are optimized to be efficient. However operations with matric
 
 [^2]: Much (if not most) of the `tidyverse` (and the R programming language generally) is about creating a smooth interface between the analyst/scientist and the back-end complexity of the operations they are performing. Projects like [sparklyr](https://spark.rstudio.com/), [DBI](https://db.rstudio.com/dbi/), [reticulate](https://github.com/rstudio/reticulate), [tidymodels](https://www.tidymodels.org/), and [brms](https://github.com/paul-buerkner/brms) (to name a few) represent cases where this *interface* role of R is most apparent.
 
-For example, you *could* use an approach like the one I walk through to calculate pairwise correlations between each of your variables. However, the `cor()` function would do this much more efficiently if called on a matrix or traditional dataframe structure (or you could also use the `corrr` package within the `tidymodels` suite which calls `cor()` in the back-end^[`corrr` can also be used to run the operation on databases that may have larger data than you could fit on your computer.]).
+There is sometimes an urge to do *everything* in a tidy way, which is not necessary. For example, you *could* use an approach like the one I walk through to calculate pairwise correlations between each of your variables. However, the `cor()` function would do this much more efficiently if called on a matrix or traditional dataframe without list-columns (though you could also use the `corrr` package within the `tidymodels` suite which calls `cor()` in the back-end^[`corrr` can also be used to run the operation on databases that may have larger data than you could fit on your computer.]).
 
 However, for many operations...
 
