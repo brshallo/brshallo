@@ -144,7 +144,7 @@ See [Expand via join] for an alternative approach using the `dplyr::*_join()` op
 Filter-out redundant columns, sort the rows, better organize the columns.
 ```{r}
 df_lists_comb <- df_lists_comb %>% 
-  filter(!(var == var2)) %>% 
+  filter(var != var2) %>% 
   arrange(var, var2) %>% 
   mutate(vars = paste0(var, ".", var2)) %>% 
   select(contains("var"), everything()) %>% 
@@ -382,6 +382,37 @@ ames_test %>%
   group_by(var) %>% 
   summarise_all(list)
 ```
+
+## Gif for social media
+
+```{r, eval = FALSE}
+AmesHousing::make_ames() %>% 
+  select(Year = Year_Sold, Price = Sale_Price) %>% 
+  # I.
+  group_by(Year) %>% 
+  summarise(Price = list(Gr_Liv_Area)) %>% 
+  ungroup() %>% 
+  # II.
+  expand(nesting(Year, Price),
+         nesting(Year2 = Year, Price2 = Price)
+  ) %>%
+  # III.
+  filter(Year != Year2) %>% 
+  mutate(Years = map2_chr(.x = Year, 
+                          .y = Year2, 
+                          .f = c_sort_collapse)) %>%
+  distinct(Years, .keep_all = TRUE) %>% 
+  select(-Years) %>% 
+  #IV.
+  mutate(ks_test = map2(Price, 
+                        Price2, 
+                        stats::ks.test) %>% map_dbl("p.value")
+  )
+```
+
+![](/post/2020-05-31-tidy-2-way-column-combinations_files/pairwise-comparison-gif-edit.gif)
+
+Actual gif was created by embedding above code into a presentation and exporting it as a gif and then making a few minor edits.
 
 ## Session info
 

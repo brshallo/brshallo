@@ -64,7 +64,7 @@
 
   <article class="article">
     
-    <span class="article-duration">18 min read</span>
+    <span class="article-duration">19 min read</span>
     
 
     <h1 class="article-title">Tidy Pairwise Operations</h1>
@@ -97,6 +97,7 @@
 <li><a href="#expand-via-join">Expand via join</a></li>
 <li><a href="#nested-tibbles">Nested tibbles</a></li>
 <li><a href="#pivot-and-then-summarise">Pivot and then summarise</a></li>
+<li><a href="#gif-for-social-media">Gif for social media</a></li>
 <li><a href="#session-info">Session info</a></li>
 </ul></li>
 </ul>
@@ -218,7 +219,7 @@ ames_subset &lt;- select(ames, ames_cols) %&gt;%
 <h2>III. Filter redundancies</h2>
 <p>Filter-out redundant columns, sort the rows, better organize the columns.</p>
 <pre class="r"><code>df_lists_comb &lt;- df_lists_comb %&gt;% 
-  filter(!(var == var2)) %&gt;% 
+  filter(var != var2) %&gt;% 
   arrange(var, var2) %&gt;% 
   mutate(vars = paste0(var, &quot;.&quot;, var2)) %&gt;% 
   select(contains(&quot;var&quot;), everything()) %&gt;% 
@@ -428,6 +429,33 @@ ames_data_features_example %&gt;%
              values_to = &quot;vector&quot;) %&gt;% 
   group_by(var) %&gt;% 
   summarise_all(list)</code></pre>
+</div>
+<div id="gif-for-social-media" class="section level2">
+<h2>Gif for social media</h2>
+<pre class="r"><code>AmesHousing::make_ames() %&gt;% 
+  select(Year = Year_Sold, Price = Sale_Price) %&gt;% 
+  # I.
+  group_by(Year) %&gt;% 
+  summarise(Price = list(Gr_Liv_Area)) %&gt;% 
+  ungroup() %&gt;% 
+  # II.
+  expand(nesting(Year, Price),
+         nesting(Year2 = Year, Price2 = Price)
+  ) %&gt;%
+  # III.
+  filter(Year != Year2) %&gt;% 
+  mutate(Years = map2_chr(.x = Year, 
+                          .y = Year2, 
+                          .f = c_sort_collapse)) %&gt;%
+  distinct(Years, .keep_all = TRUE) %&gt;% 
+  select(-Years) %&gt;% 
+  #IV.
+  mutate(ks_test = map2(Price, 
+                        Price2, 
+                        stats::ks.test) %&gt;% map_dbl(&quot;p.value&quot;)
+  )</code></pre>
+<p><img src="/post/2020-05-31-tidy-2-way-column-combinations_files/pairwise-comparison-gif-edit.gif" /></p>
+<p>Actual gif was created by embedding above code into a presentation and exporting it as a gif and then making a few minor edits.</p>
 </div>
 <div id="session-info" class="section level2">
 <h2>Session info</h2>

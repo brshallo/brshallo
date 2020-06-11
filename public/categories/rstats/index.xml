@@ -17,7 +17,7 @@
       <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/06/03/tidy-2-way-column-combinations/</guid>
-      <description>DataOverviewI. Nest and pivotWhat if my variables are across rows not columns?II. Expand combinationsIII. Filter redundanciesIV. Map function(s)V. Return to normal dataframeVI. Bind back to dataFunctionalizeExample creating &amp;amp; evaluating featuresWhen is this approach inappropriate?AppendixInteractions example, tidymodelsExpand via joinNested tibblesPivot and then summariseSession infoSay you want to map an operation or list of operations across all two-way1 combinations of a set of variables/columns in a dataframe.</description>
+      <description>DataOverviewI. Nest and pivotWhat if my variables are across rows not columns?II. Expand combinationsIII. Filter redundanciesIV. Map function(s)V. Return to normal dataframeVI. Bind back to dataFunctionalizeExample creating &amp;amp; evaluating featuresWhen is this approach inappropriate?AppendixInteractions example, tidymodelsExpand via joinNested tibblesPivot and then summariseGif for social mediaSession infoSay you want to map an operation or list of operations across all two-way1 combinations of a set of variables/columns in a dataframe.</description>
     </item>
     
     <item>
