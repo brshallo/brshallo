@@ -51,7 +51,7 @@ Throughout this post, wherever I write "dataframe" I really mean "tibble" (a dat
 
 [^examples]: I'll also reference related approaches / small tweaks (putting those materials in the [Appendix]. This is by no means an exhaustive list (e.g. don't have an example with a `for` loop or with a `%do%` operator). The source code of my post on [Ambiguous Absolute Value](https://www.bryanshalloway.com/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/) signs shows a related but more complex / messy approach on a combinatorics problem.
 
-[^dplyr]: The new `dplyr` 1.0.0. contains new functions that would have been potentially useful for several of these operations. I highly recommend checking these updates out in the various [recent posts](https://www.tidyverse.org/blog/) by Hadley Wickham. Some of the major updates (potentially relevant to the types of operations I'll be discussing in my post):
+[^dplyr]: The new `dplyr` 1.0.0. contains new functions that would have been potentially useful for several of these operations. I highly recommend checking these updates out in the various [recent posts](https://www.tidyverse.org/tags/dplyr-1-0-0/) by Hadley Wickham. Some of the major updates (potentially relevant to the types of operations I'll be discussing in my post):
     
     * new approach for across-column operations (replacing `_at()`, `_if()`, `_all()` variants with `across()` function)
     * brought-back rowwise operations
