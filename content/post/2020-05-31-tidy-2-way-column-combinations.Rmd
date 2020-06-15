@@ -20,6 +20,8 @@ thumbnail: https://www.bryanshalloway.com/post/2020-05-31-tidy-2-way-column-comb
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
+# Overview 
+
 Say you want to map an operation or list of operations across all two-way[^twoway] combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc^[Though this "throw everything and the kitchen-sink" approach may not always be a good idea.]. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables[^1]. In some cases there may be a pairwise implementation already available, e.g. R's `cor()` function for computing correlations^[Or the tidymodels implementation `corrr::correlate()` in the [corrr](https://corrr.tidymodels.org/) package.]. In other cases one may not exist or is not easy to use^[or is not in a style you prefer]. In this post I'll walk through an example[^examples] explaining code and steps for setting-up arbitrary pairwise operations across sets of variables. 
 
 *I'll break my approach down into several steps:*
@@ -31,7 +33,7 @@ IV. Map function(s)
 V. Return to normal dataframe  
 VI. Bind back to data  
 
-If your interest is only in computing summary statistics (as opposed to modifying an existing dataframe with new columns / features),then only steps I - IV are needed.
+If your interest is only in computing summary statistics (as opposed to modifying an existing dataframe with new columns / features), then only steps I - IV are needed.
 
 **Relevant software and style:**
 
@@ -55,11 +57,11 @@ Throughout this post, wherever I write "dataframe" I really mean "tibble" (a dat
     * brought-back rowwise operations
     * emphasize ability to output tibbles / multiple columns in core `dplyr` verbs... This is something I had only taken advantage of occassionally in the past ([example](https://stackoverflow.com/a/54725732/9059865)), but will look to use more going forward.]
 
-```{r}
-library(tidyverse)
-```
+**Other resources and open issues (updated 2020-06-14):**
 
-# Data
+In particular, the comments in issue [44](https://github.com/tidymodels/corrr/issues/44) for the `corrr` package contain excellent solutions for doing pairwise operations (the subject of this post)^[f I'd spotted this issue initially I'm not sure I would have written this post. However what this post offers is a more verbose treatment of the problem which may be useful for people newer to pairwise operations or the tidyverse.]. Issue [94](https://github.com/tidymodels/corrr/issues/94) also features discussion on this topic. Throughout this post I will reference other alternative code/approaches (especially in the footnotes and the [Appendix]). 
+
+**Data:**
 
 I'll use the ames housing dataset across examples.
 
@@ -72,6 +74,8 @@ Specifically, I'll focus on ten numeric columns that, based on a random sample o
 [^technical]: For technical reasons, I also converted all integer types to doubles -- was getting integer overflow problems in later operations before changing. [Thread](https://stackoverflow.com/questions/8804779/what-is-integer-overflow-in-r-and-how-can-it-happen) on integer overflow in R. In this post I'm not taking a disciplined approach to feature engineering. For example it may make sense to normalize the variables so that variable combinations would be starting on a similar scale. This could be done using `recipes::step_normalize()` or with code like `dplyr::mutate_all(df, ~(. - mean(.)) / sd(.))` .
 
 ```{r}
+library(tidyverse)
+
 set.seed(2020)
 ames_cols <- ames %>% 
   select_if(is.numeric) %>% 
@@ -87,8 +91,6 @@ ames_subset <- select(ames, ames_cols) %>%
   # but is not pertinent for examples
   mutate_all(as.double)
 ```
-
-# Overview 
 
 ## I. Nest and pivot
 
@@ -110,7 +112,7 @@ df_lists <- ames_subset %>%
 
 See [Pivot and then summarise] for a nearly identical approach with just an altered order of steps. Also see [Nested tibbles] for how you could create a list-column of dataframes^[The more common approach.] rather than vectors. 
 
-### What if my variables are across rows not columns?
+**What if my variables are across rows not columns?**
 
 For example, pretend you want to see if `Sale_Price` is different across `Mo_Sold`. Perhaps you started by doing an F-test, found that to be significant, and now want to do pairwise t-tests across the samples of `Sale_Price` for each `Mo_Sold`. To set this up, you will want a `group_by()` rather than a `pivot_longer()` step. E.g.
 
