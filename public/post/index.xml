@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Bryan&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 03 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 16 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Use Flipbooks to Explain Your Code and Thought Process</title>
+      <link>/2020/06/16/use-flipbooks-to-explain-your-code-and-thought-process/</link>
+      <pubDate>Tue, 16 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/16/use-flipbooks-to-explain-your-code-and-thought-process/</guid>
+      <description>Learning R’s %&amp;gt;%Using the pipe operator (%&amp;gt;%) is one of my favorite things about coding in R and the tidyverse. However when it was first shown to me, I couldn’t understand what the #rstats nut describing it was so enthusiastic about. They tried to explain, “It means and then do the next operation.” When that didn’t click for me, they continued (while becoming ever more excited) “It passes the previous steps output into the first argument of the next function,” still… 😐😐😕.</description>
+    </item>
     
     <item>
       <title>Tidy Pairwise Operations</title>
