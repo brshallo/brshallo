@@ -63,7 +63,7 @@ See [More sophisticated highlighting] if your use-case requires more than line-l
 
 # Animating a flipbook
 
-I sometimes want to convert a flipbook into a gif, e.g. for sharing an example in a README or on social media. If you ignored my prior entreaty, this is a second reminder to stop and go read about `flipbookr`, which contains the `code_create_gif_flipbook()` function. Just look at the beautiful gif thumbnails of flipbooks on the [about page](https://evamaerey.github.io/flipbooks/about)!
+I sometimes want to convert a flipbook into a gif, e.g. for sharing an example in a README or a snippet of a cool concept on social media. If you ignored my prior entreaty, this is a second reminder to stop and go read about `flipbookr`, which contains the `code_create_gif_flipbook()` function. Just look at the beautiful gif thumbnails of flipbooks on the [about page](https://evamaerey.github.io/flipbooks/about)!
 
 ![](/post/2020-06-16-use-flipbooks-to-explain-your-code-and-thought-process_files/flipbookr-example.gif)
 
@@ -82,7 +82,7 @@ Next step would have been trying to think through a more programmatic way of bui
 
 ## Closing note
 
-I highly recommend exploring the [Rstudio Education blog](https://education.rstudio.com/blog/). The site contains some enormously helpful resources for improving your technical communication. It was here that I stumbled on the post [Decorate your R code with flair](https://education.rstudio.com/blog/2020/05/flair/) -- which inspired me to make a first attempt at building a reproducible animation of line-by-line execution of R code (something I'd been wanting to do for ages). The positive response and feedback of which led me to learn about `flipbookr` and inspired me to finish writing this blog post. 
+I also highly recommend exploring the [Rstudio Education blog](https://education.rstudio.com/blog/). The site contains some enormously helpful resources for improving your technical communication. It was here that I stumbled on the post [Decorate your R code with flair](https://education.rstudio.com/blog/2020/05/flair/) -- which inspired me to make a first attempt at building a reproducible animation of line-by-line execution of R code (something I'd been wanting to do for ages). The positive response and feedback of which led me to learn about `flipbookr` and inspired me to finish writing this blog post. 
 
 # Appendix
 
