@@ -34,7 +34,7 @@ Now, a few years and reads through [R for Data Science](https://r4ds.had.co.nz/)
 
 ><blockquote class="twitter-tweet"><p lang="en" dir="ltr">What is your <a href="https://twitter.com/hashtag/tidyverse?src=hash&amp;ref_src=twsrc%5Etfw">#tidyverse</a> (or other <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> ) approach for doing arbitrary pairwise operations across variables? Mine is frequently something like:<br><br>I. nest...<br>II. expand combos... <br>III. filter...<br>IV. map fun(s)...<br>...<br><br>I wrote a post walking through this: <a href="https://t.co/xRnRf5yh3m">https://t.co/xRnRf5yh3m</a> <a href="https://t.co/Zvxey2gm3H">pic.twitter.com/Zvxey2gm3H</a></p>&mdash; Bryan Shalloway (@brshallo) <a href="https://twitter.com/brshallo/status/1271194908477591553?ref_src=twsrc%5Etfw">June 11, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-However each of these examples were built using PowerPoint (and a lot of copy and pasting of code + output). The series of images cannot be easily reproduced (at least not without going through another highly manual exercise). In this post, I'll point to resources on how to create these sorts of code communication materials in ways that *are reproducible*.
+However each of these examples were built using PowerPoint (and a lot of copy and pasting of code + output). The series of images cannot be easily reproduced. In this post I'll point to resources on how to create these sorts of code communication materials in ways that *are reproducible*.
 
 # Flipbooks
 
