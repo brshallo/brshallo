@@ -89,8 +89,8 @@ Blogging is time consuming. Reaching out to package maintainers or making contri
 
 * Kelly also created an [issue](https://github.com/kbodwin/flair/issues/15) to further discuss possible integrations between `flair` and `flipbookr`.
 * I remade my initial example using `flipbookr` ([see issue](https://github.com/EvaMaeRey/flipbookr/issues/22)). 
-    * I had first created an [issue](https://github.com/EvaMaeRey/flipbookr/issues/21) showing how to print `xaringan` slides incrementally using `pagedown::chrome_print()`.
-        * Which helped to close the loop on a related open [issue](https://github.com/rstudio/pagedown/issues/110) on `xaringan`.
+    * I first created an [issue](https://github.com/EvaMaeRey/flipbookr/issues/21) showing how to print `xaringan` slides incrementally using `pagedown::chrome_print()`.
+        * Which helped to close a related [issue](https://github.com/rstudio/pagedown/issues/110) on `xaringan`.
 * Gina Reynolds made a variety of updates to `flipbookr`, one of which included adding the html --> pdf --> gif workflow to the template `r emo::ji("smile")`.
 
 ><blockquote class="twitter-tweet"><p lang="en" dir="ltr">Big thanks to <a href="https://twitter.com/grrrck?ref_src=twsrc%5Etfw">@grrrck</a> and <a href="https://twitter.com/statsgen?ref_src=twsrc%5Etfw">@statsgen</a> for helps and <a href="https://twitter.com/xieyihui?ref_src=twsrc%5Etfw">@xieyihui</a> because {xaringan}! And to <a href="https://twitter.com/brshallo?ref_src=twsrc%5Etfw">@brshallo</a> and <a href="https://twitter.com/KellyBodwin?ref_src=twsrc%5Etfw">@KellyBodwin</a> for new ideas about how to share flipbooks, html -&gt; pdf -&gt; gif. Guidance now included in template update on this - this gif created w/ that workflow!🙏🤩</p>&mdash; Gina Reynolds (@EvaMaeRey) <a href="https://twitter.com/EvaMaeRey/status/1274837474460626945?ref_src=twsrc%5Etfw">June 21, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
