@@ -44,20 +44,13 @@ As described in the [flipbookr documentation](https://evamaerey.github.io/flipbo
 
 ![(Example inspired by 'Many Models' chapter of 'R For Data Science' by Grolemund & Wickham.)](https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-r4ds.gif?raw=true )
 
-At this point you should stop reading this blog and instead go learn about [flipbookr](https://github.com/EvaMaeRey/flipbookr). My post was largely written before I learned about this package. Hence, starting at [this presentation](https://rstudio.com/resources/rstudioconf-2020/flipbooks-evangeline-reynolds/) by [Gina Reynolds](https://twitter.com/EvaMaeRey) or `flipbookr`'s [about page](https://evamaerey.github.io/flipbooks/about) will generally be a more productive use of your time. Just look at all of the beautiful flipbook examples you can find there!
-
-[![](/post/2020-06-16-use-flipbooks-to-explain-your-code-and-thought-process_files/flipbookr-example.gif)](https://evamaerey.github.io/flipbooks/about)
-
-The remainder of this post discusses either tools adjacent to flipbooks or describes workflows that can also be found within `flipbookr` documentation.
+At this point you should stop reading this blog and instead go learn about [flipbookr](https://github.com/EvaMaeRey/flipbookr). My post was largely written before I learned about this package. Hence, starting at [this presentation](https://rstudio.com/resources/rstudioconf-2020/flipbooks-evangeline-reynolds/) by [Gina Reynolds](https://twitter.com/EvaMaeRey) or `flipbookr`'s [about page](https://evamaerey.github.io/flipbooks/about) will generally be a more productive use of your time. The remainder of this post discusses either tools adjacent to flipbooks or describes workflows that can also be found within `flipbookr` documentation.
 
 # Example with xaringan
 
 The [xaringan](https://github.com/yihui/xaringan) package for making slideshows contains highlighting features (and is what `flipbookr` is built-on). For highlighting *code* you can use the trailing comment `#<<`^[Which I prefer over the alternatives of using the leading `*` or wrapping the message in`{{}}`.]. For highlighting *output* there is the `highlight.output` code chunk option.
 
 ><iframe src="https://slides.yihui.org/xaringan/#31" style="width: 560px; height: 315px;"></iframe>
-
-><iframe width="560" height="315"
-src="https://slides.yihui.org/xaringan/#32"></iframe>
 
 [Mitchell O'Hara-Wild](https://twitter.com/mitchoharawild)'s 2019 presentation on *"Flexible futures for [fable](https://github.com/tidyverts/fable) functionality"* contains a helpful example where he uses these features to walk-through [his code](https://github.com/mitchelloharawild/fable-combinations-2019/blob/6a55628e1ad156c0040676b7881a799f7f75370a/user2019/index.Rmd).
 
@@ -67,26 +60,30 @@ See [More sophisticated highlighting] if your use-case requires more than line-l
 
 # Animating a flipbook
 
-I sometimes want to convert a flipbook into a gif, e.g. when sharing an example in a README or a snippet of a concept on social media. If you ignored my prior entreaty, this is a second reminder to stop and go read about `flipbookr`. The [template file](https://evamaerey.github.io/flipbooks/about) now shows how to create gifs using `flipbookr` --> `pagedown` --> `magick`^[Creates html --> pdf --> gif.]. I also describe this workflow and provide examples [here](https://github.com/brshallo/flipbookr-gifs-examples), e.g.
+I sometimes want to convert a flipbook into a gif, e.g. when sharing an example in a README or a snippet of a concept on social media. If you ignored my prior entreaty, this is a second reminder to stop and go read about `flipbookr`. The [template file](https://evamaerey.github.io/flipbooks/about) now shows how to create gifs using `flipbookr` (html) --> `pagedown` (pdf) --> `magick` (gif). I also describe this workflow and provide examples [here](https://github.com/brshallo/flipbookr-gifs-examples), e.g.
 
 ![(Example from a prior blog post, "Riddler Solutions: Pedestrian Puzzles")](https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-riddler-solution.gif)
 
 # Closing note
 
-I recommend exploring the [Rstudio Education blog](https://education.rstudio.com/blog/). The site contains helpful resources for improving your technical communication. It was here that I stumbled on the post [Decorate your R code with flair](https://education.rstudio.com/blog/2020/05/flair/). Reading this inspired me to make a first attempt at building a reproducible animation of line-by-line execution of R code (something I'd been wanting to do for ages). The positive response + feedback to my initial tweet led me to learn about `flipbookr` and motivated additional actions (described in [Engagement & contributions]) including the review and completion of this blog post.
+I recommend exploring the [Rstudio Education blog](https://education.rstudio.com/blog/). The site contains helpful resources for improving your technical communication. It was here that I stumbled on the post [Decorate your R code with flair](https://education.rstudio.com/blog/2020/05/flair/). Reading this inspired me to make a first attempt at building a reproducible animation of line-by-line execution of R code (something I'd been wanting to do for ages). The positive response & feedback to my initial tweet led me to learn about `flipbookr` and motivated additional actions (described in [Engagement & contributions]) including the review and completion of this blog post.
+
+Finally, please go enjoy the beautiful examples you can find at the `flipbookr` [about page](https://evamaerey.github.io/flipbooks/about):
+
+[![](/post/2020-06-16-use-flipbooks-to-explain-your-code-and-thought-process_files/flipbookr-example.gif)](https://evamaerey.github.io/flipbooks/about)
 
 # Appendix
 
 ## More sophisticated highlighting
 
-For more sophisticated highlighting of *code*, use the [flair package](https://github.com/kbodwin/flair). I'm not sure what to recommend for highlighting changes in *output* to the console... perhaps [diffobj](https://github.com/brodieG/diffobj) would be an option. You could also just more explicitly format the output, e.g. using  [gt](https://github.com/rstudio/gt) or [kableExtra](https://github.com/haozhu233/kableExtra) for tabular outputs, or using geoms, annotations, etc. in [ggplot](https://github.com/tidyverse/ggplot2)s. And, of course, you can always dive into the html.
+For more sophisticated highlighting of *code*, use the [flair package](https://github.com/kbodwin/flair). I'm not sure what to recommend for highlighting changes in *output* to the console... perhaps [diffobj](https://github.com/brodieG/diffobj) would be an option. You could also just explicitly format the output, e.g. using  [gt](https://github.com/rstudio/gt) or [kableExtra](https://github.com/haozhu233/kableExtra) for tabular outputs, or using geoms, annotations, etc. in [ggplot](https://github.com/tidyverse/ggplot2)s. And, of course, you can always dive into the html.
 
 ## Engagement & contributions
 
 Blogging is time consuming. Reaching out to package maintainers or making contributions (even small ones) on open-source software projects can be intimidating. As a *tiny* success story, I documented actions that stemmed (in some part) from engaging with the #rstats online communities while working on this blog post topic:
 
 * While this post was in draft form, I tweeted out my initial approach (that used the [flair](https://github.com/kbodwin/flair) package). 
-    * The next step might have been trying to improve upon this. Thankfully, instead, [Kelly Bodwin](https://twitter.com/KellyBodwin) pointed me to `flipbookr` `r emo::ji("smile")`! 
+    * The next step might have been trying to improve upon this. Thankfully, instead, [Kelly Bodwin](https://twitter.com/KellyBodwin) pointed me to `flipbookr`! 
 
 ><blockquote class="twitter-tweet"><p lang="en" dir="ltr">P.S. <br><br>The `flair_lines()` function lets you highlight whole line(s) if you want! <br><br>{flipbookr} is a better option for making gifs/slides like this, but {flair} + {pagedown} + {magick} might help if you want specialty or layered highlighting.</p>&mdash; Kelly Bodwin (@KellyBodwin) <a href="https://twitter.com/KellyBodwin/status/1272741205365764097?ref_src=twsrc%5Etfw">June 16, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
