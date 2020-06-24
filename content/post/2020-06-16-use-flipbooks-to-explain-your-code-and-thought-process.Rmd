@@ -1,18 +1,18 @@
 ---
 title: Use Flipbooks to Explain Your Code and Thought Process
 author: Bryan Shalloway
-date: '2020-06-25'
-slug: use-flipbooks-to-explain-your-code-and-thought-process
+date: '2020-06-24'
 categories:
   - programming
 tags:
-  - rstats
-  - reproducibility
   - animation
+  - reproducibility
+  - rstats
   - tidyverse
+slug: use-flipbooks-to-explain-your-code-and-thought-process
 output:
   blogdown::html_page:
-    toc: false
+    toc: no
 ---
 
 # Learning R's `%>%`
