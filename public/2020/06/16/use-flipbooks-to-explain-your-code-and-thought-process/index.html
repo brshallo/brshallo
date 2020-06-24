@@ -59,7 +59,7 @@
 
   <article class="article">
     
-    <span class="article-duration">5 min read</span>
+    <span class="article-duration">6 min read</span>
     
 
     <h1 class="article-title">Use Flipbooks to Explain Your Code and Thought Process</h1>
@@ -97,26 +97,23 @@ What is your <a href="https://twitter.com/hashtag/tidyverse?src=hash&amp;ref_src
 </blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </blockquote>
-<p>However each of these examples were built using PowerPoint (and a lot of copy and pasting of code + output). The series of images are not easily reproducible – I can’t recreate or share how I made these slides (at least not without going through another highly manual exercise). In this post, I’ll point to resources on how to create these sorts of technical communication materials in ways that are reproducible.</p>
+<p>However each of these examples were built using PowerPoint (and a lot of copy and pasting of code + output). The series of images cannot be easily reproduced (at least not without going through another highly manual exercise). In this post, I’ll point to resources on how to create these sorts of code communication materials in ways that <em>are reproducible</em>.</p>
 </div>
 <div id="flipbooks" class="section level1">
 <h1>Flipbooks</h1>
-<p>When I started writing this post, I planned to call this type of output a “<strong>LEXPREX</strong>” for “<strong>L</strong>ine-by-line <strong>EX</strong>ecution with <strong>PR</strong>inted <strong>EX</strong>amples” (and a name evocative of the inspiring <a href="https://github.com/tidyverse/reprex">reprex</a> package by <a href="https://twitter.com/JennyBryan%5D">Jenny Bryan</a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>). But, thankfully, an excellent solution containing thorough explanations (and a much better name) already existed, <a href="https://evamaerey.github.io/flipbooks/about">flipbooks</a>.</p>
-<p>At this point you should stop reading this blog and instead go learn about <a href="https://github.com/EvaMaeRey/flipbookr">flipbookr</a>. My post was largely written before I learned about this package<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. Hence the next several sections discuss making flipbook-like solutions (but in ways that would require a great deal more copy-and-pasting of code to implement). See additional resources in tweet below.</p>
-<blockquote>
-<blockquote class="twitter-tweet">
-<p lang="en" dir="ltr">
-Wow, thanks <a href="https://twitter.com/KellyBodwin?ref_src=twsrc%5Etfw"><span class="citation">@KellyBodwin</span></a> for the recommendation. <a href="https://twitter.com/EvaMaeRey?ref_src=twsrc%5Etfw"><span class="citation">@EvaMaeRey</span></a> 📦 <code>flipbookr</code> is another incredible resource for <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> education that will save me so much time. <br><br>- <a href="https://t.co/WB5jWIOg5h">https://t.co/WB5jWIOg5h</a><br>- <a href="https://t.co/z7NtBVASXl">https://t.co/z7NtBVASXl</a> <a href="https://t.co/9DEQUR1teY">https://t.co/9DEQUR1teY</a>
-</p>
-— Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1272761990025486336?ref_src=twsrc%5Etfw">June 16, 2020</a>
-</blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-</blockquote>
-<p>If you are still interested in reading about other (less elegant, less fully featured) approaches to building flipbook-like outputs, continue on.</p>
+<p>When I started writing this post, I planned to call this type of output a “<strong>LEXPREX</strong>” for “<strong>L</strong>ine-by-line <strong>EX</strong>ecution with <strong>PR</strong>inted <strong>EX</strong>amples” (and a name evocative of the inspiring <a href="https://github.com/tidyverse/reprex">reprex</a> package by <a href="https://twitter.com/JennyBryan%5D">Jenny Bryan</a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>). But, thankfully, an excellent solution containing thorough explanations (and a much better name) already existed, <em>flipbooks</em>.</p>
+<p>As described in the <a href="https://evamaerey.github.io/flipbooks/about">flipbookr documentation</a>, “flipbooks are tools that present side-by-side, aligned, incremental code-output.”</p>
+<div class="figure">
+<img src="https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-r4ds.gif?raw=true" alt="(Example inspired by ‘Many Models’ chapter of ‘R For Data Science’ by Grolemund &amp; Wickham.)" />
+<p class="caption">(Example inspired by ‘Many Models’ chapter of ‘R For Data Science’ by Grolemund &amp; Wickham.)</p>
+</div>
+<p>At this point you should stop reading this blog and instead go learn about <a href="https://github.com/EvaMaeRey/flipbookr">flipbookr</a>. My post was largely written before I learned about this package. Hence, starting at <a href="https://rstudio.com/resources/rstudioconf-2020/flipbooks-evangeline-reynolds/">this presentation</a> by <a href="https://twitter.com/EvaMaeRey">Gina Reynolds</a> or <code>flipbookr</code>’s <a href="https://evamaerey.github.io/flipbooks/about">about page</a> will generally be a more productive use of your time. Just look at all of the beautiful flipbook examples you can find there!</p>
+<p><a href="https://evamaerey.github.io/flipbooks/about"><img src="/post/2020-06-16-use-flipbooks-to-explain-your-code-and-thought-process_files/flipbookr-example.gif" /></a></p>
+<p>The remainder of this post discusses either tools adjacent to flipbooks or describes workflows that can also be found within <code>flipbookr</code> documentation.</p>
 </div>
 <div id="example-with-xaringan" class="section level1">
 <h1>Example with xaringan</h1>
-<p>The <a href="https://github.com/yihui/xaringan">xaringan</a> package for making slideshows contains highlighting features (and is what <code>flipbookr</code> is built-on). For highlighting <em>code</em>, you can use the trailing comment <code>#&lt;&lt;</code><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. For highlighting <em>output</em>, there is the <code>highlight.output</code> code chunk option.</p>
+<p>The <a href="https://github.com/yihui/xaringan">xaringan</a> package for making slideshows contains highlighting features (and is what <code>flipbookr</code> is built-on). For highlighting <em>code</em> you can use the trailing comment <code>#&lt;&lt;</code><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. For highlighting <em>output</em> there is the <code>highlight.output</code> code chunk option.</p>
 <blockquote>
 <iframe src="https://slides.yihui.org/xaringan/#31" style="width: 560px; height: 315px;">
 </iframe>
@@ -125,43 +122,62 @@ Wow, thanks <a href="https://twitter.com/KellyBodwin?ref_src=twsrc%5Etfw"><span 
 <iframe width="560" height="315" src="https://slides.yihui.org/xaringan/#32">
 </iframe>
 </blockquote>
-<p><a href="https://twitter.com/mitchoharawild">Mitchell O’Hara-Wild</a>’s 2019 presentation on <em>“Flexible futures for <a href="https://github.com/tidyverts/fable">fable</a> functionality”</em> contains a helpful example where he uses these features to build a code walk-through (<a href="https://github.com/mitchelloharawild/fable-combinations-2019/blob/6a55628e1ad156c0040676b7881a799f7f75370a/user2019/index.Rmd">source code</a>).</p>
+<p><a href="https://twitter.com/mitchoharawild">Mitchell O’Hara-Wild</a>’s 2019 presentation on <em>“Flexible futures for <a href="https://github.com/tidyverts/fable">fable</a> functionality”</em> contains a helpful example where he uses these features to walk-through <a href="https://github.com/mitchelloharawild/fable-combinations-2019/blob/6a55628e1ad156c0040676b7881a799f7f75370a/user2019/index.Rmd">his code</a>.</p>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/DhDOTxojQ3k?start=554" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
 </iframe>
 <p>See <a href="#more-sophisticated-highlighting">More sophisticated highlighting</a> if your use-case requires more than line-level highlighting.</p>
 </div>
 <div id="animating-a-flipbook" class="section level1">
 <h1>Animating a flipbook</h1>
-<p>I sometimes want to convert a flipbook into a gif, e.g. for sharing an example in a README or a snippet of a cool concept on social media. If you ignored my prior entreaty, this is a second reminder to stop and go read about <code>flipbookr</code>, which contains the <code>code_create_gif_flipbook()</code> function. Just look at the beautiful gif thumbnails of flipbooks on the <a href="https://evamaerey.github.io/flipbooks/about">about page</a>!</p>
-<p><img src="/post/2020-06-16-use-flipbooks-to-explain-your-code-and-thought-process_files/flipbookr-example.gif" /></p>
-<p><strong>My initial approach (written prior to learning of <code>flipbookr</code>):</strong></p>
-<p>If you read the source code at the link in the tweet below, you will see I use…</p>
-<ul>
-<li><a href="https://github.com/kbodwin/flair">flair</a> for the code highlighting</li>
-<li><a href="https://github.com/yihui/xaringan">xaringan</a> for the slides</li>
-<li><a href="https://github.com/rstudio/pagedown">pagedown</a> to convert the html slides into pdf</li>
-<li><a href="https://github.com/ropensci/magick">magick</a> to convert the pdf into images, apply a few (hacky) transformations, and then stitch them together into a gif</li>
-</ul>
-<blockquote>
-<blockquote class="twitter-tweet">
-<p lang="en" dir="ltr">
-❤️flair📦by <a href="https://twitter.com/KellyBodwin?ref_src=twsrc%5Etfw"><span class="citation">@KellyBodwin</span></a> for teaching <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> and explaining the %&gt;% in particular. Here's a quick example using: <code>flair</code> + <code>xaringan</code> –&gt; <code>pagedown</code> –&gt; <code>magick</code> to make a gif of expanding chain of <a href="https://twitter.com/hashtag/tidyverse?src=hash&amp;ref_src=twsrc%5Etfw">#tidyverse</a> operations: <a href="https://t.co/cSi858dFVa">https://t.co/cSi858dFVa</a> <br><br>(thx also <a href="https://twitter.com/xieyihui?ref_src=twsrc%5Etfw"><span class="citation">@xieyihui</span></a> <a href="https://twitter.com/opencpu?ref_src=twsrc%5Etfw"><span class="citation">@opencpu</span></a> ) <a href="https://t.co/7nvWDabKgm">pic.twitter.com/7nvWDabKgm</a>
-</p>
-— Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1272737172978905088?ref_src=twsrc%5Etfw">June 16, 2020</a>
-</blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-</blockquote>
-<p>Next step would have been trying to think through a more programmatic way of building these slides and calling these steps. Thankfully, instead, <a href="https://twitter.com/KellyBodwin">Kelly Bodwin</a> pointed me to <code>flipbookr</code> 😄!</p>
-<div id="closing-note" class="section level2">
-<h2>Closing note</h2>
-<p>I also highly recommend exploring the <a href="https://education.rstudio.com/blog/">Rstudio Education blog</a>. The site contains some enormously helpful resources for improving your technical communication. It was here that I stumbled on the post <a href="https://education.rstudio.com/blog/2020/05/flair/">Decorate your R code with flair</a> – which inspired me to make a first attempt at building a reproducible animation of line-by-line execution of R code (something I’d been wanting to do for ages). The positive response and feedback of which led me to learn about <code>flipbookr</code> and inspired me to finish writing this blog post.</p>
+<p>I sometimes want to convert a flipbook into a gif, e.g. when sharing an example in a README or a snippet of a concept on social media. If you ignored my prior entreaty, this is a second reminder to stop and go read about <code>flipbookr</code>. The <a href="https://evamaerey.github.io/flipbooks/about">template file</a> now shows how to create gifs using <code>flipbookr</code> –&gt; <code>pagedown</code> –&gt; <code>magick</code><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. I also describe this workflow and provide examples <a href="https://github.com/brshallo/flipbookr-gifs-examples">here</a>, e.g.</p>
+<p><a href="https://github.com/brshallo/flipbookr-gifs-examples"><img src="https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-riddler-solution.gif" title="Example from a prior blog post solving a city planning riddle" /></a></p>
 </div>
+<div id="closing-note" class="section level1">
+<h1>Closing note</h1>
+<p>I recommend exploring the <a href="https://education.rstudio.com/blog/">Rstudio Education blog</a>. The site contains helpful resources for improving your technical communication. It was here that I stumbled on the post <a href="https://education.rstudio.com/blog/2020/05/flair/">Decorate your R code with flair</a>. Reading this inspired me to make a first attempt at building a reproducible animation of line-by-line execution of R code (something I’d been wanting to do for ages). The positive response + feedback to my initial tweet led me to learn about <code>flipbookr</code> and motivated additional actions (described in <a href="#engagement-contributions">Engagement &amp; contributions</a>) including the review and completion of this blog post.</p>
 </div>
 <div id="appendix" class="section level1">
 <h1>Appendix</h1>
 <div id="more-sophisticated-highlighting" class="section level2">
 <h2>More sophisticated highlighting</h2>
-<p>For more sophisticated highlighting of <em>code</em>, use the <a href="https://github.com/kbodwin/flair">flair package</a>. I’m not sure what to recommend for highlighting changes in <em>output</em> to the console… perhaps <a href="https://github.com/brodieG/diffobj">diffobj</a> would be an option. You could also just explicitly format the output, e.g. using <a href="https://github.com/rstudio/gt">gt</a> or <a href="https://github.com/haozhu233/kableExtra">kableExtra</a> for tabular outputs, or using geoms, annotations, etc. in <a href="https://github.com/tidyverse/ggplot2">ggplot</a>s. And, of course, you can always dive into the html.</p>
+<p>For more sophisticated highlighting of <em>code</em>, use the <a href="https://github.com/kbodwin/flair">flair package</a>. I’m not sure what to recommend for highlighting changes in <em>output</em> to the console… perhaps <a href="https://github.com/brodieG/diffobj">diffobj</a> would be an option. You could also just more explicitly format the output, e.g. using <a href="https://github.com/rstudio/gt">gt</a> or <a href="https://github.com/haozhu233/kableExtra">kableExtra</a> for tabular outputs, or using geoms, annotations, etc. in <a href="https://github.com/tidyverse/ggplot2">ggplot</a>s. And, of course, you can always dive into the html.</p>
+</div>
+<div id="engagement-contributions" class="section level2">
+<h2>Engagement &amp; contributions</h2>
+<p>Blogging is time consuming. Reaching out to package maintainers or making contributions (even small ones) on open-source software projects can be intimidating. As a <em>tiny</em> success story, I documented actions that stemmed (in some part) from engaging with the #rstats online communities while working on this blog post topic:</p>
+<ul>
+<li>I initially approached this ‘line-by-line execution of code’ problem by using the <a href="https://github.com/kbodwin/flair">flair</a> package. While the blog you are reading was in draft form, I tweeted out my approach.
+<ul>
+<li>The next step might have been trying to improve on this. Thankfully, instead, <a href="https://twitter.com/KellyBodwin">Kelly Bodwin</a> pointed me to <code>flipbookr</code> 😄!</li>
+</ul></li>
+</ul>
+<blockquote>
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+P.S. <br><br>The <code>flair_lines()</code> function lets you highlight whole line(s) if you want! <br><br>{flipbookr} is a better option for making gifs/slides like this, but {flair} + {pagedown} + {magick} might help if you want specialty or layered highlighting.
+</p>
+— Kelly Bodwin (<span class="citation">@KellyBodwin</span>) <a href="https://twitter.com/KellyBodwin/status/1272741205365764097?ref_src=twsrc%5Etfw">June 16, 2020</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</blockquote>
+<ul>
+<li>Kelly also created an <a href="https://github.com/kbodwin/flair/issues/15">issue</a> to further discuss possible integrations between <code>flair</code> and <code>flipbookr</code>.</li>
+<li>I remade my initial example using <code>flipbookr</code> (<a href="https://github.com/EvaMaeRey/flipbookr/issues/22">see issue</a>).
+<ul>
+<li>Though I first created an <a href="https://github.com/EvaMaeRey/flipbookr/issues/21">issue</a> showing how to print <code>xaringan</code> slides incrementally using <code>pagedown::chrome_print()</code>.
+<ul>
+<li>Which helped to close the loop on a related open <a href="https://github.com/rstudio/pagedown/issues/110">issue</a> on <code>xaringan</code>.</li>
+</ul></li>
+</ul></li>
+<li>Gina Reynolds made a variety of updates to <code>flipbookr</code>, one of which included adding the html –&gt; pdf –&gt; gif workflow to the template 😄.</li>
+</ul>
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+Big thanks to <a href="https://twitter.com/grrrck?ref_src=twsrc%5Etfw"><span class="citation">@grrrck</span></a> and <a href="https://twitter.com/statsgen?ref_src=twsrc%5Etfw"><span class="citation">@statsgen</span></a> for helps and <a href="https://twitter.com/xieyihui?ref_src=twsrc%5Etfw"><span class="citation">@xieyihui</span></a> because {xaringan}! And to <a href="https://twitter.com/brshallo?ref_src=twsrc%5Etfw"><span class="citation">@brshallo</span></a> and <a href="https://twitter.com/KellyBodwin?ref_src=twsrc%5Etfw"><span class="citation">@KellyBodwin</span></a> for new ideas about how to share flipbooks, html -&gt; pdf -&gt; gif. Guidance now included in template update on this - this gif created w/ that workflow!🙏🤩
+</p>
+— Gina Reynolds (<span class="citation">@EvaMaeRey</span>) <a href="https://twitter.com/EvaMaeRey/status/1274837474460626945?ref_src=twsrc%5Etfw">June 21, 2020</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </div>
 </div>
 <div class="footnotes">
@@ -169,8 +185,8 @@ Wow, thanks <a href="https://twitter.com/KellyBodwin?ref_src=twsrc%5Etfw"><span 
 <ol>
 <li id="fn1"><p>See my notes and solutions <a href="https://brshallo.github.io/r4ds_solutions/">here</a>.<a href="#fnref1" class="footnote-back">↩</a></p></li>
 <li id="fn2"><p>I also considered names such as <code>pexprex</code>, <code>sexprex</code>, <code>pripex</code>, … I’ll let the reader guess at the acronyms.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>I just don’t know how to “kill my darlings”.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>Which I prefer over the alternatives of using the leading <code>*</code> or wrapping the message in<code>{{}}</code>.<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>Which I prefer over the alternatives of using the leading <code>*</code> or wrapping the message in<code>{{}}</code>.<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>Creates html –&gt; pdf –&gt; gif.<a href="#fnref4" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
 
