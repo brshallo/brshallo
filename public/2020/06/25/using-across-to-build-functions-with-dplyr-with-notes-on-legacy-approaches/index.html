@@ -85,8 +85,8 @@
 </div>
 
 <pre class="r"><code>library(tidyverse)</code></pre>
-<p><a href="https://github.com/tidyverse/dplyr">dplyr</a>, the foundational <a href="https://www.tidyverse.org/">tidyverse</a> package, makes a trade-off between being easy to code in interactively while being more difficult to create functions with. The source of the trade-off is in how <code>dplyr</code> evaluates column names (specifically, allowing for unquoted column names as argument inputs). Tidyevaluation has been under major development the last couple of years in order to make <a href="https://dplyr.tidyverse.org/articles/programming.html">programming with dplyr</a> easier.</p>
-<p>During this development, there have been a variety of proposed methods for programming with <code>dplyr</code>. In this post, I will document the current ‘best-practices’ with <code>dplyr</code> 1.0.0. In the <a href="#older-approaches">Older approaches</a> section I provide analagous examples that someone (i.e. myself) might have used during this maturation period.</p>
+<p><a href="https://github.com/tidyverse/dplyr">dplyr</a>, the foundational <a href="https://www.tidyverse.org/">tidyverse</a> package, makes a trade-off between being easy to code in interactively while being more difficult to create functions with. The source of the trade-off is in how <code>dplyr</code> evaluates column names (specifically, allowing for unquoted column names as argument inputs). tidy evaluation has been under major development the last couple of years in order to make <a href="https://dplyr.tidyverse.org/articles/programming.html">programming with dplyr</a> easier.</p>
+<p>During this development, there have been a variety of proposed methods for programming with <code>dplyr</code>. In this post, I will document the current ‘best-practices’ with <code>dplyr</code> 1.0.0. In the <a href="#older-approaches">Older approaches</a> section I provide analogous examples that someone (i.e. myself) might have used during this maturation period.</p>
 <p>For a more full discussion on this topic see <code>dplyr</code>’s documentation at <a href="https://dplyr.tidyverse.org/articles/programming.html">programming with dplyr</a> and the various links referenced there.</p>
 <div id="function-expecting-one-column" class="section level1">
 <h1>Function expecting one column</h1>
@@ -112,22 +112,22 @@
   
   summarise(df, across({{vars}}, list(sum = sum, mean = mean)))
 }</code></pre>
-<p>If you want to <code>group_by()</code> one set of variables, and <code>summarise()</code> another set of variables you could do:</p>
+<p>If you are creating a function that can take in multiple sets of columns, e.g. you want to <code>group_by()</code> one set of variables and <code>summarise()</code> another set, you could do:</p>
 <pre class="r"><code>sum_group_vars &lt;- function(df, group_vars, sum_vars){
   df %&gt;% 
     group_by(across({{group_vars}})) %&gt;% 
     summarise(across({{sum_vars}}, list(sum = sum, mean = mean)))
 }</code></pre>
-<p>Which a user could call:</p>
+<p>Which a user would call:</p>
 <pre class="r"><code>sum_group_vars(mpg,
                c(model, year), 
                c(hwy, cty))</code></pre>
-<p>You could also make the inputs to <code>.fns</code> an argument in your function.</p>
+<p>You could also make the inputs to <code>.fns</code> an argument in your function<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
 </div>
 <div id="older-approaches" class="section level1">
 <h1>Older approaches</h1>
-<p>The methods in this section still work and are supported, they are just no longer the ‘recommended’ or most modern approach available for creating functions with <code>dplyr</code> verbs. Generally, I think the new <code>across()</code> approaches introduced in <code>dplyr</code> 1.0.0 are easier and more consistent to use.</p>
-<p>Prior to the introduction of the <strong>bracket-brakcet</strong>, <code>{{}}</code>, you would have used the <strong><code>enquo()</code> + bang-bang</strong> approach<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> for building a function that summarised one variable. E.g.</p>
+<p>The methods in this section still work and are supported, they are just no longer the ‘recommended’ or most ‘modern’ approach available for creating functions that pass column names into <code>dplyr</code> verbs. Generally, I think the new <code>across()</code> approaches introduced in <code>dplyr</code> 1.0.0 are easier and more consistent to use than the methods that preceded them.</p>
+<p>Prior to the introduction of the <strong>bracket-bracket</strong>, <code>{{}}</code>, you would have used the <strong><code>enquo()</code> + bang-bang</strong> approach<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> for building a function that summarised one variable. E.g.</p>
 <pre class="r"><code>sum_var &lt;- function(df, var){
   var_quo &lt;- enquo(var)
   summarise(df, !!var_quo := sum(!!var_quo))
@@ -137,7 +137,7 @@
   
   summarise_at(df, {{vars}}, sum)
 }</code></pre>
-<p>Similar to using <code>across()</code> this method allows multiple variables being input. However what is weird about this function is that it requires the user wrapping the variable names with the <code>vars()</code> function<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. E.g. to use the previously created function, a user would run:</p>
+<p>Similar to using <code>across()</code> this method allows multiple variables being input. However what is weird about this function is that it requires the user wrapping the variable names with the <code>vars()</code> function<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. E.g. to use the previously created function, a user would run:</p>
 <pre class="r"><code>sum_vars(mpg, vars(hwy, cty))</code></pre>
 <p>Alternatively, you could have the variable name inputs be character vectors by modifying the function like so:</p>
 <pre class="r"><code>sum_var &lt;- function(df, vars){
@@ -174,8 +174,9 @@
 <hr />
 <ol>
 <li id="fn1"><p><code>dplyr</code> 1.0.0 also now has <a href="https://www.tidyverse.org/blog/2020/02/glue-strings-and-tidy-eval/">support for using the glue</a> package syntax for modifying variable names.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>There is also the <code>rlang::enquos()</code> and <code>!!!</code> operator for when the input has length greater than one.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>A niche function specific to tidyevaluation (which users might not think to use).<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>Though doing this doesn’t require any tidy evaluation knowledge.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>There is also the <code>rlang::enquos()</code> and <code>!!!</code> operator for when the input has length greater than one.<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>A niche function specific to tidy evaluation (which users might not think to use).<a href="#fnref4" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
 
