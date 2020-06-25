@@ -54,7 +54,7 @@ Throughout this post, wherever I write "dataframe" I really mean "tibble" (a dat
     
     * new approach for across-column operations (replacing `_at()`, `_if()`, `_all()` variants with `across()` function)
     * brought-back rowwise operations
-    * emphasize ability to output tibbles / multiple columns in core `dplyr` verbs... This is something I had only taken advantage of occassionally in the past ([example](https://stackoverflow.com/a/54725732/9059865)), but will look to use more going forward.]
+    * emphasize ability to output tibbles / multiple columns in core `dplyr` verbs. This is something I had only taken advantage of occassionally in the past ([example](https://stackoverflow.com/a/54725732/9059865)), but will look to use more going forward.
 
 **Other resources and open issues (updated 2020-06-14):**
 

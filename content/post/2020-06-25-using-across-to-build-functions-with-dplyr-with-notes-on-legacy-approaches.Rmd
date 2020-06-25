@@ -1,0 +1,171 @@
+---
+title: Using across() to build functions with dplyr, with notes on legacy approaches
+author: Bryan Shalloway
+date: '2020-06-25'
+slug: using-across-to-build-functions-with-dplyr-with-notes-on-legacy-approaches
+categories:
+  - programming
+  - r
+tags:
+  - rstats
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+[dplyr](https://github.com/tidyverse/dplyr), the foundational [tidyverse](https://www.tidyverse.org/) package, makes a trade-off between being easy to code in interactively while being more difficult to create functions with. The source of the trade-off is in how `dplyr` evaluates column names (specifically, allowing for unquoted column names as argument inputs). Tidyevaluation has been under major development the last couple of years in order to make [programming with dplyr](https://dplyr.tidyverse.org/articles/programming.html) easier. 
+
+During this development, there have been a variety of proposed methods for programming with `dplyr`. In this post, I will document the current 'best-practices' with `dplyr` 1.0.0. In the [Older approaches] I provide analagous examples that someone (i.e. myself) might have used during this maturation period. 
+
+For a more full discussion on this topic see `dplyr`'s documentation at [programming with dplyr](https://dplyr.tidyverse.org/articles/programming.html) and the various links referenced there.
+
+# Function expecting one column
+
+Pretend we want to create a function that calculates the sum of a given variable in a dataframe: 
+
+```{r}
+sum_var <- function(df, var){
+  
+  summarise(df, {{var_quo}} := sum({{var_quo}}))
+}
+```
+
+A user would call this:
+```{r}
+sum_vars(mpg, cty)
+```
+
+If you wanted to edit the variable in place and avoid using the special assignment operator `:=`, you could use the new (in `dplyr` 1.0.0) `across()` function.
+
+```{r}
+sum_vars <- function(df, vars){
+  
+  summarise(df, across({{vars}}, sum))
+}
+```
+
+# Functions allowing multiple columns
+
+Using the `across()` approach also allows you to input more than one variable, e.g. a user could call the following to get summaries on both `cty` and `hwy`.
+
+```{r}
+sum_vars(mpg, c(cty, hwy))
+```
+
+If you wanted to compute multiple column summaries with different functions and you wanted to append the function name onto your outputted columns^[`dplyr` 1.0.0 also now has [support for using the glue](https://www.tidyverse.org/blog/2020/02/glue-strings-and-tidy-eval/) package syntax for modifying variable names.], you could instead pass a named list of functions into the `.fns` argument of `across()`.
+
+```{r}
+sum_vars <- function(df, vars){
+  
+  summarise(df, across({{vars}}, list(sum = sum, mean = mean)))
+}
+```
+
+If you want to group by one set of variables, and summarise another set of variables you could do:
+
+```{r}
+sum_group_vars <- function(df, group_vars, sum_vars){
+  df %>% 
+    group_by(across({{group_vars}})) %>% 
+    summarise(across({{sum_vars}}, list(sum = sum, mean = mean)))
+}
+```
+
+Which a user could call:
+
+```{r}
+sum_group_vars(mpg,
+               c(model, year), 
+               c(hwy, cty))
+```
+
+You could also make the inputs to `.fns` an input in your function as well.
+
+# Older approaches
+
+The methods in this section still work and are supported, they are just no longer the 'recommended' or most modern approach available for creating functions with `dplyr` verbs. Generally, I think the new `across()` approaches introduced in `dplyr` 1.0.0 are easier and more consistent to use.
+
+Prior to the introduction of the `{{}}` approach, you would have used the **`enquo()` + bang-bang** approach for building a function that summarised one variable:
+
+```{r}
+sum_var <- function(df, var){
+  var_quo <- enquo(var)
+  summarise(df, !!var_quo := sum(!!var_quo))
+}
+```
+
+There is also the `rlang::enquos()` and `!!!` operator for when the input has length greater than one.
+
+To modify variables in-place you would have used the `*_at()`, `*_if()` or `*_all()` function variants (which are now superseded by `across()`).
+
+```{r}
+sum_vars <- function(df, vars){
+  
+  summarise_at(df, {{vars}}, sum)
+}
+```
+
+Similar to using `across()` this method allows multiple variables being input. However what is weird about this function is that it requires the user wrapping the variable names with the `vars()` function^[A niche function specific to tidyevaluation (which users might not think to use).]. E.g. to use the previously created function, users would run:
+
+```{r}
+sum_vars(mpg, vars(hwy, cty))
+```
+
+Alternatively, you could have the variable name inputs be character strings by modifying the function like so:
+
+```{r}
+sum_var <- function(df, vars){
+  
+  summarise_at(df, vars(one_of(vars)), sum)
+}
+```
+
+Which could be called by a user as:
+```{r}
+sum_var(mpg, c("hwy", "cty"))
+```
+
+These `*_at()` variants also support inputting a list of functions, e.g. the below function would output both the sums and means. 
+
+```{r}
+sum_var <- function(df, var){
+  
+  summarise_at(df, vars(one_of(var)), list(sum = sum, mean = mean))
+}
+```
+
+For multiple grouping variables and multiple variables to be summarised you could create:
+
+```{r}
+groupsum <- function(df, group_vars, sum_vars){
+  df %>% 
+    group_by_at(vars(one_of(group_vars))) %>% 
+    summarise_at(vars(one_of(sum_vars)), sum)
+}
+```
+
+Which would be called by a user:
+```{r}
+sum_var(mpg, 
+        c("model", "year"), 
+        c("hwy", "cty"))
+```
+
+There are a variety of other spins you might take on creating these types of functions. One other older approach perhaps worth mentioning (presented [here](https://rstudio.com/resources/rstudioconf-2019/working-with-names-and-expressions-in-your-tidy-eval-code/)) was "passing the dots". 
+
+Example if we want to `group_by()` multiple columns and then summarise on just one column:
+
+```{r}
+sum_group_var <- function(df, sum_var, ...){
+  df %>% 
+    group_by(...) %>% 
+    summarise({{sum_var}} := sum({{sum_var}}))
+}
+```
+
+The limitation with this approach is that only one set of your inputs can have more than one variable in it, i.e. wherever you pass the `...` in your function.
