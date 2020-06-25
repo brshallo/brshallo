@@ -12,12 +12,12 @@
     
     
     <item>
-      <title>Using across() to build functions with dplyr, with notes on legacy approaches</title>
+      <title>Short Examples of Best Practices When Writing Functions That Call dplyr Verbs</title>
       <link>/2020/06/25/using-across-to-build-functions-with-dplyr-with-notes-on-legacy-approaches/</link>
       <pubDate>Thu, 25 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/06/25/using-across-to-build-functions-with-dplyr-with-notes-on-legacy-approaches/</guid>
-      <description>Function expecting one columnFunctions allowing multiple columnsOlder approacheslibrary(tidyverse)dplyr, the foundational tidyverse package, makes a trade-off between being easy to code in interactively while being more difficult to create functions with. The source of the trade-off is in how dplyr evaluates column names (specifically, allowing for unquoted column names as argument inputs). tidy evaluation has been under major development the last couple of years in order to make programming with dplyr easier.</description>
+      <description>Function expecting one columnFunctions allowing multiple columnsOlder approachesAppendixdplyr, the foundational tidyverse package, makes a trade-off between being easy to code in interactively at the expense of being more difficult to create functions with. The source of the trade-off is in how dplyr evaluates column names (specifically, allowing for unquoted column names as argument inputs). Tidy evaluation has been under major development the last couple of years in order to make programming with dplyr easier.</description>
     </item>
     
     <item>

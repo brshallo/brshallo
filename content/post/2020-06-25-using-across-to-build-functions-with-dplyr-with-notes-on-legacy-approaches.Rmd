@@ -1,30 +1,30 @@
 ---
-title: Using across() to build functions with dplyr, with notes on legacy approaches
+title: Short Examples of Best Practices When Writing Functions That Call dplyr Verbs
 author: Bryan Shalloway
 date: '2020-06-25'
-slug: using-across-to-build-functions-with-dplyr-with-notes-on-legacy-approaches
 categories:
   - programming
   - r
 tags:
   - rstats
+slug: using-across-to-build-functions-with-dplyr-with-notes-on-legacy-approaches
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
-```{r}
-library(tidyverse)
-```
-
-[dplyr](https://github.com/tidyverse/dplyr), the foundational [tidyverse](https://www.tidyverse.org/) package, makes a trade-off between being easy to code in interactively while being more difficult to create functions with. The source of the trade-off is in how `dplyr` evaluates column names (specifically, allowing for unquoted column names as argument inputs). tidy evaluation has been under major development the last couple of years in order to make [programming with dplyr](https://dplyr.tidyverse.org/articles/programming.html) easier. 
+[dplyr](https://github.com/tidyverse/dplyr), the foundational [tidyverse](https://www.tidyverse.org/) package, makes a trade-off between being easy to code in interactively at the expense of being more difficult to create functions with. The source of the trade-off is in how `dplyr` evaluates column names (specifically, allowing for unquoted column names as argument inputs). Tidy evaluation has been under major development the last couple of years in order to make [programming with dplyr](https://dplyr.tidyverse.org/articles/programming.html) easier. 
 
 During this development, there have been a variety of proposed methods for programming with `dplyr`. In this post, I will document the current 'best-practices' with `dplyr` 1.0.0. In the [Older approaches] section I provide analogous examples that someone (i.e. myself) might have used during this maturation period. 
 
 For a more full discussion on this topic see `dplyr`'s documentation at [programming with dplyr](https://dplyr.tidyverse.org/articles/programming.html) and the various links referenced there.
 
 # Function expecting one column
+
+```{r}
+library(tidyverse)
+```
 
 Pretend we want to create a function that calculates the sum of a given variable in a dataframe: 
 
@@ -35,7 +35,7 @@ sum_var <- function(df, var){
 }
 ```
 
-A user would call this:
+To run this function:
 ```{r}
 sum_vars(mpg, cty)
 ```
@@ -66,7 +66,7 @@ sum_vars <- function(df, vars){
 }
 ```
 
-If you are creating a function that can take in multiple sets of columns, e.g. you want to `group_by()` one set of variables and `summarise()` another set, you could do:
+You might want to create a function that can take in multiple sets of columns, e.g. the function below allows you to `group_by()` one set of variables and `summarise()` another set:
 
 ```{r}
 sum_group_vars <- function(df, group_vars, sum_vars){
@@ -76,21 +76,20 @@ sum_group_vars <- function(df, group_vars, sum_vars){
 }
 ```
 
-Which a user would call:
-
+How a user would run `sum_group_vars()`:
 ```{r}
 sum_group_vars(mpg,
                c(model, year), 
                c(hwy, cty))
 ```
 
-You could also make the inputs to `.fns` an argument in your function^[Though doing this doesn't require any tidy evaluation knowledge.].
+If you're feeling fancy, you could also make the input to `.fns` an argument to `sum_group_vars()`^[Doing this doesn't require any tidy evaluation knowledge].
 
 # Older approaches
 
-The methods in this section still work and are supported, they are just no longer the 'recommended' or most 'modern' approach available for creating functions that pass column names into `dplyr` verbs. Generally, I think the new `across()` approaches introduced in `dplyr` 1.0.0 are easier and more consistent to use than the methods that preceded them.
+Generally, I find the new `across()` approaches introduced in `dplyr` 1.0.0 are easier and more consistent to use than the methods that preceded them. However the methods in this section still work and are supported. They are just no longer the 'recommended' or most 'modern' approach available for creating functions that pass column names into `dplyr` verbs. 
 
-Prior to the introduction of the **bracket-bracket**, `{{}}`, you would have used the **`enquo()` + bang-bang** approach^[There is also the `rlang::enquos()` and `!!!` operator for when the input has length greater than one.] for building a function that summarised one variable. E.g.
+Prior to the introduction of the *bracket-bracket*, `{{}}`, you would have used the *`enquo()` + bang-bang* approach^[There is also the `rlang::enquos()` and `!!!` operator for when the input has length greater than one.]. The function below is equivalent to the `sum_var()` function shown at the start of this post.
 
 ```{r}
 sum_var <- function(df, var){
@@ -108,7 +107,7 @@ sum_vars <- function(df, vars){
 }
 ```
 
-Similar to using `across()` this method allows multiple variables being input. However what is weird about this function is that it requires the user wrapping the variable names with the `vars()` function^[A niche function specific to tidy evaluation (which users might not think to use).]. E.g. to use the previously created function, a user would run:
+Similar to using `across()` this method allows multiple variables being input. However what is weird about this function is that it requires the user wrapping the variable names in `vars()`^[A niche function specific to tidy evaluation (which users might not think of).]. Hence to use the previously created function, a user would run:
 
 ```{r}
 sum_vars(mpg, vars(hwy, cty))
@@ -154,9 +153,9 @@ sum_var(mpg,
         c("hwy", "cty"))
 ```
 
-There are a variety of other spins you might take on creating these types of functions. 
+There are a variety of similar spins you might take on handling tidy evaluation when creating these or similar types of functions. 
 
-One other older approach perhaps worth mentioning (presented [here](https://rstudio.com/resources/rstudioconf-2019/working-with-names-and-expressions-in-your-tidy-eval-code/)) is "passing the dots". Example if we want to `group_by()` multiple columns and then `summarise()` on just one column:
+One other older approach perhaps worth mentioning (presented [here](https://rstudio.com/resources/rstudioconf-2019/working-with-names-and-expressions-in-your-tidy-eval-code/)) is "passing the dots". Here is an example for if we want to `group_by()` multiple columns and then `summarise()` on just one column:
 
 ```{r}
 sum_group_var <- function(df, sum_var, ...){
@@ -166,4 +165,10 @@ sum_group_var <- function(df, sum_var, ...){
 }
 ```
 
-The limitation with this approach is that only one set of your inputs can have more than one variable in it, i.e. wherever you pass the `...` to in your function.
+The limitation with this approach is that only one set of your inputs can have more than one variable in it, i.e. wherever you pass the `...` in your function.
+
+# Appendix
+
+Image shared on social media was created using `xaringan` and `flair`. See [dplyr-1.0.0-example](https://github.com/brshallo/dplyr-1.0.0-example) for details.
+
+![](https://github.com/brshallo/dplyr-1.0.0-example/blob/master/dplyr-example-cropped.png?raw=true)
