@@ -145,7 +145,7 @@ For multiple grouping variables and multiple variables to be summarised you coul
 groupsum <- function(df, group_vars, sum_vars){
   df %>% 
     group_by_at(vars(one_of(group_vars))) %>% 
-    summarise_at(vars(one_of(sum_vars)), sum)
+    summarise_at(vars(one_of(sum_vars)), list(sum = sum, mean = mean))
 }
 ```
 
@@ -156,9 +156,9 @@ sum_var(mpg,
         c("hwy", "cty"))
 ```
 
-There are a variety of other spins you might take on creating these types of functions. One other older approach perhaps worth mentioning (presented [here](https://rstudio.com/resources/rstudioconf-2019/working-with-names-and-expressions-in-your-tidy-eval-code/)) was "passing the dots". 
+There are a variety of other spins you might take on creating these types of functions. 
 
-Example if we want to `group_by()` multiple columns and then summarise on just one column:
+One other older approach perhaps worth mentioning (presented [here](https://rstudio.com/resources/rstudioconf-2019/working-with-names-and-expressions-in-your-tidy-eval-code/)) was "passing the dots". Example if we want to `group_by()` multiple columns and then summarise on just one column:
 
 ```{r}
 sum_group_var <- function(df, sum_var, ...){
@@ -168,4 +168,4 @@ sum_group_var <- function(df, sum_var, ...){
 }
 ```
 
-The limitation with this approach is that only one set of your inputs can have more than one variable in it, i.e. wherever you pass the `...` in your function.
+The limitation with this approach is that only one set of your inputs can have more than one variable in it, i.e. wherever you pass the `...` to in your function.

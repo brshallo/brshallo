@@ -156,20 +156,20 @@
 <pre class="r"><code>groupsum &lt;- function(df, group_vars, sum_vars){
   df %&gt;% 
     group_by_at(vars(one_of(group_vars))) %&gt;% 
-    summarise_at(vars(one_of(sum_vars)), sum)
+    summarise_at(vars(one_of(sum_vars)), list(sum = sum, mean = mean))
 }</code></pre>
 <p>Which would be called by a user:</p>
 <pre class="r"><code>sum_var(mpg, 
         c(&quot;model&quot;, &quot;year&quot;), 
         c(&quot;hwy&quot;, &quot;cty&quot;))</code></pre>
-<p>There are a variety of other spins you might take on creating these types of functions. One other older approach perhaps worth mentioning (presented <a href="https://rstudio.com/resources/rstudioconf-2019/working-with-names-and-expressions-in-your-tidy-eval-code/">here</a>) was “passing the dots”.</p>
-<p>Example if we want to <code>group_by()</code> multiple columns and then summarise on just one column:</p>
+<p>There are a variety of other spins you might take on creating these types of functions.</p>
+<p>One other older approach perhaps worth mentioning (presented <a href="https://rstudio.com/resources/rstudioconf-2019/working-with-names-and-expressions-in-your-tidy-eval-code/">here</a>) was “passing the dots”. Example if we want to <code>group_by()</code> multiple columns and then summarise on just one column:</p>
 <pre class="r"><code>sum_group_var &lt;- function(df, sum_var, ...){
   df %&gt;% 
     group_by(...) %&gt;% 
     summarise({{sum_var}} := sum({{sum_var}}))
 }</code></pre>
-<p>The limitation with this approach is that only one set of your inputs can have more than one variable in it, i.e. wherever you pass the <code>...</code> in your function.</p>
+<p>The limitation with this approach is that only one set of your inputs can have more than one variable in it, i.e. wherever you pass the <code>...</code> to in your function.</p>
 </div>
 <div class="footnotes">
 <hr />
