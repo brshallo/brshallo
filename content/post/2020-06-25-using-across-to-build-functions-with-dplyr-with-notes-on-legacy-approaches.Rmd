@@ -20,7 +20,7 @@ library(tidyverse)
 
 [dplyr](https://github.com/tidyverse/dplyr), the foundational [tidyverse](https://www.tidyverse.org/) package, makes a trade-off between being easy to code in interactively while being more difficult to create functions with. The source of the trade-off is in how `dplyr` evaluates column names (specifically, allowing for unquoted column names as argument inputs). Tidyevaluation has been under major development the last couple of years in order to make [programming with dplyr](https://dplyr.tidyverse.org/articles/programming.html) easier. 
 
-During this development, there have been a variety of proposed methods for programming with `dplyr`. In this post, I will document the current 'best-practices' with `dplyr` 1.0.0. In the [Older approaches] I provide analagous examples that someone (i.e. myself) might have used during this maturation period. 
+During this development, there have been a variety of proposed methods for programming with `dplyr`. In this post, I will document the current 'best-practices' with `dplyr` 1.0.0. In the [Older approaches] section I provide analagous examples that someone (i.e. myself) might have used during this maturation period. 
 
 For a more full discussion on this topic see `dplyr`'s documentation at [programming with dplyr](https://dplyr.tidyverse.org/articles/programming.html) and the various links referenced there.
 
@@ -57,7 +57,7 @@ Using the `across()` approach also allows you to input more than one variable, e
 sum_vars(mpg, c(cty, hwy))
 ```
 
-If you wanted to compute multiple column summaries with different functions and you wanted to append the function name onto your outputted columns^[`dplyr` 1.0.0 also now has [support for using the glue](https://www.tidyverse.org/blog/2020/02/glue-strings-and-tidy-eval/) package syntax for modifying variable names.], you could instead pass a named list of functions into the `.fns` argument of `across()`.
+If you wanted to compute multiple column summaries with different functions and you wanted to glue the function name onto your outputted column names^[`dplyr` 1.0.0 also now has [support for using the glue](https://www.tidyverse.org/blog/2020/02/glue-strings-and-tidy-eval/) package syntax for modifying variable names.], you could instead pass a named list of functions into the `.fns` argument of `across()`.
 
 ```{r}
 sum_vars <- function(df, vars){
@@ -66,7 +66,7 @@ sum_vars <- function(df, vars){
 }
 ```
 
-If you want to group by one set of variables, and summarise another set of variables you could do:
+If you want to `group_by()` one set of variables, and `summarise()` another set of variables you could do:
 
 ```{r}
 sum_group_vars <- function(df, group_vars, sum_vars){
@@ -84,13 +84,13 @@ sum_group_vars(mpg,
                c(hwy, cty))
 ```
 
-You could also make the inputs to `.fns` an input in your function as well.
+You could also make the inputs to `.fns` an argument in your function.
 
 # Older approaches
 
 The methods in this section still work and are supported, they are just no longer the 'recommended' or most modern approach available for creating functions with `dplyr` verbs. Generally, I think the new `across()` approaches introduced in `dplyr` 1.0.0 are easier and more consistent to use.
 
-Prior to the introduction of the `{{}}` approach, you would have used the **`enquo()` + bang-bang** approach for building a function that summarised one variable:
+Prior to the introduction of the **bracket-brakcet**, `{{}}`, you would have used the **`enquo()` + bang-bang** approach^[There is also the `rlang::enquos()` and `!!!` operator for when the input has length greater than one.] for building a function that summarised one variable. E.g.
 
 ```{r}
 sum_var <- function(df, var){
@@ -98,8 +98,6 @@ sum_var <- function(df, var){
   summarise(df, !!var_quo := sum(!!var_quo))
 }
 ```
-
-There is also the `rlang::enquos()` and `!!!` operator for when the input has length greater than one.
 
 To modify variables in-place you would have used the `*_at()`, `*_if()` or `*_all()` function variants (which are now superseded by `across()`).
 
@@ -110,13 +108,13 @@ sum_vars <- function(df, vars){
 }
 ```
 
-Similar to using `across()` this method allows multiple variables being input. However what is weird about this function is that it requires the user wrapping the variable names with the `vars()` function^[A niche function specific to tidyevaluation (which users might not think to use).]. E.g. to use the previously created function, users would run:
+Similar to using `across()` this method allows multiple variables being input. However what is weird about this function is that it requires the user wrapping the variable names with the `vars()` function^[A niche function specific to tidyevaluation (which users might not think to use).]. E.g. to use the previously created function, a user would run:
 
 ```{r}
 sum_vars(mpg, vars(hwy, cty))
 ```
 
-Alternatively, you could have the variable name inputs be character strings by modifying the function like so:
+Alternatively, you could have the variable name inputs be character vectors by modifying the function like so:
 
 ```{r}
 sum_var <- function(df, vars){
@@ -158,7 +156,7 @@ sum_var(mpg,
 
 There are a variety of other spins you might take on creating these types of functions. 
 
-One other older approach perhaps worth mentioning (presented [here](https://rstudio.com/resources/rstudioconf-2019/working-with-names-and-expressions-in-your-tidy-eval-code/)) was "passing the dots". Example if we want to `group_by()` multiple columns and then summarise on just one column:
+One other older approach perhaps worth mentioning (presented [here](https://rstudio.com/resources/rstudioconf-2019/working-with-names-and-expressions-in-your-tidy-eval-code/)) is "passing the dots". Example if we want to `group_by()` multiple columns and then `summarise()` on just one column:
 
 ```{r}
 sum_group_var <- function(df, sum_var, ...){

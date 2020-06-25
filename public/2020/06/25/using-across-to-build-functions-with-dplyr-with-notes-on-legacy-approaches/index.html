@@ -86,7 +86,7 @@
 
 <pre class="r"><code>library(tidyverse)</code></pre>
 <p><a href="https://github.com/tidyverse/dplyr">dplyr</a>, the foundational <a href="https://www.tidyverse.org/">tidyverse</a> package, makes a trade-off between being easy to code in interactively while being more difficult to create functions with. The source of the trade-off is in how <code>dplyr</code> evaluates column names (specifically, allowing for unquoted column names as argument inputs). Tidyevaluation has been under major development the last couple of years in order to make <a href="https://dplyr.tidyverse.org/articles/programming.html">programming with dplyr</a> easier.</p>
-<p>During this development, there have been a variety of proposed methods for programming with <code>dplyr</code>. In this post, I will document the current ‘best-practices’ with <code>dplyr</code> 1.0.0. In the <a href="#older-approaches">Older approaches</a> I provide analagous examples that someone (i.e. myself) might have used during this maturation period.</p>
+<p>During this development, there have been a variety of proposed methods for programming with <code>dplyr</code>. In this post, I will document the current ‘best-practices’ with <code>dplyr</code> 1.0.0. In the <a href="#older-approaches">Older approaches</a> section I provide analagous examples that someone (i.e. myself) might have used during this maturation period.</p>
 <p>For a more full discussion on this topic see <code>dplyr</code>’s documentation at <a href="https://dplyr.tidyverse.org/articles/programming.html">programming with dplyr</a> and the various links referenced there.</p>
 <div id="function-expecting-one-column" class="section level1">
 <h1>Function expecting one column</h1>
@@ -107,12 +107,12 @@
 <h1>Functions allowing multiple columns</h1>
 <p>Using the <code>across()</code> approach also allows you to input more than one variable, e.g. a user could call the following to get summaries on both <code>cty</code> and <code>hwy</code>.</p>
 <pre class="r"><code>sum_vars(mpg, c(cty, hwy))</code></pre>
-<p>If you wanted to compute multiple column summaries with different functions and you wanted to append the function name onto your outputted columns<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, you could instead pass a named list of functions into the <code>.fns</code> argument of <code>across()</code>.</p>
+<p>If you wanted to compute multiple column summaries with different functions and you wanted to glue the function name onto your outputted column names<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, you could instead pass a named list of functions into the <code>.fns</code> argument of <code>across()</code>.</p>
 <pre class="r"><code>sum_vars &lt;- function(df, vars){
   
   summarise(df, across({{vars}}, list(sum = sum, mean = mean)))
 }</code></pre>
-<p>If you want to group by one set of variables, and summarise another set of variables you could do:</p>
+<p>If you want to <code>group_by()</code> one set of variables, and <code>summarise()</code> another set of variables you could do:</p>
 <pre class="r"><code>sum_group_vars &lt;- function(df, group_vars, sum_vars){
   df %&gt;% 
     group_by(across({{group_vars}})) %&gt;% 
@@ -122,25 +122,24 @@
 <pre class="r"><code>sum_group_vars(mpg,
                c(model, year), 
                c(hwy, cty))</code></pre>
-<p>You could also make the inputs to <code>.fns</code> an input in your function as well.</p>
+<p>You could also make the inputs to <code>.fns</code> an argument in your function.</p>
 </div>
 <div id="older-approaches" class="section level1">
 <h1>Older approaches</h1>
 <p>The methods in this section still work and are supported, they are just no longer the ‘recommended’ or most modern approach available for creating functions with <code>dplyr</code> verbs. Generally, I think the new <code>across()</code> approaches introduced in <code>dplyr</code> 1.0.0 are easier and more consistent to use.</p>
-<p>Prior to the introduction of the <code>{{}}</code> approach, you would have used the <strong><code>enquo()</code> + bang-bang</strong> approach for building a function that summarised one variable:</p>
+<p>Prior to the introduction of the <strong>bracket-brakcet</strong>, <code>{{}}</code>, you would have used the <strong><code>enquo()</code> + bang-bang</strong> approach<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> for building a function that summarised one variable. E.g.</p>
 <pre class="r"><code>sum_var &lt;- function(df, var){
   var_quo &lt;- enquo(var)
   summarise(df, !!var_quo := sum(!!var_quo))
 }</code></pre>
-<p>There is also the <code>rlang::enquos()</code> and <code>!!!</code> operator for when the input has length greater than one.</p>
 <p>To modify variables in-place you would have used the <code>*_at()</code>, <code>*_if()</code> or <code>*_all()</code> function variants (which are now superseded by <code>across()</code>).</p>
 <pre class="r"><code>sum_vars &lt;- function(df, vars){
   
   summarise_at(df, {{vars}}, sum)
 }</code></pre>
-<p>Similar to using <code>across()</code> this method allows multiple variables being input. However what is weird about this function is that it requires the user wrapping the variable names with the <code>vars()</code> function<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. E.g. to use the previously created function, users would run:</p>
+<p>Similar to using <code>across()</code> this method allows multiple variables being input. However what is weird about this function is that it requires the user wrapping the variable names with the <code>vars()</code> function<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. E.g. to use the previously created function, a user would run:</p>
 <pre class="r"><code>sum_vars(mpg, vars(hwy, cty))</code></pre>
-<p>Alternatively, you could have the variable name inputs be character strings by modifying the function like so:</p>
+<p>Alternatively, you could have the variable name inputs be character vectors by modifying the function like so:</p>
 <pre class="r"><code>sum_var &lt;- function(df, vars){
   
   summarise_at(df, vars(one_of(vars)), sum)
@@ -163,7 +162,7 @@
         c(&quot;model&quot;, &quot;year&quot;), 
         c(&quot;hwy&quot;, &quot;cty&quot;))</code></pre>
 <p>There are a variety of other spins you might take on creating these types of functions.</p>
-<p>One other older approach perhaps worth mentioning (presented <a href="https://rstudio.com/resources/rstudioconf-2019/working-with-names-and-expressions-in-your-tidy-eval-code/">here</a>) was “passing the dots”. Example if we want to <code>group_by()</code> multiple columns and then summarise on just one column:</p>
+<p>One other older approach perhaps worth mentioning (presented <a href="https://rstudio.com/resources/rstudioconf-2019/working-with-names-and-expressions-in-your-tidy-eval-code/">here</a>) is “passing the dots”. Example if we want to <code>group_by()</code> multiple columns and then <code>summarise()</code> on just one column:</p>
 <pre class="r"><code>sum_group_var &lt;- function(df, sum_var, ...){
   df %&gt;% 
     group_by(...) %&gt;% 
@@ -175,7 +174,8 @@
 <hr />
 <ol>
 <li id="fn1"><p><code>dplyr</code> 1.0.0 also now has <a href="https://www.tidyverse.org/blog/2020/02/glue-strings-and-tidy-eval/">support for using the glue</a> package syntax for modifying variable names.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>A niche function specific to tidyevaluation (which users might not think to use).<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>There is also the <code>rlang::enquos()</code> and <code>!!!</code> operator for when the input has length greater than one.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>A niche function specific to tidyevaluation (which users might not think to use).<a href="#fnref3" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
 
