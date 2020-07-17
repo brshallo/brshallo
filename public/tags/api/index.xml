@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>animation on Bryan&#39;s website</title>
-    <link>/tags/animation/</link>
-    <description>Recent content in animation on Bryan&#39;s website</description>
+    <title>api on Bryan&#39;s website</title>
+    <link>/tags/api/</link>
+    <description>Recent content in api on Bryan&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 20 Jul 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/animation/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/api/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -19,15 +19,6 @@
       <guid>/2020/07/20/animate-interactive-objects-with-face-detection-javascript-and-chrome-browser/</guid>
       <description>Things follow youFirst draftHow I made thisNext stepsPath, Learning, and ResourcesClosing thoughtsAppendixAdditional actionsWe spend the majority of our time in front of screens. It’s mostly one of computer/tablet/phone/tv1. These are primarily on platforms the user controls or owns. However I’m surprised we don’t yet have more interactions with screens “out in the world”.
 Face detection and object recognition technologies are now highly accessible, making it easy to create interactive screens.</description>
-    </item>
-    
-    <item>
-      <title>Use Flipbooks to Explain Your Code and Thought Process</title>
-      <link>/2020/06/24/use-flipbooks-to-explain-your-code-and-thought-process/</link>
-      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/2020/06/24/use-flipbooks-to-explain-your-code-and-thought-process/</guid>
-      <description>Learning R’s %&amp;gt;%Using the pipe operator (%&amp;gt;%) is one of my favorite things about coding in R and the tidyverse. However when it was first shown to me, I couldn’t understand what the #rstats nut describing it was so enthusiastic about. They tried to explain, “It means and then do the next operation.” When that didn’t click for me, they continued (while becoming ever more excited) “It passes the previous steps output into the first argument of the next function,” still… 😐😐😕.</description>
     </item>
     
   </channel>

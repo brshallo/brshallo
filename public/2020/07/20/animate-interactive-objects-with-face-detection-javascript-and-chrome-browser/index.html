@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.57.2" />
+
+
+<title>Animate interactive objects with Face Detection, JavaScript and Chrome Browser - Bryan&#39;s website</title>
+<meta property="og:title" content="Animate interactive objects with Face Detection, JavaScript and Chrome Browser - Bryan&#39;s website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/bryan_edit.jpg"
+         width="60"
+         height="60"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="https://twitter.com/brshallo">Twitter</a></li>
+    
+    <li><a href="https://github.com/brshallo">GitHub</a></li>
+    
+    <li><a href="https://www.linkedin.com/in/bryanshalloway/">LinkedIn</a></li>
+    
+    <li><a href="https://www.youtube.com/channel/UCDVMC4-VRU-tR2Z4nYc1mDA">YouTube</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">7 min read</span>
+    
+
+    <h1 class="article-title">Animate interactive objects with Face Detection, JavaScript and Chrome Browser</h1>
+
+    
+    <span class="article-date">2020-07-20</span>
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#things-follow-you">Things follow you</a></li>
+<li><a href="#first-draft">First draft</a><ul>
+<li><a href="#how-i-made-this">How I made this</a></li>
+</ul></li>
+<li><a href="#next-steps">Next steps</a></li>
+<li><a href="#path-learning-and-resources">Path, Learning, and Resources</a></li>
+<li><a href="#closing-thoughts">Closing thoughts</a></li>
+<li><a href="#appendix">Appendix</a><ul>
+<li><a href="#additional-actions">Additional actions</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p>We spend the majority of our time in front of screens. It’s mostly one of computer/tablet/phone/tv<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. These are primarily on platforms the user controls or owns. However I’m surprised we don’t yet have more interactions with screens “out in the world”.</p>
+<p>Face detection and object recognition technologies are now highly accessible, making it easy to create interactive screens. I wanted to toy around with using this technology to create displays that are designed to surprise or startle the user<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. In this post I’ll describe my starting place on a small project.</p>
+<div id="things-follow-you" class="section level1">
+<h1>Things follow you</h1>
+<p>Try to recall that creepy feeling you get when someone or something is looking at you. Now imagine having that feeling all of the time. That is the surprise or unsettled feeling I want to evoke. A few examples:</p>
+<p>A poster for a new Lord of the Rings movie coming out that has an Eye of Sauron that follows you as you walk into the cinema<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
+<p><img src="https://i.insider.com/5aec114a19ee861f008b4855?width=1200&amp;format=jpeg&amp;auto=webp" /></p>
+<p>An army recruiter with an “I want you” Uncle Sam poster behind him whose finger points at you as you walk by.</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Unclesamwantyou.jpg/440px-Unclesamwantyou.jpg" /></p>
+<p>or imagine bumping into someone at the grocery store during COVID19 whose shirt beeps at you and flashes red if you get within 6 feet of them.</p>
+<p>I intentionally made these examples somewhat dystopian. There is an important societal reckoning taking place right now regarding tracking technologies (particularly in regard to their impacts on communities of color). I wanted to work on something that, while playful, would call to mind concerns of a ‘Big Brother’ or ‘watchful eye’ like figure.</p>
+<p>As a starting place, I focused on <em>animating eyes</em> that would track a user that looked at them (and requiring just a browser and a webcam).</p>
+</div>
+<div id="first-draft" class="section level1">
+<h1>First draft</h1>
+<p>Here is my first pass:</p>
+<p><strong>video of it in action</strong></p>
+<p>The <a href="https://codepen.io/brshallo/full/qBbyrLg">code is on codepen</a>6[This is my first project using JavaScript (don’t expect much when it comes to code quality).].</p>
+<p>To set it up:</p>
+<ul>
+<li>Open a Chrome browser and go <a href="chrome://flags/#enable-experimental-web-platform-features">here</a> and enable experimental web platform features (it currently only works on Chrome and only on Windows or macOS – it does not yet work on Android, iOS, or Linux)</li>
+<li>Go to <a href="https://codepen.io/brshallo/full/qBbyrLg">codepen link</a></li>
+<li>Allow use of webcam when prompted and ensure you are in the ‘Results’ view and within view of your webcam (you can press F11 key to go full screen and hide the browser bar)</li>
+<li>You will likely need to hit refresh when opening or when resizing</li>
+</ul>
+<p>If you want to use it to creep out the family members you are locked at home with, see the <a href="#additional-actions">Additional actions</a> section.</p>
+<div id="how-i-made-this" class="section level2">
+<h2>How I made this</h2>
+<p>To get the video and initial face detection set-up, I copied code from <a href="https://github.com/wesbos/beginner-javascript/tree/764f0d589e6affeda2c0b6f17874311188de0d57/exercises/55%20-%20Face%20Detection%20Censorship">this repo</a> by <a href="https://twitter.com/wesbos">Wes Bos</a>. To animate the eye, I used an html5 canvas element and javascript. Mostly, the eye follows your position in the video. Though I did a few things to make the eye movement look more interesting:</p>
+<ul>
+<li>Rather than updating with every frame, it estimates your position based on the moving average of 10 frames, this makes the movement appear more smooth and softens the jitters that come from the algorithm constantly updating it’s estimate of your position</li>
+<li>I used some trigonometry to soften the tracking so that the pupil’s movement would look more realistic at a distance.</li>
+<li>I also have the components of the eye slightly change shape and turn in or out depending on your position. However this is very much still a work on progress (there are errors and most of the math here is almost nonsensical) – fixing the eye tracking is the major focus area for <a href="#next-steps">Next steps</a>.</li>
+</ul>
+</div>
+</div>
+<div id="next-steps" class="section level1">
+<h1>Next steps</h1>
+<p><strong>Improve position mapping:</strong></p>
+<p>Using estimates of the length of facial landmarks, you can estimate the distance someone is from the screen. See <a href="https://github.com/philiiiiiipp/Android-Screen-to-Face-Distance-Measurement">project on github</a> that discusses this<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. Once you have an estimate of someone’s position, you can adjust the image accordingly so that you can make the eye look like it is following the user through space<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. Here is a ‘back of the napkin’ sketch of my mental model for the problem:</p>
+<p><strong>Photo of diagram of eye and required trig</strong></p>
+<p>Once you have an estimate of the distance a face is from the camera, the important points for the projection of the eye to a 2d animation can be filled-in (with just a little bit of trigonometry). Ultimately I’d love to do something like was set-up <a href="https://github.com/evermeer/EVFaceTracker">here</a>:</p>
+<p><img src="https://github.com/evermeer/EVFaceTracker/raw/master/EVFaceTracker.gif?raw=true" /></p>
+<p>Or picture a digital version (tailored to where the user is standing) of the creepy alligator meme that was going around:</p>
+<p><img src="http://www.ohmagif.com/wp-content/uploads/2013/12/cool-amazing-t-rex-optical-illusion.gif" /></p>
+<p>Though this may be limited<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. Also, note this means the view would be tailored to a single user – the animation would become distorted for users other than the individual the animation is tracking.</p>
+<p><strong>Improve everything else:</strong></p>
+<p>Animating the above would require a great deal more sophistication. I’d also love to improve the code. However, the above <a href="#next-steps">Next steps</a> are largely aspirational – this project is <em>far removed</em> from my day job and I am inexperienced in much of the underlying technologies / softwares<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>. Hence I’m unsure when I’ll pick this back-up<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
+</div>
+<div id="path-learning-and-resources" class="section level1">
+<h1>Path, Learning, and Resources</h1>
+<p>My initial plan for building the tracking eyes was to use the python bindings for OpenCV<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> for the face detection and then use the open source video editing software, <em>Blender</em> (which can also run python scripts), to overlay an animation. See <a href="https://www.youtube.com/watch?v=O7nNO3FLkLU">cool example</a> where someone uses Blender to demo face animations of a character. A problem with this approach is that Blender is not a light-weight application. Hence I wasn’t sure how I would easily deploy it… so investigated alternatives.</p>
+<p>On the tail-end of <a href="https://www.youtube.com/watch?v=8p5SDI4TNDc">this presentation</a> by <a href="https://twitter.com/cassiecodes?lang=en">Cassie Evans</a> on making interactive SVG images, is where I learned about Google Chrome’s experimental shape detection API. I then found <a href="https://twitter.com/wesbos/status/976097163834019842?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E976097163834019842%7Ctwgr%5E&amp;ref_url=https%3A%2F%2Fcdn.embedly.com%2Fwidgets%2Fmedia.html%3Ftype%3Dtext2Fhtmlkey%3Da19fcc184b9711e1b4764040d3dc5c07schema%3Dtwitterurl%3Dhttps3A%2F%2Ftwitter.com%2Fwesbos%2Fstatus%2F976097163834019842image%3Dhttps3A%2F%2Fi.embed.ly%2F1%2Fimage3Furl3Dhttps253A252F252Fpbs.twimg.com252Fmedia252FDYvLKKMXkAAUxjf.jpg253Alarge26key3Da19fcc184b9711e1b4764040d3dc5c07">Wes Bos’ tweet</a> on the subject:</p>
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+😮 Did you know Chrome has a FaceDetector API? <a href="https://t.co/wSwDdI8p1u">pic.twitter.com/wSwDdI8p1u</a>
+</p>
+— Wes Bos (<span class="citation">@wesbos</span>) <a href="https://twitter.com/wesbos/status/976097163834019842?ref_src=twsrc%5Etfw">March 20, 2018</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>Given the relative simplicity of the shape detection API and the ease with which I could then deploy a first draft through a Chrome browser, I decided to go this route.</p>
+<p><em>A problem</em> was that I needed to learn some web development (or at least JavaScript) basics. <em>Preliminary learning resources I went through:</em></p>
+<ul>
+<li>About 40% of the videos/exercies from the first three courses of <a href="https://www.coursera.org/specializations/web-design#courses">University of Michigan’s Web Design series on coursera</a> by <a href="https://twitter.com/ColleenAtUMSI">Colleen van Lent</a></li>
+<li>The first several chapters of <a href="https://learn.shayhowe.com/html-css/building-your-first-web-page/">Learn to Code HTML &amp; CSS</a> by <a href="https://twitter.com/shayhowe">Shay Howe</a></li>
+<li>Some <a href="https://www.youtube.com/watch?v=EO6OkltgudE&amp;list=PLpPnRKq7eNW3We9VdCfx9fprhqXHwTPXL">tutorials on HTML5 canvas</a> elements by <a href="https://twitter.com/chriscourses?lang=en">Chris Courses</a></li>
+</ul>
+<p>Rather than taking the SVG route, I ended-up just using a canvas element. WARNING, this is my first project in JavaScript… please don’t judge me based on the code quality <code>!r emo::ji('smile')</code>.</p>
+</div>
+<div id="closing-thoughts" class="section level1">
+<h1>Closing thoughts</h1>
+<p>Please try it out or consider ways you can make something engaging or surprising for users. If you do, please let me know :-) <span class="citation">[@brshallo]</span>(<a href="https://twitter.com/brshallo" class="uri">https://twitter.com/brshallo</a>).</p>
+</div>
+<div id="appendix" class="section level1">
+<h1>Appendix</h1>
+<div id="additional-actions" class="section level2">
+<h2>Additional actions</h2>
+<ul>
+<li>Ensure there is <em>very good</em> frontward facing lighting (though tracking currently gets jumpy at a distance<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>)</li>
+<li>Plug device into a TV or larger display</li>
+<li>Get the camera lined-up</li>
+<li>Call your loved one into the room and wait for them to notice and start interacting with the giant eye ball that is following them</li>
+<li>For <em>bonus</em> points capture it on video and tweet it at me or with an appropriate hashtag (e.g. #eyeseeyou)</li>
+<li>For <em>bonus</em> bonus points, edit the code and make some fun new animation from it</li>
+</ul>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Maybe there’s also Peloton, car display, Mirror… (if you’re fancy).<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>This is not a new idea.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>Similarly, picture a portrait whose eyes follow you as you walk-by – similar to Mark Rober’s [video] (<a href="https://www.youtube.com/watch?v=sPgKu2E-jdw" class="uri">https://www.youtube.com/watch?v=sPgKu2E-jdw</a>) but tracking you automatically (human free).<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>For my use-case though I may use face height rather than (or in addition to) face width – as cannot trust that people will be turned towards my camera and figure it is less likely they will tilt their head.<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>Though may be somewhat limited as a user has two eyes, not just one, so depth illusion might not work perfectly.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>Afterall, we’re not working with holograms or special glasses.<a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>So doing things goes slowly.<a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>But wanted to at least post this first draft<a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>Open Computer Vision<a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p>Perhaps will fix / improve in future.<a href="#fnref10" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+
+    </div>
+  </article>
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//bryanshalloway.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+</main>
+
+  
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a> and <a href="https://bookdown.org/yihui/blogdown/" class="footer-links-kudos">  <img src="/images/hex-blogdown.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+
+
+    
+  </body>
+</html>
+

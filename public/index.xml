@@ -6,10 +6,20 @@
     <description>Recent content on Bryan&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 25 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 20 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Animate interactive objects with Face Detection, JavaScript and Chrome Browser</title>
+      <link>/2020/07/20/animate-interactive-objects-with-face-detection-javascript-and-chrome-browser/</link>
+      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/07/20/animate-interactive-objects-with-face-detection-javascript-and-chrome-browser/</guid>
+      <description>Things follow youFirst draftHow I made thisNext stepsPath, Learning, and ResourcesClosing thoughtsAppendixAdditional actionsWe spend the majority of our time in front of screens. It’s mostly one of computer/tablet/phone/tv1. These are primarily on platforms the user controls or owns. However I’m surprised we don’t yet have more interactions with screens “out in the world”.
+Face detection and object recognition technologies are now highly accessible, making it easy to create interactive screens.</description>
+    </item>
     
     <item>
       <title>Short Examples of Best Practices When Writing Functions That Call dplyr Verbs</title>
