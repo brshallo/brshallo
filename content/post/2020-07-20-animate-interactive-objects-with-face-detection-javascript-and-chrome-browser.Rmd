@@ -42,9 +42,9 @@ I intentionally made these examples somewhat dystopian. There is an important so
 As a starting place, I focused on animating an eye that would track a user that looked at it^[And that could be easily shared across devices.].
 
 **Here is my first draft:**
-
-<iframe width="100%" src="https://www.youtube.com/embed/UPAgQxaDDCo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
+<div class="iframe-container">
+  <iframe width="100%" src="https://www.youtube.com/embed/UPAgQxaDDCo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 *If you want to set it up:*
 
 * Open a Chrome browser and enable [experimental web platform features](chrome://flags/#enable-experimental-web-platform-features) (currently only works on Chrome and does not yet work on Android, iOS, or Linux)
