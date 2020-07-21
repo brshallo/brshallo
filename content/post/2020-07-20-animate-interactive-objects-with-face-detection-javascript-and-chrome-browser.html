@@ -20,7 +20,7 @@ tags:
 <li><a href="#codepen-example">Codepen example</a></li>
 <li><a href="#how-i-made-it">How I made it</a></li>
 <li><a href="#next-steps">Next steps</a></li>
-<li><a href="#path-learning-and-resources">Path, Learning and Resources</a></li>
+<li><a href="#learning-path-and-resources">Learning path and resources</a></li>
 <li><a href="#closing-thoughts">Closing thoughts</a></li>
 <li><a href="#appendix">Appendix</a><ul>
 <li><a href="#additional-actions">Additional actions</a></li>
@@ -29,7 +29,7 @@ tags:
 </div>
 
 <p>We spend the majority of our time in front of screens. It’s mostly one of computer/tablet/phone/tv<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. These are largely platforms the user owns or controls. I’m surprised we don’t yet have more interactions with screens <em>out in the world</em>.</p>
-<p>Face detection and object recognition technologies are now highly accessible, making it easy to create interactive screens. In this post I’ll describe my starting place on a small project using this technology to create a display designed to unnerve the user.</p>
+<p>Face detection and object recognition technologies are now highly accessible, making it easy to use a camera to make a display interactive. In this post I’ll describe my starting place on a small project using this technology to create an animation designed to unnerve the user.</p>
 <div id="things-following-you" class="section level1">
 <h1>Things following you</h1>
 <p>Try to recall that creepy sensation you get when someone or something is looking at you. Now imagine having that all of the time. That is the unsettled feeling I want to evoke. A few ideas:</p>
@@ -41,19 +41,19 @@ An army recruiter with an “I want you” Uncle Sam poster behind him whose fin
 <center>
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Unclesamwantyou.jpg/440px-Unclesamwantyou.jpg" alt="Uncle Sam" style="width:50.0%" />
 </center>
-<p>Or imagine bumping into someone at the grocery store during COVID19 whose shirt beeps and flashes red if you get within 6 feet of them.</p>
+<p>Someone at the grocery store (during COVID19) whose shirt beeps and flashes red if you get within 6 feet of them.</p>
 <p>I intentionally made these examples somewhat dystopian. There is an important societal reckoning taking place right now regarding tracking technologies (particularly in regard to its impacts on communities of color). I wanted to work on something that, while playful, would call to mind concerns of a ‘Big Brother’ or ‘watchful eye’ like figure.</p>
 </div>
 <div id="codepen-example" class="section level1">
 <h1>Codepen example</h1>
-<p>As a starting place, I focused on animating an eye that would track a user that looked at them<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
+<p>As a starting place, I focused on animating an eye that would track a user that looked at it<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
 <p><strong>Here is my first draft:</strong></p>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/UPAgQxaDDCo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
 </iframe>
 <p><em>If you want to set it up:</em></p>
 <ul>
 <li>Open a Chrome browser and enable <a href="chrome://flags/#enable-experimental-web-platform-features">experimental web platform features</a> (currently only works on Chrome and does not yet work on Android, iOS, or Linux)</li>
-<li>Go to my <a href="https://codepen.io/brshallo/full/qBbyrLg">codepen</a><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>)</li>
+<li>Go to my <a href="https://codepen.io/brshallo/full/qBbyrLg">codepen</a><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></li>
 <li>Allow use of webcam when prompted</li>
 <li>For a better view, ensure you are on the ‘Results’ tab and press the F11 key to hide the browser bar</li>
 <li>You will likely need to refresh when opening or when resizing</li>
@@ -62,7 +62,7 @@ An army recruiter with an “I want you” Uncle Sam poster behind him whose fin
 </div>
 <div id="how-i-made-it" class="section level1">
 <h1>How I made it</h1>
-<p>To get the video and initial face detection set-up, I copied code from <a href="https://github.com/wesbos/beginner-javascript/tree/764f0d589e6affeda2c0b6f17874311188de0d57/exercises/55%20-%20Face%20Detection%20Censorship">this github repo</a> by <a href="https://twitter.com/wesbos">Wes Bos</a>. To animate the eye, I used an html5 canvas element and javascript. Mostly, the eye follows your position in the video. Though I did a few things to make the eye movement look more interesting:</p>
+<p>To get the video and initial face detection set-up, I copied code from <a href="https://github.com/wesbos/beginner-javascript/tree/764f0d589e6affeda2c0b6f17874311188de0d57/exercises/55%20-%20Face%20Detection%20Censorship">this github repo</a> by <a href="https://twitter.com/wesbos">Wes Bos</a>. To animate the eye I used an html5 canvas element and JavaScript. The eye simply follows your position in the video. Though I did a few things to make the eye movement look more interesting:</p>
 <ul>
 <li>Rather than updating with every frame, it estimates your position based on the moving average of 10 frames, this makes the movement appear more smooth and softens the jitters of the algorithm constantly updating its estimate of your position.</li>
 <li>I used some trigonometry to soften the tracking so that the pupil’s movement would look more realistic at a distance.</li>
@@ -85,11 +85,11 @@ An army recruiter with an “I want you” Uncle Sam poster behind him whose fin
 </iframe>
 <p>but tailored to where the user is standing. However this may be limited<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>, also the view would be tailored to a single user<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>.</p>
 <p><strong>Improve everything else:</strong></p>
-<p>The above improvements would require a great deal more sophistication in the animation. I’d also like to improve the code quality. However, all of these <a href="#next-steps">Next steps</a> are largely aspirational – this project is <em>far removed</em> from my day job and I am inexperienced in much of the underlying technologies / software. Hence I’m unsure when I’ll pick this back-up<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
+<p>The above improvements would require a great deal more sophistication in the animation. I’d also like to improve the code quality. All of these <a href="#next-steps">Next steps</a> are largely aspirational – this project is <em>far removed</em> from my day job and I am inexperienced in much of the underlying technologies / software. Hence I’m unsure when I’ll pick this back-up<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
 </div>
-<div id="path-learning-and-resources" class="section level1">
-<h1>Path, Learning and Resources</h1>
-<p>My initial plan for building the tracking eyes was to use the python bindings for OpenCV<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> for the face detection and then use the open source video editing software, <em>Blender</em> (which can also run python scripts), to overlay an animation. See <a href="https://www.youtube.com/watch?v=O7nNO3FLkLU">example</a> where someone uses webcam and Blender to demo their face animations on a character. A problem with this approach is that Blender is not a light-weight application. Hence I wasn’t sure how I would easily deploy it… so I investigated alternative approaches.</p>
+<div id="learning-path-and-resources" class="section level1">
+<h1>Learning path and resources</h1>
+<p>My initial plan (for building the eye tracking component) was to use the python bindings for OpenCV<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> for the face detection. I would then use the open source video editing software, <em>Blender</em> (which can also run python scripts) to overlay an animation<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>. See <a href="https://www.youtube.com/watch?v=O7nNO3FLkLU">example</a> where someone uses webcam and Blender to demo their face animations on a character. A problem with this approach is that Blender is not a light-weight application. Hence I wasn’t sure how I would easily deploy it… so I investigated alternative approaches.</p>
 <p>Near the end of <a href="https://www.youtube.com/watch?v=8p5SDI4TNDc">this presentation</a> by <a href="https://twitter.com/cassiecodes?lang=en">Cassie Evans</a> on making interactive SVG images is where I learned about Google Chrome’s experimental shape detection API. I then found Wes Bos’s tweet on the subject.</p>
 <blockquote class="twitter-tweet">
 <p lang="en" dir="ltr">
@@ -101,11 +101,11 @@ An army recruiter with an “I want you” Uncle Sam poster behind him whose fin
 <p>I decided to go this route because of the relative simplicity of the shape detection API and the ease with which I could then deploy a first draft through a Chrome browser. <em>A problem</em> was that I needed to learn some web development (or at least JavaScript) basics.</p>
 <p><em>Preliminary learning resources:</em></p>
 <ul>
-<li>About 40% of the videos/exercies from the first three courses of <a href="https://www.coursera.org/specializations/web-design#courses">University of Michigan’s Web Design series on coursera</a> by <a href="https://twitter.com/ColleenAtUMSI">Colleen van Lent</a></li>
-<li>The first several chapters of <a href="https://learn.shayhowe.com/html-css/building-your-first-web-page/">Learn to Code HTML &amp; CSS</a> by <a href="https://twitter.com/shayhowe">Shay Howe</a></li>
+<li>About 40% of the videos/exercises from the first three courses of <a href="https://www.coursera.org/specializations/web-design#courses">University of Michigan’s Web Design series on coursera</a> by <a href="https://twitter.com/ColleenAtUMSI">Colleen van Lent</a></li>
+<li>The first few chapters of <a href="https://learn.shayhowe.com/html-css/building-your-first-web-page/">Learn to Code HTML &amp; CSS</a> by <a href="https://twitter.com/shayhowe">Shay Howe</a></li>
 <li>Most of the <a href="https://www.youtube.com/watch?v=EO6OkltgudE&amp;list=PLpPnRKq7eNW3We9VdCfx9fprhqXHwTPXL">tutorials on HTML5 canvas</a> elements by <a href="https://twitter.com/chriscourses?lang=en">Chris Courses</a></li>
 </ul>
-<p>Rather than using SVG’s, I ended-up just using a canvas element and JavaScript<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</p>
+<p>Rather than using SVG’s, I ended-up just using a canvas element and JavaScript<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>.</p>
 </div>
 <div id="closing-thoughts" class="section level1">
 <h1>Closing thoughts</h1>
@@ -116,7 +116,7 @@ An army recruiter with an “I want you” Uncle Sam poster behind him whose fin
 <div id="additional-actions" class="section level2">
 <h2>Additional actions</h2>
 <ul>
-<li>Ensure there is <em>good</em> lighting, tracking tends to get jumpy at a distance (honestly only works so-so at this point)<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a></li>
+<li>Ensure there is <em>good</em> lighting, tracking tends to get jumpy at a distance (honestly only works so-so at this point)<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a></li>
 <li>Plug device into a TV or larger display</li>
 <li>Get the camera lined-up (ideally is close to eye-level)</li>
 <li>Call your loved one into the room and wait for them to notice and start interacting with the giant eye ball that is following them</li>
@@ -139,7 +139,8 @@ An army recruiter with an “I want you” Uncle Sam poster behind him whose fin
 <li id="fn9"><p>The animation would become distorted for users other than the individual the animation is tracking.<a href="#fnref9" class="footnote-back">↩</a></p></li>
 <li id="fn10"><p>But wanted to at least post this first draft<a href="#fnref10" class="footnote-back">↩</a></p></li>
 <li id="fn11"><p>Open Computer Vision<a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>Again, don’t expect much when it comes to code quality.<a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p>Perhaps will fix / improve in future.<a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p>Or some python animation library I might be able to find.<a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>Again, don’t expect much when it comes to code quality.<a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p>Perhaps will fix / improve in future.<a href="#fnref14" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
