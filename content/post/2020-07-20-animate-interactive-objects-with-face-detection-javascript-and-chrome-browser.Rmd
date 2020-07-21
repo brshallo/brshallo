@@ -43,7 +43,7 @@ As a starting place, I focused on animating an eye that would track a user that 
 
 **Here is my first draft:**
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/UPAgQxaDDCo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="100%" src="https://www.youtube.com/embed/UPAgQxaDDCo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 *If you want to set it up:*
 
