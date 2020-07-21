@@ -77,9 +77,9 @@ Once you have an estimate of the distance a face is from the camera, the importa
 ![](https://github.com/evermeer/EVFaceTracker/raw/master/EVFaceTracker.gif?raw=true){width="50%"}
 
 Or picture a digital version of the creepy t-rex meme that was going around:
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/A4QcyW-qTUg?start=9" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
+<div class="iframe-container">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/A4QcyW-qTUg?start=9" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 but tailored to where the user is standing. However this may be limited^[Afterall, we're not working with holograms or special glasses.], also the view would be tailored to a single user^[The animation would become distorted for users other than the individual the animation is tracking.].
 
 **Improve everything else:**
