@@ -6,10 +6,20 @@
     <description>Recent content in programming on Bryan&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 25 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 11 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/programming/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Pricing insights from historical data (part 1)</title>
+      <link>/2020/08/11/pricing-insights-from-historical-data-part-1/</link>
+      <pubDate>Tue, 11 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/08/11/pricing-insights-from-historical-data-part-1/</guid>
+      <description>What influeces price?How have influential factors changed over time?Identify abnormalities / abnormalities?AppendixPricing challengesDataset considerationsRegularization and colinear variables“All models are wrong, some models are useful.” -“Tukey”
+Setting prices for large complicated products is challenging, particularly in business to business (B2B) contexts. B2B sellers may lack information, e.g. accurate ‘street’ prices for the various configurations of their products. However they typically do have historical data on internal sales transactions as well as leadership with a strong desire for insights into pricing behavior.</description>
+    </item>
     
     <item>
       <title>Short Examples of Best Practices When Writing Functions That Call dplyr Verbs</title>
