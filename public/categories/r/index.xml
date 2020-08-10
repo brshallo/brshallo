@@ -17,8 +17,8 @@
       <pubDate>Tue, 11 Aug 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/08/11/pricing-insights-from-historical-data-part-1/</guid>
-      <description>What influeces price?How have influential factors changed over time?Identify abnormalities / abnormalities?AppendixPricing challengesDataset considerationsRegularization and colinear variables“All models are wrong, some models are useful.” -“Tukey”
-Setting prices for large complicated products is challenging, particularly in business to business (B2B) contexts. B2B sellers may lack information, e.g. accurate ‘street’ prices for the various configurations of their products. However they typically do have historical data on internal sales transactions as well as leadership with a strong desire for insights into pricing behavior.</description>
+      <description>Problem contextWhat influeces price?Significance vs effect sizeClosing noteHow have influential factors changed over time?Identify abnormalities / abnormalities?AppendixPricing challengesDataset considerationsRegularization and colinear variablesCoefficients of a regularized model“All models are wrong, but some are useful.” -George Box
+Problem contextSetting prices for large complicated products is challenging, particularly in business to business (B2B) contexts.</description>
     </item>
     
     <item>

@@ -59,7 +59,7 @@
 
   <article class="article">
     
-    <span class="article-duration">10 min read</span>
+    <span class="article-duration">12 min read</span>
     
 
     <h1 class="article-title">Pricing insights from historical data (part 1)</h1>
@@ -73,59 +73,78 @@
 
 <div id="TOC">
 <ul>
-<li><a href="#what-influeces-price">What influeces price?</a></li>
+<li><a href="#problem-context">Problem context</a></li>
+<li><a href="#what-influeces-price">What influeces price?</a><ul>
+<li><a href="#significance-vs-effect-size">Significance vs effect size</a></li>
+</ul></li>
+<li><a href="#closing-note">Closing note</a></li>
 <li><a href="#how-have-influential-factors-changed-over-time">How have influential factors changed over time?</a></li>
 <li><a href="#identify-abnormalities-abnormalities">Identify abnormalities / abnormalities?</a></li>
 <li><a href="#appendix">Appendix</a><ul>
 <li><a href="#pricing-challenges">Pricing challenges</a></li>
 <li><a href="#dataset-considerations">Dataset considerations</a></li>
-</ul></li>
 <li><a href="#regularization-and-colinear-variables">Regularization and colinear variables</a></li>
+<li><a href="#coefficients-of-a-regularized-model">Coefficients of a regularized model</a></li>
+</ul></li>
 </ul>
 </div>
 
 <blockquote>
-<p>“All models are wrong, some models are useful.” -“Tukey”</p>
+<p>“All models are wrong, but some are useful.” -George Box</p>
 </blockquote>
-<p>Setting prices for large complicated products is challenging, particularly in <a href="link%20to%20helpful%20resource">business to business</a> (B2B) contexts. B2B sellers may lack information, e.g. accurate ‘street’ prices for the various configurations of their products. However they typically <em>do have</em> historical data on internal sales transactions as well as leadership with a strong desire for <em>insights</em> into pricing behavior. The <a href="#pricing-challenges">Pricing challenges</a> section in the <a href="#appendix">Appendix</a> discusses potential internal and external limitations – in this post I’ll put aside the question of <em>how</em> to set prices. Instead, I’ll walk through some straight forward, statistical methods you can use to evaluate differences, trends, and abnormalities in your organizations pricing that rely only on historical sales information.</p>
-<p>With internal data<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> you can still support answers to many important questions and provide a starting place towards more sophisticated pricing strategies or analyses. I will tackle some potential questions:</p>
-<ul>
-<li>Which factors influence price? What is the magnitude of the influence?</li>
+<div id="problem-context" class="section level1">
+<h1>Problem context</h1>
+<p>Setting prices for large complicated products is challenging, particularly in <a href="link%20to%20helpful%20resource">business to business</a> (B2B) contexts. B2B sellers may lack information, e.g. accurate estimates of customer budget or ‘street’ prices for the various configurations of their products. However they typically <em>do have</em> historical data on internal sales transactions as well as leadership with a strong desire for <em>insights</em> into pricing behavior. The <a href="#pricing-challenges">Pricing challenges</a> section discusses potential internal and external limitations in setting prices. In this post I’ll put aside the question of <em>how</em> to set prices. Instead, I’ll walk through some statistical methods that rely only on historical sales information and that you can use to evaluate differences, trends, and abnormalities in your organizations pricing.</p>
+<p>With internal data<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> you can still support answers to many important questions and provide a starting place towards more sophisticated pricing strategies or analyses. In a series of posts I will tackle the following questions:</p>
+<ol style="list-style-type: decimal">
+<li>How do differences in product components associate with differenes in price? What is the magnitude of the influence of these factors? (This post.)</li>
 <li>How have these factors changed over time?</li>
-<li>Which customers seem to fall outside the ‘normal’ behavior in regard to the price they are receiving?</li>
-</ul>
-<p>For my examples, I will use data from the Ames, Iowa housing market. See <a href="#dataset-considerations">Dataset considerations</a> in the <a href="#appendix">Appendix</a> for why I chose it as well as problems with using the <a href="link%20to%20make_ames%20function">ames</a> dataset as an analogue for B2B selling/pricing scenarios. My examples were built using the R programming language, you can find the source code at my [github] page.</p>
+<li>Which customers seem to fall outside ‘normal’ behavior in regard to the price they are receiving?</li>
+<li>How to model for potential complexities in pricing strategy? (E.g. differences in price based on differences in volume of a component)</li>
+</ol>
+<p>For the examples in this post, I will use data from the Ames, Iowa housing market. See the <a href="#dataset-considerations">Dataset considerations</a> section for why I use the <a href="link%20to%20make_ames%20function">ames</a> dataset as an analogue for B2B selling/pricing scenarios (as well as problems with this choice). My examples were built using the R programming language, you can find the source code at my [github] page.</p>
+</div>
 <div id="what-influeces-price" class="section level1">
 <h1>What influeces price?</h1>
 <p><strong>Dollars per unit:</strong></p>
-<p>Products have features. These features<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> can be used to train a model to estimate price. For a linear model, the outputted coefficents associated with these features can be thought of as pseudo-proxies for the expected <em>dollar per unit</em> value associated with the component (<a href="https://en.wikipedia.org/wiki/Ceteris_paribus">ceteris paribus</a>). Let’s build a simple model for home price that uses <em>just</em> square footage as a feature for predicting price paid.</p>
-<p>The model comes out to: … (use package that converts <code>stats::lm</code> model output into latex). The coefficeint on sale price is (kind of) a measure of expected dollars per square foot. If you build the model without an intercept<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>, the coefficient more directly represents dollar / square foot (would get a coefficient / $ per square foot of __). However it’s <em>typically</em> more appropriate to <a href="link%20to%20SO%20post%20with%20evidence">leave the intercept in the model</a>.</p>
+<p>Products have features. These features<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> can be used to train a model to estimate price. For a linear model, the outputted coefficents associated with these features can (kind of) serve as proxies for the expected <em>dollar per unit</em> change associated with the component (<a href="https://en.wikipedia.org/wiki/Ceteris_paribus">ceteris paribus</a>).</p>
+<p>Let’s build a simple model for home price that uses <em>just</em> square footage as a feature for predicting price paid. The model comes out to: … (use package that converts <code>stats::lm</code> model output into latex). The coefficient on sale price: …, is a measure of expected dollars per change in square footage. If you build the model without an intercept<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>, the coefficient more directly represents dollars per square foot^[Doing this the model becomes …). However it’s <em>typically</em> more appropriate to <a href="link%20to%20SO%20post%20with%20evidence">leave the intercept in the model</a>.</p>
 <p><strong>Model assumptions, robust methods</strong>:</p>
-<p>Linear regression has a variety of <a href="link%20to%20assumptions%20of%20linear%20regression">model assumptions</a>, if you are building a model primarily for prediction, you do not need to worry about these as much<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. However if you are building the model to perform inference (e.g. trying to interpret the coefficients as representing the value-add of different components of a product) these assumptions matter more. For our simple model we can see we break the assumption of __.</p>
+<p>Linear regression has a variety of <a href="link%20to%20assumptions%20of%20linear%20regression">model assumptions</a>, if you are building a model primarily for prediction, you do not need to worry about these in the same way<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. However if you are building the model to perform inference (e.g. trying to interpret the coefficients as representing the value-add associated with different components of a product) these assumptions matter more. For our simple model we can see we break the assumption of __.</p>
 <p><strong>graph checking model assumptions for our simple model</strong></p>
-<p>Often you will perform transformations on your variables that aide you in satsifying these assumptions – however doing such changes the interpretation of your coefficients<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> You may also simply use a linear model algorithm whose estimates are <a href="link%20to%20definition%20of%20robust">robust</a> under violations of these assumptions. Using a robust linear estimator, our coefficient is: ___ .</p>
+<p>Often the modeler performs transformations on the variables to satsify these assumptions. However, important to the pricing analysis context, such modification alters the meaning of the coefficients<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. The analyst may also choose to use an optimization algorithm that produces estimates <a href="link%20to%20definition%20of%20robust">robust</a> to violations of these assumptions. Using a robust estimator, the coefficient on our linear model is: … .</p>
 <p><strong>Multiple variables and the tug-of-war between collinear inputs</strong>:</p>
-<p>Let’s add to our original model a new variable: number of bathrooms (I will continue to use a robust estimator).</p>
+<p>Let’s add to our original model a new variable: number of bathrooms (I will continue to use a robust estimator in this example).</p>
 <p><strong>Figure of model coefficients with new variables added</strong></p>
-<p>Notice that the coefficient on square footage has decreased – this is because number of bathrooms and square footage of house are highly correlated (correlation of …). The new model parameters are estimated while taking each of these factors into account. Some of the impact that previously existed entirely in the coefficient on square footage is now shared between these two coefficients. At its extreme, this can lead to potentially unintuitive results. For example, if we add another variable: <code>number of bedrooms</code>, we see the estimate for the coefficient (which is also highly correlated with the existing model inputs) is actually negative. <strong>MODEL WITH THREE VARIABLES</strong> This doesn’t mean houses with more bedrooms are associated with negative house prices, though it suggests that a house with the same square footage and number of bathrooms will be less expensive if it has more bedrooms (perhaps representing a preference for larger rooms or open spaces).</p>
-<p>Standard linear regression models feature this tug-of-war like optimization whereby correlated variables share (/ battle over) a general influence on the model. This can cause variable coefficients that would, in a univariable context be similar, seem to move in opposing directions when considered together in multivariable contexts. In pricing analysis exercises (where you care about the individual parameter estimates and want them to be meaningful) this behavior may be desirable, but it has potential drawbacks<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>:</p>
+<p>Notice the coefficient on square footage has decreased – this is because number of bathrooms and square footage of house are highly correlated (they have a <a href="link%20to%20correlation%20explanation">pearson correlation</a> of …). The new estimates take each of these factors into account. Some of the impact on home price that previously existed entirely in the coefficient for square footage is now shared between these two simiar variables. At its extreme, this can lead to unintuitive results. For example, if we add another variable: <code>number of bedrooms</code>, we see the estimate for the coefficient (which is also highly correlated with <code>number of bathrooms</code> and <code>square feet</code>) is actually negative. <strong>MODEL WITH THREE VARIABLES</strong> This doesn’t mean houses with more bedrooms are associated with negative house prices. Though it suggests a house with the same square footage and number of bathrooms will be less expensive if it has more bedrooms (perhaps representing a preference for larger rooms / open space among buyers).</p>
+<p>Typical linear regression models feature this tug-of-war like optimization whereby correlated variables share (/ battle over) a general influence on the model. At times this causes similar variable to seem to have opposing impacts. When evaluating coefficients for pricing analysis exercises<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> this behavior has potential drawbacks<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>:</p>
 <ul>
-<li>As you increase the number of variables in the model, this effect can make for models with a high degree of instability / variance in the values of the coefficients – meaning that the coefficients in your model can change dramatically even from small changes in the data<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></li>
-<li>You may want to limit models with unintuitive variable relationships (e.g. where highly related factors have coefficients that seem to act in opposing directions).</li>
+<li>As you increase the number of variables in the model, this effect can make for models with a high degree of instability / variance in the parameter estimates – meaning that the coefficients in your model could change dramatically even from small changes in the training data<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></li>
+<li>You may want to limit methods that result in models with unintuitive variable relationships (like those discussed where highly related factors have coefficients that appear to act in opposing directions).</li>
 </ul>
-<p>Two common approaches:</p>
+<p>Two potential remedies:</p>
 <ul>
-<li><em>Regularization</em>: puts constraints on the linear model that discourage high levels of variance in your coefficient estimates. See the section <a href="#regularization-and-colinear-variables">Regularization and colinear variables</a> for a more full discussion on this.</li>
-<li><em>Bayesian approaches</em>: can use <a href="link%20to%20definition%20of%20priors%20in%20linear%20model">priors</a> and rigorous estimation procedures to limit <a href="link%20to%20overfitting">overfitting</a> and subdue extreme estimates</li>
+<li><em>Regularization</em>: puts constraints on the linear model that discourage high levels of variance in your coefficient estimates. See the section <a href="#regularization-and-colinear-variables">Regularization and colinear variables</a> for a more full discussion on how L1 &amp; L2 penalties affect estimates for colinear model inputs.</li>
+<li><em>Bayesian approaches</em>: can use <a href="link%20to%20definition%20of%20priors%20in%20linear%20model">priors</a> and rigorous estimation procedures to limit <a href="link%20to%20overfitting">overfitting</a> and subdue extreme estimates.</li>
 </ul>
-<p>Each will modulate coefficient estimates differently in conditions of multicolinearity of model variables. The model below shows the coefficient estimates for each of several model types<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
+<p>Each will modulate coefficient estimates differently. The figure below shows the coefficient estimates when using each of these methods.</p>
 <p><strong>plot of coefficient estimates from different models</strong></p>
 <p>Note differences…</p>
+<p>I typically do…</p>
+<div id="significance-vs-effect-size" class="section level2">
+<h2>Significance vs effect size</h2>
+</div>
+</div>
+<div id="closing-note" class="section level1">
+<h1>Closing note</h1>
+<p>You can use regression models to evaluate the impact of different factors on price. It is important to consider how coefficient estimates will respond to violations of your model assumptions, particularly those of multi-colinearity and to use estimation techniques that are appropriate for your problem.</p>
+<p>If you have questions or feedback feel free to reach-out to me at <a href="link">brshallo</a>. I will cover the other questions noted in <a href="#problem-context">Problem Context</a> in a series of posts in the coming weeks.</p>
 </div>
 <div id="how-have-influential-factors-changed-over-time" class="section level1">
 <h1>How have influential factors changed over time?</h1>
 <p>If you want to evaluate a general impact of year / time on price, you could simply include it as a variable in the model and see the associated variable. If you want to evaluate how the influence of factors has <em>changed</em> over time however you could simply build models between different years and compare the coefficient estimates.</p>
 <p>The chart below shows coefficient estimates for variables … across … years in the data. I used method … to build the model.</p>
+<p>Have something about function for modulating further back items on pricing…</p>
 <p><strong>Chart of coefficients for each year</strong></p>
 <p>Note that… estimates have changed… across years. To evaluate if a variables change is significant between two years we could use a statistical test (link to SO article that describes methodology for comparing if difference between coefficients is statistically signficant).</p>
 <p>To more rigorously evaluate which variables are trending up or down in their influence on price we could build a linear regression model of the coefficient estimates against year and compare the magnitude and/or significance of the change in coefficients across years.</p>
@@ -168,26 +187,30 @@
 </ul>
 <p>Though for the notes in this post, this didn’t matter.</p>
 </div>
-</div>
-<div id="regularization-and-colinear-variables" class="section level1">
-<h1>Regularization and colinear variables</h1>
+<div id="regularization-and-colinear-variables" class="section level2">
+<h2>Regularization and colinear variables</h2>
 <p>Regularization typically comes in two flavors, either an L1 penalty (lasso regression) or L2 penalty (ridge regression), or some combination of these (elastic net) is applied to the linear model. These penalties provides a cost for larger coefficient which acts to decrease the variance in our estimates<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>. In conditions of colinear inputs, these two penalties act differently on coefficient estimates of colinear features:</p>
 <ul>
 <li>Lasso regression tends to choose a ‘best’ variable (among a subset of colinear variables) whose coefficient ‘survives’, while the other associated variables’ coefficients are pushed towards zero</li>
 <li>For ridge regression, coefficients of similar variables gravitate to a similar value</li>
 </ul>
 </div>
+<div id="coefficients-of-a-regularized-model" class="section level2">
+<h2>Coefficients of a regularized model</h2>
+<p>Variable inputs are usually standardized before applying regularization. Hence because inputs are all (essentially) put on the same scale, the coefficient estimates can be directly compared with one another as measures of their relative influence on the target (home price). This ease of comparison may be convenient, though if our goal is interpretting the coefficient estimates in terms of dollar change per unit increase, we may need to transform the coefficients. This is what was done in figure … by …</p>
+</div>
+</div>
 <div class="footnotes">
 <hr />
 <ol>
 <li id="fn1"><p>Internal sales data alone is limited in that its focused on only a component of sales, rather than considering the full picture – this puts the analyst in a familiar position of one with incomplete information, and a constrained scope of influence.<a href="#fnref1" class="footnote-back">↩</a></p></li>
 <li id="fn2"><p>Dataset should be structured such that each feature is a column and each row an observation, e.g. a sale<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>I.e. make it zero<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>At least to the extent that satisfying them doesn’t improve your predictions.<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>E.g. a log transform on an input changes the interpretation of the coefficient to be something closer to dollar per percentage change of input.<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>It depends :-/<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>This is what “variance” means in the bias-variance trade-off in model development.<a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>Variables are usually be standardized before applying regularization. If our goal is interpretting the coefficient estimates, we may need to transform the coefficients for interpretation purposes.<a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>I.e. make it zero so that the expected value of a house of 0 square foot is $0<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>At least to the extent that satisfying them doesn’t improve your predictions, or suggest a different model type may be more appropriate.<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>E.g. a log transform on an input changes the interpretation of the coefficient to be something closer to dollar per percentage change of input. In a future post, I will discuss variable transformations in pricing analysis contexts further.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>Where you care about the individual parameter estimates and want them to be meaningful.<a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>This may also be beneficial – it depends :-/<a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>This is what “variance” means in the bias-variance trade-off common in model development.<a href="#fnref8" class="footnote-back">↩</a></p></li>
 <li id="fn9"><p>A variety of factors though push organizations to simplify their products and this process – for the purposes of this post though, I’ll assume a complicated product portfolio.<a href="#fnref9" class="footnote-back">↩</a></p></li>
 <li id="fn10"><p>For a more full discussion on these concepts see UVA coursera specialization on <a href="https://www.coursera.org/learn/uva-darden-bcg-pricing-strategy-cost-economics?utm_source=gg&amp;utm_medium=sem&amp;utm_content=01-CourseraCatalog-DSA-US&amp;campaignid=9918777773&amp;adgroupid=102058276958&amp;device=c&amp;keyword=&amp;matchtype=b&amp;network=g&amp;devicemodel=&amp;adpostion=&amp;creativeid=434544785640&amp;hide_mobile_promo=&amp;gclid=CjwKCAjwsan5BRAOEiwALzomXyDwos6rlUmAwFrv9BjJFUPnyvzPRedArpRD2iRkocMemgtsZrfihxoCjfUQAvD_BwE">Cost and Economics in Pricing Strategy</a>.<a href="#fnref10" class="footnote-back">↩</a></p></li>
 <li id="fn11"><p>Organizations may lack the money or the will.<a href="#fnref11" class="footnote-back">↩</a></p></li>

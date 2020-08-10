@@ -11,6 +11,7 @@ tags:
   - chrome
   - api
   - animation
+thumbnail: /post/2020-07-20-animate-interactive-objects-with-face-detection-javascript-and-chrome-browser_files/eye-track-small.gif
 ---
 
 ```{r setup, include=FALSE}
@@ -109,6 +110,10 @@ Rather than using SVG's, I ended-up just using a canvas element and JavaScript^[
 Try it out or consider ways you can make something engaging or surprising for users. If you do, please let me know at [brshallo](https://twitter.com/brshallo) on Twitter `r emo::ji("smile")`.
 
 # Appendix
+
+Associated Twitter post:
+
+><blockquote class="twitter-tweet"><p lang="en" dir="ltr">New addition to the livingroom, giant eyeball that follows you around when you look at it.<br><br>See blog on how I made it using <a href="https://twitter.com/chrome?ref_src=twsrc%5Etfw">@chrome</a> browser&#39;s <a href="https://twitter.com/hashtag/FaceDetection?src=hash&amp;ref_src=twsrc%5Etfw">#FaceDetection</a> api and <a href="https://twitter.com/hashtag/JavaScript?src=hash&amp;ref_src=twsrc%5Etfw">#JavaScript</a> : <a href="https://t.co/S993yWZEpn">https://t.co/S993yWZEpn</a> <a href="https://t.co/1ebjaGmPzC">pic.twitter.com/1ebjaGmPzC</a></p>&mdash; Bryan Shalloway (@brshallo) <a href="https://twitter.com/brshallo/status/1285394365855211520?ref_src=twsrc%5Etfw">July 21, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 ## Additional actions
 
