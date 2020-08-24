@@ -6,19 +6,19 @@
     <description>Recent content in business on Bryan&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 11 Aug 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 17 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/business/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Pricing insights from historical data (part 1)</title>
-      <link>/2020/08/11/pricing-insights-from-historical-data-part-1/</link>
-      <pubDate>Tue, 11 Aug 2020 00:00:00 +0000</pubDate>
+      <title>Linear Regression in Pricing Analysis, Essential Things to Know</title>
+      <link>/2020/08/17/pricing-insights-from-historical-data-part-1/</link>
+      <pubDate>Mon, 17 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/08/11/pricing-insights-from-historical-data-part-1/</guid>
-      <description>Problem contextWhat influeces price?Significance vs effect sizeClosing noteHow have influential factors changed over time?Identify abnormalities / abnormalities?AppendixPricing challengesDataset considerationsRegularization and colinear variablesCoefficients of a regularized model“All models are wrong, but some are useful.” -George Box
-Problem contextSetting prices for large complicated products is challenging, particularly in business to business (B2B) contexts.</description>
+      <guid>/2020/08/17/pricing-insights-from-historical-data-part-1/</guid>
+      <description>What influeces price?Simple linear regression modelInference and challengesViolation of model assumptionsThe tug-of-war between colinear inputsImproving model fit, considerationsClosing noteAppendixPricing challengesFuture pricing postsDataset considerationsInterpretability of machine learning methodsRegularization and colinear variablesCoefficients of a regularized modelPricing is hard.
+Setting prices for large complicated products is challenging, particularly in Business to Business sales (B2B).</description>
     </item>
     
   </channel>
