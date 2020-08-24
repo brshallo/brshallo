@@ -17,11 +17,11 @@ slug: pricing-insights-from-historical-data-part-1
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, cache = TRUE)
 ```
 
-**Pricing is hard.** This *Price is Right* contestant would agree.
+**Pricing is hard.** 
 
-![](https://media2.giphy.com/media/SG0KKFtwUpqJW/giphy.gif)
+![Price is Right Contestant... struggling](https://media2.giphy.com/media/SG0KKFtwUpqJW/giphy.gif)
 
-Setting prices for large complicated products is challenging, particularly in Business to Business sales (B2B). B2B sellers may lack important information (e.g. accurate estimates of customer budget or 'street' prices for the various configurations of their products -- the [Pricing challenges] section discusses other internal and external limitations in setting prices). However organizations typically *do have* historical data on internal sales transactions as well as leadership with a strong desire for *insights* into pricing behavior. For now I'll put aside the question of how to use econometric approaches to set ideal prices. Instead, I’ll walk through some statistical methods that rely only on historical sales information and that can be used for analyzing differences, trends, and abnormalities in your organizations pricing.
+This is particularly true with large complicated products, common in Business to Business sales (B2B). B2B sellers may lack important information (e.g. accurate estimates of customer budget or 'street' prices for the various configurations of their products -- the [Pricing challenges] section discusses other internal and external limitations in setting prices). However organizations typically *do have* historical data on internal sales transactions as well as leadership with a strong desire for *insights* into pricing behavior. For now I'll put aside the question of how to use econometric approaches to set ideal prices. Instead, I’ll walk through some statistical methods that rely only on historical sales information and that can be used for analyzing differences, trends, and abnormalities in your organizations pricing.
 
 With internal data^[Internal sales data alone is limited in that its focused on only a component of sales, rather than considering the full picture -- this puts the analyst in a familiar position of one with incomplete information, and a constrained scope of influence.] you can still support answers to many important questions and provide a starting place for more sophisticated pricing strategies or analyses. I will be writing a series of posts on pricing (see [Future pricing posts] section for likely topics). In this post, I will focus on the basic ideas and considerations important when using regression models to understand prices. 
 
