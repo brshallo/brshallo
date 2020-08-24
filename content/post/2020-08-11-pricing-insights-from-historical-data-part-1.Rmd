@@ -176,7 +176,7 @@ Alternatives to the standard optimization technique of [Ordinary Least Squares](
 
 Each of these fitting procedures has different advantages and disadvantages and will modulate coefficient estimates differently^[For robust methods and regularization, there are less established methods for producing confidence intervals. You may need to use simulation methods (which are more computationally intensive).].
 
-# Closing note
+# Closing notes and tips
 
 You can use regression models to evaluate the impact of different factors on price. However it is important to consider how coefficient estimates will respond to your particular input data (e.g. multicolinearity of your inputs or violations of your model assumptions) and to use techniques that will produce an appropriate model fit for your particular need. In pricing contexts in particular you should consider the types of inferences you will be asked to make and build your model in a way that fits your business requirements. 
 
