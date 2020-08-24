@@ -4,12 +4,12 @@ author: Bryan Shalloway
 date: '2020-08-17'
 categories:
   - business
-  - programming
-  - r
-  - rstats
+  - pricing
 tags:
-  - r
+  - pricing
+  - business
   - rstats
+  - hedonic modeling
 slug: pricing-insights-from-historical-data-part-1
 ---
 
