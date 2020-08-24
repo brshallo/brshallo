@@ -17,7 +17,7 @@
       <pubDate>Mon, 17 Aug 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/08/17/pricing-insights-from-historical-data-part-1/</guid>
-      <description>What influences price?Simple linear regression modelInference and challengesViolation of model assumptionsThe tug-of-war between colinear inputsImproving model fit, considerationsClosing notes and tipsAppendixPricing challengesFuture pricing postsDataset considerationsInterpretability of machine learning methodsRegularization and colinear variablesCoefficients of a regularized modelPricing is hard.
+      <description>What influences price?Simple linear regression modelInference and challengesViolation of model assumptionsThe tug-of-war between colinear inputsImproving model fit, considerationsClosing notes and tipsAppendixPricing challengesFuture pricing postsDataset considerationsInterpretability of machine learning methodsRegularization and colinear variablesCoefficients of a regularized modelPricing is hard. This Price is Right contestant would agree.
 Setting prices for large complicated products is challenging, particularly in Business to Business sales (B2B).</description>
     </item>
     

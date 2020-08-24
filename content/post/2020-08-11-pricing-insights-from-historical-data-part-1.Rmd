@@ -17,13 +17,13 @@ slug: pricing-insights-from-historical-data-part-1
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, cache = TRUE)
 ```
 
-**Pricing is hard.**
+**Pricing is hard.** This *Price is Right* contestant would agree.
 
 ![](https://media2.giphy.com/media/SG0KKFtwUpqJW/giphy.gif)
 
-Setting prices for large complicated products is challenging, particularly in Business to Business sales (B2B). B2B sellers may lack important information (e.g. accurate estimates of customer budget or 'street' prices for the various configurations of their products). The [Pricing challenges] section discusses other internal and external limitations in setting prices.. However organizations typically *do have* historical data on internal sales transactions as well as leadership with a strong desire for *insights* into pricing behavior. For now I'll put aside the question of how to use econometric approaches to set ideal prices. Instead, I’ll walk through some statistical methods that rely only on historical sales information and that can be used for analyzing differences, trends, and abnormalities in your organizations pricing.
+Setting prices for large complicated products is challenging, particularly in Business to Business sales (B2B). B2B sellers may lack important information (e.g. accurate estimates of customer budget or 'street' prices for the various configurations of their products -- the [Pricing challenges] section discusses other internal and external limitations in setting prices). However organizations typically *do have* historical data on internal sales transactions as well as leadership with a strong desire for *insights* into pricing behavior. For now I'll put aside the question of how to use econometric approaches to set ideal prices. Instead, I’ll walk through some statistical methods that rely only on historical sales information and that can be used for analyzing differences, trends, and abnormalities in your organizations pricing.
 
-With internal data^[Internal sales data alone is limited in that its focused on only a component of sales, rather than considering the full picture -- this puts the analyst in a familiar position of one with incomplete information, and a constrained scope of influence.] you can still support answers to many important questions and provide a starting place for more sophisticated pricing strategies or analyses. I will be writing a series of posts on pricing (see [Future pricing posts] section for likely topics). In this post, I will focus on the basic ideas important to using regression models to understand prices and some of the considerations in model fitting (particularly important in these contexts). 
+With internal data^[Internal sales data alone is limited in that its focused on only a component of sales, rather than considering the full picture -- this puts the analyst in a familiar position of one with incomplete information, and a constrained scope of influence.] you can still support answers to many important questions and provide a starting place for more sophisticated pricing strategies or analyses. I will be writing a series of posts on pricing (see [Future pricing posts] section for likely topics). In this post, I will focus on the basic ideas and considerations important when using regression models to understand prices. 
 
 I will use data from the Ames, Iowa housing market. See the [Dataset considerations] section for why I use the [ames](https://cran.r-project.org/web/packages/AmesHousing/AmesHousing.pdf) dataset as an analogue for B2B selling / pricing scenarios (as well as problems with this choice). My examples were built using the R programming language, you can find the source code at my [github page](https://github.com/brshallo/brshallo/blob/master/content/post/2020-08-11-pricing-insights-from-historical-data-part-1.Rmd).
 
@@ -32,9 +32,9 @@ I will use data from the Ames, Iowa housing market. See the [Dataset considerati
 Products have features. These features^[Dataset should be structured such that each feature is a column and each row an observation, e.g. a sale.] can be used to train a model to estimate price. For a linear model, the outputted coefficients associated with these features can act as proxies for the expected *dollar per unit* change associated with the component^[Sort of, and under certain contexts...] ([ceteris paribus](https://en.wikipedia.org/wiki/Ceteris_paribus)). In pricing contexts, the idea that regression coefficients relate to the value (i.e. 'implicit price') of the constituent components of the product is sometimes called hedonic modeling^[https://en.wikipedia.org/wiki/Hedonic_regression]. An assumption in hedonic modeling is that our model includes all variables that matter to price^[Missing important components or misattributing influence of price can cause bias in the model (omitted variable bias).]. This assumption is important in that it suggests:
 
 1. Regression modeling of price is not well suited to contexts where you cannot explain a reasonably high proportion of the variance in the price of your product.
-1. You should be particularly thoughtful regarding the variables you include in your model and avoid including variables that represent overlaps in information about your product.
+1. You should be particularly thoughtful regarding the variables you include in your model and avoid including variables that represent overlapping/duplicated information about your product.
 
-For a more full discussion on hedonic modeling^[and how it can also be used for things like creating price indices] see the [Handbook on Residential Property Prices Indices](https://www.oecd-ilibrary.org/docserver/9789264197183-7-en.pdf?expires=1597241573&id=id&accname=guest&checksum=0FA9E2EB249B3EB5DBA108E3AC44CCA3). In this post I will build very simple models that obviously don't represent all relevant factors or meet some of the strong assumptions in hedonic modeling. My focus is instead on illustrating some basic considerations in regression that are particular important in pricing contexts. 
+For a more full discussion on hedonic modeling^[and how it can also be used for things like creating price indices] see the [Handbook on Residential Property Prices Indices](https://www.oecd-ilibrary.org/docserver/9789264197183-7-en.pdf?expires=1597241573&id=id&accname=guest&checksum=0FA9E2EB249B3EB5DBA108E3AC44CCA3). In this post I will build very simple models that obviously don't represent all relevant factors or meet some of the strong assumptions in hedonic modeling. Instead, my focus is on illustrating some basic considerations in regression that are particular important in pricing contexts. 
 
 ```{r load-packages}
 library(tidymodels)
@@ -128,7 +128,7 @@ Notice the coefficient on `TotRms_AbvGrd` is negative at *-11792.2*. This doesn'
 
 **Theoretical challenge:**
 
-Pretend we put in another variable: `half_bathrooms` that represented the number of half bathrooms in the home. Our previous variable `bathrooms` already included both full and half bathrooms. This presents a theoretical problem for the model: bathrooms would be represented in two different variables that have a *necessary* overlap with one another. Our understanding of the value of a bathroom as its coefficient value would become less clear^[Hence the importance of being particularly thoughtful of the variables you input into the model and avoiding variables that roughly duplicate one another.]. 
+Pretend we put in another variable: `half_bathrooms` that represented the number of half bathrooms in the home. Our previous variable `bathrooms` already included both full and half bathrooms. This presents a theoretical problem for the model: bathrooms would be represented in two different variables that have a *necessary* overlap^[(though not perfect colinearity)] with one another. Our understanding of the value of a bathroom as its coefficient value would become less clear^[Hence the importance of being particularly thoughtful of the variables you input into the model and avoiding variables that roughly duplicate one another.]. 
 
 Beyond this *theoretical challenge*, duplicated or highly associated inputs also create *numeric challenges*. The remainder of this post will be focused on numeric challenges and considerations in fitting regression models. These lessons can be applied broadly across inferential contexts but are particularly important in pricing analysis.
 
@@ -143,7 +143,7 @@ Linear regression models feature this 'tug-of-war' between the magnitude of coef
 
 ## Improving model fit, considerations
 
-I do not discuss the topic of Variable Selection, but highly recommend the associated chapter in the online textbook [Feature Engineering and Selection](http://www.feat.engineering/selection.html) by Max Kuhn and Kjell Johnson.
+I do not discuss the topic of *variable selection*, but highly recommend the associated chapter in the online textbook [Feature Engineering and Selection](http://www.feat.engineering/selection.html) by Max Kuhn and Kjell Johnson.
 
 **Data transformations**
 
@@ -156,7 +156,7 @@ Before modeling, transformations to the underlying data are often applied for on
 
 Important in pricing contexts, transformations to the data alter the meaning of the coefficients[^3]. Data transformations may improve model fit, but may complicate coefficient interpretability. In some cases this may be helpful in other cases it may not -- it all depends on the aims of the model and the types of interpretations the analyst is hoping to make[^4]. As part of an internal presentation given at NetApp on pricing, I describe some common variable transformations and how these affect the resulting interpretation of the coefficients:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/dqrkIIziBLE?start=398" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/dqrkIIziBLE?start=448" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 [^3]: E.g. a log transform on an input alters the interpretation of the coefficient to be something closer to dollars per percentage point change of input. Log on target means percentage change in price per unit change in input. If you take the log of both your inputs and your target, the coefficient represents percent change in x related to percent change in y, also known as an 'elasticity' model in econometrics.
 
@@ -168,7 +168,7 @@ When using more sophisticated machine learning techniques the term *data transfo
 
 **Fitting procedures**
 
-Alternatives to the standard optimization technique of [Ordinary Least Squares](https://en.wikipedia.org/wiki/Ordinary_least_squares#:~:text=In%20statistics%2C%20ordinary%20least%20squares,in%20a%20linear%20regression%20model.&text=Under%20these%20conditions%2C%20the%20method,the%20errors%20have%20finite%20variances) (OLS) may be more robust to model assumptions and influential points or tend to produce more stable estimates^[Some of what I read on hedonic modeling seemed to discourage the use of methods other than Ordinary Least Squares (e.g. Weighted Least Squares) but I've found other methods to be helpful.]. A few options:
+Alternatives to the standard optimization technique for linear regression, [Ordinary Least Squares](https://en.wikipedia.org/wiki/Ordinary_least_squares#:~:text=In%20statistics%2C%20ordinary%20least%20squares,in%20a%20linear%20regression%20model.&text=Under%20these%20conditions%2C%20the%20method,the%20errors%20have%20finite%20variances) (OLS), may be more robust to model assumptions and influential points or tend to produce more stable estimates^[Some of what I read on hedonic modeling seemed to discourage the use of methods other than Ordinary Least Squares (e.g. Weighted Least Squares) but I've found other methods to be helpful.]. A few options:
 
 * *Regularization*: puts constraints on the linear model that discourage high levels of variance in your coefficient estimates. See the section [Regularization and colinear variables] for a more full discussion on how L1 & L2 penalties affect estimates for colinear inputs differently^[Regularization with an L1 penalty provides the added bonus of also doing variable selection.].
 * *Bayesian approaches*: can use [priors](https://en.wikipedia.org/wiki/Prior_probability) and rigorous estimation procedures to limit [overfitting](https://en.wikipedia.org/wiki/Overfitting) and subdue extreme estimates.
@@ -178,15 +178,15 @@ Each of these fitting procedures has different advantages and disadvantages and 
 
 # Closing notes and tips
 
-You can use regression models to evaluate the impact of different factors on price. However it is important to consider how coefficient estimates will respond to your particular input data (e.g. multicolinearity of your inputs or violations of your model assumptions) and to use techniques that will produce an appropriate model fit for your particular need. In pricing contexts in particular you should consider the types of inferences you will be asked to make and build your model in a way that fits your business requirements. 
+You can use regression models to evaluate the impact of different factors on price. However it is important to consider how coefficient estimates will respond to your particular input data (e.g. multicolinearity of your inputs or violations of your model assumptions) and to use techniques that will produce an appropriate model fit for your needs. In pricing contexts in particular you should consider the types of inferences you will be asked to make and build your model in a way that fits your business requirements. 
 
 Some tips for building models for inference in pricing contexts: 
 
 * If your model doesn't explain a high proportion of the data, be careful what you say to stakeholders about the respective value of components^[Generally it is a good idea to describe the mean error or some other measure, so that they can get a sense of how close the model you are describing is fitting the data, or whether the effects you are talking about are general, but not particularly useful for predictions.].
-* Getting a good model fit should be a driving force. However, in a similar way to how you may prefer fewer variables or a more simple modeling technique, you should also prefer fewer and less complicated variable transformations and a preference for transformations that retain an intuitive interpretability for the model.
+* Getting a good model fit should be a driving force. However, in a similar way to how you may prefer fewer variables or a more simple modeling technique, you may also prefer fewer and less complicated variable transformations^[And a preference for transformations that retain an intuitive interpretability for the model.].
 * When evaluating the influence of the components of your product, review the variability in your coefficient estimates and not just the estimates themselves.
-* Consider building linear models using multiple model fit techniques^[Then review the coefficient estimates across them.]^[I tend to rely heavily on regularization techniques.].
-* Even if you plan on using a linear model, using a generic more complex machine learning model can be helpful as a sanity check. If model performance is not hugely different from your linear model, you are fine, if it is substantially different that may mean there is some important relationship you are missing and need to identify.
+* Consider building linear models using multiple model fit techniques^[Then review the coefficient estimates across them.] ^[I tend to rely heavily on regularization techniques.].
+* Even if you plan on using a linear model, using a generic more complex machine learning model can be helpful as a sanity check. If model performance is not substantially different between your models, you are fine, if it is, there may be an important relationship you are missing and need to identify.
 
 Stay tuned for [Future pricing posts] on related topics. 
 
