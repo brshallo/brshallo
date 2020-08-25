@@ -99,7 +99,8 @@ ggplot(aes(fill = colour), data = circles_moving) +
 
 # Riddler Classic
 
-T**The riddle:**
+**The riddle:**
+
 >From Robert Berger comes a question of maximizing magnetic volume:
 
 >Robert’s daughter has a set of Magna-Tiles, which, as their name implies, are tiles with magnets on the edges that can be used to build various polygons and polyhedra. Some of the tiles are identical isosceles triangles with one 30 degree angle and two 75 degree angles. If you were to arrange 12 of these tiles with their 30 degree angles in the center, they would lay flat and form a regular dodecagon. If you were to put fewer (between three and 11) of those tiles together in a similar way, they would form a pyramid whose base is a regular polygon. Robert has graciously provided a photo of the resulting pyramids when three and 11 tiles are used:
