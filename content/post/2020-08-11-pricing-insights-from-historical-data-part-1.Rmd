@@ -78,7 +78,7 @@ mod_sqft %>%
   knitr::kable()
 ```
 
-We can do *{coefficient estimate} +/- 2*$\cdot$*{standard error of estimate}* to get a 95% confidence interval for where we believe the 'true' coefficient estimate for `Gr_Liv_Area` falls. In this case, this means that across our observations, the mean price change per square foot (holding all other things equal) is roughly between 108 and 116^[Note there are more modern approaches to estimating this range using Bayesian or simulation based methods.].
+We can do *{coefficient estimate} +/- 2*$\cdot$*{standard error of estimate}* to get a 95% confidence interval for where we believe the 'true' coefficient estimate for `Gr_Liv_Area` falls. In this case, this means that across our observations, the mean price change per square foot (while only taking into account this variables) is roughly between 108 and 116^[Note there are more modern approaches to estimating this range using Bayesian or simulation based methods.].
 
 ### Violation of model assumptions
 
