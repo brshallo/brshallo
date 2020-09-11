@@ -6,10 +6,19 @@
     <description>Recent content in rstats on Bryan&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 17 Aug 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 11 Sep 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/rstats/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Compromise Between the Electoral College and a National Popular Vote</title>
+      <link>/2020/09/11/compromise-between-the-electoral-college-and-a-national-popular-vote/</link>
+      <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/09/11/compromise-between-the-electoral-college-and-a-national-popular-vote/</guid>
+      <description>In this post I will discuss using a popular vote weighted by the electoral college of each state as a method to elect the president of the United States. This approach would empower voters by expanding political influence outside of the ‘battleground states.’ It would also preserve the existing biases inherent in the electoral college (thereby minimizing the impact on election outcomes, making such a system more legislatively palatable across party affiliations).</description>
+    </item>
     
     <item>
       <title>Linear Regression in Pricing Analysis, Essential Things to Know</title>
