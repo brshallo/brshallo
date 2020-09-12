@@ -54,7 +54,7 @@ Ways of getting around this collective action problem:
 
 # Closing note
 
-The chief advantage of a national popular vote for presidential elections is not that it achieves *perfect* representation but that it provides *improved incentives* for presidential candidates. Specifically it promotes campaigns and policy proposals that give attention to a broader subset of the American public^[As described [here]( https://www.nationalpopularvote.com/written-explanation)).] and reduces the variability in election results. However a national popular vote inevitably faces partisan challenges and may give-off the appearance of too momentous a departure from the norms of the existing electoral college. As a compromise between these systems, a national popular vote weighted by the electoral college avoids many of the challenges to a national popular vote while achieving its most important aims. It deserves consideration. 
+The chief advantage of a national popular vote for presidential elections is not that it achieves *perfect* representation but that it provides *improved incentives* for presidential candidates. Specifically it promotes campaigns and policy proposals that give attention to a broader subset of the American public^[As described [here]( https://www.nationalpopularvote.com/written-explanation)).] and reduces the variability in election results. However a national popular vote inevitably faces partisan challenges and may give-off the appearance of too momentous a departure from the norms of the existing electoral college. As a compromise between these systems, a national popular vote weighted by the electoral college avoids many of the challenges to a national popular vote while achieving its most important aims. It therefore deserves consideration. 
 
 # Appendix
 
@@ -63,7 +63,7 @@ The chief advantage of a national popular vote for presidential elections is not
 > In all but two states, electoral votes are 'winner-take-all'. The candidate winning the popular vote normally receives all of that state's votes. Maine and Nebraska have taken a different approach. Using the 'congressional district method', these states allocate two electoral votes to the state popular vote winner, and then one electoral vote to the popular vote winner in each Congressional district (2 in Maine, 3 in Nebraska). This creates multiple popular vote contests in these states, which could lead to a split electoral vote.
 > - https://www.270towin.com/content/split-electoral-votes-maine-and-nebraska/
 
-There may be some philosophical appeal to this method for allocating votes however there are still relatively similar problems with it to the ‘winner-take-all’ method. For example, 
+There may be some philosophical appeal to this method for allocating votes however there are still relatively similar problems with it to the ‘winner-take-all’ method when applied to the state. For example, 
 
 *	if your vote is not in a ‘battleground district’ your vote, once again, may not matter as much (i.e. a ‘battleground state’ is simply replaced by a ‘battleground district’)
 *	opens-up presidential election to risks associated with gerrymandering
