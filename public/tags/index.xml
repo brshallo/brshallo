@@ -39,15 +39,6 @@
     </item>
     
     <item>
-      <title>rstats</title>
-      <link>/tags/rstats/</link>
-      <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/rstats/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>business</title>
       <link>/tags/business/</link>
       <pubDate>Mon, 17 Aug 2020 00:00:00 +0000</pubDate>
@@ -71,6 +62,15 @@
       <pubDate>Mon, 17 Aug 2020 00:00:00 +0000</pubDate>
       
       <guid>/tags/pricing/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rstats</title>
+      <link>/tags/rstats/</link>
+      <pubDate>Mon, 17 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/rstats/</guid>
       <description></description>
     </item>
     
