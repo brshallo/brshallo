@@ -14,7 +14,7 @@ output:
     toc: no
 ---
 
-*In this post I discuss using a national popular vote weighted by the electoral college to elect the president. This approach would empower voters by expanding political influence outside of ‘battleground states.’ It would also preserve the existing biases built into the American electoral college (thereby making such a system legislatively palatable across party affiliations and electoral college traditionalists). This post presents potential merits of a weighted national popular vote however it does not represent a personal endorsement.*
+*In this post I discuss using a national popular vote weighted by the electoral college to elect the president. This approach would empower voters by expanding political influence outside of ‘battleground states.’ It would also preserve the existing biases built into the American electoral college (thereby making such a system legislatively palatable across party affiliations and electoral college traditionalists)*^[This post presents potential merits of a weighted national popular vote however it does not represent a personal endorsement.].
 
 Irrespective of political party or disposition towards direct democracy, the winner-take-all approach (currently applied by most US states to allocate their electoral votes for the president) has clear drawbacks. These include:
 
@@ -84,7 +84,7 @@ Essentially it was a [collective action problem](https://en.wikipedia.org/wiki/C
 
 *	The approach the National Popular Vote initiative has used is to have individual states pass laws that only go into effect once the requisite threshold of electoral votes is reached – thereby not forcing any individual state to ‘give-up’ some of their influence prematurely. The same approach could be taken to push adoption of a weighted national popular vote^[I.e. the law would only go into effect when states representing 270 electoral votes passed legislation.].
 *	Other approaches may be more piecemeal. For example states of similar size and counterbalanced political leanings could agree to pass proportional voting laws simultaneously – thereby not reducing the support to their preferred presidential candidate (but still empowering the voters within their state)^[E.g. say a ten vote state that tends to go 60% democratic teams up with another ten vote state that tends to go 60% republican and each pass a proportional voting system simultaneously.]. Such an approach would be more effective if fractional votes among electors are allowed^[Interesting article on fractional representatives: http://www.hnn.us/articles/129114.html .] ^[If such an approach were adopted by all states, it would create the problem of it being more likely that an individual state does not receive the requisite 270 electoral votes... which would need to be addressed.].
-*	Of course there's a constitutional amendment...
+*	US constitutional amendment...
 
 # Closing note
 
