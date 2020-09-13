@@ -48,12 +48,12 @@
   </url>
   
   <url>
-    <loc>/categories/business/</loc>
+    <loc>/tags/business/</loc>
     <lastmod>2020-08-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/business/</loc>
+    <loc>/categories/business/</loc>
     <lastmod>2020-08-17T00:00:00+00:00</lastmod>
   </url>
   
@@ -68,12 +68,12 @@
   </url>
   
   <url>
-    <loc>/categories/pricing/</loc>
+    <loc>/tags/pricing/</loc>
     <lastmod>2020-08-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/pricing/</loc>
+    <loc>/categories/pricing/</loc>
     <lastmod>2020-08-17T00:00:00+00:00</lastmod>
   </url>
   
@@ -168,12 +168,12 @@
   </url>
   
   <url>
-    <loc>/categories/math/</loc>
+    <loc>/tags/math/</loc>
     <lastmod>2020-03-04T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/math/</loc>
+    <loc>/categories/math/</loc>
     <lastmod>2020-03-04T00:00:00+00:00</lastmod>
   </url>
   
@@ -230,6 +230,56 @@
   <url>
     <loc>/2020/02/06/maximizing-magnetic-volume-the-perfect-bowl/</loc>
     <lastmod>2020-02-06T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/iceland/</loc>
+    <lastmod>2020-01-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2020/01/01/iceland-day-6-perlan-departure/</loc>
+    <lastmod>2020-01-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/travel/</loc>
+    <lastmod>2020-01-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/travel/</loc>
+    <lastmod>2020-01-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2019/12/31/iceland-day-5-blue-lagoon-new-year-s-eve/</loc>
+    <lastmod>2019-12-31T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2019/12/30/iceland-day-4-southeast-coast-diamond-beach/</loc>
+    <lastmod>2019-12-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2019/12/29/iceland-day-3-thingvellier-disaster/</loc>
+    <lastmod>2019-12-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2019/12/28/iceland-day-2-golden-circle-snowmobiling/</loc>
+    <lastmod>2019-12-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/trave/</loc>
+    <lastmod>2019-12-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2019/12/27/iceland-day-1-landing-city-tour/</loc>
+    <lastmod>2019-12-27T00:00:00+00:00</lastmod>
   </url>
   
 </urlset>
