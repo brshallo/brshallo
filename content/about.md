@@ -4,7 +4,11 @@ author: Bryan Shalloway
 date: '2020-02-06'
 ---
 
-Bryan graduated with honors in Cognitive Neuroscience from Washington University in St. Louis where he also studied American Culture Studies and Political Science. He spent the majority of his high school and undergraduate summers in a Neuropathology research lab studying Alzheimer's disease. His postgraduate career started as a high school math teacher in Durham Public Schools through Teach for America. In 2015 he moved into analytics as a School Performance Analyst in Colorado through an Education Pioneers fellowship, before returning to North Carolina where he completed a Master's in Advanced Analytics from NC State. 
+*Education & Early Career:*
+
+Bryan graduated with honors in Cognitive Neuroscience from Washington University in St. Louis where he also studied American Culture Studies and Political Science. He spent the majority of his high school and undergraduate summers in a Neuropathology research lab studying Alzheimer's disease. His postgraduate career started as a high school math teacher in Durham Public Schools, North Carolina through Teach for America. In 2015 he moved into analytics as a School Performance Analyst in Colorado through an Education Pioneers fellowship, before returning to North Carolina where he completed a Master's in Advanced Analytics from NC State University. 
+
+*Career in Data Science:*
 
 Bryan has been a Data Scientist at NetApp in the Raleigh-Durham area since July of 2017. He has worked on a wide range of problems in customer support and sales. Examples of projects he has taken leading roles on:
 
