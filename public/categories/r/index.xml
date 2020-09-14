@@ -1,331 +1,25 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>r on Bryan&#39;s website</title>
+    <title>r on Bryan Shalloway&#39;s Blog</title>
     <link>/categories/r/</link>
-    <description>Recent content in r on Bryan&#39;s website</description>
+    <description>Recent content in r on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 04 Mar 2020 00:00:00 +0000</lastBuildDate><atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 04 Mar 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>Riddler Solutions: Pedestrian Puzzles</title>
       <link>/2020/03/04/riddler-solutions-pedestrian-puzzles/</link>
       <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/03/04/riddler-solutions-pedestrian-puzzles/</guid>
-      <description>
-
-&lt;div id=&#34;TOC&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#riddler-express&#34;&gt;Riddler express&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#riddler-classic&#34;&gt;Riddler classic&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#time-to-center&#34;&gt;Time to center&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#transform-grid-rotate-first&#34;&gt;Transform grid, rotate first&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#transform-city-pretty&#34;&gt;Transform city, pretty&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-
-&lt;p&gt;This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; and &lt;a href=&#34;#riddler-classic&#34;&gt;Riddler Classic&lt;/a&gt;. I created a &lt;em&gt;toy&lt;/em&gt; package &lt;a href=&#34;https://github.com/brshallo/animatrixr&#34;&gt;animatrixr&lt;/a&gt; to help with some of the visualizations and computations for my solutions&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;div id=&#34;riddler-express&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Riddler express&lt;/h1&gt;
-&lt;p&gt;&lt;strong&gt;The riddle:&lt;/strong&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Riddler City is a large circular metropolis, with countless square city blocks that each have a side length of 1 km. A small section of the city, composed of 36 blocks, is shown in the diagram below:
-&lt;img src=&#34;https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-9.41.05-PM.png?w=1150&#34; style=&#34;width:50.0%&#34; /&gt;
-At the very center of the city lies Riddler City Hall. Its many employees all walk to and from work, and their homes are evenly scattered across the city. The sidewalks they walk along have always been adjacent to the streets — but that may be changing.
-Recently, several city hall employees submitted a petition, requesting that the sidewalks should no longer lie alongside the streets. Instead, they want the sidewalks to cut diagonally across the city, connecting nearby street intersections. These proposed sidewalks are represented by the thicker blue lines in the diagram below:
-&lt;img src=&#34;https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-9.52.37-PM.png?w=1150&#34; style=&#34;width:50.0%&#34; /&gt;
-The mayor of Riddler City has tasked you with resolving this dispute in a mathematical manner. She would like you to answer the following question: What fraction of the city hall employees would have a shorter walk home (that is, to the street intersection nearest to their home) if the city replaced its traditional sidewalks with these diagonal sidewalks?&lt;/p&gt;
-&lt;p&gt;– &lt;a href=&#34;https://fivethirtyeight.com/contributors/zach-wissner-gross/&#34;&gt;Zach Wissner-Gross&lt;/a&gt;, &lt;a href=&#34;https://fivethirtyeight.com/features/can-you-solve-this-rather-pedestrian-puzzle/&#34;&gt;“Can You Solve this Rather Pedestrian Puzzle,” FiveThirtyEight&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;My approach:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;I. Create hypothetical simulation of city&lt;br /&gt;
-II. For each scenario, calculate Manhattan Distances from center for all points&lt;br /&gt;
-III. Make distances comparable by scaling by unit length of a city block&lt;br /&gt;
-IV. Compare distances between scenarios for all points; compute proportion that have shorter path with new diagonal sidewalks&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;I. Create hypothetical city&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;I first created a hypothetical 100 unit diameter version of this city&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;. I added residences at every point on a 100x100 grid and then removed those points that had a euclidean distance&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt; greater than 50 units from the center.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
-library(animatrixr)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;radius &amp;lt;- 50
-df_start &amp;lt;- crossing(x = -radius:radius, y = -radius:radius) %&amp;gt;% 
-  #Removes points with euclidian distance from center &amp;gt; radius:
-  filter(sqrt(x^2 + y^2) &amp;lt;= radius)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;em&gt;II. Calculate Manhattan Distances&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;For both scenarios, we need to calculate the &lt;a href=&#34;https://en.wikipedia.org/wiki/Taxicab_geometry&#34;&gt;Manhattan length&lt;/a&gt;&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt; between the origin and every point. To calculate the Manhattan length on the new scenario, we first need to find what the residence’s coordinates would be in the new sidewalk grid. The new coordinate system could be thought of simply as a rotated and shrunken version of the existing grid&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;, which can be represented as applying the matrix transformation:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ M = \left(\begin{array}{cc} 0.5 &amp;amp; -0.5\\0.5  &amp;amp; 0.5 \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;(See &lt;a href=&#34;#transform-city-pretty&#34;&gt;Transform city, pretty&lt;/a&gt; in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; to view the code used to create the above visualization.)&lt;/p&gt;
-&lt;p&gt;Our residences are not changing locations, they would just have different coordinates specific to the new sidewalks – hence we will actually apply the inverse&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt; of this transformation to our starting coordinates. This will give us the position of our residences on the new (transformed) coordinate grid.&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ M^{-1} = \left(\begin{array}{cc} 1 &amp;amp; 1\\-1  &amp;amp; 1 \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_trans &amp;lt;- df_start %&amp;gt;% 
-  mutate(x_trans = x,
-         y_trans = y) %&amp;gt;% 
-  # x_trans, y_trans represent the coordinates on the new plane
-  transform_df_coords(x_trans, y_trans, m = matrix(c(1, -1, 1, 1), nrow = 2))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We will then calculate the Manhattan lengths of the points on both the new and old coordinate systems – which (because we are comparing distance from the origin: 0,0) can be computed as: &lt;span class=&#34;math inline&#34;&gt;\(Manhattan\;Length = |x| + |y|\)&lt;/span&gt;.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_units &amp;lt;- df_trans %&amp;gt;% 
-  mutate(a_units = abs(x) + abs(y),
-         b_units = abs(x_trans) + abs(y_trans))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;em&gt;IV: Multiply Manhattan lengths by length of a block:&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;The length of a block under the new and old scenarios are different (new diagonal sidewalks have shorter blocks), hence our current Manhattan lengths are not comparable. If we set the length of a single block on the original coordinate system as being 1 unit, then you can use the Pythagorean Theorem to find that the length of a block on the new sidewalks would be &lt;span class=&#34;math inline&#34;&gt;\(\frac{\sqrt{2}}{2}\)&lt;/span&gt;. We simply multiply our Manhattan lengths in each of our scenarios by their respective unit lengths (either 1 or ~0.7071).&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists &amp;lt;- df_units %&amp;gt;% 
-  mutate(a_dist = 1 * a_units,
-         b_dist = (sqrt(2) / 2) * b_units)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The scaled distances can now be compared.&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;V. Aggregate proportion difference:&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;Finally, we compute the proportion that have a shorter distance under the new sidewalks compared to the old sidewalks:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists %&amp;gt;% 
-  summarise(prop_shorter = (sum(b_dist &amp;lt; a_dist)/ n()) %&amp;gt;% round(2)) %&amp;gt;% 
-  knitr::kable()&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr class=&#34;header&#34;&gt;
-&lt;th align=&#34;right&#34;&gt;prop_shorter&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;em&gt;Riddler express solution:&lt;/em&gt; new diagonal sidewalks would be faster for 50% of people.&lt;/p&gt;
-&lt;p&gt;Let’s visualize which resident’s the new sidewalks would be faster for:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists %&amp;gt;% 
-  mutate(diagonal_faster = b_dist &amp;lt; a_dist) %&amp;gt;% 
-  ggplot(aes(x = x, y = y))+
-  geom_point(aes(colour = diagonal_faster))+
-  coord_fixed()+
-  ggforce::theme_no_axes()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;riddler-classic&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Riddler classic&lt;/h1&gt;
-&lt;p&gt;&lt;strong&gt;The riddle:&lt;/strong&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;From David Lewis comes an additional, original twist on Riddler City’s urban planning:&lt;/p&gt;
-&lt;p&gt;The mayor ultimately decided not to pursue diagonal sidewalks, but the petitioners haven’t given up yet. One of them recently visited Barcelona and was inspired by its octagonal city blocks.&lt;/p&gt;
-&lt;p&gt;Now, there’s a second petition on the mayor’s desk, asking that the grid layout of the city’s sidewalks be replaced with an octagonal pattern, represented by the thicker blue lines in the diagram below:
-&lt;img src=&#34;https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-10.03.57-PM.png?w=1150&#34; style=&#34;width:50.0%&#34; /&gt;
-Under this second proposal, now what fraction of the employees would have a shorter walk home if the city replaced its traditional sidewalks with these new sidewalks?&lt;/p&gt;
-&lt;p&gt;– &lt;a href=&#34;https://fivethirtyeight.com/contributors/zach-wissner-gross/&#34;&gt;Zach Wissner-Gross&lt;/a&gt;, &lt;a href=&#34;https://fivethirtyeight.com/features/can-you-solve-this-rather-pedestrian-puzzle/&#34;&gt;“Can You Solve this Rather Pedestrian Puzzle,” FiveThirtyEight&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;My approach:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;The Barcelona distance is just a combination of the Manhattan lengths of both the original and diagonal sidewalk grids (though with the unit lengths scaled differently)&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;. The unit lengths&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt; for the horizontal and diagonal components will depend on what proportion&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt; of a side is horizontal vs diagonal (corresponding with the original vs transformed grid from the &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; solution)&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;We can define our relevant side lengths as a function of x:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/barcelona_dist.jpg&#34; style=&#34;width:50.0%&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[x : \frac{inverse\;of\;proportion\;horizontal}{2},\]&lt;/span&gt;
-&lt;span class=&#34;math display&#34;&gt;\[0 &amp;lt; x &amp;lt; 0.5\]&lt;/span&gt;
-&lt;span class=&#34;math display&#34;&gt;\[diagonal\;length = \sqrt{2}x\]&lt;/span&gt;
-&lt;span class=&#34;math display&#34;&gt;\[horizontal\;length = 1 - 2x\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;I’ll start by setting x = 0.25.&lt;/em&gt; Hence the Manhattan length of our horizontal component will be scaled by &lt;span class=&#34;math inline&#34;&gt;\(\frac{1}{2}\)&lt;/span&gt;, and our diagonal component will be scaled by &lt;span class=&#34;math inline&#34;&gt;\(\frac{\sqrt{2}}{4}\)&lt;/span&gt;. After scaling our components, we simply add them together to get our Barcelona distance&lt;a href=&#34;#fn11&#34; class=&#34;footnote-ref&#34; id=&#34;fnref11&#34;&gt;&lt;sup&gt;11&lt;/sup&gt;&lt;/a&gt; &lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;x &amp;lt;- 0.25
-side_length &amp;lt;- 1 - 2*x
-side_length_trans &amp;lt;- sqrt(2)*x
-
-df_dists_abc &amp;lt;- df_dists %&amp;gt;% 
-  mutate(c_dist_a = a_units * side_length,
-         c_dist_b = b_units * side_length_trans,
-         c_dist = c_dist_a + c_dist_b)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Finally, for all points, we compare the travel distance on the new Barcelona grid compared to on the original horizontal grid and compute the percentage that have a shorter distance under the new sidewalks.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists_abc %&amp;gt;% 
-  summarise(prop_shorter = (sum(c_dist &amp;lt; a_dist)/ n()) %&amp;gt;% round(2)) %&amp;gt;% 
-  knitr::kable()&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr class=&#34;header&#34;&gt;
-&lt;th align=&#34;right&#34;&gt;prop_shorter&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;In the case (when x is set to 0.25) we see the proportion that is closer to City Hall (i.e. the center of our city&lt;a href=&#34;#fn13&#34; class=&#34;footnote-ref&#34; id=&#34;fnref13&#34;&gt;&lt;sup&gt;13&lt;/sup&gt;&lt;/a&gt;) is again 50%.&lt;/p&gt;
-&lt;p&gt;If we visualize in which locations the new Barcelona sidewalks have a shorter travel distance, we will see a similar result to that found in the &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; solution.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists_abc %&amp;gt;% 
-  mutate(barcelona_faster = c_dist &amp;lt; a_dist) %&amp;gt;% 
-  ggplot(aes(x = x, y = y))+
-  geom_point(aes(colour = barcelona_faster))+
-  coord_fixed()+
-  ggforce::theme_no_axes()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;We need to verify that ‘50% have a shorter walk’ is our solution regardless of what we set for x.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;To accomplish this, I wrote a function &lt;code&gt;summarise_proportion()&lt;/code&gt;, that will output the ‘Proportion Barcelona sidewalk distance is shorter’ across any given x between 0 and 0.5 (the possible values of x).&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;summarise_proportion &amp;lt;- function(x, df_start = df_dists, out_data = FALSE){
-
-  x &amp;lt;- 0.25
-  side_length &amp;lt;- 1 - 2*x
-  side_length_trans &amp;lt;- sqrt(2)*x
-  
-  df_dists_out &amp;lt;- df_dists %&amp;gt;% 
-    mutate(c_dist_a = a_units * side_length,
-           c_dist_b = b_units * side_length_trans,
-           c_dist = c_dist_a + c_dist_b)
-  
-  if(out_data) return(df_dists_out)
-  
-  df_dists_out %&amp;gt;%
-    summarise(prop_shorter = (sum(c_dist &amp;lt; a_dist)/ n())) %&amp;gt;%  
-    pluck(&amp;quot;prop_shorter&amp;quot;)
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Specifically I evaluated this ‘proportion shorter’ for &lt;em&gt;x&lt;/em&gt; set to each of &lt;span class=&#34;math inline&#34;&gt;\(0.01, 0.05, 0.09, ... 0.49\)&lt;/span&gt;.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;x_vec &amp;lt;- seq(from = 0.01, to = 0.49, by = 0.04)
-
-df_summary &amp;lt;- tibble(x = x_vec) %&amp;gt;% 
-  mutate(prop_shorter = map_dbl(x, summarise_proportion, df_start = df_dists) %&amp;gt;% round(2))
-
-df_summary %&amp;gt;% 
-  knitr::kable()&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr class=&#34;header&#34;&gt;
-&lt;th align=&#34;right&#34;&gt;x&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;prop_shorter&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.01&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.05&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.09&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.13&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.17&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.21&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.25&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.29&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.33&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.37&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.41&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.45&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;0.49&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;For each of these, &lt;em&gt;the new ‘Barcelona grid’ is faster for 50% of people&lt;/em&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Appendix&lt;/h1&gt;
-&lt;div id=&#34;time-to-center&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Time to center&lt;/h2&gt;
-&lt;p&gt;Visualize the distance to the center based on where people are in the city for each of the potential city grids.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists_abc %&amp;gt;% 
-  select(x, y, a_dist, b_dist, c_dist) %&amp;gt;% 
-  pivot_longer(cols = c(a_dist, b_dist, c_dist), names_to = &amp;quot;grid&amp;quot;, values_to = &amp;quot;distance&amp;quot;) %&amp;gt;% 
-  mutate(grid = fct_recode(grid, 
-                           &amp;quot;rectangular&amp;quot; = &amp;quot;a_dist&amp;quot;,
-                           &amp;quot;diagonal&amp;quot; = &amp;quot;b_dist&amp;quot;,
-                           &amp;quot;barcelona.25&amp;quot; = &amp;quot;c_dist&amp;quot;)) %&amp;gt;% 
-  ggplot(aes(x = x, y = y, colour = distance))+
-  geom_point()+
-  facet_wrap(~grid)+
-  coord_fixed()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;This suggests that if the city were square shaped (rather than a circle) that the transformed (diagonal and Barcelona) sidewalks would have greater than 50% of the residents with a shorter travel distance to the center of the city.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;transform-grid-rotate-first&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Transform grid, rotate first&lt;/h2&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;add_transformation(
-  m = matrix(c(0.5, 0.5,-0.5, 0.5), nrow = 2), 
-  seq_fun = seq_matrix_rotate_first) %&amp;gt;% 
-  animate_matrix()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_rotate_shrink.gif&#34; /&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;transform-city-pretty&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Transform city, pretty&lt;/h2&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;start_grid &amp;lt;- animatrixr::construct_grid(-8:8, -8:8) %&amp;gt;% 
-  mutate(index = row_number(),
-         time = 1L)
-
-end_grid &amp;lt;- animatrixr::transform_segment(start_grid,  m = matrix(c(0.5, 0.5,-0.5, 0.5), nrow = 2)) %&amp;gt;% 
-  mutate(time = 2L)
-
-house_points &amp;lt;- crossing(x = -3:3, y = -3:3) %&amp;gt;% 
-  mutate(symbol = emo::ji(&amp;quot;house&amp;quot;))
-
-city_hall &amp;lt;- tibble(x = 0, y = 0)
-
-p_pretty &amp;lt;- bind_rows(start_grid, end_grid) %&amp;gt;% 
-  ggplot()+
-  geom_segment(aes(x = x, y = y, xend = xend, yend = yend, group = index, colour = time))+
-  geom_text(aes(x = x, y = y, label = symbol), data = house_points, size = 8)+
-  geom_label(aes(x = x, y = y, label = &amp;quot;Riddler\nCity Hall&amp;quot;), data = city_hall, size = 8, color = &amp;quot;brown&amp;quot;)+
-  scale_colour_gradient(low = &amp;quot;black&amp;quot;, high = &amp;quot;royalblue3&amp;quot;)+
-  scale_x_continuous(breaks = -3L:3L, minor_breaks = NULL)+
-  scale_y_continuous(breaks = -3L:3L, minor_breaks = NULL)+
-  coord_fixed(xlim = c(-3, 3), ylim = c(-3, 3))+
-  theme_minimal()+
-  theme(axis.text = element_blank(),
-        axis.title = element_blank(),
-        legend.position = &amp;quot;none&amp;quot;,
-        panel.border = element_rect(colour = &amp;quot;black&amp;quot;, fill=NA, size=1))
-
-p_pretty + 
-  gganimate::transition_states(time)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif&#34; /&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;footnotes&#34;&gt;
-&lt;hr /&gt;
-&lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;And wrote a couple preliminary posts on animating matrix transformations that can be found &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/&#34;&gt;here&lt;/a&gt;&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Is large enough to get a reasonable approximation for the answer.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I.e. straight line distance.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;The Manhattan Length is just the shortest number of city blocks between points.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;I highly recommend the Essence of Linear Algebra video series, particularly chapter 3 (on Matrix Transformations) and &lt;a href=&#34;https://www.youtube.com/watch?v=P2LTAUO1TdA&#34;&gt;13&lt;/a&gt; (on Change of basis).&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;In R, you can use the &lt;code&gt;solve()&lt;/code&gt; function to give you the inverse of a matrix.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;We have already done most of the computations we’ll need and can follow similar steps to those taken in the &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; solution.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;I.e. length of an individual city block, or in this case, component of a city block.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;In the diagram below, we will actually have it be a function of one-half of the inverse of the proportion – this is because there are two diagonals adjoining each horizontal component.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, &lt;em&gt;x&lt;/em&gt;, of a triangle created by a diagonal.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Note that if we were to set x = 0, the distance from each location would be equivalent to the distances in our starting (horizontal) grid, and if we set x = 0.5, the distances would be equal to those in our transformed (diagonal) grid.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Note that we are not taking into account the tiny differences that emerge regarding starting location for each resident (i.e. which point within a Barcelona square should they start). If we make the grid arbitrarily large, these differences become inconsequential – hence we can ignore them.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;The origin of our coordinate systems.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-</description>
+      <description>Riddler expressRiddler classicAppendixTime to centerTransform grid, rotate firstTransform city, prettyThis post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, Riddler Express and Riddler Classic. I created a toy package animatrixr to help with some of the visualizations and computations for my solutions1.
+Riddler expressThe riddle:
+Riddler City is a large circular metropolis, with countless square city blocks that each have a side length of 1 km.</description>
     </item>
     
   </channel>

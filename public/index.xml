@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Bryan&#39;s website</title>
+    <title>Bryan Shalloway&#39;s Blog</title>
     <link>/</link>
-    <description>Recent content on Bryan&#39;s website</description>
+    <description>Recent content on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 11 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
@@ -2588,7 +2588,7 @@ gganimate::anim_save(here::here(&amp;quot;static/post/2020-02-13-fivethirtyeight
       <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
       
       <guid>/about/</guid>
-      <description>&lt;p&gt;&lt;em&gt;Education &amp;amp; Early Career:&lt;/em&gt;&lt;/p&gt;
+      <description>&lt;p&gt;&lt;em&gt;Schooling &amp;amp; Early Career:&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;Bryan graduated with honors in Cognitive Neuroscience from Washington University in St. Louis where he also studied American Culture Studies and Political Science. He spent the majority of his high school and undergraduate summers in a Neuropathology research lab studying Alzheimer&amp;rsquo;s disease. His postgraduate career started as a high school math teacher in Durham Public Schools, North Carolina through Teach for America. In 2015 he moved into analytics as a School Performance Analyst in Colorado through an Education Pioneers fellowship, before returning to North Carolina where he completed a Master&amp;rsquo;s in Advanced Analytics from NC State University.&lt;/p&gt;
 

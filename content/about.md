@@ -4,7 +4,7 @@ author: Bryan Shalloway
 date: '2020-02-06'
 ---
 
-*Education & Early Career:*
+*Schooling & Early Career:*
 
 Bryan graduated with honors in Cognitive Neuroscience from Washington University in St. Louis where he also studied American Culture Studies and Political Science. He spent the majority of his high school and undergraduate summers in a Neuropathology research lab studying Alzheimer's disease. His postgraduate career started as a high school math teacher in Durham Public Schools, North Carolina through Teach for America. In 2015 he moved into analytics as a School Performance Analyst in Colorado through an Education Pioneers fellowship, before returning to North Carolina where he completed a Master's in Advanced Analytics from NC State University. 
 

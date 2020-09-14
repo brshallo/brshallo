@@ -1,187 +1,24 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>politics on Bryan&#39;s website</title>
+    <title>politics on Bryan Shalloway&#39;s Blog</title>
     <link>/categories/politics/</link>
-    <description>Recent content in politics on Bryan&#39;s website</description>
+    <description>Recent content in politics on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 11 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="/categories/politics/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 11 Sep 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/politics/index.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>A National Popular Vote Weighted by the Electoral College</title>
       <link>/2020/09/11/compromise-between-the-electoral-college-and-a-national-popular-vote/</link>
       <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/09/11/compromise-between-the-electoral-college-and-a-national-popular-vote/</guid>
-      <description>
-
-
-&lt;p&gt;&lt;em&gt;In this post I discuss using a national popular vote weighted by the electoral college to elect the president. This approach would empower voters by expanding political influence outside of ‘battleground states.’ It would also preserve the existing biases built into the American electoral college (thereby making such a system legislatively palatable across party affiliations and electoral college traditionalists)&lt;/em&gt;&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Irrespective of political party or disposition towards direct democracy, the winner-take-all approach (currently applied by most US states to allocate their electoral votes for the president) has clear drawbacks. These include:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;incentivizes only campaigning in battleground states&lt;/li&gt;
-&lt;li&gt;greater variability in outcomes compared to alternatives&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;incentivizes policies that benefit battleground states over the interests of ‘all Americans’&lt;/li&gt;
-&lt;li&gt;promotes a feeling among much of the electorate that their vote is unlikely to influence the election&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;In the last several years&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;, the movement for a national popular vote (to elect the president) has gained traction. A compact between states to vote for the national popular vote winner has been passed in states representing 196 of the 270 electoral votes required for the agreement to have legal force. The &lt;a href=&#34;https://www.nationalpopularvote.com/&#34;&gt;website&lt;/a&gt; of the organization promoting the National Popular Vote initiative outlines the disadvantages of the winner-take-all approach used by most states and provides arguments for employing a national popular vote. The site also provides evidence for the constitutionality of a national popular vote and counters ‘myths’ that a popular vote would overly advantage or disadvantage certain states.&lt;/p&gt;
-&lt;p&gt;However partisanship makes transitioning to a national popular vote difficult. For any given presidential election cycle, the electoral college may favor a particular political party&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;. Hence it may be against the advantaged party’s interests to support a change to the election process (likewise, the disadvantaged party has an incentive to &lt;em&gt;support&lt;/em&gt; a change in the election process&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;). Therefore a cynic could argue that getting the requisite number of states to legislate support for the national popular vote compact is almost synonymous with winning the election. Even a national popular vote that &lt;em&gt;was&lt;/em&gt; passed into law may be politically fragile, and at risk of frequent challenges depending on the state-level political party in power.&lt;/p&gt;
-&lt;p&gt;The goal of the National Popular Vote initiative is to &lt;em&gt;make every vote matter equally&lt;/em&gt;. However if we weaken this goal to be: &lt;em&gt;make the importance of votes more equal than they currently are,&lt;/em&gt; &lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt; it may be easier to change the electoral system in a way that is less likely to agitate partisans or traditionalists attached to the influences inherent in the electoral college.&lt;/p&gt;
-&lt;p&gt;I propose that a popular vote &lt;em&gt;weighted by the electoral college&lt;/em&gt; deserves consideration. Such an approach is equivalent to having the allocation of electoral votes in each state be based on the popular vote within that state. For example, if a state has 30 electoral votes, and 55% of those go to the Republican and 45% to the Democrat, the Republican would receive 16.5 votes and the Democrat 13.5. Let’s apply this across states for the 2012 election.&lt;/p&gt;
-&lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;https://github.com/brshallo/weighted-national-popular-vote/blob/master/state-electoral-votes-split.png?raw=true&#34; alt=&#34;brshallo/weighted-national-popular-vote&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;&lt;a href=&#34;https://github.com/brshallo/weighted-national-popular-vote&#34;&gt;brshallo/weighted-national-popular-vote&lt;/a&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;Aggregating these for the 2012 election, the Democrat (Obama) would have received 271.4 electoral votes, the Republican (Romney) 255 electoral votes, and other candidates 11.6 electoral votes. This represents 50.4%, 47.4%, and 2.2% respectively. Describing outcomes in terms of ‘proportional allocation of electoral votes by state’ or as a ‘electoral college weighted percentage of the popular vote’ are interchangeable&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;. However percentages are easier to articulate, hence this is the terminology I use for the remainder of the post.&lt;/p&gt;
-&lt;p&gt;A national popular vote weighted by the electoral college would truly empower small states&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt; whose voters’ ballots could be worth as much as three times those of larger states&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/US_2010_Census_State_Population_Per_Electoral_Vote.png/660px-US_2010_Census_State_Population_Per_Electoral_Vote.png&#34; alt=&#34;State Population per electoral vote from the 2010 census, Wikipedia, National Popular Vote Interstate Compact&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;State Population per electoral vote from the 2010 census, &lt;a href=&#34;https://en.wikipedia.org/wiki/National_Popular_Vote_Interstate_Compact&#34;&gt;Wikipedia, National Popular Vote Interstate Compact&lt;/a&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;While this may seem horribly unfair, it only makes the existing biases built into the electoral college more transparent. Also&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt;, it still represents a major improvement in representativeness over the existing system – where only a ~quarter of the population’s votes make any substantitive difference in the outcome of the election (those votes in battleground states&lt;a href=&#34;#fn11&#34; class=&#34;footnote-ref&#34; id=&#34;fnref11&#34;&gt;&lt;sup&gt;11&lt;/sup&gt;&lt;/a&gt;).&lt;/p&gt;
-&lt;p&gt;A weighted national popular vote would likely preserve (at least in part) any advantage a party has in the electoral college (for a given election cycle). This would make associated legislation potentially easier to pass and more enduring across changes in state party leadership (compared to legislation for a raw popular vote). The weighted popular vote also maintains the essence of the existing electoral college&lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt; – it just replaces ‘winner-take-all’ with ‘proportional’ allocation of a state’s electoral votes (perhaps a less glaring difference compared to adopting a raw national popular vote).&lt;/p&gt;
-&lt;p&gt;Let’s review what the results would have been in recent elections if applying a national popular vote weighted by the electoral college.&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;Proportion of electoral college weighted national popular vote won on elections from 1976 to 2016:&lt;/em&gt;&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr class=&#34;header&#34;&gt;
-&lt;th align=&#34;right&#34;&gt;year&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;dem&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;rep&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;other&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1976&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.499&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.476&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.024&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1980&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.411&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.504&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.085&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1984&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.401&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.588&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.011&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1988&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.454&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.533&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.013&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1992&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.427&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.373&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.200&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;1996&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.488&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.407&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.105&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;2000&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.478&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.480&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.042&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;2004&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.478&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.509&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.013&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;2008&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.525&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.456&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.019&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;2012&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.504&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.474&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.022&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;2016&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.474&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.462&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.064&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;Since 1976 there have been two elections where the popular vote and the electoral college did not agree (2000 and 2016). The weighted national popular vote would have disagreed with the raw national popular vote once (in the 2000 election) and with the winner-take-all based electoral college once (in 2016)&lt;a href=&#34;#fn13&#34; class=&#34;footnote-ref&#34; id=&#34;fnref13&#34;&gt;&lt;sup&gt;13&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;See github repo &lt;a href=&#34;https://github.com/brshallo/weighted-national-popular-vote&#34;&gt;brshallo/weighted-national-popular-vote&lt;/a&gt; for details on data sources and scripts used to produce the above figures and calculations.&lt;/p&gt;
-&lt;div id=&#34;how-to-get-it-passed&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;How to get it passed?&lt;/h1&gt;
-&lt;p&gt;The beginning of the video “Myths About Constitutionality” explains how we got our current ‘winner-take-all’ systems across states.&lt;/p&gt;
-&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/ubIeQ-uO_b0?start=92&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;
-&lt;/iframe&gt;
-&lt;p&gt;Essentially it was a &lt;a href=&#34;https://en.wikipedia.org/wiki/Collective_action_problem#:~:text=A%20collective%20action%20problem%20or,individuals%20that%20discourage%20joint%20action.&#34;&gt;collective action problem&lt;/a&gt; whereby states (controlled by one party or another) adopted a ‘winner-take-all’ approach as a means of attempting to maximize their individual influence (and give the most advantage they could to their preferred candidate). Once a few states adopted the ‘winner-take-all’ system it created a domino effect whereby all states adopted it&lt;a href=&#34;#fn14&#34; class=&#34;footnote-ref&#34; id=&#34;fnref14&#34;&gt;&lt;sup&gt;14&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;Ways of getting around this collective action problem:&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The approach the National Popular Vote initiative has used is to have individual states pass laws that only go into effect once the requisite threshold of electoral votes is reached – thereby not forcing any individual state to ‘give-up’ some of their influence prematurely. The same approach could be taken to push adoption of a weighted national popular vote&lt;a href=&#34;#fn15&#34; class=&#34;footnote-ref&#34; id=&#34;fnref15&#34;&gt;&lt;sup&gt;15&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Other approaches may be more piecemeal. For example states of similar size and counterbalanced political leanings could agree to pass proportional voting laws simultaneously – thereby not reducing the support to their preferred presidential candidate (but still empowering the voters within their state)&lt;a href=&#34;#fn16&#34; class=&#34;footnote-ref&#34; id=&#34;fnref16&#34;&gt;&lt;sup&gt;16&lt;/sup&gt;&lt;/a&gt;. Such an approach would be more effective if fractional votes among electors are allowed&lt;a href=&#34;#fn17&#34; class=&#34;footnote-ref&#34; id=&#34;fnref17&#34;&gt;&lt;sup&gt;17&lt;/sup&gt;&lt;/a&gt; &lt;a href=&#34;#fn18&#34; class=&#34;footnote-ref&#34; id=&#34;fnref18&#34;&gt;&lt;sup&gt;18&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;US constitutional amendment…&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;div id=&#34;closing-note&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Closing note&lt;/h1&gt;
-&lt;p&gt;The chief advantage of a national popular vote for presidential elections is not that it achieves &lt;em&gt;perfect&lt;/em&gt; representation but that it provides &lt;em&gt;improved incentives&lt;/em&gt; for presidential candidates. For example it would promote campaigns and policy proposals that gave attention to a broader subset of the American public&lt;a href=&#34;#fn19&#34; class=&#34;footnote-ref&#34; id=&#34;fnref19&#34;&gt;&lt;sup&gt;19&lt;/sup&gt;&lt;/a&gt; and reduce the variability in election results. However a national popular vote inevitably faces partisan challenges and may give-off the appearance of being too momentous a departure from the norms of the existing electoral college. As a compromise between these systems a national popular vote, that is weighted by the electoral college, avoids many of the challenges to legislating a pure national popular vote while still achieving its most important objectives.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Appendix&lt;/h1&gt;
-&lt;div id=&#34;what-about-nebraska-and-maine&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;What about Nebraska and Maine?&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;In all but two states, electoral votes are ‘winner-take-all’. The candidate winning the popular vote normally receives all of that state’s votes. Maine and Nebraska have taken a different approach. Using the ‘congressional district method’, these states allocate two electoral votes to the state popular vote winner, and then one electoral vote to the popular vote winner in each Congressional district (2 in Maine, 3 in Nebraska). This creates multiple popular vote contests in these states, which could lead to a split electoral vote.&lt;/p&gt;
-&lt;p&gt;-&lt;a href=&#34;https://www.270towin.com/content/split-electoral-votes-maine-and-nebraska/&#34;&gt;270towin.com&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;There may be some philosophical appeal to this method for allocating votes however there are still relatively similar problems with it to the ‘winner-take-all’ method when applied to the state. For example,&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;if your vote is not in a ‘battleground district’ your vote, once again, may not matter as much (i.e. a ‘battleground state’ is simply replaced by a ‘battleground district’)&lt;/li&gt;
-&lt;li&gt;opens-up presidential election to risks associated with gerrymandering&lt;/li&gt;
-&lt;li&gt;if this were applied nationally, appealing to specific states could be supplanted by appealing to specific types of congressional districts, e.g. districts with more urban or rural areas (which may influence president’s against ‘looking out for all Americans’)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;footnotes&#34;&gt;
-&lt;hr /&gt;
-&lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;This post presents potential merits of a weighted national popular vote however it does not represent a personal endorsement.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;A few thousand votes in a few places have a greater chance of swaying entire elections in our current system compared to the likelihood of this occurring with a national popular vote.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;particularly since the 2016 election&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;However the political party the electoral college advantages frequently changes between election cycles (&lt;a href=&#34;https://fivethirtyeight.com/features/will-the-electoral-college-doom-the-democrats-again/&#34;&gt;Silver, 2016&lt;/a&gt;).&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;It’s not a coincidence that the popular vote initiative is gained substantial support from many Democrats following the 2016 election.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;by spreading political influence away from the dozen or so battleground states&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;As long as you allow for fractional electoral votes.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;The electoral college is designed to empower small states, though in practice it only empowers battleground states (at least for presidential elections).&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;For an alternative approach to weighting influence, see &lt;a href=&#34;https://theconversation.com/whose-votes-count-the-least-in-the-electoral-college-74280&#34;&gt;Schalit, 2017&lt;/a&gt; which reviews states have the highest or lowest weighted votes based on actual voters (rather than the census). In the article they point-out that many of the votes in mid-sized states actually have the lowest weights. They attribute this to higher voter turnout and note (at the end of the article) that this may be contributed to by many of these being in battleground states.&lt;/p&gt;
-&lt;p&gt;I did a similar analysis weighting by: &lt;span class=&#34;math display&#34;&gt;\[\frac{totalVotes/nationalElectoralVotes(538)}{stateVotes/stateElectoralVotes}\]&lt;/span&gt; Below is a figure of weights for the 2012 election:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://github.com/brshallo/weighted-national-popular-vote/blob/master/electoral-influence-2012.png?raw=true&#34; /&gt;&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;regardless of your opinion on the electoral college and whether voters in small states &lt;em&gt;should&lt;/em&gt; be afforded outsized representation compared to their population&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;“Influence” here is evidenced by campaign events and ad spending among candidates as described at &lt;a href=&#34;https://www.nationalpopularvote.com/written-explanation&#34;&gt;this page&lt;/a&gt;.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;I.e. it still spreads out votes by states and not just across the population&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;In 2016 Clinton would have had a ~1 percentage point advantage over Trump in the weighted popular vote (compared to the ~2 percentage point advantage she had in the raw popular vote). Under the weighted popular vote George W. Bush would still have still won the election in 2000, despite losing the raw popular vote.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;The result of every state adopting it however has, at least in modern elections, resulted in the majority of states’ influence being reduced.&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;I.e. the law would only go into effect when states representing 270 electoral votes passed legislation.&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;E.g. say a ten vote state that tends to go 60% democratic teams up with another ten vote state that tends to go 60% republican and each pass a proportional voting system simultaneously.&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;Interesting article on fractional representatives: &lt;a href=&#34;http://www.hnn.us/articles/129114.html&#34; class=&#34;uri&#34;&gt;http://www.hnn.us/articles/129114.html&lt;/a&gt; .&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn18&#34;&gt;&lt;p&gt;If such an approach were adopted by all states, it would create the problem of it being more likely that an individual state does not receive the requisite 270 electoral votes… which would need to be addressed.&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;As described &lt;a href=&#34;https://www.nationalpopularvote.com/written-explanation&#34;&gt;here&lt;/a&gt;.&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-</description>
+      <description>In this post I discuss using a national popular vote weighted by the electoral college to elect the president. This approach would empower voters by expanding political influence outside of ‘battleground states.’ It would also preserve the existing biases built into the American electoral college (thereby making such a system legislatively palatable across party affiliations and electoral college traditionalists)1.
+Irrespective of political party or disposition towards direct democracy, the winner-take-all approach (currently applied by most US states to allocate their electoral votes for the president) has clear drawbacks.</description>
     </item>
     
   </channel>

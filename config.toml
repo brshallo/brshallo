@@ -1,6 +1,6 @@
 baseurl = "https://www.bryanshalloway.com/"
 languageCode = "en-us"
-title = "Bryan's website"
+title = "Bryan Shalloway's Blog"
 theme = "hugo-lithium"
 googleAnalytics = ""
 disqusShortname = "bryanshalloway"
