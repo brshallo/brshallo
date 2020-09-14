@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>reproducibility on Bryan Shalloway&#39;s Blog</title>
@@ -6,18 +6,134 @@
     <description>Recent content in reproducibility on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 24 Jun 2020 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/tags/reproducibility/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Wed, 24 Jun 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/reproducibility/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Use Flipbooks to Explain Your Code and Thought Process</title>
       <link>/2020/06/24/use-flipbooks-to-explain-your-code-and-thought-process/</link>
       <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/06/24/use-flipbooks-to-explain-your-code-and-thought-process/</guid>
-      <description>Learning R’s %&amp;gt;%Using the pipe operator (%&amp;gt;%) is one of my favorite things about coding in R and the tidyverse. However when it was first shown to me, I couldn’t understand what the #rstats nut describing it was so enthusiastic about. They tried to explain, “It means and then do the next operation.” When that didn’t click for me, they continued (while becoming ever more excited) “It passes the previous steps output into the first argument of the next function,” still… 😐😐😕.</description>
+      <description>
+
+
+&lt;div id=&#34;learning-rs&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Learning R’s &lt;code&gt;%&amp;gt;%&lt;/code&gt;&lt;/h1&gt;
+&lt;p&gt;Using the pipe operator (&lt;code&gt;%&amp;gt;%&lt;/code&gt;) is one of my favorite things about coding in R and the &lt;a href=&#34;https://www.tidyverse.org/&#34;&gt;tidyverse&lt;/a&gt;. However when it was first shown to me, I couldn’t understand what the &lt;a href=&#34;https://twitter.com/search?q=%23rstats&amp;amp;src=typed_query&#34;&gt;#rstats&lt;/a&gt; nut describing it was &lt;em&gt;so enthusiastic&lt;/em&gt; about. They tried to explain, “It means &lt;em&gt;and then&lt;/em&gt; do the next operation.” When that didn’t click for me, they continued (while becoming ever more excited) “It &lt;em&gt;passes the previous steps output into the first argument&lt;/em&gt; of the next function,” still… 😐😐😕.
+Self-evident verbs in their code like &lt;code&gt;select()&lt;/code&gt;, &lt;code&gt;filter()&lt;/code&gt;, &lt;code&gt;summarise()&lt;/code&gt; helped me nod along, partly following the operations. Though it wasn’t until I evaluated the code &lt;em&gt;line-by-line&lt;/em&gt; that I recognized the pipe’s elegance, power, beauty, simplicity 😄!&lt;/p&gt;
+&lt;p&gt;Now, a few years and reads through &lt;a href=&#34;https://r4ds.had.co.nz/&#34;&gt;R for Data Science&lt;/a&gt; later&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;, I will often share my work by keeping the code and output together and showing, line-by-line, what I am building towards. For example when…&lt;/p&gt;
+&lt;p&gt;… giving a 2019 talk on &lt;em&gt;“Managing objects in analytics workflows, using lists as columns in dataframes”&lt;/em&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/gme4Fb9JVjk?start=258&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;… giving a 2017 talk on &lt;em&gt;“Getting started with ‘tidy’ data science in R”&lt;/em&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/eeCELJNWEuw?start=474&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;… promoting a recent blog post on &lt;em&gt;“Tidy pairwise operations”&lt;/em&gt; (though in this case I removed the code):&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+What is your &lt;a href=&#34;https://twitter.com/hashtag/tidyverse?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#tidyverse&lt;/a&gt; (or other &lt;a href=&#34;https://twitter.com/hashtag/rstats?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#rstats&lt;/a&gt; ) approach for doing arbitrary pairwise operations across variables? Mine is frequently something like:&lt;br&gt;&lt;br&gt;I. nest…&lt;br&gt;II. expand combos… &lt;br&gt;III. filter…&lt;br&gt;IV. map fun(s)…&lt;br&gt;…&lt;br&gt;&lt;br&gt;I wrote a post walking through this: &lt;a href=&#34;https://t.co/xRnRf5yh3m&#34;&gt;https://t.co/xRnRf5yh3m&lt;/a&gt; &lt;a href=&#34;https://t.co/Zvxey2gm3H&#34;&gt;pic.twitter.com/Zvxey2gm3H&lt;/a&gt;
+&lt;/p&gt;
+— Bryan Shalloway (&lt;span class=&#34;citation&#34;&gt;@brshallo&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/brshallo/status/1271194908477591553?ref_src=twsrc%5Etfw&#34;&gt;June 11, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;However each of these examples were built using PowerPoint (and a lot of copy and pasting of code + output). The series of images cannot be easily reproduced. In this post I’ll point to resources on how to create these sorts of code communication materials in ways that &lt;em&gt;are reproducible&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;flipbooks&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Flipbooks&lt;/h1&gt;
+&lt;p&gt;When I started writing this post, I planned to call this type of output a “&lt;strong&gt;LEXPREX&lt;/strong&gt;” for “&lt;strong&gt;L&lt;/strong&gt;ine-by-line &lt;strong&gt;EX&lt;/strong&gt;ecution with &lt;strong&gt;PR&lt;/strong&gt;inted &lt;strong&gt;EX&lt;/strong&gt;amples” (and a name evocative of the inspiring &lt;a href=&#34;https://github.com/tidyverse/reprex&#34;&gt;reprex&lt;/a&gt; package by &lt;a href=&#34;https://twitter.com/JennyBryan%5D&#34;&gt;Jenny Bryan&lt;/a&gt;&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;). But, thankfully, an excellent solution containing thorough explanations (and a much better name) already existed, &lt;em&gt;flipbooks&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;As described in the &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;flipbookr documentation&lt;/a&gt;, “flipbooks are tools that present side-by-side, aligned, incremental code-output.”&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-r4ds.gif?raw=true&#34; alt=&#34;(Example inspired by ‘Many Models’ chapter of ‘R For Data Science’ by Grolemund &amp;amp; Wickham.)&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;(Example inspired by ‘Many Models’ chapter of ‘R For Data Science’ by Grolemund &amp;amp; Wickham.)&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;At this point you should stop reading this blog and instead go learn about &lt;a href=&#34;https://github.com/EvaMaeRey/flipbookr&#34;&gt;flipbookr&lt;/a&gt;. My post was largely written before I learned about this package. Hence, starting at &lt;a href=&#34;https://rstudio.com/resources/rstudioconf-2020/flipbooks-evangeline-reynolds/&#34;&gt;this presentation&lt;/a&gt; by &lt;a href=&#34;https://twitter.com/EvaMaeRey&#34;&gt;Gina Reynolds&lt;/a&gt; or &lt;code&gt;flipbookr&lt;/code&gt;’s &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;about page&lt;/a&gt; will generally be a more productive use of your time. The remainder of this post discusses either tools adjacent to flipbooks or describes workflows that can also be found within &lt;code&gt;flipbookr&lt;/code&gt; documentation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;example-with-xaringan&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Example with xaringan&lt;/h1&gt;
+&lt;p&gt;The &lt;a href=&#34;https://github.com/yihui/xaringan&#34;&gt;xaringan&lt;/a&gt; package for making slideshows contains highlighting features (and is what &lt;code&gt;flipbookr&lt;/code&gt; is built-on). For highlighting &lt;em&gt;code&lt;/em&gt; you can use the trailing comment &lt;code&gt;#&amp;lt;&amp;lt;&lt;/code&gt;&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;. For highlighting &lt;em&gt;output&lt;/em&gt; there is the &lt;code&gt;highlight.output&lt;/code&gt; code chunk option.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;iframe src=&#34;https://slides.yihui.org/xaringan/#31&#34; style=&#34;width: 560px; height: 315px;&#34;&gt;
+&lt;/iframe&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://twitter.com/mitchoharawild&#34;&gt;Mitchell O’Hara-Wild&lt;/a&gt;’s 2019 presentation on &lt;em&gt;“Flexible futures for &lt;a href=&#34;https://github.com/tidyverts/fable&#34;&gt;fable&lt;/a&gt; functionality”&lt;/em&gt; contains a helpful example where he uses these features to walk-through &lt;a href=&#34;https://github.com/mitchelloharawild/fable-combinations-2019/blob/6a55628e1ad156c0040676b7881a799f7f75370a/user2019/index.Rmd&#34;&gt;his code&lt;/a&gt;.&lt;/p&gt;
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/DhDOTxojQ3k?start=554&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;See &lt;a href=&#34;#more-sophisticated-highlighting&#34;&gt;More sophisticated highlighting&lt;/a&gt; if your use-case requires more than line-level highlighting.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;animating-a-flipbook&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Animating a flipbook&lt;/h1&gt;
+&lt;p&gt;I sometimes want to convert a flipbook into a gif, e.g. when sharing an example in a README or a snippet of a concept on social media. If you ignored my prior entreaty, this is a second reminder to stop and go read about &lt;code&gt;flipbookr&lt;/code&gt;. The &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;template file&lt;/a&gt; now shows how to create gifs using &lt;code&gt;flipbookr&lt;/code&gt; (html) –&amp;gt; &lt;code&gt;pagedown&lt;/code&gt; (pdf) –&amp;gt; &lt;code&gt;magick&lt;/code&gt; (gif). I also describe this workflow and provide examples &lt;a href=&#34;https://github.com/brshallo/flipbookr-gifs-examples&#34;&gt;here&lt;/a&gt;, e.g.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-riddler-solution.gif&#34; alt=&#34;(Example from a prior blog post, “Riddler Solutions: Pedestrian Puzzles”)&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;(Example from a prior blog post, “Riddler Solutions: Pedestrian Puzzles”)&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;closing-note&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Closing note&lt;/h1&gt;
+&lt;p&gt;I recommend exploring the &lt;a href=&#34;https://education.rstudio.com/blog/&#34;&gt;Rstudio Education blog&lt;/a&gt;. The site contains helpful resources for improving your technical communication. It was here that I stumbled on the post &lt;a href=&#34;https://education.rstudio.com/blog/2020/05/flair/&#34;&gt;Decorate your R code with flair&lt;/a&gt;. Reading this inspired me to make a first attempt at building a reproducible animation of line-by-line execution of R code (something I’d been wanting to do for ages). The positive response &amp;amp; feedback to my initial tweet led me to learn about &lt;code&gt;flipbookr&lt;/code&gt; and motivated additional actions (described in &lt;a href=&#34;#engagement-contributions&#34;&gt;Engagement &amp;amp; contributions&lt;/a&gt;) including the review and completion of this blog post.&lt;/p&gt;
+&lt;p&gt;Finally, please go enjoy the beautiful examples you can find at the &lt;code&gt;flipbookr&lt;/code&gt; &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;about page&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;&lt;img src=&#34;/post/2020-06-16-use-flipbooks-to-explain-your-code-and-thought-process_files/flipbookr-example.gif&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;div id=&#34;more-sophisticated-highlighting&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;More sophisticated highlighting&lt;/h2&gt;
+&lt;p&gt;For more sophisticated highlighting of &lt;em&gt;code&lt;/em&gt;, use the &lt;a href=&#34;https://github.com/kbodwin/flair&#34;&gt;flair package&lt;/a&gt;. I’m not sure what to recommend for highlighting changes in &lt;em&gt;output&lt;/em&gt; to the console… perhaps &lt;a href=&#34;https://github.com/brodieG/diffobj&#34;&gt;diffobj&lt;/a&gt; would be an option. You could also just explicitly format the output, e.g. using &lt;a href=&#34;https://github.com/rstudio/gt&#34;&gt;gt&lt;/a&gt; or &lt;a href=&#34;https://github.com/haozhu233/kableExtra&#34;&gt;kableExtra&lt;/a&gt; for tabular outputs, or using geoms, annotations, etc. in &lt;a href=&#34;https://github.com/tidyverse/ggplot2&#34;&gt;ggplot&lt;/a&gt;s. And, of course, you can always dive into the html.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;engagement-contributions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Engagement &amp;amp; contributions&lt;/h2&gt;
+&lt;p&gt;Blogging is time consuming. Reaching out to package maintainers or making contributions (even small ones) on open-source software projects can be intimidating. As a &lt;em&gt;tiny&lt;/em&gt; success story, I documented actions that stemmed (in some part) from engaging with the #rstats online communities while working on this blog post topic:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;While this post was in draft form, I tweeted out my initial approach (that used the &lt;a href=&#34;https://github.com/kbodwin/flair&#34;&gt;flair&lt;/a&gt; package).
+&lt;ul&gt;
+&lt;li&gt;The next step might have been trying to improve upon this. Thankfully, instead, &lt;a href=&#34;https://twitter.com/KellyBodwin&#34;&gt;Kelly Bodwin&lt;/a&gt; pointed me to &lt;code&gt;flipbookr&lt;/code&gt;!&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+P.S. &lt;br&gt;&lt;br&gt;The &lt;code&gt;flair_lines()&lt;/code&gt; function lets you highlight whole line(s) if you want! &lt;br&gt;&lt;br&gt;{flipbookr} is a better option for making gifs/slides like this, but {flair} + {pagedown} + {magick} might help if you want specialty or layered highlighting.
+&lt;/p&gt;
+— Kelly Bodwin (&lt;span class=&#34;citation&#34;&gt;@KellyBodwin&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/KellyBodwin/status/1272741205365764097?ref_src=twsrc%5Etfw&#34;&gt;June 16, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Kelly also created an &lt;a href=&#34;https://github.com/kbodwin/flair/issues/15&#34;&gt;issue&lt;/a&gt; to further discuss possible integrations between &lt;code&gt;flair&lt;/code&gt; and &lt;code&gt;flipbookr&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;I remade my initial example using &lt;code&gt;flipbookr&lt;/code&gt; (&lt;a href=&#34;https://github.com/EvaMaeRey/flipbookr/issues/22&#34;&gt;see issue&lt;/a&gt;).
+&lt;ul&gt;
+&lt;li&gt;I first created an &lt;a href=&#34;https://github.com/EvaMaeRey/flipbookr/issues/21&#34;&gt;issue&lt;/a&gt; showing how to print &lt;code&gt;xaringan&lt;/code&gt; slides incrementally using &lt;code&gt;pagedown::chrome_print()&lt;/code&gt;.
+&lt;ul&gt;
+&lt;li&gt;Which helped to close a related &lt;a href=&#34;https://github.com/rstudio/pagedown/issues/110&#34;&gt;issue&lt;/a&gt; on &lt;code&gt;xaringan&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Gina Reynolds made a variety of updates to &lt;code&gt;flipbookr&lt;/code&gt;, one of which included adding the html –&amp;gt; pdf –&amp;gt; gif workflow to the template 😄.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+Big thanks to &lt;a href=&#34;https://twitter.com/grrrck?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@grrrck&lt;/span&gt;&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/statsgen?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@statsgen&lt;/span&gt;&lt;/a&gt; for helps and &lt;a href=&#34;https://twitter.com/xieyihui?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@xieyihui&lt;/span&gt;&lt;/a&gt; because {xaringan}! And to &lt;a href=&#34;https://twitter.com/brshallo?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@brshallo&lt;/span&gt;&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/KellyBodwin?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@KellyBodwin&lt;/span&gt;&lt;/a&gt; for new ideas about how to share flipbooks, html -&amp;gt; pdf -&amp;gt; gif. Guidance now included in template update on this - this gif created w/ that workflow!🙏🤩
+&lt;/p&gt;
+— Gina Reynolds (&lt;span class=&#34;citation&#34;&gt;@EvaMaeRey&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/EvaMaeRey/status/1274837474460626945?ref_src=twsrc%5Etfw&#34;&gt;June 21, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;See my notes and solutions &lt;a href=&#34;https://brshallo.github.io/r4ds_solutions/&#34;&gt;here&lt;/a&gt;.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;I also considered names such as &lt;code&gt;pexprex&lt;/code&gt;, &lt;code&gt;sexprex&lt;/code&gt;, &lt;code&gt;pripex&lt;/code&gt;, … I’ll let the reader guess at the acronyms.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Which I prefer over the alternatives of using the leading &lt;code&gt;*&lt;/code&gt; or wrapping the message in&lt;code&gt;{{}}&lt;/code&gt;.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
     </item>
     
   </channel>

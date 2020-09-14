@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>riddles on Bryan Shalloway&#39;s Blog</title>
@@ -6,20 +6,326 @@
     <description>Recent content in riddles on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 04 Mar 2020 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/tags/riddles/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Wed, 04 Mar 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/riddles/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Riddler Solutions: Pedestrian Puzzles</title>
       <link>/2020/03/04/riddler-solutions-pedestrian-puzzles/</link>
       <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/03/04/riddler-solutions-pedestrian-puzzles/</guid>
-      <description>Riddler expressRiddler classicAppendixTime to centerTransform grid, rotate firstTransform city, prettyThis post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, Riddler Express and Riddler Classic. I created a toy package animatrixr to help with some of the visualizations and computations for my solutions1.
-Riddler expressThe riddle:
-Riddler City is a large circular metropolis, with countless square city blocks that each have a side length of 1 km.</description>
+      <description>
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#riddler-express&#34;&gt;Riddler express&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#riddler-classic&#34;&gt;Riddler classic&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#time-to-center&#34;&gt;Time to center&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#transform-grid-rotate-first&#34;&gt;Transform grid, rotate first&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#transform-city-pretty&#34;&gt;Transform city, pretty&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; and &lt;a href=&#34;#riddler-classic&#34;&gt;Riddler Classic&lt;/a&gt;. I created a &lt;em&gt;toy&lt;/em&gt; package &lt;a href=&#34;https://github.com/brshallo/animatrixr&#34;&gt;animatrixr&lt;/a&gt; to help with some of the visualizations and computations for my solutions&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;riddler-express&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Riddler express&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;The riddle:&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Riddler City is a large circular metropolis, with countless square city blocks that each have a side length of 1 km. A small section of the city, composed of 36 blocks, is shown in the diagram below:
+&lt;img src=&#34;https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-9.41.05-PM.png?w=1150&#34; style=&#34;width:50.0%&#34; /&gt;
+At the very center of the city lies Riddler City Hall. Its many employees all walk to and from work, and their homes are evenly scattered across the city. The sidewalks they walk along have always been adjacent to the streets — but that may be changing.
+Recently, several city hall employees submitted a petition, requesting that the sidewalks should no longer lie alongside the streets. Instead, they want the sidewalks to cut diagonally across the city, connecting nearby street intersections. These proposed sidewalks are represented by the thicker blue lines in the diagram below:
+&lt;img src=&#34;https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-9.52.37-PM.png?w=1150&#34; style=&#34;width:50.0%&#34; /&gt;
+The mayor of Riddler City has tasked you with resolving this dispute in a mathematical manner. She would like you to answer the following question: What fraction of the city hall employees would have a shorter walk home (that is, to the street intersection nearest to their home) if the city replaced its traditional sidewalks with these diagonal sidewalks?&lt;/p&gt;
+&lt;p&gt;– &lt;a href=&#34;https://fivethirtyeight.com/contributors/zach-wissner-gross/&#34;&gt;Zach Wissner-Gross&lt;/a&gt;, &lt;a href=&#34;https://fivethirtyeight.com/features/can-you-solve-this-rather-pedestrian-puzzle/&#34;&gt;“Can You Solve this Rather Pedestrian Puzzle,” FiveThirtyEight&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;My approach:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I. Create hypothetical simulation of city&lt;br /&gt;
+II. For each scenario, calculate Manhattan Distances from center for all points&lt;br /&gt;
+III. Make distances comparable by scaling by unit length of a city block&lt;br /&gt;
+IV. Compare distances between scenarios for all points; compute proportion that have shorter path with new diagonal sidewalks&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;I. Create hypothetical city&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;I first created a hypothetical 100 unit diameter version of this city&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;. I added residences at every point on a 100x100 grid and then removed those points that had a euclidean distance&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt; greater than 50 units from the center.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(animatrixr)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;radius &amp;lt;- 50
+df_start &amp;lt;- crossing(x = -radius:radius, y = -radius:radius) %&amp;gt;% 
+  #Removes points with euclidian distance from center &amp;gt; radius:
+  filter(sqrt(x^2 + y^2) &amp;lt;= radius)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;II. Calculate Manhattan Distances&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;For both scenarios, we need to calculate the &lt;a href=&#34;https://en.wikipedia.org/wiki/Taxicab_geometry&#34;&gt;Manhattan length&lt;/a&gt;&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt; between the origin and every point. To calculate the Manhattan length on the new scenario, we first need to find what the residence’s coordinates would be in the new sidewalk grid. The new coordinate system could be thought of simply as a rotated and shrunken version of the existing grid&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;, which can be represented as applying the matrix transformation:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ M = \left(\begin{array}{cc} 0.5 &amp;amp; -0.5\\0.5  &amp;amp; 0.5 \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;(See &lt;a href=&#34;#transform-city-pretty&#34;&gt;Transform city, pretty&lt;/a&gt; in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; to view the code used to create the above visualization.)&lt;/p&gt;
+&lt;p&gt;Our residences are not changing locations, they would just have different coordinates specific to the new sidewalks – hence we will actually apply the inverse&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt; of this transformation to our starting coordinates. This will give us the position of our residences on the new (transformed) coordinate grid.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ M^{-1} = \left(\begin{array}{cc} 1 &amp;amp; 1\\-1  &amp;amp; 1 \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_trans &amp;lt;- df_start %&amp;gt;% 
+  mutate(x_trans = x,
+         y_trans = y) %&amp;gt;% 
+  # x_trans, y_trans represent the coordinates on the new plane
+  transform_df_coords(x_trans, y_trans, m = matrix(c(1, -1, 1, 1), nrow = 2))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We will then calculate the Manhattan lengths of the points on both the new and old coordinate systems – which (because we are comparing distance from the origin: 0,0) can be computed as: &lt;span class=&#34;math inline&#34;&gt;\(Manhattan\;Length = |x| + |y|\)&lt;/span&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_units &amp;lt;- df_trans %&amp;gt;% 
+  mutate(a_units = abs(x) + abs(y),
+         b_units = abs(x_trans) + abs(y_trans))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;IV: Multiply Manhattan lengths by length of a block:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;The length of a block under the new and old scenarios are different (new diagonal sidewalks have shorter blocks), hence our current Manhattan lengths are not comparable. If we set the length of a single block on the original coordinate system as being 1 unit, then you can use the Pythagorean Theorem to find that the length of a block on the new sidewalks would be &lt;span class=&#34;math inline&#34;&gt;\(\frac{\sqrt{2}}{2}\)&lt;/span&gt;. We simply multiply our Manhattan lengths in each of our scenarios by their respective unit lengths (either 1 or ~0.7071).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists &amp;lt;- df_units %&amp;gt;% 
+  mutate(a_dist = 1 * a_units,
+         b_dist = (sqrt(2) / 2) * b_units)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The scaled distances can now be compared.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;V. Aggregate proportion difference:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Finally, we compute the proportion that have a shorter distance under the new sidewalks compared to the old sidewalks:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists %&amp;gt;% 
+  summarise(prop_shorter = (sum(b_dist &amp;lt; a_dist)/ n()) %&amp;gt;% round(2)) %&amp;gt;% 
+  knitr::kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;prop_shorter&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;em&gt;Riddler express solution:&lt;/em&gt; new diagonal sidewalks would be faster for 50% of people.&lt;/p&gt;
+&lt;p&gt;Let’s visualize which resident’s the new sidewalks would be faster for:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists %&amp;gt;% 
+  mutate(diagonal_faster = b_dist &amp;lt; a_dist) %&amp;gt;% 
+  ggplot(aes(x = x, y = y))+
+  geom_point(aes(colour = diagonal_faster))+
+  coord_fixed()+
+  ggforce::theme_no_axes()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;riddler-classic&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Riddler classic&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;The riddle:&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;From David Lewis comes an additional, original twist on Riddler City’s urban planning:&lt;/p&gt;
+&lt;p&gt;The mayor ultimately decided not to pursue diagonal sidewalks, but the petitioners haven’t given up yet. One of them recently visited Barcelona and was inspired by its octagonal city blocks.&lt;/p&gt;
+&lt;p&gt;Now, there’s a second petition on the mayor’s desk, asking that the grid layout of the city’s sidewalks be replaced with an octagonal pattern, represented by the thicker blue lines in the diagram below:
+&lt;img src=&#34;https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-10.03.57-PM.png?w=1150&#34; style=&#34;width:50.0%&#34; /&gt;
+Under this second proposal, now what fraction of the employees would have a shorter walk home if the city replaced its traditional sidewalks with these new sidewalks?&lt;/p&gt;
+&lt;p&gt;– &lt;a href=&#34;https://fivethirtyeight.com/contributors/zach-wissner-gross/&#34;&gt;Zach Wissner-Gross&lt;/a&gt;, &lt;a href=&#34;https://fivethirtyeight.com/features/can-you-solve-this-rather-pedestrian-puzzle/&#34;&gt;“Can You Solve this Rather Pedestrian Puzzle,” FiveThirtyEight&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;My approach:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The Barcelona distance is just a combination of the Manhattan lengths of both the original and diagonal sidewalk grids (though with the unit lengths scaled differently)&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;. The unit lengths&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt; for the horizontal and diagonal components will depend on what proportion&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt; of a side is horizontal vs diagonal (corresponding with the original vs transformed grid from the &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; solution)&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;We can define our relevant side lengths as a function of x:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/barcelona_dist.jpg&#34; style=&#34;width:50.0%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[x : \frac{inverse\;of\;proportion\;horizontal}{2},\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[0 &amp;lt; x &amp;lt; 0.5\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[diagonal\;length = \sqrt{2}x\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[horizontal\;length = 1 - 2x\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;I’ll start by setting x = 0.25.&lt;/em&gt; Hence the Manhattan length of our horizontal component will be scaled by &lt;span class=&#34;math inline&#34;&gt;\(\frac{1}{2}\)&lt;/span&gt;, and our diagonal component will be scaled by &lt;span class=&#34;math inline&#34;&gt;\(\frac{\sqrt{2}}{4}\)&lt;/span&gt;. After scaling our components, we simply add them together to get our Barcelona distance&lt;a href=&#34;#fn11&#34; class=&#34;footnote-ref&#34; id=&#34;fnref11&#34;&gt;&lt;sup&gt;11&lt;/sup&gt;&lt;/a&gt; &lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;x &amp;lt;- 0.25
+side_length &amp;lt;- 1 - 2*x
+side_length_trans &amp;lt;- sqrt(2)*x
+
+df_dists_abc &amp;lt;- df_dists %&amp;gt;% 
+  mutate(c_dist_a = a_units * side_length,
+         c_dist_b = b_units * side_length_trans,
+         c_dist = c_dist_a + c_dist_b)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, for all points, we compare the travel distance on the new Barcelona grid compared to on the original horizontal grid and compute the percentage that have a shorter distance under the new sidewalks.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists_abc %&amp;gt;% 
+  summarise(prop_shorter = (sum(c_dist &amp;lt; a_dist)/ n()) %&amp;gt;% round(2)) %&amp;gt;% 
+  knitr::kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;prop_shorter&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;In the case (when x is set to 0.25) we see the proportion that is closer to City Hall (i.e. the center of our city&lt;a href=&#34;#fn13&#34; class=&#34;footnote-ref&#34; id=&#34;fnref13&#34;&gt;&lt;sup&gt;13&lt;/sup&gt;&lt;/a&gt;) is again 50%.&lt;/p&gt;
+&lt;p&gt;If we visualize in which locations the new Barcelona sidewalks have a shorter travel distance, we will see a similar result to that found in the &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; solution.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists_abc %&amp;gt;% 
+  mutate(barcelona_faster = c_dist &amp;lt; a_dist) %&amp;gt;% 
+  ggplot(aes(x = x, y = y))+
+  geom_point(aes(colour = barcelona_faster))+
+  coord_fixed()+
+  ggforce::theme_no_axes()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;We need to verify that ‘50% have a shorter walk’ is our solution regardless of what we set for x.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;To accomplish this, I wrote a function &lt;code&gt;summarise_proportion()&lt;/code&gt;, that will output the ‘Proportion Barcelona sidewalk distance is shorter’ across any given x between 0 and 0.5 (the possible values of x).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;summarise_proportion &amp;lt;- function(x, df_start = df_dists, out_data = FALSE){
+
+  x &amp;lt;- 0.25
+  side_length &amp;lt;- 1 - 2*x
+  side_length_trans &amp;lt;- sqrt(2)*x
+  
+  df_dists_out &amp;lt;- df_dists %&amp;gt;% 
+    mutate(c_dist_a = a_units * side_length,
+           c_dist_b = b_units * side_length_trans,
+           c_dist = c_dist_a + c_dist_b)
+  
+  if(out_data) return(df_dists_out)
+  
+  df_dists_out %&amp;gt;%
+    summarise(prop_shorter = (sum(c_dist &amp;lt; a_dist)/ n())) %&amp;gt;%  
+    pluck(&amp;quot;prop_shorter&amp;quot;)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Specifically I evaluated this ‘proportion shorter’ for &lt;em&gt;x&lt;/em&gt; set to each of &lt;span class=&#34;math inline&#34;&gt;\(0.01, 0.05, 0.09, ... 0.49\)&lt;/span&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;x_vec &amp;lt;- seq(from = 0.01, to = 0.49, by = 0.04)
+
+df_summary &amp;lt;- tibble(x = x_vec) %&amp;gt;% 
+  mutate(prop_shorter = map_dbl(x, summarise_proportion, df_start = df_dists) %&amp;gt;% round(2))
+
+df_summary %&amp;gt;% 
+  knitr::kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;x&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;prop_shorter&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.01&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.05&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.09&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.13&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.17&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.21&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.25&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.29&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.33&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.37&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.41&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.45&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.49&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;For each of these, &lt;em&gt;the new ‘Barcelona grid’ is faster for 50% of people&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;div id=&#34;time-to-center&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Time to center&lt;/h2&gt;
+&lt;p&gt;Visualize the distance to the center based on where people are in the city for each of the potential city grids.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists_abc %&amp;gt;% 
+  select(x, y, a_dist, b_dist, c_dist) %&amp;gt;% 
+  pivot_longer(cols = c(a_dist, b_dist, c_dist), names_to = &amp;quot;grid&amp;quot;, values_to = &amp;quot;distance&amp;quot;) %&amp;gt;% 
+  mutate(grid = fct_recode(grid, 
+                           &amp;quot;rectangular&amp;quot; = &amp;quot;a_dist&amp;quot;,
+                           &amp;quot;diagonal&amp;quot; = &amp;quot;b_dist&amp;quot;,
+                           &amp;quot;barcelona.25&amp;quot; = &amp;quot;c_dist&amp;quot;)) %&amp;gt;% 
+  ggplot(aes(x = x, y = y, colour = distance))+
+  geom_point()+
+  facet_wrap(~grid)+
+  coord_fixed()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This suggests that if the city were square shaped (rather than a circle) that the transformed (diagonal and Barcelona) sidewalks would have greater than 50% of the residents with a shorter travel distance to the center of the city.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;transform-grid-rotate-first&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Transform grid, rotate first&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;add_transformation(
+  m = matrix(c(0.5, 0.5,-0.5, 0.5), nrow = 2), 
+  seq_fun = seq_matrix_rotate_first) %&amp;gt;% 
+  animate_matrix()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_rotate_shrink.gif&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;transform-city-pretty&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Transform city, pretty&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;start_grid &amp;lt;- animatrixr::construct_grid(-8:8, -8:8) %&amp;gt;% 
+  mutate(index = row_number(),
+         time = 1L)
+
+end_grid &amp;lt;- animatrixr::transform_segment(start_grid,  m = matrix(c(0.5, 0.5,-0.5, 0.5), nrow = 2)) %&amp;gt;% 
+  mutate(time = 2L)
+
+house_points &amp;lt;- crossing(x = -3:3, y = -3:3) %&amp;gt;% 
+  mutate(symbol = emo::ji(&amp;quot;house&amp;quot;))
+
+city_hall &amp;lt;- tibble(x = 0, y = 0)
+
+p_pretty &amp;lt;- bind_rows(start_grid, end_grid) %&amp;gt;% 
+  ggplot()+
+  geom_segment(aes(x = x, y = y, xend = xend, yend = yend, group = index, colour = time))+
+  geom_text(aes(x = x, y = y, label = symbol), data = house_points, size = 8)+
+  geom_label(aes(x = x, y = y, label = &amp;quot;Riddler\nCity Hall&amp;quot;), data = city_hall, size = 8, color = &amp;quot;brown&amp;quot;)+
+  scale_colour_gradient(low = &amp;quot;black&amp;quot;, high = &amp;quot;royalblue3&amp;quot;)+
+  scale_x_continuous(breaks = -3L:3L, minor_breaks = NULL)+
+  scale_y_continuous(breaks = -3L:3L, minor_breaks = NULL)+
+  coord_fixed(xlim = c(-3, 3), ylim = c(-3, 3))+
+  theme_minimal()+
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        legend.position = &amp;quot;none&amp;quot;,
+        panel.border = element_rect(colour = &amp;quot;black&amp;quot;, fill=NA, size=1))
+
+p_pretty + 
+  gganimate::transition_states(time)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;And wrote a couple preliminary posts on animating matrix transformations that can be found &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/&#34;&gt;here&lt;/a&gt;&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Is large enough to get a reasonable approximation for the answer.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I.e. straight line distance.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;The Manhattan Length is just the shortest number of city blocks between points.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;I highly recommend the Essence of Linear Algebra video series, particularly chapter 3 (on Matrix Transformations) and &lt;a href=&#34;https://www.youtube.com/watch?v=P2LTAUO1TdA&#34;&gt;13&lt;/a&gt; (on Change of basis).&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;In R, you can use the &lt;code&gt;solve()&lt;/code&gt; function to give you the inverse of a matrix.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;We have already done most of the computations we’ll need and can follow similar steps to those taken in the &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; solution.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;I.e. length of an individual city block, or in this case, component of a city block.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;In the diagram below, we will actually have it be a function of one-half of the inverse of the proportion – this is because there are two diagonals adjoining each horizontal component.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, &lt;em&gt;x&lt;/em&gt;, of a triangle created by a diagonal.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Note that if we were to set x = 0, the distance from each location would be equivalent to the distances in our starting (horizontal) grid, and if we set x = 0.5, the distances would be equal to those in our transformed (diagonal) grid.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Note that we are not taking into account the tiny differences that emerge regarding starting location for each resident (i.e. which point within a Barcelona square should they start). If we make the grid arbitrarily large, these differences become inconsequential – hence we can ignore them.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;The origin of our coordinate systems.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -28,9 +334,459 @@ Riddler expressThe riddle:
       <pubDate>Thu, 20 Feb 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/02/20/visualizing-matrix-transformations-with-gganimate/</guid>
-      <description>I highly recommend the fantastic video series Essence of Linear Algebra by Grant Sanderson. In this post I’ll walk through how you can use gganimate and the tidyverse to (very loosely) recreate some of the visualizations shown in that series. Specifically those on matrix transformations and changing the basis vectors1.
+      <description>
 
-This post is an offshoot of a post of my solutions to this week’s FiveThirtyEight Riddler. To support my solution, I was trying to visualize matrix transformations.</description>
+
+&lt;p&gt;I highly recommend the fantastic video series &lt;a href=&#34;https://www.youtube.com/watch?v=fNk_zzaMoSs&amp;amp;list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab&#34;&gt;Essence of Linear Algebra&lt;/a&gt; by &lt;a href=&#34;https://twitter.com/3blue1brown&#34;&gt;Grant Sanderson&lt;/a&gt;. In this post I’ll walk through how you can use &lt;code&gt;gganimate&lt;/code&gt; and the &lt;code&gt;tidyverse&lt;/code&gt; to (very loosely) recreate some of the visualizations shown in that series. Specifically those on matrix transformations and changing the basis vectors&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/kYB8IZa5AuE?start=234&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;&lt;br/&gt;&lt;/p&gt;
+This post is an offshoot of a &lt;a href=&#34;https://www.bryanshalloway.com/2020/03/04/riddler-solutions-pedestrian-puzzles/&#34;&gt;post of my solutions&lt;/a&gt; to this week’s &lt;a href=&#34;https://fivethirtyeight.com/features/can-you-solve-this-rather-pedestrian-puzzle/&#34;&gt;FiveThirtyEight Riddler&lt;/a&gt;. To support my solution, I was trying to visualize matrix transformations. I reached-out to &lt;a href=&#34;https://twitter.com/thomasp85&#34;&gt;Thomas Lin Peterson&lt;/a&gt;:
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+I do not. Would love to see it, though🙂
+&lt;/p&gt;
+— Thomas Lin Pedersen (&lt;span class=&#34;citation&#34;&gt;@thomasp85&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/thomasp85/status/1230171239077105666?ref_src=twsrc%5Etfw&#34;&gt;February 19, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;p&gt;… figured I’d share what I’ve patched together so far 🎉 (will just be looking at transformations by 2x2 matrices).&lt;/p&gt;
+&lt;p&gt;In this post (unlike in those previous) I’ve exposed most of the code directly in the blog, but the raw RMD file is also on my &lt;a href=&#34;https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-20-visualizing-matrix-transformations-with-gganimate.Rmd&#34;&gt;github page&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I also wrote a follow-up to this blog post that can be found &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/&#34;&gt;here&lt;/a&gt;, which walks through &lt;a href=&#34;https://github.com/brshallo/animatrixr&#34;&gt;animatrixr&lt;/a&gt;: a rudimentary package I wrote for piping together matrix transformations for animations. This first post provides some documentation on some of the functions that ended-up within &lt;code&gt;animatrixr&lt;/code&gt;, but you might also just start directly on the follow-up post.&lt;/p&gt;
+&lt;div id=&#34;quick-start&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Quick start&lt;/h1&gt;
+&lt;p&gt;I made a &lt;a href=&#34;https://gist.github.com/brshallo/6a125f9c96dac5445cebb97cc62bfc9c&#34;&gt;gist&lt;/a&gt;&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt; containing the functions needed to produce a simple animation of a 2x2 matrix transformation. If you are reading this post with the sole goal of creating an animation like the one below&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;, you can copy and run this code chunk to render a 2x2 matrix transformation gif (the input to argument &lt;code&gt;m&lt;/code&gt; can be any &lt;em&gt;2x2&lt;/em&gt; matrix of interest).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;if (!requireNamespace(&amp;quot;devtools&amp;quot;)) install.packages(&amp;quot;devtools&amp;quot;)
+devtools::source_gist(&amp;quot;https://gist.github.com/brshallo/6a125f9c96dac5445cebb97cc62bfc9c&amp;quot;)
+
+animate_matrix_transformation(m = matrix(c(0.5, 0.5, 0.5, -0.25), nrow = 2))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/unnamed-chunk-13-1.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Over the next several sections I’ll walk through the thinking behind this code (culminating in the &lt;a href=&#34;#visualizations&#34;&gt;Visualizations&lt;/a&gt; section, where this animation will be shown again). Sections in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; contain variations on this animation that add-on additional simple transformations and layers.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;helper-functions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Helper functions&lt;/h1&gt;
+&lt;p&gt;&lt;code&gt;construct_grid()&lt;/code&gt;: given vectors of x and y intercepts, return a dataframe with columns &lt;code&gt;x&lt;/code&gt;, &lt;code&gt;y&lt;/code&gt;, &lt;code&gt;xend&lt;/code&gt;, &lt;code&gt;yend&lt;/code&gt; (meant for input into &lt;code&gt;geom_segment()&lt;/code&gt;).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;construct_grid &amp;lt;- function(xintercepts = -5:5, yintercepts = -5:5){
+  bind_rows(
+    crossing(x = xintercepts,
+             y = min(yintercepts),
+             yend = max(yintercepts)) %&amp;gt;%
+      mutate(xend = x),
+    crossing(y = yintercepts,
+             x = min(xintercepts),
+             xend = max(xintercepts)) %&amp;gt;%
+      mutate(yend = y)
+  ) %&amp;gt;% 
+    select(x, y, xend, yend)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;Use with &lt;code&gt;geom_segment()&lt;/code&gt; to make simple grids:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;construct_grid() %&amp;gt;% 
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend))+
+  geom_segment()+
+  coord_fixed()+
+  ggforce::theme_no_axes()+
+  theme(panel.border = element_blank())&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;transform_df_coords()&lt;/code&gt;: Given dataframe, column names of coordinates&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;, and a transformation matrix, return dataframe with transformed coordinates.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;transform_df_coords &amp;lt;- function(df, ..., m = diag(length(df))){
+  
+  df_names &amp;lt;- names(df)
+  
+  df_coords &amp;lt;- df %&amp;gt;% 
+    select(...)
+  
+  df_coords_names &amp;lt;- names(df_coords)
+  
+  df_matrix &amp;lt;- df_coords %&amp;gt;% 
+    as.matrix() %&amp;gt;% 
+    t()
+  
+  df_coords_new &amp;lt;- (m %*% df_matrix) %&amp;gt;% 
+    t() %&amp;gt;% 
+    as_tibble() %&amp;gt;% 
+    set_names(df_coords_names)
+  
+  df_other &amp;lt;- df %&amp;gt;% 
+    select(-one_of(df_coords_names))
+  
+  bind_cols(df_coords_new, df_other) %&amp;gt;% 
+    select(df_names)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;transform_df_coords()&lt;/code&gt; is just matrix multiplication, but facilitates applying matrix transformations on a dataframe where each row (in specified columns) represents a vector / coordinate point&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Example in&lt;/em&gt; &lt;span class=&#34;math inline&#34;&gt;\(\mathbb{R}^2\)&lt;/span&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;transform_df_coords(tibble(x = 1:4, y = 1:4), x, y, m = matrix(1:4, nrow = 2)) %&amp;gt;% 
+  knitr::kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;x&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;y&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;4&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;8&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;12&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;12&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;18&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;16&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;24&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Again, this is the same as:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} 1 &amp;amp; 3\\ 2 &amp;amp; 4 \end{array}\right)
+\left(\begin{array}{cc} 1 &amp;amp; 2 &amp;amp; 3 &amp;amp; 4 \\ 1 &amp;amp; 2 &amp;amp; 3 &amp;amp; 4 \end{array}\right) 
+= \left(\begin{array}{cc} 4 &amp;amp; 8 &amp;amp; 12 &amp;amp; 16 \\ 6 &amp;amp; 12 &amp;amp; 18 &amp;amp; 24 \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;(Just with a ‘tidy’ dataframe as output.)&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Also works with more dimensions, see example in&lt;/em&gt; &lt;span class=&#34;math inline&#34;&gt;\(\mathbb{R}^3\)&lt;/span&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;transform_df_coords(tibble(x = 1:5, y = 1:5, z = 1:5), x, y, z, m = matrix(1:9, nrow = 3)) %&amp;gt;% 
+  knitr::kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;x&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;y&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;z&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;12&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;15&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;18&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;24&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;30&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;36&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;36&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;45&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;54&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;48&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;60&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;72&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;60&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;75&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;90&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;However for our visualizations, we only care about examples in 2 dimensions (when we are applying a 2x2 matrix transformation).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;construct-objects-for-graph&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Construct objects for graph&lt;/h1&gt;
+&lt;p&gt;For a simple animation I will build dataframes that contain the coordinates for the following objects&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a &lt;em&gt;starting grid&lt;/em&gt; and a &lt;em&gt;transformed grid&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;a &lt;em&gt;starting basis vector&lt;/em&gt; and a &lt;em&gt;transformed basis vector&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To play nicely with &lt;code&gt;gganimate&lt;/code&gt; the start and transformed objects need to have additional properties&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a field that groups like objects across the animation (e.g. &lt;code&gt;id&lt;/code&gt; column)&lt;/li&gt;
+&lt;li&gt;a field that designates transitions between &lt;em&gt;start&lt;/em&gt; and &lt;em&gt;transformed&lt;/em&gt; states (e.g. &lt;code&gt;time&lt;/code&gt; column)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For my example I will be applying the following matrix transformation to our basis vectors&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;.
+&lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} 0.5 &amp;amp; 0.5\\ 0.5 &amp;amp; -0.25 \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Define transformation matrix:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# same as above examples using `matrix()` but I find inputting into tribble more
+# intuitive for 2x2 matrix
+transformation_matrix &amp;lt;- tribble(~ x, ~ y,
+                                 0.5, 0.5,
+                                 0.5, -0.25) %&amp;gt;% 
+  as.matrix()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;Construct grids:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;grid_start &amp;lt;- construct_grid() %&amp;gt;% 
+  mutate(id = row_number())
+
+grid_trans &amp;lt;- grid_start %&amp;gt;% 
+  # need to `transform_df_coords()` twice as each segment is made up of 2 points
+  transform_df_coords(x, y, m = transformation_matrix) %&amp;gt;% 
+  transform_df_coords(xend, yend, m = transformation_matrix)
+
+grid_all &amp;lt;- bind_rows(
+  mutate(grid_start, time = 1),
+  mutate(grid_trans, time = 2)
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;Construct basis vectors:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;basis_start &amp;lt;- tibble(
+  x = c(0, 0),
+  y = c(0, 0),
+  xend = c(1, 0),
+  yend = c(0, 1),
+  # `vec` is unnecessary, will just use to differentiate colors
+  vec = c(&amp;quot;i&amp;quot;, &amp;quot;j&amp;quot;)
+) %&amp;gt;% 
+  mutate(id = nrow(grid_start) + row_number())
+
+basis_trans &amp;lt;- basis_start %&amp;gt;% 
+  transform_df_coords(x, y, m = transformation_matrix) %&amp;gt;% 
+  transform_df_coords(xend, yend, m = transformation_matrix)
+
+basis_all &amp;lt;- bind_rows(
+  mutate(basis_start, time = 1),
+  mutate(basis_trans, time = 2)
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;build-visualization&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Build visualization&lt;/h1&gt;
+&lt;p&gt;&lt;em&gt;Define breaks in grid:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# If you just want to use the starting grid for the breaks, could do
+x_breaks &amp;lt;- unique(grid_start$x)
+y_breaks &amp;lt;- unique(grid_start$y)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;Define visualization:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p &amp;lt;- ggplot(aes(x = x, y = y, group = id), data = grid_all)+
+  geom_segment(aes(xend = xend, yend = yend))+
+  geom_segment(aes(xend = xend, yend = yend, colour = vec), data = basis_all, arrow = arrow(length = unit(0.02, &amp;quot;npc&amp;quot;)), size = 1.2)+
+  scale_x_continuous(breaks = x_breaks, minor_breaks = NULL)+
+  scale_y_continuous(breaks = y_breaks, minor_breaks = NULL)+
+  coord_fixed()+
+  theme_minimal()+
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        legend.position = &amp;quot;none&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;visualizations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Visualizations&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;Static image:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Animation&lt;/em&gt;&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p + gganimate::transition_states(time, wrap = FALSE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-14-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;And there it is. To view a different matrix transformation, simply change the &lt;code&gt;transformation_matrix&lt;/code&gt; defined above and re-run the code chunks&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt; or see the &lt;a href=&#34;#quick-start&#34;&gt;Quick start&lt;/a&gt; section.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;p&gt;The code used to construct images within the appendix is very similar to code already shown&lt;a href=&#34;#fn11&#34; class=&#34;footnote-ref&#34; id=&#34;fnref11&#34;&gt;&lt;sup&gt;11&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;on-changes&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;On changes&lt;/h2&gt;
+&lt;p&gt;In the few days after sharing this post on 2020-02-20, I made several changes to the images and notes (especially those within the appendix) that I think better clarified points or corrected mistakes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;multiple-matrix-transformations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Multiple matrix transformations&lt;/h2&gt;
+&lt;p&gt;I love how the “Essence of Linear Algebra” series explains how matrix transformations can be thought-of / broken-down sequentially. The same visualization can (kind-of) be set-up here – you just need to add-in an additional layer.&lt;/p&gt;
+&lt;p&gt;E.g. say, we want to apply a &lt;em&gt;rotation&lt;/em&gt; and then a &lt;em&gt;sheer&lt;/em&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rotate_trans &amp;lt;- tribble(~ x, ~ y,
+                        cos(pi / 2), -sin(pi / 2),
+                        sin(pi / 2), cos(pi / 2)) %&amp;gt;%
+  as.matrix()
+
+sheer_trans &amp;lt;- tribble(~ x, ~ y,
+                      1, 0,
+                      0.5, 1) %&amp;gt;%
+  as.matrix() &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I.e.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[\begin{bmatrix}
+1 &amp;amp; 0\\
+0.5 &amp;amp; 1 \\
+\end{bmatrix}
+\begin{bmatrix}
+0 &amp;amp; -1\\
+1 &amp;amp; 0 \\
+\end{bmatrix}X\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;I say &lt;em&gt;kind-of&lt;/em&gt; animate these because &lt;code&gt;gganimate&lt;/code&gt; transforms coordinates linearly, hence while a transformation may result in a rotation, the in-between states (where &lt;code&gt;gganimate&lt;/code&gt; fills in the gaps) will not look like a pure rotation. See &lt;a href=&#34;#potential-improvements&#34;&gt;Potential improvements&lt;/a&gt; for additional notes.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Construct grids:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;grid_start &amp;lt;- construct_grid() %&amp;gt;% 
+  mutate(id = row_number())
+
+grid_trans &amp;lt;- grid_start %&amp;gt;% 
+  # need to `transform_df_coords()` twice as each segment is made up of 2 points
+  transform_df_coords(x, y, m = rotate_trans) %&amp;gt;% 
+  transform_df_coords(xend, yend, m = rotate_trans)
+
+grid_trans2 &amp;lt;- grid_trans %&amp;gt;% 
+  # need to `transform_df_coords()` twice as each segment is made up of 2 points
+  transform_df_coords(x, y, m = sheer_trans) %&amp;gt;% 
+  transform_df_coords(xend, yend, m = sheer_trans)
+
+grid_all &amp;lt;- bind_rows(
+  mutate(grid_start, time = 1),
+  mutate(grid_trans, time = 2),
+  mutate(grid_trans2, time = 3)
+) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;Basis vectors:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;basis_start &amp;lt;- tibble(
+  x = c(0, 0),
+  y = c(0, 0),
+  xend = c(1, 0),
+  yend = c(0, 1),
+  # `vec` is unnecessary, will just use to differentiate colors
+  vec = c(&amp;quot;i&amp;quot;, &amp;quot;j&amp;quot;)
+) %&amp;gt;% 
+  mutate(id = nrow(grid_start) + row_number())
+
+basis_trans &amp;lt;- basis_start %&amp;gt;% 
+  # need to `transform_df_coords()` twice as each segment is made up of 2 points
+  transform_df_coords(x, y, m = rotate_trans) %&amp;gt;% 
+  transform_df_coords(xend, yend, m = rotate_trans)
+
+basis_trans2 &amp;lt;- basis_trans %&amp;gt;% 
+  # need to `transform_df_coords()` twice as each segment is made up of 2 points
+  transform_df_coords(x, y, m = sheer_trans) %&amp;gt;% 
+  transform_df_coords(xend, yend, m = sheer_trans)
+
+basis_all &amp;lt;- bind_rows(
+  mutate(basis_start, time = 1),
+  mutate(basis_trans, time = 2),
+  mutate(basis_trans2, time = 3)
+) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;Define visualization:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p_mult &amp;lt;- ggplot(aes(x = x, y = y, group = id), data = grid_all)+
+  geom_segment(aes(xend = xend, yend = yend))+
+  geom_segment(aes(xend = xend, yend = yend, colour = vec), data = basis_all, arrow = arrow(length = unit(0.02, &amp;quot;npc&amp;quot;)), size = 1.2)+
+  scale_x_continuous(breaks = x_breaks, minor_breaks = NULL)+
+  scale_y_continuous(breaks = y_breaks, minor_breaks = NULL)+
+  coord_fixed()+
+  theme_minimal()+
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        legend.position = &amp;quot;none&amp;quot;) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;Static image:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p_mult &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-19-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Animation:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p_mult + 
+  gganimate::transition_states(time, wrap = FALSE) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-20-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;Notice that we see the transformations done sequentially. We could also have just inputted the single (simplified) matrix transformation:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[\begin{bmatrix}
+-0.5 &amp;amp; -1\\
+1 &amp;amp; 0 \\
+\end{bmatrix}
+X\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;But thinking of the matrix transformations separately can be helpful!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;potential-improvements&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Potential improvements&lt;/h2&gt;
+&lt;p&gt;I have no (current) plans of fleshing this out further. (Though I think a ggplot extension – e.g. &lt;code&gt;ggbasis&lt;/code&gt;, &lt;code&gt;gglineartrans&lt;/code&gt; – or something could be cool.) In this section I’ll give a few notes regarding short-term things I’d change or fix-up (if I were to keep working on this – maybe I’ll get to a couple of these). Really I should dive into &lt;code&gt;tweenr&lt;/code&gt; and &lt;code&gt;transformr&lt;/code&gt; packages and associated concepts to get these worked out further.&lt;/p&gt;
+&lt;div id=&#34;problem-of-squeezing-during-rotation&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Problem of squeezing during rotation&lt;/h3&gt;
+&lt;p&gt;You might notice that something about the rotation transformation looks a little off. During the animation, the grid becomes temporarily squished in at some points. We can better see this by placing a circle on the interior of our grid and looking at the rotation of the exterior segments. The exterior segments of the grid &lt;em&gt;should&lt;/em&gt; remain tangent to our circle at all points.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;circle_df &amp;lt;- tibble(x0 = 0, y0 = 0, r = 5)
+
+p_rotation &amp;lt;- ggplot(aes(), data = filter(grid_all, time &amp;lt;= 2))+
+  geom_segment(aes(x = x, y = y, group = id, xend = xend, yend = yend))+
+  geom_segment(aes(x = x, y = y, group = id, xend = xend, yend = yend, colour = vec), arrow = arrow(length = unit(0.02, &amp;quot;npc&amp;quot;)), size = 1.2, data = filter(basis_all, time &amp;lt;= 2 ))+
+  scale_x_continuous(breaks = x_breaks, minor_breaks = NULL)+
+  scale_y_continuous(breaks = y_breaks, minor_breaks = NULL)+
+  coord_fixed()+
+  ggforce::geom_circle(aes(x0 = 0, y0 = 0, r = 5), data = circle_df)+
+  theme_minimal()+
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        legend.position = &amp;quot;none&amp;quot;)
+
+p_rotation + gganimate::transition_states(time, wrap = FALSE) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-21-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;However we can see this doesn’t happen (the grid scrunches up and the exterior segments cut into the circle). The reason this occurs is that during the animation the coordinates follow a straight line path to their new location as explained:&lt;/p&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+The problem is that coords are tweened linearly which doesn&#39;t match a rotation where the tweening should be done on the radians (or, better, tween the transformation matrix instead). There is no support for this in gganimate yet because I haven&#39;t figured out the right interface
+&lt;/p&gt;
+— Thomas Lin Pedersen (&lt;span class=&#34;citation&#34;&gt;@thomasp85&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/thomasp85/status/1230773860321988608?ref_src=twsrc%5Etfw&#34;&gt;February 21, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;p&gt;Transformations that you &lt;em&gt;could&lt;/em&gt; conceptualize of as rotations will be animated as linear changes to coordinates. As a more extreme example, see animation of a matrix transformation for a &lt;span class=&#34;math inline&#34;&gt;\(180^\circ\)&lt;/span&gt; rotation:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;animate_matrix_transformation(m = matrix(c(-1, 0, 0, 1), nrow = 2))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/transform_180degrees.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;One fix (irrespective of tweening method in &lt;code&gt;gganimate&lt;/code&gt;) could be to set specific coordinates at each frame (so that the lack of a true rotation wouldn’t be noticable)&lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;problem-of-jittery-points-during-rotation&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Problem of jittery points during rotation&lt;/h3&gt;
+&lt;p&gt;Beyond the squishing, it appears coordinate points (added via &lt;code&gt;geom_point()&lt;/code&gt;) also look a little jittery during rotations.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;For example:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;points_start &amp;lt;- crossing(x = c(-3.5:3.5), y = c(-3.5:3.5)) %&amp;gt;% 
+  mutate(id = nrow(grid_start) + nrow(basis_start) + row_number())
+ 
+points_trans &amp;lt;- points_start %&amp;gt;% 
+  transform_df_coords(x, y, m = rotate_trans)
+
+points_all &amp;lt;- bind_rows(
+  mutate(points_start, time = 1),
+  mutate(points_trans, time = 2))
+
+p_points &amp;lt;- p +
+  geom_point(data = points_all, colour = &amp;quot;royalblue3&amp;quot;)
+
+p_points + gganimate::transition_states(time, wrap = FALSE)
+
+# maybe just my eyes... maybe need to increase framerate... or something
+
+p_points &amp;lt;- p_rotation +
+  geom_point(aes(x, y), data = points_all, colour = &amp;quot;royalblue3&amp;quot;)
+
+p_points + gganimate::transition_states(time, wrap = FALSE) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-23-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;miscellaneous-notes&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Miscellaneous notes&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;I could not figure out how to add &lt;a href=&#34;https://ggplot2.tidyverse.org/reference/geom_polygon.html&#34;&gt;multiple polygons&lt;/a&gt; via &lt;code&gt;geom_polygon()&lt;/code&gt; in a way that kept smooth transitions&lt;a href=&#34;#fn13&#34; class=&#34;footnote-ref&#34; id=&#34;fnref13&#34;&gt;&lt;sup&gt;13&lt;/sup&gt;&lt;/a&gt;. Would likely need to explore &lt;code&gt;tweenr&lt;/code&gt;, &lt;code&gt;transformr&lt;/code&gt;….&lt;/li&gt;
+&lt;li&gt;Would be nice to add &lt;code&gt;title&lt;/code&gt; of image as the matrix transformation being conducted&lt;a href=&#34;#fn14&#34; class=&#34;footnote-ref&#34; id=&#34;fnref14&#34;&gt;&lt;sup&gt;14&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;May be better to render to video (rather than gif) so could pause to view&lt;/li&gt;
+&lt;li&gt;In general, could make more elegant / sophisticated… especially regarding how transformations are applied across layers
+&lt;ul&gt;
+&lt;li&gt;Would be nice if was set-up to apply the transformations across all (or specified layers).&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;note-on-scales&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Note on scales&lt;/h2&gt;
+&lt;p&gt;May want to make breaks extend across entire range (rather than just over x, y ranges of &lt;code&gt;grid_start&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Expand breaks in scales:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;x_breaks &amp;lt;-
+  seq(
+    from = 
+      floor(min(c(grid_all$x, grid_all$xend))), 
+    to = 
+      ceiling(max(c(grid_all$x, grid_all$xend))), 
+    by = 1)
+
+y_breaks &amp;lt;-
+  seq(
+    from = 
+      floor(min(c(grid_all$y, grid_all$yend))), 
+    to = 
+      ceiling(max(c(grid_all$y, grid_all$yend))), 
+    by = 1)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Which are shown throughout the series and most notably in chapters 3 and 13.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;See section [Problems and potential improvements] for notes on a couple potential updates I’ll make… not positive I’ll keep the gist code updated.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;And may not care about understanding how to do multiple transformations, adding additional layers, etc.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;/ vectors&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;I’m guessing there is a better / more elegant function already out there for ‘tidy matrix multiplication’ or something… but couldn’t immediately think of anything.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;You could add additional objects to the image – just need to ensure you create &lt;em&gt;start&lt;/em&gt; and &lt;em&gt;transformed&lt;/em&gt; versions of each object.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Creating these is not needed if you just wanted to create static images for the below examples.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;No real reason for choosing this transformation, just thought it looked cool.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;If wrap = TRUE (default) the reverse looping of the image is inaccurate as the transformation back to the original basis actually represents a transformation by the inverse of the &lt;code&gt;transformation matrix&lt;/code&gt;. Though leaving it in would look cooler.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;Could functionalize more… or make a shiny app, or do more with, see [Problems and potential improvements] for notes…&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Can largely skim over&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Though this gets into decomposing the rotation, etc. components of the matrix transformation of interest for each frame.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Seems issue has to do with &lt;code&gt;group&lt;/code&gt; needing to apply both to the polygon at a given time as well as points on the polygon across time.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Would require latex title which I don’t know if is supported by &lt;code&gt;gganimate&lt;/code&gt;&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -39,9 +795,140 @@ This post is an offshoot of a post of my solutions to this week’s FiveThirtyEi
       <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/02/06/maximizing-magnetic-volume-the-perfect-bowl/</guid>
-      <description>Riddler ExpressRiddler ClassicArea of the base of the pyramidHeight of the pyramidEncode functions and calculate volumesAppendixThis post contains solutions to FiveThirtyEight’s two riddles released 2020-01-31, Riddler Express and Riddler Classic. Code for figures and solutions can be found on my github page.
-Riddler ExpressThe riddle:
-At the recent World Indoor Bowls Championships in Great Yarmouth, England, one of the rolls by Nick Brett went viral.</description>
+      <description>
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#riddler-classic&#34;&gt;Riddler Classic&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#area-of-the-base-of-the-pyramid&#34;&gt;Area of the base of the pyramid&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#height-of-the-pyramid&#34;&gt;Height of the pyramid&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#encode-functions-and-calculate-volumes&#34;&gt;Encode functions and calculate volumes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This post contains solutions to FiveThirtyEight’s two riddles released 2020-01-31, &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; and &lt;a href=&#34;#riddler-classic&#34;&gt;Riddler Classic&lt;/a&gt;. Code for figures and solutions can be found on my &lt;a href=&#34;https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl.Rmd&#34;&gt;github page&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;riddler-express&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Riddler Express&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;The riddle:&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+At the recent World Indoor Bowls Championships in Great Yarmouth, England, one of the rolls by Nick Brett went viral. Here it is in all its glory:
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+12/10 on the mindblowing scale 🤯 &lt;a href=&#34;https://twitter.com/hashtag/SCtop10?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#SCtop10&lt;/a&gt;&lt;br&gt;&lt;br&gt;(via &lt;a href=&#34;https://twitter.com/BBCSport?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@BBCSport&lt;/span&gt;&lt;/a&gt;) &lt;a href=&#34;https://t.co/6pN6ybzVel&#34;&gt;pic.twitter.com/6pN6ybzVel&lt;/a&gt;
+&lt;/p&gt;
+— SportsCenter (&lt;span class=&#34;citation&#34;&gt;@SportsCenter&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/SportsCenter/status/1220355057503363072?ref_src=twsrc%5Etfw&#34;&gt;January 23, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In order for Nick’s green bowl to split the two red bowls, he needed expert precision in both the speed of the roll and its final angle of approach.&lt;/p&gt;
+&lt;p&gt;Suppose you were standing in Nick’s shoes, and you wanted to split two of your opponent’s bowls. Let’s simplify the math a little, and say that each bowl is a sphere with a radius of 1. Let’s further suppose that your opponent’s two red bowls are separated by a distance of 3 — that is, the centers of the red bowls are separated by a distance of 5. Define ɸ as the angle between the path your bowl is on and the line connecting your opponent’s bowls.
+For example, here’s how you could split your opponent’s bowls when ɸ is 75°:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://fivethirtyeight.com/wp-content/uploads/2020/01/bowls.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;– &lt;a href=&#34;https://fivethirtyeight.com/contributors/zach-wissner-gross/&#34;&gt;Zach Wissner-Gross&lt;/a&gt;, &lt;a href=&#34;https://fivethirtyeight.com/features/can-you-roll-the-perfect-bowl/&#34;&gt;&#34;Can You Roll The Perfect Bowl? FiveThirtyEight&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;My Approach:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Sketched-out:&lt;/em&gt;&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/bowl_calc.jpg&#34; alt=&#34;My drawings are rotated 90° clockwise from the problem description (does not affect solution)&#34; style=&#34;width:58.0%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;My drawings are rotated 90° clockwise from the problem description (does not affect solution)&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;em&gt;Walked through:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;I.&lt;/strong&gt; The minimum angle will be one where the green bowl touches points on both red bowls – this creates two tangents that you can think of as forming the track the green bowl travels down. Given the distance between the centers of the red bowls is 5 units, the distance between a green and a red bowl&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt; will be half this, 2.5 units. Also, the lines tangent to a red bowl and the green bowl will pass a point halfway between this at 1.25 units from the center of a red circle&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;II.&lt;/strong&gt; Create the following three lines:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Connect the centers of the red circles&lt;/li&gt;
+&lt;li&gt;The line tangent to both a red circle and the green circle&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;The line perpendicular to the tangent point on the red circle&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Connecting these lines will create a right triangle with side length of 1 and hypotenuse of 1.25.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;III.&lt;/strong&gt; If you remember the &lt;em&gt;soh cah toa&lt;/em&gt; rules from trigonometry, you can use the identity &lt;span class=&#34;math inline&#34;&gt;\(sin(\phi) = \frac{opposite}{hypotenuse} \longrightarrow \phi = arcsin(\frac{1}{1.25})\)&lt;/span&gt; and compute the minimum angle is ~53.13°.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;What the path of the perfect bowl would look like:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/figure-html/bowl-perfect-path-figure-1.png&#34; width=&#34;70%&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;riddler-classic&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Riddler Classic&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;The riddle:&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;From Robert Berger comes a question of maximizing magnetic volume:&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Robert’s daughter has a set of Magna-Tiles, which, as their name implies, are tiles with magnets on the edges that can be used to build various polygons and polyhedra. Some of the tiles are identical isosceles triangles with one 30 degree angle and two 75 degree angles. If you were to arrange 12 of these tiles with their 30 degree angles in the center, they would lay flat and form a regular dodecagon. If you were to put fewer (between three and 11) of those tiles together in a similar way, they would form a pyramid whose base is a regular polygon. Robert has graciously provided a photo of the resulting pyramids when three and 11 tiles are used:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://fivethirtyeight.com/wp-content/uploads/2020/01/pyramids.png&#34; style=&#34;width:58.0%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;– &lt;a href=&#34;https://fivethirtyeight.com/contributors/zach-wissner-gross/&#34;&gt;Zach Wissner-Gross&lt;/a&gt;, &lt;a href=&#34;https://fivethirtyeight.com/features/can-you-roll-the-perfect-bowl/&#34;&gt;&#34;Can You Roll The Perfect Bowl? FiveThirtyEight&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;My Approach:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The Magna-Tiles will form regular pyramids. The question is which &lt;em&gt;n-sided&lt;/em&gt; pyramid will have the greatest volume. &lt;span class=&#34;math display&#34;&gt;\[(Volume\;of\;a\;pyramid) = \frac{1}{3}(area\;of\;base)(height\;of\;pyramid)\]&lt;/span&gt; Hence we need to first calculate the &lt;a href=&#34;#area-of-the-base-of-the-pyramid&#34;&gt;Area of the base of the pyramid&lt;/a&gt; and the &lt;a href=&#34;#height-of-the-pyramid&#34;&gt;Height of the pyramid&lt;/a&gt;. I’ll set-up a way of calculating these as a function of the number of (75°-75°-30°) Magna-Tiles.&lt;/p&gt;
+&lt;div id=&#34;area-of-the-base-of-the-pyramid&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Area of the base of the pyramid&lt;/h2&gt;
+&lt;p&gt;The side length of the base of our pyramid will be the length of the shortest side of a Magna-Tile. We weren’t told the lengths of the sides of the Magna-Tiles but they don’t matter for this problem&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;. To keep things simple, I’ll say the two congruent sides of the Magna-Tiles are equal to 1 unit.&lt;/p&gt;
+&lt;p&gt;Drawing a line perpendicular to the base splits our Magna-Tile into two congruent triangles. Given the trigonometric identity that &lt;span class=&#34;math inline&#34;&gt;\(sin(\theta) = \frac{opposite}{hypotenuse}\)&lt;/span&gt; and that the hypotenuse of each triangle was set at 1 unit, we can calculate the length of the base of the Magna-Tile is &lt;em&gt;2sin(15°).&lt;/em&gt;&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/base_length.jpg&#34; alt=&#34;Base polygon side length&#34; style=&#34;width:58.0%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Base polygon side length&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;I used &lt;em&gt;Math Open Reference&lt;/em&gt; to find an equation for &lt;a href=&#34;https://www.mathopenref.com/polygonregulararea.html&#34;&gt;area of a regular polygon&lt;/a&gt; as a function of side length and number of sides: &lt;span class=&#34;math display&#34;&gt;\[(area\;of\;regular\;polygon)\;=\;\frac{(side\;length)^{2}(number\;of\;sides)}{4tan(\frac{180^{\circ}}{number\;of\;sides})}\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;You can replace &lt;em&gt;(side length)&lt;/em&gt; in this equation with &lt;em&gt;2sin(15°)&lt;/em&gt; (calculated above),
+making area a function of &lt;em&gt;only&lt;/em&gt; the number of sides on our pyramid (i.e. the number of Magna-Tiles).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;height-of-the-pyramid&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Height of the pyramid&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;Sketched out:&lt;/em&gt;&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg&#34; alt=&#34;Finding pyramid height&#34; style=&#34;width:80.0%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Finding pyramid height&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;em&gt;Walked through:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;The highest point of the pyramid will rest over the center of the base polygon. You can imagine a right triangle on the interior of a regular n-sided pyramid with its three line segments corresponding with:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;I.&lt;/strong&gt; the length of a Magna-Tile (over its line of symmetry)&lt;br /&gt;
+&lt;strong&gt;II.&lt;/strong&gt; an apothem of the pyramid’s base (an apothem is just a line segment from the center of a regular polygon to the middle of any side)&lt;br /&gt;
+&lt;strong&gt;III.&lt;/strong&gt; the pyramid’s height&lt;/p&gt;
+&lt;p&gt;Calculating &lt;strong&gt;I&lt;/strong&gt; &amp;amp; &lt;strong&gt;II&lt;/strong&gt; will enable us to use the Pythagorean Theorem to calculate the &lt;strong&gt;pyramid height&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;I.&lt;/strong&gt; Length of a Magna-Tile (over its line of symmetry)&lt;/p&gt;
+&lt;p&gt;Using the trigonometric rule that &lt;span class=&#34;math inline&#34;&gt;\(cos(\theta) = \frac{adjacent}{hypotenuse}\)&lt;/span&gt; reveals the length of a Magna-Tile as equal to &lt;em&gt;cos(15°)&lt;/em&gt; – remember we are treating the longest sides of the Magna-Tile as equal to 1 unit&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/mag_length.jpg&#34; alt=&#34;Magna-Tile length (over its line of symmetry)&#34; width=&#34;200&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Magna-Tile length (over its line of symmetry)&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;II.&lt;/strong&gt; I used Math Open Reference to find the equation for &lt;a href=&#34;https://www.mathopenref.com/apothem.html&#34;&gt;apothem length&lt;/a&gt; as a function of number and length of sides in a regular polygon. &lt;span class=&#34;math display&#34;&gt;\[apothem\;length = \frac{side\;length}{2tan(\frac{180^{\circ}}{number\;of\;sides})}\]&lt;/span&gt; You can replace &lt;em&gt;side length&lt;/em&gt; in this equation with &lt;em&gt;2sin(15°)&lt;/em&gt; (calculated above), making apothem length a function of &lt;em&gt;only&lt;/em&gt; the number of sides on our pyramid (i.e. the number of Magna-Tiles).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;III.&lt;/strong&gt; Parts &lt;strong&gt;I&lt;/strong&gt; and &lt;strong&gt;II&lt;/strong&gt; represent two sides of a right triangle. To find the third side (corresponding with &lt;em&gt;pyramid height&lt;/em&gt;) simply use the Pythagorean theorem: &lt;span class=&#34;math display&#34;&gt;\[pyramid\;height = \sqrt{(MagnaTile\;length)^{2} - (apothem\;length)^{2}}\]&lt;/span&gt;
+Fill in the values for &lt;em&gt;(Magna-Tile length)&lt;/em&gt; and &lt;em&gt;(apothem length)&lt;/em&gt; (as described in &lt;strong&gt;I&lt;/strong&gt; &amp;amp; &lt;strong&gt;II&lt;/strong&gt;) and you’ll see pyramid height is now represented as a function of &lt;em&gt;only&lt;/em&gt; number of sides (i.e. number of Magna-Tiles).&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg&#34; alt=&#34;Finding pyramid height&#34; style=&#34;width:80.0%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Finding pyramid height&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;encode-functions-and-calculate-volumes&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Encode functions and calculate volumes&lt;/h2&gt;
+&lt;p&gt;I used &lt;a href=&#34;https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl.Rmd&#34;&gt;R to encode&lt;/a&gt; these functions&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt; and calculate the volumes for pyramids built from 2 to 12 Magna-Tiles&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/figure-html/volumes-graph-1.png&#34; width=&#34;100%&#34; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Volume increases up until 10 Magna-Tiles and then decreases at 11&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;p&gt;&lt;em&gt;Bonus plot showing number of tiles (and size of pyramid base) vs pyramid height.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/figure-html/heights-and-apothem-graph-1.png&#34; width=&#34;100%&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;When passing the line between the centers of the red circles.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;When passing the line between the centers of the red circles.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Could do for either or both circles and would get same solution as below steps will form congruent triangles – but following these steps using the top red circle more closely follows the story of the problem.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;As the pyramids created will be similar so each pyramid would scale proportionally to one another.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;In this case the longest sides are each a hypotenuse.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;In the code I use pi / 12 radians, which is equivalent to 15° used throughout the descriptions.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;2 and 12 Magna-Tiles represent flat structures ad therefore no volume.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;At 12 the structure is flat so no longer has volume.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
     </item>
     
   </channel>

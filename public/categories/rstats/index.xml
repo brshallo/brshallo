@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>rstats on Bryan Shalloway&#39;s Blog</title>
@@ -6,18 +6,125 @@
     <description>Recent content in rstats on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 25 Jun 2020 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/categories/rstats/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 25 Jun 2020 00:00:00 +0000</lastBuildDate><atom:link href="/categories/rstats/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Short Examples of Best Practices When Writing Functions That Call dplyr Verbs</title>
       <link>/2020/06/25/using-across-to-build-functions-with-dplyr-with-notes-on-legacy-approaches/</link>
       <pubDate>Thu, 25 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/06/25/using-across-to-build-functions-with-dplyr-with-notes-on-legacy-approaches/</guid>
-      <description>Function expecting one columnFunctions allowing multiple columnsOlder approachesAppendixdplyr, the foundational tidyverse package, makes a trade-off between being easy to code in interactively at the expense of being more difficult to create functions with. The source of the trade-off is in how dplyr evaluates column names (specifically, allowing for unquoted column names as argument inputs). Tidy evaluation has been under major development the last couple of years in order to make programming with dplyr easier.</description>
+      <description>
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#function-expecting-one-column&#34;&gt;Function expecting one column&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#functions-allowing-multiple-columns&#34;&gt;Functions allowing multiple columns&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#older-approaches&#34;&gt;Older approaches&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/tidyverse/dplyr&#34;&gt;dplyr&lt;/a&gt;, the foundational &lt;a href=&#34;https://www.tidyverse.org/&#34;&gt;tidyverse&lt;/a&gt; package, makes a trade-off between being easy to code in interactively at the expense of being more difficult to create functions with. The source of the trade-off is in how &lt;code&gt;dplyr&lt;/code&gt; evaluates column names (specifically, allowing for unquoted column names as argument inputs). Tidy evaluation has been under major development the last couple of years in order to make &lt;a href=&#34;https://dplyr.tidyverse.org/articles/programming.html&#34;&gt;programming with dplyr&lt;/a&gt; easier.&lt;/p&gt;
+&lt;p&gt;During this development, there have been a variety of proposed methods for programming with &lt;code&gt;dplyr&lt;/code&gt;. In this post, I will document the current ‘best-practices’ with &lt;code&gt;dplyr&lt;/code&gt; 1.0.0. In the &lt;a href=&#34;#older-approaches&#34;&gt;Older approaches&lt;/a&gt; section I provide analogous examples that someone (i.e. myself) might have used during this maturation period.&lt;/p&gt;
+&lt;p&gt;For a more full discussion on this topic see &lt;code&gt;dplyr&lt;/code&gt;’s documentation at &lt;a href=&#34;https://dplyr.tidyverse.org/articles/programming.html&#34;&gt;programming with dplyr&lt;/a&gt; and the various links referenced there.&lt;/p&gt;
+&lt;div id=&#34;function-expecting-one-column&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Function expecting one column&lt;/h1&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Pretend we want to create a function that calculates the sum of a given variable in a dataframe:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_var &amp;lt;- function(df, var){
+  
+  summarise(df, {{var_quo}} := sum({{var_quo}}))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To run this function:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_vars(mpg, cty)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you wanted to edit the variable in place and avoid using the special assignment operator &lt;code&gt;:=&lt;/code&gt;, you could use the new (in &lt;code&gt;dplyr&lt;/code&gt; 1.0.0) &lt;code&gt;across()&lt;/code&gt; function.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_vars &amp;lt;- function(df, vars){
+  
+  summarise(df, across({{vars}}, sum))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;functions-allowing-multiple-columns&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Functions allowing multiple columns&lt;/h1&gt;
+&lt;p&gt;Using the &lt;code&gt;across()&lt;/code&gt; approach also allows you to input more than one variable, e.g. a user could call the following to get summaries on both &lt;code&gt;cty&lt;/code&gt; and &lt;code&gt;hwy&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_vars(mpg, c(cty, hwy))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you wanted to compute multiple column summaries with different functions and you wanted to glue the function name onto your outputted column names&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;, you could instead pass a named list of functions into the &lt;code&gt;.fns&lt;/code&gt; argument of &lt;code&gt;across()&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_vars &amp;lt;- function(df, vars){
+  
+  summarise(df, across({{vars}}, list(sum = sum, mean = mean)))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You might want to create a function that can take in multiple sets of columns, e.g. the function below allows you to &lt;code&gt;group_by()&lt;/code&gt; one set of variables and &lt;code&gt;summarise()&lt;/code&gt; another set:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_group_vars &amp;lt;- function(df, group_vars, sum_vars){
+  df %&amp;gt;% 
+    group_by(across({{group_vars}})) %&amp;gt;% 
+    summarise(across({{sum_vars}}, list(sum = sum, mean = mean)))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;How a user would run &lt;code&gt;sum_group_vars()&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_group_vars(mpg,
+               c(model, year), 
+               c(hwy, cty))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you’re feeling fancy, you could also make the input to &lt;code&gt;.fns&lt;/code&gt; an argument to &lt;code&gt;sum_group_vars()&lt;/code&gt;&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;older-approaches&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Older approaches&lt;/h1&gt;
+&lt;p&gt;Generally, I find the new &lt;code&gt;across()&lt;/code&gt; approaches introduced in &lt;code&gt;dplyr&lt;/code&gt; 1.0.0 are easier and more consistent to use than the methods that preceded them. However the methods in this section still work and are supported. They are just no longer the ‘recommended’ or most ‘modern’ approach available for creating functions that pass column names into &lt;code&gt;dplyr&lt;/code&gt; verbs.&lt;/p&gt;
+&lt;p&gt;Prior to the introduction of the &lt;em&gt;bracket-bracket&lt;/em&gt;, &lt;code&gt;{{}}&lt;/code&gt;, you would have used the &lt;em&gt;&lt;code&gt;enquo()&lt;/code&gt; + bang-bang&lt;/em&gt; approach&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;. The function below is equivalent to the &lt;code&gt;sum_var()&lt;/code&gt; function shown at the start of this post.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_var &amp;lt;- function(df, var){
+  var_quo &amp;lt;- enquo(var)
+  summarise(df, !!var_quo := sum(!!var_quo))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To modify variables in-place you would have used the &lt;code&gt;*_at()&lt;/code&gt;, &lt;code&gt;*_if()&lt;/code&gt; or &lt;code&gt;*_all()&lt;/code&gt; function variants (which are now superseded by &lt;code&gt;across()&lt;/code&gt;).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_vars &amp;lt;- function(df, vars){
+  
+  summarise_at(df, {{vars}}, sum)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Similar to using &lt;code&gt;across()&lt;/code&gt; this method allows multiple variables being input. However what is weird about this function is that it requires the user wrapping the variable names in &lt;code&gt;vars()&lt;/code&gt;&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;. Hence to use the previously created function, a user would run:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_vars(mpg, vars(hwy, cty))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Alternatively, you could have the variable name inputs be character vectors by modifying the function like so:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_var &amp;lt;- function(df, vars){
+  
+  summarise_at(df, vars(one_of(vars)), sum)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Which could be called by a user as:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_var(mpg, c(&amp;quot;hwy&amp;quot;, &amp;quot;cty&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;These &lt;code&gt;*_at()&lt;/code&gt; variants also support inputting a list of functions, e.g. the below function would output both the sums and means.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_var &amp;lt;- function(df, var){
+  
+  summarise_at(df, vars(one_of(var)), list(sum = sum, mean = mean))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;For multiple grouping variables and multiple variables to be summarised you could create:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;groupsum &amp;lt;- function(df, group_vars, sum_vars){
+  df %&amp;gt;% 
+    group_by_at(vars(one_of(group_vars))) %&amp;gt;% 
+    summarise_at(vars(one_of(sum_vars)), list(sum = sum, mean = mean))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Which would be called by a user:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_var(mpg, 
+        c(&amp;quot;model&amp;quot;, &amp;quot;year&amp;quot;), 
+        c(&amp;quot;hwy&amp;quot;, &amp;quot;cty&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There are a variety of similar spins you might take on handling tidy evaluation when creating these or similar types of functions.&lt;/p&gt;
+&lt;p&gt;One other older approach perhaps worth mentioning (presented &lt;a href=&#34;https://rstudio.com/resources/rstudioconf-2019/working-with-names-and-expressions-in-your-tidy-eval-code/&#34;&gt;here&lt;/a&gt;) is “passing the dots”. Here is an example for if we want to &lt;code&gt;group_by()&lt;/code&gt; multiple columns and then &lt;code&gt;summarise()&lt;/code&gt; on just one column:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_group_var &amp;lt;- function(df, sum_var, ...){
+  df %&amp;gt;% 
+    group_by(...) %&amp;gt;% 
+    summarise({{sum_var}} := sum({{sum_var}}))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The limitation with this approach is that only one set of your inputs can have more than one variable in it, i.e. wherever you pass the &lt;code&gt;...&lt;/code&gt; in your function.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;p&gt;Image shared on social media was created using &lt;code&gt;xaringan&lt;/code&gt; and &lt;code&gt;flair&lt;/code&gt;. See &lt;a href=&#34;https://github.com/brshallo/dplyr-1.0.0-example&#34;&gt;dplyr-1.0.0-example&lt;/a&gt; for details.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://github.com/brshallo/dplyr-1.0.0-example/blob/master/dplyr-example-cropped.png?raw=true&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;&lt;code&gt;dplyr&lt;/code&gt; 1.0.0 also now has &lt;a href=&#34;https://www.tidyverse.org/blog/2020/02/glue-strings-and-tidy-eval/&#34;&gt;support for using the glue&lt;/a&gt; package syntax for modifying variable names.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Doing this doesn’t require any tidy evaluation knowledge&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;There is also the &lt;code&gt;rlang::enquos()&lt;/code&gt; and &lt;code&gt;!!!&lt;/code&gt; operator for when the input has length greater than one.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;A niche function specific to tidy evaluation (which users might not think of).&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -26,7 +133,127 @@
       <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/06/24/use-flipbooks-to-explain-your-code-and-thought-process/</guid>
-      <description>Learning R’s %&amp;gt;%Using the pipe operator (%&amp;gt;%) is one of my favorite things about coding in R and the tidyverse. However when it was first shown to me, I couldn’t understand what the #rstats nut describing it was so enthusiastic about. They tried to explain, “It means and then do the next operation.” When that didn’t click for me, they continued (while becoming ever more excited) “It passes the previous steps output into the first argument of the next function,” still… 😐😐😕.</description>
+      <description>
+
+
+&lt;div id=&#34;learning-rs&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Learning R’s &lt;code&gt;%&amp;gt;%&lt;/code&gt;&lt;/h1&gt;
+&lt;p&gt;Using the pipe operator (&lt;code&gt;%&amp;gt;%&lt;/code&gt;) is one of my favorite things about coding in R and the &lt;a href=&#34;https://www.tidyverse.org/&#34;&gt;tidyverse&lt;/a&gt;. However when it was first shown to me, I couldn’t understand what the &lt;a href=&#34;https://twitter.com/search?q=%23rstats&amp;amp;src=typed_query&#34;&gt;#rstats&lt;/a&gt; nut describing it was &lt;em&gt;so enthusiastic&lt;/em&gt; about. They tried to explain, “It means &lt;em&gt;and then&lt;/em&gt; do the next operation.” When that didn’t click for me, they continued (while becoming ever more excited) “It &lt;em&gt;passes the previous steps output into the first argument&lt;/em&gt; of the next function,” still… 😐😐😕.
+Self-evident verbs in their code like &lt;code&gt;select()&lt;/code&gt;, &lt;code&gt;filter()&lt;/code&gt;, &lt;code&gt;summarise()&lt;/code&gt; helped me nod along, partly following the operations. Though it wasn’t until I evaluated the code &lt;em&gt;line-by-line&lt;/em&gt; that I recognized the pipe’s elegance, power, beauty, simplicity 😄!&lt;/p&gt;
+&lt;p&gt;Now, a few years and reads through &lt;a href=&#34;https://r4ds.had.co.nz/&#34;&gt;R for Data Science&lt;/a&gt; later&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;, I will often share my work by keeping the code and output together and showing, line-by-line, what I am building towards. For example when…&lt;/p&gt;
+&lt;p&gt;… giving a 2019 talk on &lt;em&gt;“Managing objects in analytics workflows, using lists as columns in dataframes”&lt;/em&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/gme4Fb9JVjk?start=258&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;… giving a 2017 talk on &lt;em&gt;“Getting started with ‘tidy’ data science in R”&lt;/em&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/eeCELJNWEuw?start=474&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;… promoting a recent blog post on &lt;em&gt;“Tidy pairwise operations”&lt;/em&gt; (though in this case I removed the code):&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+What is your &lt;a href=&#34;https://twitter.com/hashtag/tidyverse?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#tidyverse&lt;/a&gt; (or other &lt;a href=&#34;https://twitter.com/hashtag/rstats?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#rstats&lt;/a&gt; ) approach for doing arbitrary pairwise operations across variables? Mine is frequently something like:&lt;br&gt;&lt;br&gt;I. nest…&lt;br&gt;II. expand combos… &lt;br&gt;III. filter…&lt;br&gt;IV. map fun(s)…&lt;br&gt;…&lt;br&gt;&lt;br&gt;I wrote a post walking through this: &lt;a href=&#34;https://t.co/xRnRf5yh3m&#34;&gt;https://t.co/xRnRf5yh3m&lt;/a&gt; &lt;a href=&#34;https://t.co/Zvxey2gm3H&#34;&gt;pic.twitter.com/Zvxey2gm3H&lt;/a&gt;
+&lt;/p&gt;
+— Bryan Shalloway (&lt;span class=&#34;citation&#34;&gt;@brshallo&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/brshallo/status/1271194908477591553?ref_src=twsrc%5Etfw&#34;&gt;June 11, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;However each of these examples were built using PowerPoint (and a lot of copy and pasting of code + output). The series of images cannot be easily reproduced. In this post I’ll point to resources on how to create these sorts of code communication materials in ways that &lt;em&gt;are reproducible&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;flipbooks&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Flipbooks&lt;/h1&gt;
+&lt;p&gt;When I started writing this post, I planned to call this type of output a “&lt;strong&gt;LEXPREX&lt;/strong&gt;” for “&lt;strong&gt;L&lt;/strong&gt;ine-by-line &lt;strong&gt;EX&lt;/strong&gt;ecution with &lt;strong&gt;PR&lt;/strong&gt;inted &lt;strong&gt;EX&lt;/strong&gt;amples” (and a name evocative of the inspiring &lt;a href=&#34;https://github.com/tidyverse/reprex&#34;&gt;reprex&lt;/a&gt; package by &lt;a href=&#34;https://twitter.com/JennyBryan%5D&#34;&gt;Jenny Bryan&lt;/a&gt;&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;). But, thankfully, an excellent solution containing thorough explanations (and a much better name) already existed, &lt;em&gt;flipbooks&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;As described in the &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;flipbookr documentation&lt;/a&gt;, “flipbooks are tools that present side-by-side, aligned, incremental code-output.”&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-r4ds.gif?raw=true&#34; alt=&#34;(Example inspired by ‘Many Models’ chapter of ‘R For Data Science’ by Grolemund &amp;amp; Wickham.)&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;(Example inspired by ‘Many Models’ chapter of ‘R For Data Science’ by Grolemund &amp;amp; Wickham.)&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;At this point you should stop reading this blog and instead go learn about &lt;a href=&#34;https://github.com/EvaMaeRey/flipbookr&#34;&gt;flipbookr&lt;/a&gt;. My post was largely written before I learned about this package. Hence, starting at &lt;a href=&#34;https://rstudio.com/resources/rstudioconf-2020/flipbooks-evangeline-reynolds/&#34;&gt;this presentation&lt;/a&gt; by &lt;a href=&#34;https://twitter.com/EvaMaeRey&#34;&gt;Gina Reynolds&lt;/a&gt; or &lt;code&gt;flipbookr&lt;/code&gt;’s &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;about page&lt;/a&gt; will generally be a more productive use of your time. The remainder of this post discusses either tools adjacent to flipbooks or describes workflows that can also be found within &lt;code&gt;flipbookr&lt;/code&gt; documentation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;example-with-xaringan&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Example with xaringan&lt;/h1&gt;
+&lt;p&gt;The &lt;a href=&#34;https://github.com/yihui/xaringan&#34;&gt;xaringan&lt;/a&gt; package for making slideshows contains highlighting features (and is what &lt;code&gt;flipbookr&lt;/code&gt; is built-on). For highlighting &lt;em&gt;code&lt;/em&gt; you can use the trailing comment &lt;code&gt;#&amp;lt;&amp;lt;&lt;/code&gt;&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;. For highlighting &lt;em&gt;output&lt;/em&gt; there is the &lt;code&gt;highlight.output&lt;/code&gt; code chunk option.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;iframe src=&#34;https://slides.yihui.org/xaringan/#31&#34; style=&#34;width: 560px; height: 315px;&#34;&gt;
+&lt;/iframe&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://twitter.com/mitchoharawild&#34;&gt;Mitchell O’Hara-Wild&lt;/a&gt;’s 2019 presentation on &lt;em&gt;“Flexible futures for &lt;a href=&#34;https://github.com/tidyverts/fable&#34;&gt;fable&lt;/a&gt; functionality”&lt;/em&gt; contains a helpful example where he uses these features to walk-through &lt;a href=&#34;https://github.com/mitchelloharawild/fable-combinations-2019/blob/6a55628e1ad156c0040676b7881a799f7f75370a/user2019/index.Rmd&#34;&gt;his code&lt;/a&gt;.&lt;/p&gt;
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/DhDOTxojQ3k?start=554&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;See &lt;a href=&#34;#more-sophisticated-highlighting&#34;&gt;More sophisticated highlighting&lt;/a&gt; if your use-case requires more than line-level highlighting.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;animating-a-flipbook&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Animating a flipbook&lt;/h1&gt;
+&lt;p&gt;I sometimes want to convert a flipbook into a gif, e.g. when sharing an example in a README or a snippet of a concept on social media. If you ignored my prior entreaty, this is a second reminder to stop and go read about &lt;code&gt;flipbookr&lt;/code&gt;. The &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;template file&lt;/a&gt; now shows how to create gifs using &lt;code&gt;flipbookr&lt;/code&gt; (html) –&amp;gt; &lt;code&gt;pagedown&lt;/code&gt; (pdf) –&amp;gt; &lt;code&gt;magick&lt;/code&gt; (gif). I also describe this workflow and provide examples &lt;a href=&#34;https://github.com/brshallo/flipbookr-gifs-examples&#34;&gt;here&lt;/a&gt;, e.g.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-riddler-solution.gif&#34; alt=&#34;(Example from a prior blog post, “Riddler Solutions: Pedestrian Puzzles”)&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;(Example from a prior blog post, “Riddler Solutions: Pedestrian Puzzles”)&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;closing-note&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Closing note&lt;/h1&gt;
+&lt;p&gt;I recommend exploring the &lt;a href=&#34;https://education.rstudio.com/blog/&#34;&gt;Rstudio Education blog&lt;/a&gt;. The site contains helpful resources for improving your technical communication. It was here that I stumbled on the post &lt;a href=&#34;https://education.rstudio.com/blog/2020/05/flair/&#34;&gt;Decorate your R code with flair&lt;/a&gt;. Reading this inspired me to make a first attempt at building a reproducible animation of line-by-line execution of R code (something I’d been wanting to do for ages). The positive response &amp;amp; feedback to my initial tweet led me to learn about &lt;code&gt;flipbookr&lt;/code&gt; and motivated additional actions (described in &lt;a href=&#34;#engagement-contributions&#34;&gt;Engagement &amp;amp; contributions&lt;/a&gt;) including the review and completion of this blog post.&lt;/p&gt;
+&lt;p&gt;Finally, please go enjoy the beautiful examples you can find at the &lt;code&gt;flipbookr&lt;/code&gt; &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;about page&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;&lt;img src=&#34;/post/2020-06-16-use-flipbooks-to-explain-your-code-and-thought-process_files/flipbookr-example.gif&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;div id=&#34;more-sophisticated-highlighting&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;More sophisticated highlighting&lt;/h2&gt;
+&lt;p&gt;For more sophisticated highlighting of &lt;em&gt;code&lt;/em&gt;, use the &lt;a href=&#34;https://github.com/kbodwin/flair&#34;&gt;flair package&lt;/a&gt;. I’m not sure what to recommend for highlighting changes in &lt;em&gt;output&lt;/em&gt; to the console… perhaps &lt;a href=&#34;https://github.com/brodieG/diffobj&#34;&gt;diffobj&lt;/a&gt; would be an option. You could also just explicitly format the output, e.g. using &lt;a href=&#34;https://github.com/rstudio/gt&#34;&gt;gt&lt;/a&gt; or &lt;a href=&#34;https://github.com/haozhu233/kableExtra&#34;&gt;kableExtra&lt;/a&gt; for tabular outputs, or using geoms, annotations, etc. in &lt;a href=&#34;https://github.com/tidyverse/ggplot2&#34;&gt;ggplot&lt;/a&gt;s. And, of course, you can always dive into the html.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;engagement-contributions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Engagement &amp;amp; contributions&lt;/h2&gt;
+&lt;p&gt;Blogging is time consuming. Reaching out to package maintainers or making contributions (even small ones) on open-source software projects can be intimidating. As a &lt;em&gt;tiny&lt;/em&gt; success story, I documented actions that stemmed (in some part) from engaging with the #rstats online communities while working on this blog post topic:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;While this post was in draft form, I tweeted out my initial approach (that used the &lt;a href=&#34;https://github.com/kbodwin/flair&#34;&gt;flair&lt;/a&gt; package).
+&lt;ul&gt;
+&lt;li&gt;The next step might have been trying to improve upon this. Thankfully, instead, &lt;a href=&#34;https://twitter.com/KellyBodwin&#34;&gt;Kelly Bodwin&lt;/a&gt; pointed me to &lt;code&gt;flipbookr&lt;/code&gt;!&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+P.S. &lt;br&gt;&lt;br&gt;The &lt;code&gt;flair_lines()&lt;/code&gt; function lets you highlight whole line(s) if you want! &lt;br&gt;&lt;br&gt;{flipbookr} is a better option for making gifs/slides like this, but {flair} + {pagedown} + {magick} might help if you want specialty or layered highlighting.
+&lt;/p&gt;
+— Kelly Bodwin (&lt;span class=&#34;citation&#34;&gt;@KellyBodwin&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/KellyBodwin/status/1272741205365764097?ref_src=twsrc%5Etfw&#34;&gt;June 16, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Kelly also created an &lt;a href=&#34;https://github.com/kbodwin/flair/issues/15&#34;&gt;issue&lt;/a&gt; to further discuss possible integrations between &lt;code&gt;flair&lt;/code&gt; and &lt;code&gt;flipbookr&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;I remade my initial example using &lt;code&gt;flipbookr&lt;/code&gt; (&lt;a href=&#34;https://github.com/EvaMaeRey/flipbookr/issues/22&#34;&gt;see issue&lt;/a&gt;).
+&lt;ul&gt;
+&lt;li&gt;I first created an &lt;a href=&#34;https://github.com/EvaMaeRey/flipbookr/issues/21&#34;&gt;issue&lt;/a&gt; showing how to print &lt;code&gt;xaringan&lt;/code&gt; slides incrementally using &lt;code&gt;pagedown::chrome_print()&lt;/code&gt;.
+&lt;ul&gt;
+&lt;li&gt;Which helped to close a related &lt;a href=&#34;https://github.com/rstudio/pagedown/issues/110&#34;&gt;issue&lt;/a&gt; on &lt;code&gt;xaringan&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Gina Reynolds made a variety of updates to &lt;code&gt;flipbookr&lt;/code&gt;, one of which included adding the html –&amp;gt; pdf –&amp;gt; gif workflow to the template 😄.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+Big thanks to &lt;a href=&#34;https://twitter.com/grrrck?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@grrrck&lt;/span&gt;&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/statsgen?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@statsgen&lt;/span&gt;&lt;/a&gt; for helps and &lt;a href=&#34;https://twitter.com/xieyihui?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@xieyihui&lt;/span&gt;&lt;/a&gt; because {xaringan}! And to &lt;a href=&#34;https://twitter.com/brshallo?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@brshallo&lt;/span&gt;&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/KellyBodwin?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@KellyBodwin&lt;/span&gt;&lt;/a&gt; for new ideas about how to share flipbooks, html -&amp;gt; pdf -&amp;gt; gif. Guidance now included in template update on this - this gif created w/ that workflow!🙏🤩
+&lt;/p&gt;
+— Gina Reynolds (&lt;span class=&#34;citation&#34;&gt;@EvaMaeRey&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/EvaMaeRey/status/1274837474460626945?ref_src=twsrc%5Etfw&#34;&gt;June 21, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;See my notes and solutions &lt;a href=&#34;https://brshallo.github.io/r4ds_solutions/&#34;&gt;here&lt;/a&gt;.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;I also considered names such as &lt;code&gt;pexprex&lt;/code&gt;, &lt;code&gt;sexprex&lt;/code&gt;, &lt;code&gt;pripex&lt;/code&gt;, … I’ll let the reader guess at the acronyms.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Which I prefer over the alternatives of using the leading &lt;code&gt;*&lt;/code&gt; or wrapping the message in&lt;code&gt;{{}}&lt;/code&gt;.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -35,7 +262,495 @@
       <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/06/03/tidy-2-way-column-combinations/</guid>
-      <description>OverviewI. Nest and pivotII. Expand combinationsIII. Filter redundanciesIV. Map function(s)V. Return to normal dataframeVI. Bind back to dataFunctionalizeExample creating &amp;amp; evaluating featuresWhen is this approach inappropriate?AppendixInteractions example, tidymodelsExpand via joinNested tibblesPivot and then summariseGif for social mediaSession infoOverviewSay you want to map an operation or list of operations across all two-way1 combinations of a set of variables/columns in a dataframe.</description>
+      <description>
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#overview&#34;&gt;Overview&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#i.-nest-and-pivot&#34;&gt;I. Nest and pivot&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#ii.-expand-combinations&#34;&gt;II. Expand combinations&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#iii.-filter-redundancies&#34;&gt;III. Filter redundancies&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#iv.-map-functions&#34;&gt;IV. Map function(s)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#v.-return-to-normal-dataframe&#34;&gt;V. Return to normal dataframe&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#vi.-bind-back-to-data&#34;&gt;VI. Bind back to data&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#functionalize&#34;&gt;Functionalize&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#example-creating-evaluating-features&#34;&gt;Example creating &amp;amp; evaluating features&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#when-is-this-approach-inappropriate&#34;&gt;When is this approach inappropriate?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#interactions-example-tidymodels&#34;&gt;Interactions example, tidymodels&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#expand-via-join&#34;&gt;Expand via join&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#nested-tibbles&#34;&gt;Nested tibbles&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#pivot-and-then-summarise&#34;&gt;Pivot and then summarise&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#gif-for-social-media&#34;&gt;Gif for social media&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-info&#34;&gt;Session info&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;div id=&#34;overview&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Overview&lt;/h1&gt;
+&lt;p&gt;Say you want to map an operation or list of operations across all two-way&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt; combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;. In some cases there may be a pairwise implementation already available, e.g. R’s &lt;code&gt;cor()&lt;/code&gt; function for computing correlations&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;. In other cases one may not exist or is not easy to use&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;. In this post I’ll walk through an example&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt; explaining code and steps for setting-up arbitrary pairwise operations across sets of variables.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;I’ll break my approach down into several steps:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;I. Nest and pivot&lt;br /&gt;
+II. Expand combinations&lt;br /&gt;
+III. Filter redundancies&lt;br /&gt;
+IV. Map function(s)&lt;br /&gt;
+V. Return to normal dataframe&lt;br /&gt;
+VI. Bind back to data&lt;/p&gt;
+&lt;p&gt;If your interest is only in computing summary statistics (as opposed to modifying an existing dataframe with new columns / features), then only steps I - IV are needed.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Relevant software and style:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I will primarily be using R’s &lt;code&gt;tidyverse&lt;/code&gt; packages. I make frequent use of lists as columns within dataframes – if you are new to these, see my previous &lt;a href=&#34;https://www.youtube.com/watch?v=gme4Fb9JVjk&#34;&gt;talk&lt;/a&gt; and the resources&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt; I link to in the description.&lt;/p&gt;
+&lt;p&gt;Throughout this post, wherever I write “dataframe” I really mean “tibble” (a dataframe with minor changes to default options and printing behavior). Also note that I am using &lt;code&gt;dplyr&lt;/code&gt; 0.8.3 rather than the newly released 1.0.0&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Other resources and open issues (updated 2020-06-14):&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;In particular, the comments in issue &lt;a href=&#34;https://github.com/tidymodels/corrr/issues/44&#34;&gt;44&lt;/a&gt; for the &lt;code&gt;corrr&lt;/code&gt; package contain excellent solutions for doing pairwise operations (the subject of this post)&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt;. Issue &lt;a href=&#34;https://github.com/tidymodels/corrr/issues/94&#34;&gt;94&lt;/a&gt; also features discussion on this topic. Throughout this post I will reference other alternative code/approaches (especially in the footnotes and the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Data:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I’ll use the ames housing dataset across examples.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ames &amp;lt;- AmesHousing::make_ames()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Specifically, I’ll focus on ten numeric columns that, based on a random sample of 1000 rows, show the highest correlation with &lt;code&gt;Sale_Price&lt;/code&gt;&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+
+set.seed(2020)
+ames_cols &amp;lt;- ames %&amp;gt;% 
+  select_if(is.numeric) %&amp;gt;% 
+  sample_n(1000) %&amp;gt;% 
+  corrr::correlate() %&amp;gt;% 
+  corrr::focus(Sale_Price) %&amp;gt;% 
+  arrange(-abs(Sale_Price)) %&amp;gt;% 
+  head(10) %&amp;gt;% 
+  pull(rowname)
+
+ames_subset &amp;lt;- select(ames, ames_cols) %&amp;gt;% 
+  # Could normalize data or do other prep 
+  # but is not pertinent for examples
+  mutate_all(as.double)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;i.-nest-and-pivot&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;I. Nest and pivot&lt;/h2&gt;
+&lt;p&gt;There are a variety of ways to make lists into columns within a dataframe. In the example below, I first use &lt;code&gt;summarise_all(.tbl = ames_subset, .funs = list)&lt;/code&gt; to create a one row dataframe where each column is a list containing a single element and each individual element corresponds with a numeric vector of length 2930.&lt;/p&gt;
+&lt;p&gt;After nesting, I pivot&lt;a href=&#34;#fn11&#34; class=&#34;footnote-ref&#34; id=&#34;fnref11&#34;&gt;&lt;sup&gt;11&lt;/sup&gt;&lt;/a&gt; the columns leaving a dataframe with two columns:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;var&lt;/code&gt; the variable names&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;vector&lt;/code&gt; a list where each element contains the associated vector&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_lists &amp;lt;- ames_subset %&amp;gt;% 
+  summarise_all(list) %&amp;gt;% 
+  pivot_longer(cols = everything(), 
+               names_to = &amp;quot;var&amp;quot;, 
+               values_to = &amp;quot;vector&amp;quot;) %&amp;gt;% 
+  print()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 10 x 2
+##    var            vector       
+##    &amp;lt;chr&amp;gt;          &amp;lt;list&amp;gt;       
+##  1 Gr_Liv_Area    &amp;lt;dbl [2,930]&amp;gt;
+##  2 Garage_Cars    &amp;lt;dbl [2,930]&amp;gt;
+##  3 Garage_Area    &amp;lt;dbl [2,930]&amp;gt;
+##  4 Total_Bsmt_SF  &amp;lt;dbl [2,930]&amp;gt;
+##  5 First_Flr_SF   &amp;lt;dbl [2,930]&amp;gt;
+##  6 Year_Built     &amp;lt;dbl [2,930]&amp;gt;
+##  7 Full_Bath      &amp;lt;dbl [2,930]&amp;gt;
+##  8 Year_Remod_Add &amp;lt;dbl [2,930]&amp;gt;
+##  9 TotRms_AbvGrd  &amp;lt;dbl [2,930]&amp;gt;
+## 10 Fireplaces     &amp;lt;dbl [2,930]&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;See &lt;a href=&#34;#pivot-and-then-summarise&#34;&gt;Pivot and then summarise&lt;/a&gt; for a nearly identical approach with just an altered order of steps. Also see &lt;a href=&#34;#nested-tibbles&#34;&gt;Nested tibbles&lt;/a&gt; for how you could create a list-column of dataframes&lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt; rather than vectors.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;What if my variables are across rows not columns?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;For example, pretend you want to see if &lt;code&gt;Sale_Price&lt;/code&gt; is different across &lt;code&gt;Mo_Sold&lt;/code&gt;. Perhaps you started by doing an F-test, found that to be significant, and now want to do pairwise t-tests across the samples of &lt;code&gt;Sale_Price&lt;/code&gt; for each &lt;code&gt;Mo_Sold&lt;/code&gt;. To set this up, you will want a &lt;code&gt;group_by()&lt;/code&gt; rather than a &lt;code&gt;pivot_longer()&lt;/code&gt; step. E.g.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ames %&amp;gt;% 
+  group_by(Mo_Sold) %&amp;gt;% 
+  summarise(Sale_Price = list(Sale_Price)) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 12 x 2
+##    Mo_Sold Sale_Price 
+##      &amp;lt;int&amp;gt; &amp;lt;list&amp;gt;     
+##  1       1 &amp;lt;int [123]&amp;gt;
+##  2       2 &amp;lt;int [133]&amp;gt;
+##  3       3 &amp;lt;int [232]&amp;gt;
+##  4       4 &amp;lt;int [279]&amp;gt;
+##  5       5 &amp;lt;int [395]&amp;gt;
+##  6       6 &amp;lt;int [505]&amp;gt;
+##  7       7 &amp;lt;int [449]&amp;gt;
+##  8       8 &amp;lt;int [233]&amp;gt;
+##  9       9 &amp;lt;int [161]&amp;gt;
+## 10      10 &amp;lt;int [173]&amp;gt;
+## 11      11 &amp;lt;int [143]&amp;gt;
+## 12      12 &amp;lt;int [104]&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;At which point your data is in fundamentally the same form as was created in the previous code chunk (at least for if we only care about computing summary metrics that don’t require vectors of equal length&lt;a href=&#34;#fn13&#34; class=&#34;footnote-ref&#34; id=&#34;fnref13&#34;&gt;&lt;sup&gt;13&lt;/sup&gt;&lt;/a&gt;) so you can move onto &lt;a href=&#34;#ii.-expand-combinations&#34;&gt;II. Expand combinations&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;If the variables needed for your combinations of interest are across both rows and columns, you may want to use both &lt;code&gt;pivot_longer()&lt;/code&gt; and &lt;code&gt;group_by()&lt;/code&gt; steps and may need to make a few small modifications.&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ii.-expand-combinations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;II. Expand combinations&lt;/h2&gt;
+&lt;p&gt;I then use &lt;code&gt;tidyr::nesting()&lt;/code&gt; within &lt;code&gt;tidyr::expand()&lt;/code&gt; to make all 2-way combinations of our rows.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_lists_comb &amp;lt;- expand(df_lists,
+                        nesting(var, vector),
+                        nesting(var2 = var, vector2 = vector)) %&amp;gt;% 
+  print()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 100 x 4
+##    var        vector        var2           vector2      
+##    &amp;lt;chr&amp;gt;      &amp;lt;list&amp;gt;        &amp;lt;chr&amp;gt;          &amp;lt;list&amp;gt;       
+##  1 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Fireplaces     &amp;lt;dbl [2,930]&amp;gt;
+##  2 Fireplaces &amp;lt;dbl [2,930]&amp;gt; First_Flr_SF   &amp;lt;dbl [2,930]&amp;gt;
+##  3 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Full_Bath      &amp;lt;dbl [2,930]&amp;gt;
+##  4 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Garage_Area    &amp;lt;dbl [2,930]&amp;gt;
+##  5 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Garage_Cars    &amp;lt;dbl [2,930]&amp;gt;
+##  6 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Gr_Liv_Area    &amp;lt;dbl [2,930]&amp;gt;
+##  7 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Total_Bsmt_SF  &amp;lt;dbl [2,930]&amp;gt;
+##  8 Fireplaces &amp;lt;dbl [2,930]&amp;gt; TotRms_AbvGrd  &amp;lt;dbl [2,930]&amp;gt;
+##  9 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Year_Built     &amp;lt;dbl [2,930]&amp;gt;
+## 10 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Year_Remod_Add &amp;lt;dbl [2,930]&amp;gt;
+## # ... with 90 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;See &lt;a href=&#34;#expand-via-join&#34;&gt;Expand via join&lt;/a&gt; for an alternative approach using the &lt;code&gt;dplyr::*_join()&lt;/code&gt; operations.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;You could make a strong case that this step should be after &lt;a href=&#34;#iii.-filter-redundancies&#34;&gt;III. Filter redundancies&lt;/a&gt;&lt;a href=&#34;#fn14&#34; class=&#34;footnote-ref&#34; id=&#34;fnref14&#34;&gt;&lt;sup&gt;14&lt;/sup&gt;&lt;/a&gt;. However putting it beforehand makes the required code easier to write and to read.&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;iii.-filter-redundancies&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;III. Filter redundancies&lt;/h2&gt;
+&lt;p&gt;Filter-out redundant columns, sort the rows, better organize the columns.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_lists_comb &amp;lt;- df_lists_comb %&amp;gt;% 
+  filter(var != var2) %&amp;gt;% 
+  arrange(var, var2) %&amp;gt;% 
+  mutate(vars = paste0(var, &amp;quot;.&amp;quot;, var2)) %&amp;gt;% 
+  select(contains(&amp;quot;var&amp;quot;), everything()) %&amp;gt;% 
+  print()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 90 x 5
+##    var          var2           vars                    vector       vector2     
+##    &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;          &amp;lt;chr&amp;gt;                   &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;      
+##  1 Fireplaces   First_Flr_SF   Fireplaces.First_Flr_SF &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  2 Fireplaces   Full_Bath      Fireplaces.Full_Bath    &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  3 Fireplaces   Garage_Area    Fireplaces.Garage_Area  &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  4 Fireplaces   Garage_Cars    Fireplaces.Garage_Cars  &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  5 Fireplaces   Gr_Liv_Area    Fireplaces.Gr_Liv_Area  &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  6 Fireplaces   Total_Bsmt_SF  Fireplaces.Total_Bsmt_~ &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  7 Fireplaces   TotRms_AbvGrd  Fireplaces.TotRms_AbvG~ &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  8 Fireplaces   Year_Built     Fireplaces.Year_Built   &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  9 Fireplaces   Year_Remod_Add Fireplaces.Year_Remod_~ &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+## 10 First_Flr_SF Fireplaces     First_Flr_SF.Fireplaces &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+## # ... with 80 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If your operation of interest is associative&lt;a href=&#34;#fn15&#34; class=&#34;footnote-ref&#34; id=&#34;fnref15&#34;&gt;&lt;sup&gt;15&lt;/sup&gt;&lt;/a&gt;, apply a filter to remove additional redundant combinations.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;c_sort_collapse &amp;lt;- function(...){
+  c(...) %&amp;gt;% 
+    sort() %&amp;gt;% 
+    str_c(collapse = &amp;quot;.&amp;quot;)
+}
+
+df_lists_comb_as &amp;lt;- df_lists_comb %&amp;gt;% 
+  mutate(vars = map2_chr(.x = var, 
+                         .y = var2, 
+                         .f = c_sort_collapse)) %&amp;gt;%
+  distinct(vars, .keep_all = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;iv.-map-functions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;IV. Map function(s)&lt;/h2&gt;
+&lt;p&gt;Each row of your dataframe now contains the relevant combinations of variables and is ready to have any arbitrary function(s) mapped across them.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Example with summary statistic&lt;a href=&#34;#fn16&#34; class=&#34;footnote-ref&#34; id=&#34;fnref16&#34;&gt;&lt;sup&gt;16&lt;/sup&gt;&lt;/a&gt;:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;For example, let’s say we want to compute the p-value of the correlation coefficient for each pair&lt;a href=&#34;#fn17&#34; class=&#34;footnote-ref&#34; id=&#34;fnref17&#34;&gt;&lt;sup&gt;17&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pairs_cor_pvalues &amp;lt;- df_lists_comb_as %&amp;gt;% 
+  mutate(cor_pvalue = map2(vector, vector2, cor.test) %&amp;gt;% map_dbl(&amp;quot;p.value&amp;quot;),
+         vars = fct_reorder(vars, -cor_pvalue)) %&amp;gt;% 
+  arrange(cor_pvalue) %&amp;gt;% 
+  print()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 45 x 6
+##    var        var2         vars                vector     vector2     cor_pvalue
+##    &amp;lt;chr&amp;gt;      &amp;lt;chr&amp;gt;        &amp;lt;fct&amp;gt;               &amp;lt;list&amp;gt;     &amp;lt;list&amp;gt;           &amp;lt;dbl&amp;gt;
+##  1 First_Flr~ Total_Bsmt_~ First_Flr_SF.Total~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  0.       
+##  2 Full_Bath  Gr_Liv_Area  Full_Bath.Gr_Liv_A~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  0.       
+##  3 Garage_Ar~ Garage_Cars  Garage_Area.Garage~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  0.       
+##  4 Gr_Liv_Ar~ TotRms_AbvG~ Gr_Liv_Area.TotRms~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  0.       
+##  5 Year_Built Year_Remod_~ Year_Built.Year_Re~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  7.85e-301
+##  6 First_Flr~ Gr_Liv_Area  First_Flr_SF.Gr_Li~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  8.17e-244
+##  7 Garage_Ca~ Year_Built   Garage_Cars.Year_B~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  1.57e-219
+##  8 Full_Bath  TotRms_AbvG~ Full_Bath.TotRms_A~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  1.24e-210
+##  9 First_Flr~ Garage_Area  First_Flr_SF.Garag~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  8.16e-178
+## 10 Garage_Ca~ Gr_Liv_Area  Garage_Cars.Gr_Liv~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  4.80e-175
+## # ... with 35 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;For fun, let’s plot the most significant associations onto a bar graph.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pairs_cor_pvalues %&amp;gt;% 
+  head(15) %&amp;gt;% 
+  mutate(cor_pvalue_nlog = -log(cor_pvalue)) %&amp;gt;% 
+  ggplot(aes(x = vars, 
+             y = cor_pvalue_nlog, 
+             fill = is.infinite(cor_pvalue_nlog) %&amp;gt;% factor(c(T, F))))+
+  geom_col()+
+  coord_flip()+
+  theme_bw()+
+  labs(title = &amp;quot;We are confident that garage area and # of garage cars are correlated&amp;quot;,
+       y = &amp;quot;Negative log of p-value of correlation coefficient&amp;quot;,
+       x = &amp;quot;Variable combinations&amp;quot;,
+       fill = &amp;quot;Too high to\nmeaningfully\ndifferentiate:&amp;quot;)+
+  theme(plot.title.position = &amp;quot;plot&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;You could use this approach to calculate any pairwise summary statistic. For example, see &lt;a href=&#34;https://gist.github.com/brshallo/dc3c1f2f34519ca2a8a68024bc3a22e5&#34;&gt;gist&lt;/a&gt; where I calculate the K-S statistic across each combination of a group of distributions.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;If you only care about computing summary statistics on your pairwise combinations, (and not adding new columns onto your original dataframe) you can stop here.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Example with transformations&lt;a href=&#34;#fn18&#34; class=&#34;footnote-ref&#34; id=&#34;fnref18&#34;&gt;&lt;sup&gt;18&lt;/sup&gt;&lt;/a&gt;:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Back to the feature engineering example, perhaps we want to create new features of the difference and quotient of each combination of our variables.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;new_features_prep1 &amp;lt;- df_lists_comb %&amp;gt;% 
+  mutate(difference = map2(vector, vector2, `-`),
+         ratio = map2(vector, vector2, `/`))&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;v.-return-to-normal-dataframe&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;V. Return to normal dataframe&lt;/h2&gt;
+&lt;p&gt;The next set of steps will put our data back into a more traditional form consistent with our starting dataframe/tibble.&lt;/p&gt;
+&lt;p&gt;First let’s revert our data to a form similar to where it was at the end of &lt;a href=&#34;#i.-nest-and-pivot&#34;&gt;I. Nest and pivot&lt;/a&gt; where we had two columns:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;one with our variable names&lt;/li&gt;
+&lt;li&gt;a second containing a list-column of vectors&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;new_features_prep2 &amp;lt;- new_features_prep1 %&amp;gt;% 
+  pivot_longer(cols = c(difference, ratio)) %&amp;gt;% # 1
+  mutate(name_vars = str_c(var, name, var2, sep = &amp;quot;.&amp;quot;)) %&amp;gt;% # 2
+  select(name_vars, value) # 3&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;At the end of each line of code above is a number corresponding with the following explanations:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;if we had done just one operation, this step would not be needed, but we did multiple operations, created multiple list-columns (&lt;code&gt;difference&lt;/code&gt; and &lt;code&gt;ratio&lt;/code&gt;) which we need to get into a single list-column&lt;/li&gt;
+&lt;li&gt;create new variable name that combines constituent variable names with name of transformation&lt;/li&gt;
+&lt;li&gt;remove old columns&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Next we simply apply the inverse of those operations performed in &lt;a href=&#34;#i.-nest-and-pivot&#34;&gt;I. Nest and pivot&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;new_features &amp;lt;- new_features_prep2 %&amp;gt;% 
+  pivot_wider(values_from = value,
+              names_from = name_vars) %&amp;gt;%
+  unnest(cols = everything())&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The new features will add a good number of columns onto our original dataset&lt;a href=&#34;#fn19&#34; class=&#34;footnote-ref&#34; id=&#34;fnref19&#34;&gt;&lt;sup&gt;19&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dim(new_features)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 2930  180&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;vi.-bind-back-to-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;VI. Bind back to data&lt;/h2&gt;
+&lt;p&gt;I then bind the new features back onto the original subsetted dataframe.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ames_data_features &amp;lt;- bind_cols(ames_subset, new_features)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;At which point I could do further exploring, feature engineering, model building, etc.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;functionalize&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Functionalize&lt;/h1&gt;
+&lt;p&gt;I put these steps into a few (unpolished) functions found at &lt;a href=&#34;https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1&#34;&gt;this gist&lt;/a&gt;&lt;a href=&#34;#fn20&#34; class=&#34;footnote-ref&#34; id=&#34;fnref20&#34;&gt;&lt;sup&gt;20&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::source_gist(&amp;quot;https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;operations_combinations()&lt;/code&gt; takes in your dataframe, the set of numeric columns to create pairwise combinations from, and a list of functions&lt;a href=&#34;#fn21&#34; class=&#34;footnote-ref&#34; id=&#34;fnref21&#34;&gt;&lt;sup&gt;21&lt;/sup&gt;&lt;/a&gt; to apply.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;example-creating-evaluating-features&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Example creating &amp;amp; evaluating features&lt;/h1&gt;
+&lt;p&gt;Let’s use the new &lt;code&gt;operations_combinations()&lt;/code&gt; function to create new columns for the differences and quotients between all pairwise combinations of our variables of interest.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ames_data_features_example &amp;lt;- operations_combinations(
+  df = mutate_if(ames, is.numeric, as.double),
+  one_of(ames_cols),
+  funs = list(&amp;quot;/&amp;quot;, &amp;quot;-&amp;quot;),
+  funs_names = list(&amp;quot;ratio&amp;quot;, &amp;quot;difference&amp;quot;),
+  associative = FALSE
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Perhaps you want to calculate some measure of association between your features and a target of interest. To keep things simple, I’ll remove any columns that contain any NA’s or infinite values.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;features_keep &amp;lt;- ames_data_features_example %&amp;gt;% 
+  keep(is.numeric) %&amp;gt;% 
+  keep(~sum(is.na(.) | is.infinite(.)) == 0) %&amp;gt;% 
+  colnames()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Maybe, for some reason, you want to see the statistical significance of the correlation of each feature with &lt;code&gt;Sale_Price&lt;/code&gt; when weighting by &lt;code&gt;Lot_Area&lt;/code&gt;. I’ll calculate these across variables (and a random sample of 1500 observations) then plot them on a histogram.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(1234)
+ames_data_features_example %&amp;gt;% 
+  sample_n(1500) %&amp;gt;% 
+  summarise_at(
+    .vars = features_keep[!(features_keep %in% c(&amp;quot;Sale_Price&amp;quot;, &amp;quot;Lot_Area&amp;quot;))],
+    .funs = ~weights::wtd.cor(., Sale_Price, weight = Lot_Area)[1]) %&amp;gt;% 
+  gather() %&amp;gt;% # gather() is an older version of pivot_longer() w/ fewer parameters
+  ggplot(aes(x = value))+
+  geom_vline(xintercept = 0, colour = &amp;quot;lightgray&amp;quot;, size = 2)+
+  geom_histogram()+
+  scale_x_continuous(labels = scales::comma)+
+  labs(title = &amp;quot;Distribution of correlations with Sale_Price&amp;quot;,
+       subtitle = &amp;quot;Weighted by Lot Area&amp;quot;,
+       x = &amp;quot;Weighted correlation coefficient&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-18-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;If doing predictive modeling or inference you may want to fit any transformations and analysis into a &lt;code&gt;tidymodels&lt;/code&gt; pipeline or other framework. For some brief notes on this see &lt;a href=&#34;#interactions-example-tidymodels&#34;&gt;Interactions example, tidymodels&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;when-is-this-approach-inappropriate&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;When is this approach inappropriate?&lt;/h1&gt;
+&lt;p&gt;Combinatorial growth is very fast&lt;a href=&#34;#fn22&#34; class=&#34;footnote-ref&#34; id=&#34;fnref22&#34;&gt;&lt;sup&gt;22&lt;/sup&gt;&lt;/a&gt;. As you increase either the number of variables in your pool or the size of each set, you will quickly bump into computational limitations.&lt;/p&gt;
+&lt;p&gt;Tidyverse packages are optimized to be efficient. However operations with matrices or other specialized formats&lt;a href=&#34;#fn23&#34; class=&#34;footnote-ref&#34; id=&#34;fnref23&#34;&gt;&lt;sup&gt;23&lt;/sup&gt;&lt;/a&gt; are generally faster&lt;a href=&#34;#fn24&#34; class=&#34;footnote-ref&#34; id=&#34;fnref24&#34;&gt;&lt;sup&gt;24&lt;/sup&gt;&lt;/a&gt; than with dataframes/tibbles. If you are running into computational challenges but prefer to stick with a tidyverse aesthetic (which uses dataframes as a cornerstone), you might:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Use heuristics to reduce the number of variables or operations you need to perform (e.g. take a sample, use a preliminary filter, a step-wise like iteration, etc.)&lt;/li&gt;
+&lt;li&gt;Look for packages that abstract the storage and computationally heavy operations away&lt;a href=&#34;#fn25&#34; class=&#34;footnote-ref&#34; id=&#34;fnref25&#34;&gt;&lt;sup&gt;25&lt;/sup&gt;&lt;/a&gt; and then return back an output in a convenient form&lt;a href=&#34;#fn26&#34; class=&#34;footnote-ref&#34; id=&#34;fnref26&#34;&gt;&lt;sup&gt;26&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Improve the efficiency of your code (e.g. filter redundancies before rather than after expanding combinations)&lt;a href=&#34;#fn27&#34; class=&#34;footnote-ref&#34; id=&#34;fnref27&#34;&gt;&lt;sup&gt;27&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Consider parralelizing&lt;/li&gt;
+&lt;li&gt;Use matrices&lt;a href=&#34;#fn28&#34; class=&#34;footnote-ref&#34; id=&#34;fnref28&#34;&gt;&lt;sup&gt;28&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;There is sometimes an urge to do &lt;em&gt;everything&lt;/em&gt; in a tidy way, which is not necessary. For example, you &lt;em&gt;could&lt;/em&gt; use an approach like the one I walk through to calculate pairwise correlations between each of your variables. However, the &lt;code&gt;cor()&lt;/code&gt; function would do this much more efficiently if called on a matrix or traditional dataframe without list-columns (though you could also use the &lt;code&gt;corrr&lt;/code&gt; package within the &lt;code&gt;tidymodels&lt;/code&gt; suite which calls &lt;code&gt;cor()&lt;/code&gt; in the back-end&lt;a href=&#34;#fn29&#34; class=&#34;footnote-ref&#34; id=&#34;fnref29&#34;&gt;&lt;sup&gt;29&lt;/sup&gt;&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;However, for many operations…&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;there may not be an efficient pairwise implementation available / accessible&lt;/li&gt;
+&lt;li&gt;the slower computation may not matter or can be mitigated in some way&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These situations&lt;a href=&#34;#fn30&#34; class=&#34;footnote-ref&#34; id=&#34;fnref30&#34;&gt;&lt;sup&gt;30&lt;/sup&gt;&lt;/a&gt; are where the approach I walked through is most appropriate.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;div id=&#34;interactions-example-tidymodels&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Interactions example, tidymodels&lt;/h2&gt;
+&lt;p&gt;A good example for creating and evaluating interaction terms&lt;a href=&#34;#fn31&#34; class=&#34;footnote-ref&#34; id=&#34;fnref31&#34;&gt;&lt;sup&gt;31&lt;/sup&gt;&lt;/a&gt; is in &lt;a href=&#34;http://www.feat.engineering/complete-enumeration.html#complete-enumeration-simple-screening&#34;&gt;The Brute-Force Approach to Identifying Predictive Interactions, Simple Screening&lt;/a&gt; section of &lt;em&gt;Max Kuhn&lt;/em&gt; and &lt;em&gt;Kjell Johnson’s&lt;/em&gt; (free) online book “Feature Engineering and Selection: A Practical Approach for Predictive Models”.&lt;/p&gt;
+&lt;p&gt;The &lt;a href=&#34;https://github.com/topepo/FES/blob/master/07_Detecting_Interaction_Effects/7_04_The_Brute-Force_Approach_to_Identifying_Predictive_Interactions/ames_pairwise.R&#34;&gt;source code&lt;/a&gt; shows another approach for combining variables. The author uses…&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;combn()&lt;/code&gt; to create all combinations of variable names which are then…&lt;/li&gt;
+&lt;li&gt;turned into formulas and passed into &lt;code&gt;recipes::step_interact()&lt;/code&gt;, specifying the new columns to be created&lt;a href=&#34;#fn32&#34; class=&#34;footnote-ref&#34; id=&#34;fnref32&#34;&gt;&lt;sup&gt;32&lt;/sup&gt;&lt;/a&gt;…&lt;/li&gt;
+&lt;li&gt;for each interaction term…&lt;/li&gt;
+&lt;li&gt;in each associated model being evaluated&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The example uses a mix of packages and styles and is not a purely tidy approach – &lt;code&gt;tidymodels&lt;/code&gt; has also gone through a lot of development since “Feature Engineering and Selection…” was published in 2019&lt;a href=&#34;#fn33&#34; class=&#34;footnote-ref&#34; id=&#34;fnref33&#34;&gt;&lt;sup&gt;33&lt;/sup&gt;&lt;/a&gt;. Section 11.2 on &lt;a href=&#34;http://www.feat.engineering/greedy-simple-filters.html&#34;&gt;Greedy Search Methods, Simple Filters&lt;/a&gt; is also highly relevant.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;expand-via-join&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Expand via join&lt;/h2&gt;
+&lt;p&gt;You can take advantage of join&lt;a href=&#34;#fn34&#34; class=&#34;footnote-ref&#34; id=&#34;fnref34&#34;&gt;&lt;sup&gt;34&lt;/sup&gt;&lt;/a&gt; behavior to create all possible row combinations. In this case, the output will be the same as shown when using &lt;code&gt;expand()&lt;/code&gt; (except row order will be different).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;left_join(mutate(df_lists, id = 1),
+          mutate(df_lists, id = 1) %&amp;gt;% rename_at(vars(-one_of(&amp;quot;id&amp;quot;)), paste0, &amp;quot;2&amp;quot;)) %&amp;gt;%
+  select(-id)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;nested-tibbles&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Nested tibbles&lt;/h2&gt;
+&lt;p&gt;Creates list of tibbles rather than list of vectors – typically the first way lists as columns in dataframes is introduced.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ames_subset %&amp;gt;% 
+  pivot_longer(everything(), names_to = &amp;quot;var&amp;quot;, values_to = &amp;quot;list&amp;quot;) %&amp;gt;% 
+  group_by(var) %&amp;gt;% 
+  nest()&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pivot-and-then-summarise&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Pivot and then summarise&lt;/h2&gt;
+&lt;p&gt;(Almost) equivalent to the example in &lt;a href=&#34;#i.-nest-and-pivot&#34;&gt;I. Nest and pivot&lt;/a&gt;. Steps just run in a different order (row order will also be different).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ames_test %&amp;gt;% 
+  pivot_longer(cols = everything(), 
+             names_to = &amp;quot;var&amp;quot;, 
+             values_to = &amp;quot;vector&amp;quot;) %&amp;gt;% 
+  group_by(var) %&amp;gt;% 
+  summarise_all(list)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;gif-for-social-media&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Gif for social media&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;AmesHousing::make_ames() %&amp;gt;% 
+  select(Year = Year_Sold, Price = Sale_Price) %&amp;gt;% 
+  # I.
+  group_by(Year) %&amp;gt;% 
+  summarise(Price = list(Gr_Liv_Area)) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  # II.
+  expand(nesting(Year, Price),
+         nesting(Year2 = Year, Price2 = Price)
+  ) %&amp;gt;%
+  # III.
+  filter(Year != Year2) %&amp;gt;% 
+  mutate(Years = map2_chr(.x = Year, 
+                          .y = Year2, 
+                          .f = c_sort_collapse)) %&amp;gt;%
+  distinct(Years, .keep_all = TRUE) %&amp;gt;% 
+  select(-Years) %&amp;gt;% 
+  #IV.
+  mutate(ks_test = map2(Price, 
+                        Price2, 
+                        stats::ks.test) %&amp;gt;% map_dbl(&amp;quot;p.value&amp;quot;)
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-05-31-tidy-2-way-column-combinations_files/pairwise-comparison-gif-edit.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Actual gif was created by embedding above code into a presentation and exporting it as a gif and then making a few minor edits.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;session-info&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Session info&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sessionInfo()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## R version 3.5.1 (2018-07-02)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 10 x64 (build 18363)
+## 
+## Matrix products: default
+## 
+## locale:
+## [1] LC_COLLATE=English_United States.1252 
+## [2] LC_CTYPE=English_United States.1252   
+## [3] LC_MONETARY=English_United States.1252
+## [4] LC_NUMERIC=C                          
+## [5] LC_TIME=English_United States.1252    
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] forcats_0.4.0   stringr_1.4.0   dplyr_1.0.1     purrr_0.3.4    
+## [5] readr_1.3.1     tidyr_1.1.1     tibble_3.0.3    ggplot2_3.3.2  
+## [9] tidyverse_1.2.1
+## 
+## loaded via a namespace (and not attached):
+##  [1] fs_1.3.2            usethis_1.4.0       lubridate_1.7.4    
+##  [4] devtools_2.0.0      RColorBrewer_1.1-2  httr_1.4.0         
+##  [7] rprojroot_1.3-2     tools_3.5.1         backports_1.1.8    
+## [10] utf8_1.1.4          R6_2.4.1            rpart_4.1-13       
+## [13] Hmisc_4.1-1         colorspace_1.4-1    nnet_7.3-12        
+## [16] withr_2.2.0         gridExtra_2.3       tidyselect_1.1.0   
+## [19] prettyunits_1.1.1   processx_3.4.2      curl_3.3           
+## [22] compiler_3.5.1      cli_2.0.2           rvest_0.3.4        
+## [25] htmlTable_1.12      mice_3.8.0          xml2_1.2.0         
+## [28] desc_1.2.0          labeling_0.3        bookdown_0.11      
+## [31] checkmate_2.0.0     scales_1.1.1        corrr_0.4.2.9000   
+## [34] callr_3.4.3         digest_0.6.25       foreign_0.8-70     
+## [37] rmarkdown_1.13      base64enc_0.1-3     pkgconfig_2.0.3    
+## [40] htmltools_0.5.0     sessioninfo_1.1.1   htmlwidgets_1.3    
+## [43] rlang_0.4.7         readxl_1.3.1        rstudioapi_0.11    
+## [46] farver_2.0.3        generics_0.0.2      jsonlite_1.6.1     
+## [49] gtools_3.8.2        acepack_1.4.1       magrittr_1.5       
+## [52] Formula_1.2-3       Matrix_1.2-14       Rcpp_1.0.4.6       
+## [55] munsell_0.5.0       fansi_0.4.1         lifecycle_0.2.0    
+## [58] weights_1.0.1       stringi_1.4.6       yaml_2.2.1         
+## [61] pkgbuild_1.1.0      grid_3.5.1          gdata_2.18.0       
+## [64] crayon_1.3.4        lattice_0.20-35     haven_2.1.0        
+## [67] splines_3.5.1       hms_0.5.2           knitr_1.29         
+## [70] ps_1.3.2            pillar_1.4.6        pkgload_1.0.2      
+## [73] glue_1.4.1          evaluate_0.14       blogdown_0.15      
+## [76] latticeExtra_0.6-28 data.table_1.12.8   remotes_2.1.0      
+## [79] modelr_0.1.4        vctrs_0.3.2         testthat_2.3.2     
+## [82] cellranger_1.1.0    gtable_0.3.0        assertthat_0.2.1   
+## [85] xfun_0.16           broom_0.7.0         AmesHousing_0.0.3  
+## [88] survival_2.42-3     memoise_1.1.0       cluster_2.0.7-1    
+## [91] ellipsis_0.3.1&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Will focus on two-way example in this post, but could use similar methods to make more generalizable solution across n-way examples. If I were to do this, the code below would change. E.g.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;to use &lt;code&gt;pmap*()&lt;/code&gt; operations over &lt;code&gt;map2*()&lt;/code&gt; operations&lt;/li&gt;
+&lt;li&gt;I’d need to make some functions that make it so I can remove all the places where I have &lt;code&gt;var&lt;/code&gt; and &lt;code&gt;var2&lt;/code&gt; type column names hard-coded&lt;/li&gt;
+&lt;li&gt;Alternatively, I might shift approaches and make better use of &lt;code&gt;combn()&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Though this “throw everything and the kitchen-sink” approach may not always be a good idea.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I’ve done this type of operation in a variety of ways. Sometimes without any really good reason as to why I used one approach or another. It isn’t completely clear (at least to me) the recommended way of doing these type of operations within the tidyverse – hence the diversity of my approaches in the past and deciding to document the typical steps in the approach I take… via writing this post.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;Or the tidymodels implementation &lt;code&gt;corrr::correlate()&lt;/code&gt; in the &lt;a href=&#34;https://corrr.tidymodels.org/&#34;&gt;corrr&lt;/a&gt; package.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;or is not in a style you prefer&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;I’ll also reference related approaches / small tweaks (putting those materials in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;. This is by no means an exhaustive list (e.g. don’t have an example with a &lt;code&gt;for&lt;/code&gt; loop or with a &lt;code&gt;%do%&lt;/code&gt; operator). The source code of my post on &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/&#34;&gt;Ambiguous Absolute Value&lt;/a&gt; signs shows a related but more complex / messy approach on a combinatorics problem.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;In particular, the chapters on “Iteration” and “Many Models” in &lt;a href=&#34;https://r4ds.had.co.nz/iteration.html&#34;&gt;R for Data Science&lt;/a&gt;. I would also recommend Rebecca Barter’s &lt;a href=&#34;http://www.rebeccabarter.com/blog/2019-08-19_purrr/&#34;&gt;Learn to purrr&lt;/a&gt; blog post.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;The new &lt;code&gt;dplyr&lt;/code&gt; 1.0.0. contains new functions that would have been potentially useful for several of these operations. I highly recommend checking these updates out in the various &lt;a href=&#34;https://www.tidyverse.org/tags/dplyr-1-0-0/&#34;&gt;recent posts&lt;/a&gt; by Hadley Wickham. Some of the major updates (potentially relevant to the types of operations I’ll be discussing in my post):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;new approach for across-column operations (replacing &lt;code&gt;_at()&lt;/code&gt;, &lt;code&gt;_if()&lt;/code&gt;, &lt;code&gt;_all()&lt;/code&gt; variants with &lt;code&gt;across()&lt;/code&gt; function)&lt;/li&gt;
+&lt;li&gt;brought-back rowwise operations&lt;/li&gt;
+&lt;li&gt;emphasize ability to output tibbles / multiple columns in core &lt;code&gt;dplyr&lt;/code&gt; verbs. This is something I had only taken advantage of occassionally in the past (&lt;a href=&#34;https://stackoverflow.com/a/54725732/9059865&#34;&gt;example&lt;/a&gt;), but will look to use more going forward.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;f I’d spotted this issue initially I’m not sure I would have written this post. However what this post offers is a more verbose treatment of the problem which may be useful for people newer to pairwise operations or the tidyverse.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;For technical reasons, I also converted all integer types to doubles – was getting integer overflow problems in later operations before changing. &lt;a href=&#34;https://stackoverflow.com/questions/8804779/what-is-integer-overflow-in-r-and-how-can-it-happen&#34;&gt;Thread&lt;/a&gt; on integer overflow in R. In this post I’m not taking a disciplined approach to feature engineering. For example it may make sense to normalize the variables so that variable combinations would be starting on a similar scale. This could be done using &lt;code&gt;recipes::step_normalize()&lt;/code&gt; or with code like &lt;code&gt;dplyr::mutate_all(df, ~(. - mean(.)) / sd(.))&lt;/code&gt; .&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Note that this part of the problem is one where I actually find using &lt;code&gt;tidyr::gather()&lt;/code&gt; easier – but I’ve been forcing myself to switch over to using the &lt;code&gt;pivot_()&lt;/code&gt; functions over &lt;code&gt;spread()&lt;/code&gt; and &lt;code&gt;gather()&lt;/code&gt;.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;The more common approach.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;If your variables are across rows you are likely concerned with getting summary metrics rather than creating new features – as if your data is across rows there is nothing guaranteeing you have the same number of observations or that they are lined-up appropriately. If you &lt;em&gt;are&lt;/em&gt; interested in creating new features, you should probably have first reshaped your data to ensure each column represented a variable.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;As switching these would be more computationally efficient – see &lt;a href=&#34;#when-is-this-approach-inappropriate&#34;&gt;When is this approach inappropriate?&lt;/a&gt; for notes related to this. Switching the order here would suggest using approaches with the&lt;code&gt;combn()&lt;/code&gt; function.&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;I.e. has the same output regardless of the order of the variables. E.g. multiplication or addition but not subtraction or division.&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;Function(s) that output vectors of length 1 (or less than length of input vectors).&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;Note that the pairwise implementation &lt;code&gt;psych::corr.test()&lt;/code&gt; could have been used on your original subsetted dataframe, see &lt;a href=&#34;https://stackoverflow.com/questions/13112238/a-matrix-version-of-cor-test&#34;&gt;stack overflow thread&lt;/a&gt;.&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn18&#34;&gt;&lt;p&gt;Function(s) that output vector of length equal to length of input vectors.&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;Did not print this output because cluttered-up page with so many column names.&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn20&#34;&gt;&lt;p&gt;Steps I - III and V &amp;amp; VI are essentially direct copies of the code above. The approach I took with Step IV may take more effort to follow as it requires understanding a little &lt;code&gt;rlang&lt;/code&gt; and could likely have been done more simply.&lt;a href=&#34;#fnref20&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn21&#34;&gt;&lt;p&gt;Must have two vectors as input, but do not need to be infix functions.&lt;a href=&#34;#fnref21&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn22&#34;&gt;&lt;p&gt;Non-technical article discussing combinatorial explosion in context of company user growth targets: &lt;a href=&#34;https://medium.com/@TorBair/exponential-growth-isn-t-cool-combinatorial-growth-is-85a0b1fdb6a5&#34;&gt;Exponential Growth Isn’t Cool. Combinatorial Growth Is.&lt;/a&gt;.&lt;a href=&#34;#fnref22&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn23&#34;&gt;&lt;p&gt;E.g. &lt;a href=&#34;https://github.com/Rdatatable/data.table&#34;&gt;data.table&lt;/a&gt; dataframes&lt;a href=&#34;#fnref23&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;Hence, if you are doing operations across combinations of lots of variables it may not make sense to do the operations directly within dataframes.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;Much (if not most) of the &lt;code&gt;tidyverse&lt;/code&gt; (and the R programming language generally) is about creating a smooth interface between the analyst/scientist and the back-end complexity of the operations they are performing. Projects like &lt;a href=&#34;https://spark.rstudio.com/&#34;&gt;sparklyr&lt;/a&gt;, &lt;a href=&#34;https://db.rstudio.com/dbi/&#34;&gt;DBI&lt;/a&gt;, &lt;a href=&#34;https://github.com/rstudio/reticulate&#34;&gt;reticulate&lt;/a&gt;, &lt;a href=&#34;https://www.tidymodels.org/&#34;&gt;tidymodels&lt;/a&gt;, and &lt;a href=&#34;https://github.com/paul-buerkner/brms&#34;&gt;brms&lt;/a&gt; (to name a few) represent cases where this &lt;em&gt;interface&lt;/em&gt; role of R is most apparent.&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn26&#34;&gt;&lt;p&gt;For tidyverse packages, this is often returned into or in the form of a dataframe.&lt;a href=&#34;#fnref26&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn27&#34;&gt;&lt;p&gt;Could make better use of &lt;code&gt;combn()&lt;/code&gt; function to help.&lt;a href=&#34;#fnref27&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn28&#34;&gt;&lt;p&gt;Depending on the complexity may just need to brush-up on your linear algebra.&lt;a href=&#34;#fnref28&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn29&#34;&gt;&lt;p&gt;&lt;code&gt;corrr&lt;/code&gt; can also be used to run the operation on databases that may have larger data than you could fit on your computer.&lt;a href=&#34;#fnref29&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn30&#34;&gt;&lt;p&gt;Likely more common for many, if not most, analysts and data scientists.&lt;a href=&#34;#fnref30&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn31&#34;&gt;&lt;p&gt;I.e. multiplying two variables together&lt;a href=&#34;#fnref31&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn32&#34;&gt;&lt;p&gt;Created upon the recipe being &lt;em&gt;baked&lt;/em&gt; or &lt;em&gt;juiced&lt;/em&gt; – if you have not checked it out, &lt;a href=&#34;https://github.com/tidymodels/recipes&#34;&gt;recipes&lt;/a&gt; is AWESOME!&lt;a href=&#34;#fnref32&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn33&#34;&gt;&lt;p&gt;Maybe at a future date I’ll make a post writing out the example here using the newer approaches now available in &lt;code&gt;tidymodels&lt;/code&gt;. &lt;a href=&#34;https://gist.github.com/brshallo/674ff06608c1a55fefb8d5dc49896d65&#34;&gt;Gist&lt;/a&gt; of &lt;code&gt;combn_ttible()&lt;/code&gt;… starting place for if I ever get to that write-up.&lt;a href=&#34;#fnref33&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn34&#34;&gt;&lt;p&gt;Could also have used &lt;code&gt;right_join()&lt;/code&gt; or &lt;code&gt;full_join()&lt;/code&gt;.&lt;a href=&#34;#fnref34&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -44,9 +759,319 @@
       <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/03/04/riddler-solutions-pedestrian-puzzles/</guid>
-      <description>Riddler expressRiddler classicAppendixTime to centerTransform grid, rotate firstTransform city, prettyThis post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, Riddler Express and Riddler Classic. I created a toy package animatrixr to help with some of the visualizations and computations for my solutions1.
-Riddler expressThe riddle:
-Riddler City is a large circular metropolis, with countless square city blocks that each have a side length of 1 km.</description>
+      <description>
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#riddler-express&#34;&gt;Riddler express&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#riddler-classic&#34;&gt;Riddler classic&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#time-to-center&#34;&gt;Time to center&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#transform-grid-rotate-first&#34;&gt;Transform grid, rotate first&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#transform-city-pretty&#34;&gt;Transform city, pretty&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; and &lt;a href=&#34;#riddler-classic&#34;&gt;Riddler Classic&lt;/a&gt;. I created a &lt;em&gt;toy&lt;/em&gt; package &lt;a href=&#34;https://github.com/brshallo/animatrixr&#34;&gt;animatrixr&lt;/a&gt; to help with some of the visualizations and computations for my solutions&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;riddler-express&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Riddler express&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;The riddle:&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Riddler City is a large circular metropolis, with countless square city blocks that each have a side length of 1 km. A small section of the city, composed of 36 blocks, is shown in the diagram below:
+&lt;img src=&#34;https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-9.41.05-PM.png?w=1150&#34; style=&#34;width:50.0%&#34; /&gt;
+At the very center of the city lies Riddler City Hall. Its many employees all walk to and from work, and their homes are evenly scattered across the city. The sidewalks they walk along have always been adjacent to the streets — but that may be changing.
+Recently, several city hall employees submitted a petition, requesting that the sidewalks should no longer lie alongside the streets. Instead, they want the sidewalks to cut diagonally across the city, connecting nearby street intersections. These proposed sidewalks are represented by the thicker blue lines in the diagram below:
+&lt;img src=&#34;https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-9.52.37-PM.png?w=1150&#34; style=&#34;width:50.0%&#34; /&gt;
+The mayor of Riddler City has tasked you with resolving this dispute in a mathematical manner. She would like you to answer the following question: What fraction of the city hall employees would have a shorter walk home (that is, to the street intersection nearest to their home) if the city replaced its traditional sidewalks with these diagonal sidewalks?&lt;/p&gt;
+&lt;p&gt;– &lt;a href=&#34;https://fivethirtyeight.com/contributors/zach-wissner-gross/&#34;&gt;Zach Wissner-Gross&lt;/a&gt;, &lt;a href=&#34;https://fivethirtyeight.com/features/can-you-solve-this-rather-pedestrian-puzzle/&#34;&gt;“Can You Solve this Rather Pedestrian Puzzle,” FiveThirtyEight&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;My approach:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I. Create hypothetical simulation of city&lt;br /&gt;
+II. For each scenario, calculate Manhattan Distances from center for all points&lt;br /&gt;
+III. Make distances comparable by scaling by unit length of a city block&lt;br /&gt;
+IV. Compare distances between scenarios for all points; compute proportion that have shorter path with new diagonal sidewalks&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;I. Create hypothetical city&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;I first created a hypothetical 100 unit diameter version of this city&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;. I added residences at every point on a 100x100 grid and then removed those points that had a euclidean distance&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt; greater than 50 units from the center.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(animatrixr)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;radius &amp;lt;- 50
+df_start &amp;lt;- crossing(x = -radius:radius, y = -radius:radius) %&amp;gt;% 
+  #Removes points with euclidian distance from center &amp;gt; radius:
+  filter(sqrt(x^2 + y^2) &amp;lt;= radius)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;II. Calculate Manhattan Distances&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;For both scenarios, we need to calculate the &lt;a href=&#34;https://en.wikipedia.org/wiki/Taxicab_geometry&#34;&gt;Manhattan length&lt;/a&gt;&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt; between the origin and every point. To calculate the Manhattan length on the new scenario, we first need to find what the residence’s coordinates would be in the new sidewalk grid. The new coordinate system could be thought of simply as a rotated and shrunken version of the existing grid&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;, which can be represented as applying the matrix transformation:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ M = \left(\begin{array}{cc} 0.5 &amp;amp; -0.5\\0.5  &amp;amp; 0.5 \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;(See &lt;a href=&#34;#transform-city-pretty&#34;&gt;Transform city, pretty&lt;/a&gt; in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; to view the code used to create the above visualization.)&lt;/p&gt;
+&lt;p&gt;Our residences are not changing locations, they would just have different coordinates specific to the new sidewalks – hence we will actually apply the inverse&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt; of this transformation to our starting coordinates. This will give us the position of our residences on the new (transformed) coordinate grid.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ M^{-1} = \left(\begin{array}{cc} 1 &amp;amp; 1\\-1  &amp;amp; 1 \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_trans &amp;lt;- df_start %&amp;gt;% 
+  mutate(x_trans = x,
+         y_trans = y) %&amp;gt;% 
+  # x_trans, y_trans represent the coordinates on the new plane
+  transform_df_coords(x_trans, y_trans, m = matrix(c(1, -1, 1, 1), nrow = 2))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We will then calculate the Manhattan lengths of the points on both the new and old coordinate systems – which (because we are comparing distance from the origin: 0,0) can be computed as: &lt;span class=&#34;math inline&#34;&gt;\(Manhattan\;Length = |x| + |y|\)&lt;/span&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_units &amp;lt;- df_trans %&amp;gt;% 
+  mutate(a_units = abs(x) + abs(y),
+         b_units = abs(x_trans) + abs(y_trans))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;IV: Multiply Manhattan lengths by length of a block:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;The length of a block under the new and old scenarios are different (new diagonal sidewalks have shorter blocks), hence our current Manhattan lengths are not comparable. If we set the length of a single block on the original coordinate system as being 1 unit, then you can use the Pythagorean Theorem to find that the length of a block on the new sidewalks would be &lt;span class=&#34;math inline&#34;&gt;\(\frac{\sqrt{2}}{2}\)&lt;/span&gt;. We simply multiply our Manhattan lengths in each of our scenarios by their respective unit lengths (either 1 or ~0.7071).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists &amp;lt;- df_units %&amp;gt;% 
+  mutate(a_dist = 1 * a_units,
+         b_dist = (sqrt(2) / 2) * b_units)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The scaled distances can now be compared.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;V. Aggregate proportion difference:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Finally, we compute the proportion that have a shorter distance under the new sidewalks compared to the old sidewalks:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists %&amp;gt;% 
+  summarise(prop_shorter = (sum(b_dist &amp;lt; a_dist)/ n()) %&amp;gt;% round(2)) %&amp;gt;% 
+  knitr::kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;prop_shorter&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;em&gt;Riddler express solution:&lt;/em&gt; new diagonal sidewalks would be faster for 50% of people.&lt;/p&gt;
+&lt;p&gt;Let’s visualize which resident’s the new sidewalks would be faster for:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists %&amp;gt;% 
+  mutate(diagonal_faster = b_dist &amp;lt; a_dist) %&amp;gt;% 
+  ggplot(aes(x = x, y = y))+
+  geom_point(aes(colour = diagonal_faster))+
+  coord_fixed()+
+  ggforce::theme_no_axes()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;riddler-classic&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Riddler classic&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;The riddle:&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;From David Lewis comes an additional, original twist on Riddler City’s urban planning:&lt;/p&gt;
+&lt;p&gt;The mayor ultimately decided not to pursue diagonal sidewalks, but the petitioners haven’t given up yet. One of them recently visited Barcelona and was inspired by its octagonal city blocks.&lt;/p&gt;
+&lt;p&gt;Now, there’s a second petition on the mayor’s desk, asking that the grid layout of the city’s sidewalks be replaced with an octagonal pattern, represented by the thicker blue lines in the diagram below:
+&lt;img src=&#34;https://fivethirtyeight.com/wp-content/uploads/2020/02/Screen-Shot-2020-02-11-at-10.03.57-PM.png?w=1150&#34; style=&#34;width:50.0%&#34; /&gt;
+Under this second proposal, now what fraction of the employees would have a shorter walk home if the city replaced its traditional sidewalks with these new sidewalks?&lt;/p&gt;
+&lt;p&gt;– &lt;a href=&#34;https://fivethirtyeight.com/contributors/zach-wissner-gross/&#34;&gt;Zach Wissner-Gross&lt;/a&gt;, &lt;a href=&#34;https://fivethirtyeight.com/features/can-you-solve-this-rather-pedestrian-puzzle/&#34;&gt;“Can You Solve this Rather Pedestrian Puzzle,” FiveThirtyEight&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;My approach:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The Barcelona distance is just a combination of the Manhattan lengths of both the original and diagonal sidewalk grids (though with the unit lengths scaled differently)&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;. The unit lengths&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt; for the horizontal and diagonal components will depend on what proportion&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt; of a side is horizontal vs diagonal (corresponding with the original vs transformed grid from the &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; solution)&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;We can define our relevant side lengths as a function of x:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/barcelona_dist.jpg&#34; style=&#34;width:50.0%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[x : \frac{inverse\;of\;proportion\;horizontal}{2},\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[0 &amp;lt; x &amp;lt; 0.5\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[diagonal\;length = \sqrt{2}x\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[horizontal\;length = 1 - 2x\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;I’ll start by setting x = 0.25.&lt;/em&gt; Hence the Manhattan length of our horizontal component will be scaled by &lt;span class=&#34;math inline&#34;&gt;\(\frac{1}{2}\)&lt;/span&gt;, and our diagonal component will be scaled by &lt;span class=&#34;math inline&#34;&gt;\(\frac{\sqrt{2}}{4}\)&lt;/span&gt;. After scaling our components, we simply add them together to get our Barcelona distance&lt;a href=&#34;#fn11&#34; class=&#34;footnote-ref&#34; id=&#34;fnref11&#34;&gt;&lt;sup&gt;11&lt;/sup&gt;&lt;/a&gt; &lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;x &amp;lt;- 0.25
+side_length &amp;lt;- 1 - 2*x
+side_length_trans &amp;lt;- sqrt(2)*x
+
+df_dists_abc &amp;lt;- df_dists %&amp;gt;% 
+  mutate(c_dist_a = a_units * side_length,
+         c_dist_b = b_units * side_length_trans,
+         c_dist = c_dist_a + c_dist_b)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, for all points, we compare the travel distance on the new Barcelona grid compared to on the original horizontal grid and compute the percentage that have a shorter distance under the new sidewalks.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists_abc %&amp;gt;% 
+  summarise(prop_shorter = (sum(c_dist &amp;lt; a_dist)/ n()) %&amp;gt;% round(2)) %&amp;gt;% 
+  knitr::kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;prop_shorter&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;In the case (when x is set to 0.25) we see the proportion that is closer to City Hall (i.e. the center of our city&lt;a href=&#34;#fn13&#34; class=&#34;footnote-ref&#34; id=&#34;fnref13&#34;&gt;&lt;sup&gt;13&lt;/sup&gt;&lt;/a&gt;) is again 50%.&lt;/p&gt;
+&lt;p&gt;If we visualize in which locations the new Barcelona sidewalks have a shorter travel distance, we will see a similar result to that found in the &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; solution.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists_abc %&amp;gt;% 
+  mutate(barcelona_faster = c_dist &amp;lt; a_dist) %&amp;gt;% 
+  ggplot(aes(x = x, y = y))+
+  geom_point(aes(colour = barcelona_faster))+
+  coord_fixed()+
+  ggforce::theme_no_axes()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;We need to verify that ‘50% have a shorter walk’ is our solution regardless of what we set for x.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;To accomplish this, I wrote a function &lt;code&gt;summarise_proportion()&lt;/code&gt;, that will output the ‘Proportion Barcelona sidewalk distance is shorter’ across any given x between 0 and 0.5 (the possible values of x).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;summarise_proportion &amp;lt;- function(x, df_start = df_dists, out_data = FALSE){
+
+  x &amp;lt;- 0.25
+  side_length &amp;lt;- 1 - 2*x
+  side_length_trans &amp;lt;- sqrt(2)*x
+  
+  df_dists_out &amp;lt;- df_dists %&amp;gt;% 
+    mutate(c_dist_a = a_units * side_length,
+           c_dist_b = b_units * side_length_trans,
+           c_dist = c_dist_a + c_dist_b)
+  
+  if(out_data) return(df_dists_out)
+  
+  df_dists_out %&amp;gt;%
+    summarise(prop_shorter = (sum(c_dist &amp;lt; a_dist)/ n())) %&amp;gt;%  
+    pluck(&amp;quot;prop_shorter&amp;quot;)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Specifically I evaluated this ‘proportion shorter’ for &lt;em&gt;x&lt;/em&gt; set to each of &lt;span class=&#34;math inline&#34;&gt;\(0.01, 0.05, 0.09, ... 0.49\)&lt;/span&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;x_vec &amp;lt;- seq(from = 0.01, to = 0.49, by = 0.04)
+
+df_summary &amp;lt;- tibble(x = x_vec) %&amp;gt;% 
+  mutate(prop_shorter = map_dbl(x, summarise_proportion, df_start = df_dists) %&amp;gt;% round(2))
+
+df_summary %&amp;gt;% 
+  knitr::kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;x&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;prop_shorter&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.01&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.05&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.09&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.13&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.17&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.21&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.25&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.29&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.33&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.37&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.41&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.45&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;0.49&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;For each of these, &lt;em&gt;the new ‘Barcelona grid’ is faster for 50% of people&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;div id=&#34;time-to-center&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Time to center&lt;/h2&gt;
+&lt;p&gt;Visualize the distance to the center based on where people are in the city for each of the potential city grids.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_dists_abc %&amp;gt;% 
+  select(x, y, a_dist, b_dist, c_dist) %&amp;gt;% 
+  pivot_longer(cols = c(a_dist, b_dist, c_dist), names_to = &amp;quot;grid&amp;quot;, values_to = &amp;quot;distance&amp;quot;) %&amp;gt;% 
+  mutate(grid = fct_recode(grid, 
+                           &amp;quot;rectangular&amp;quot; = &amp;quot;a_dist&amp;quot;,
+                           &amp;quot;diagonal&amp;quot; = &amp;quot;b_dist&amp;quot;,
+                           &amp;quot;barcelona.25&amp;quot; = &amp;quot;c_dist&amp;quot;)) %&amp;gt;% 
+  ggplot(aes(x = x, y = y, colour = distance))+
+  geom_point()+
+  facet_wrap(~grid)+
+  coord_fixed()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This suggests that if the city were square shaped (rather than a circle) that the transformed (diagonal and Barcelona) sidewalks would have greater than 50% of the residents with a shorter travel distance to the center of the city.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;transform-grid-rotate-first&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Transform grid, rotate first&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;add_transformation(
+  m = matrix(c(0.5, 0.5,-0.5, 0.5), nrow = 2), 
+  seq_fun = seq_matrix_rotate_first) %&amp;gt;% 
+  animate_matrix()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_rotate_shrink.gif&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;transform-city-pretty&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Transform city, pretty&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;start_grid &amp;lt;- animatrixr::construct_grid(-8:8, -8:8) %&amp;gt;% 
+  mutate(index = row_number(),
+         time = 1L)
+
+end_grid &amp;lt;- animatrixr::transform_segment(start_grid,  m = matrix(c(0.5, 0.5,-0.5, 0.5), nrow = 2)) %&amp;gt;% 
+  mutate(time = 2L)
+
+house_points &amp;lt;- crossing(x = -3:3, y = -3:3) %&amp;gt;% 
+  mutate(symbol = emo::ji(&amp;quot;house&amp;quot;))
+
+city_hall &amp;lt;- tibble(x = 0, y = 0)
+
+p_pretty &amp;lt;- bind_rows(start_grid, end_grid) %&amp;gt;% 
+  ggplot()+
+  geom_segment(aes(x = x, y = y, xend = xend, yend = yend, group = index, colour = time))+
+  geom_text(aes(x = x, y = y, label = symbol), data = house_points, size = 8)+
+  geom_label(aes(x = x, y = y, label = &amp;quot;Riddler\nCity Hall&amp;quot;), data = city_hall, size = 8, color = &amp;quot;brown&amp;quot;)+
+  scale_colour_gradient(low = &amp;quot;black&amp;quot;, high = &amp;quot;royalblue3&amp;quot;)+
+  scale_x_continuous(breaks = -3L:3L, minor_breaks = NULL)+
+  scale_y_continuous(breaks = -3L:3L, minor_breaks = NULL)+
+  coord_fixed(xlim = c(-3, 3), ylim = c(-3, 3))+
+  theme_minimal()+
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        legend.position = &amp;quot;none&amp;quot;,
+        panel.border = element_rect(colour = &amp;quot;black&amp;quot;, fill=NA, size=1))
+
+p_pretty + 
+  gganimate::transition_states(time)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;And wrote a couple preliminary posts on animating matrix transformations that can be found &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/&#34;&gt;here&lt;/a&gt;&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Is large enough to get a reasonable approximation for the answer.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I.e. straight line distance.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;The Manhattan Length is just the shortest number of city blocks between points.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;I highly recommend the Essence of Linear Algebra video series, particularly chapter 3 (on Matrix Transformations) and &lt;a href=&#34;https://www.youtube.com/watch?v=P2LTAUO1TdA&#34;&gt;13&lt;/a&gt; (on Change of basis).&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;In R, you can use the &lt;code&gt;solve()&lt;/code&gt; function to give you the inverse of a matrix.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;We have already done most of the computations we’ll need and can follow similar steps to those taken in the &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; solution.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;I.e. length of an individual city block, or in this case, component of a city block.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;In the diagram below, we will actually have it be a function of one-half of the inverse of the proportion – this is because there are two diagonals adjoining each horizontal component.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, &lt;em&gt;x&lt;/em&gt;, of a triangle created by a diagonal.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Note that if we were to set x = 0, the distance from each location would be equivalent to the distances in our starting (horizontal) grid, and if we set x = 0.5, the distances would be equal to those in our transformed (diagonal) grid.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Note that we are not taking into account the tiny differences that emerge regarding starting location for each resident (i.e. which point within a Barcelona square should they start). If we make the grid arbitrarily large, these differences become inconsequential – hence we can ignore them.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;The origin of our coordinate systems.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -55,8 +1080,158 @@ Riddler expressThe riddle:
       <pubDate>Mon, 24 Feb 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</guid>
-      <description>This post is a continuation on my post from last week on Visualizing Matrix Transformations with gganimate. Both posts are largely inspired by Grant Sanderson’s beautiful video series The Essence of Linear Algebra and wanting to continue messing around with Thomas Lin Peterson’s fantastic gganimate package in R.
-As with the last post, I’ll describe trying to (very loosely) recreate a small part of the visualizations showing the geometry of matrix multiplication and changing basis vectors (using gganimate in R).</description>
+      <description>
+
+
+&lt;p&gt;This post is a continuation on my post from last week on &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/&#34;&gt;Visualizing Matrix Transformations with gganimate&lt;/a&gt;. Both posts are largely inspired by &lt;a href=&#34;https://twitter.com/3blue1brown&#34;&gt;Grant Sanderson’s&lt;/a&gt; beautiful video series &lt;a href=&#34;https://www.youtube.com/watch?v=kYB8IZa5AuE&amp;amp;list=PL_w8oSr1JpVCZ5pKXHKz6PkjGCbPbSBYv&amp;amp;index=4&#34;&gt;The Essence of Linear Algebra&lt;/a&gt; and wanting to continue messing around with &lt;a href=&#34;https://github.com/thomasp85/gganimate&#34;&gt;Thomas Lin Peterson’s&lt;/a&gt; fantastic &lt;a href=&#34;https://github.com/thomasp85/gganimate&#34;&gt;gganimate&lt;/a&gt; package in R.&lt;/p&gt;
+&lt;p&gt;As with the last post, I’ll describe trying to (very loosely) recreate a &lt;em&gt;small&lt;/em&gt; part of the visualizations showing the geometry of matrix multiplication and changing basis vectors (using &lt;code&gt;gganimate&lt;/code&gt; in R). (Once again, just in the 2x2 case.)&lt;/p&gt;
+&lt;p&gt;If you are &lt;em&gt;really&lt;/em&gt; interested in building visualizations like the ones shown on 3Blue1Brown, you should check-out the associated &lt;a href=&#34;https://github.com/3b1b/manim&#34;&gt;manim&lt;/a&gt; project on github.&lt;/p&gt;
+&lt;div id=&#34;topics-to-cover&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Topics to cover&lt;/h1&gt;
+&lt;p&gt;I had two major sections in the Appendix of last week’s post:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;“Multiple matrix transformations”&lt;/li&gt;
+&lt;li&gt;“Potential improvements” (where I mostly describe limitations around visualizing rotations)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This post expands on these topics.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;animatrixr-and-multiple-matrix-transformations&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;code&gt;animatrixr&lt;/code&gt; and multiple matrix transformations&lt;/h1&gt;
+&lt;p&gt;Sanderson discusses the value in sometimes decomposing a matrix transformation and thinking of its parts sequentially. I created a &lt;strong&gt;toy&lt;/strong&gt; package &lt;code&gt;animatrixr&lt;/code&gt; for building chained matrix transformations that can then be animated using &lt;code&gt;gganimate&lt;/code&gt;&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The function &lt;code&gt;animatrixr::add_transformation()&lt;/code&gt; lets you chain together matrix transformations with R’s pipe operator &lt;code&gt;%&amp;gt;%&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;For example, let’s consider three matrix transformations: horizontal sheer –&amp;gt; vertical sheer –&amp;gt; reflection across x-axis:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)
+
+if (!requireNamespace(&amp;quot;animatrixr&amp;quot;)) devtools::install_github(&amp;#39;brshallo/animatrixr&amp;#39;)
+library(animatrixr)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sheer_horizontal &amp;lt;- tribble(~ x, ~ y,
+                      1, 0.5,
+                      0, 1) %&amp;gt;%
+  as.matrix()
+
+sheer_vertical &amp;lt;- tribble(~ x, ~ y,
+                      1, 0,
+                      0.5, 1) %&amp;gt;%
+  as.matrix()
+
+reflect_x &amp;lt;- tribble(~ x, ~ y,
+                      1, 0,
+                      0, -1) %&amp;gt;%
+  as.matrix() &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now let’s visualize the transformations being applied sequentially:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
+  add_transformation(sheer_horizontal) %&amp;gt;% 
+  add_transformation(sheer_vertical) %&amp;gt;% 
+  add_transformation(reflect_x, 
+                     seq_fun = animatrixr::seq_matrix_l,
+                     n_frames = 40) %&amp;gt;% 
+  animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/vsheer-hsheer-reflect-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;add_transformation()&lt;/code&gt; explicitly creates in-between frames for a given transformation. The &lt;code&gt;seq_fun&lt;/code&gt; argument allows you to define the interpolation method, for example whether the coordinates should (during the animation) follow a linear path (default) or the angle of a rotation.&lt;/p&gt;
+&lt;p&gt;It would be nice to add-in functionality where the final transformation object could then be added to layers of a ggplot (though I’ve done nothing towards this except add an argument in &lt;code&gt;animatrixr::animate_matrix()&lt;/code&gt; for displaying the &lt;a href=&#34;https://github.com/lockedata/datasauRus&#34;&gt;datasauRus&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;(Warning: &lt;code&gt;animatrixr&lt;/code&gt; is severely limited, as discussed in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; and in package documentation. However you can find it at the “brshallo/animatrixr” repo on &lt;a href=&#34;https://github.com/brshallo/animatrixr&#34;&gt;my github page&lt;/a&gt;.)&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visualizing-rotations&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Visualizing rotations&lt;/h1&gt;
+&lt;p&gt;The &lt;code&gt;seq_fun&lt;/code&gt; argument within &lt;code&gt;add_transformation()&lt;/code&gt; specifies frames in-between the start and end states after a matrix transformation. By default it uses &lt;code&gt;animatrixr::seq_matrix_l&lt;/code&gt; which changes in-between coordinates linearly (as does &lt;code&gt;gganimate&lt;/code&gt;&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;Let’s look at a rotation where the in-between coordinates are interpolated linearly:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rotate_90 &amp;lt;- tribble(~ x, ~ y,
+                        cos(pi / 2), -sin(pi / 2),
+                        sin(pi / 2), cos(pi / 2)) %&amp;gt;%
+  as.matrix()
+
+matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
+  add_transformation(rotate_90) %&amp;gt;% 
+  animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-linear-1.gif&#34; width=&#34;71%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Linear interpolation makes the rotation transformation appear scrunched during the animation (from how we intuitively think of a rotation) as the coordinate points take a straight line path to their positions after applying the transformation&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;To make the in-between coordinates instead follow the angle of rotation we could change the &lt;code&gt;seq_fun&lt;/code&gt; from &lt;code&gt;animatrixr::seq_matrix_l&lt;/code&gt; to &lt;code&gt;animatrixr::seq_matrix_lp&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
+  add_transformation(rotate_90, seq_fun = animatrixr::seq_matrix_lp) %&amp;gt;% 
+  animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-polar-sheer-linear-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;During the rotation portion of the animation &lt;code&gt;gganimate&lt;/code&gt; is still tweening images linearly, however the frames &lt;code&gt;add_transformation()&lt;/code&gt; creates are now following along the angle of rotation of the transformation. Hence the animation ends-up approximating a curved path.&lt;/p&gt;
+&lt;p&gt;However, &lt;code&gt;seq_matrix_lp()&lt;/code&gt; needs improvement and was just set-up to work for toy examples – it really only looks ‘right’ if doing rotations off of &lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} 1 &amp;amp; 0\\0  &amp;amp; 1 \end{array}\right)\]&lt;/span&gt; See &lt;a href=&#34;#showing-rotations&#34;&gt;Showing rotations&lt;/a&gt; in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; for additional detail on how this is set-up and the various limitations with &lt;code&gt;animatrixr&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Happy animatrixing!&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# animatrixr::rotation_matrix() is helper function for creating matrix
+# transformations of rotations
+matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
+  add_transformation(animatrixr::rotation_matrix(pi / 2),
+                     seq_fun = animatrixr::seq_matrix_lp) %&amp;gt;% 
+  add_transformation(matrix(c(1, 0.5, 0, 1), nrow = 2)) %&amp;gt;% 
+  add_transformation(matrix(c(1, 0, 0, -1), nrow = 2)) %&amp;gt;% 
+  animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/unnamed-chunk-1-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;div id=&#34;using-animatrixr&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Using &lt;code&gt;animatrixr&lt;/code&gt;?&lt;/h2&gt;
+&lt;p&gt;This is a toy package (very hastily written). I have not put effort into thinking about making it usable for others. Also, some parts just don’t really work or aren’t set-up quite right… (as noted in the README and elsewhere in the package). But feel free to check-it out / improve it / make something better! Let me know if you do!&lt;/p&gt;
+&lt;p&gt;This has been a fun dabble into thinking (at least surface level) about animation. Though I don’t have any plans to add onto this (or write any more posts on this topic). If I do add anything, it will most likely just be cleaning-up the decomposition methods in the &lt;code&gt;seq_matrix*()&lt;/code&gt; functions. But no plans&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;notes-on-seq-functions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Notes on seq functions&lt;/h2&gt;
+&lt;p&gt;Below are additional notes on the &lt;code&gt;animatrixr::seq_matrix*&lt;/code&gt; functions. They need some work, but here is a description of how they are currently set-up.&lt;/p&gt;
+&lt;div id=&#34;showing-rotations&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Showing rotations&lt;/h3&gt;
+&lt;p&gt;To animate the rotation of a transformation, &lt;code&gt;add_transformation(m = matrix(c(0, 1, -1, 0), nrow = 2), seq_fun = seq_matrix_lp)&lt;/code&gt; explicitly creates in-between frames on the path the points would follow if they were instead following polar coordinates along the angle of rotation. In the next few sections I’ll discuss the process for doing this (again, this is not necessarily an ideal set-up).&lt;/p&gt;
+&lt;p&gt;Given any 2x2 matrix:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} a &amp;amp; b\\ c &amp;amp; d \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;you can use the equation &lt;code&gt;atan2(c, a)&lt;/code&gt; to extract the angle of rotation from the matrix&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt; and then create a sequence from the starting angle of rotation to the final angle of rotation.&lt;/p&gt;
+&lt;p&gt;For example, if my start angle is &lt;span class=&#34;math inline&#34;&gt;\(0^\circ\)&lt;/span&gt;, and final angle of rotation is at &lt;span class=&#34;math inline&#34;&gt;\(38^\circ\)&lt;/span&gt; and I have 20 frames, then my sequence would be:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[0^\circ, 2^\circ, ... 38^\circ\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;A rotation matrix is defined as:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} cos(\theta) &amp;amp; -sin(\theta)\\ sin(\theta) &amp;amp; cos(\theta) \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Hence I can convert my sequence of angles into a sequence of matrices that define the rotations applied for each explicit in-between frame.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+\left(\begin{array}{cc} cos(0^\circ) &amp;amp; -sin(0^\circ)\\ sin(0^\circ) &amp;amp; cos(0^\circ) \end{array}\right), 
+\left(\begin{array}{cc} cos(2^\circ) &amp;amp; -sin(2^\circ)\\ sin(2^\circ) &amp;amp; cos(2^\circ) \end{array}\right)...
+\left(\begin{array}{cc} cos(28^\circ) &amp;amp; -sin(28^\circ)\\ sin(28^\circ) &amp;amp; cos(28^\circ) \end{array}\right)
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;seq_matrix_lp-applied-on-non-standard-unit-basis-vectors&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;code&gt;seq_matrix_lp&lt;/code&gt; applied on non-standard unit basis vectors&lt;/h3&gt;
+&lt;p&gt;If you input a matrix transformation into &lt;code&gt;seq_matrix_lp&lt;/code&gt; that is not a pure rotation from the unit vectors it will decompose the matrix into a &lt;em&gt;rotation&lt;/em&gt; component and &lt;em&gt;other&lt;/em&gt; component&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;, the &lt;em&gt;other&lt;/em&gt; component creates a sequence of matrices that have the in-between frames interpolated linearly. The sequence of &lt;em&gt;rotation&lt;/em&gt; and &lt;em&gt;other&lt;/em&gt; matrices are then recomposed to provide the final sequence.&lt;/p&gt;
+&lt;p&gt;This approach means that non-pure rotations on the unit vectors, etc. will not really look like rotations. I would need to factor in other components (e.g. scale) to improve this.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;show-rotation-first&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Show rotation first&lt;/h3&gt;
+&lt;p&gt;Beyond &lt;code&gt;seq_matrip_l()&lt;/code&gt; and &lt;code&gt;seq_matrix_lp()&lt;/code&gt;, I made another seq_matrix* function: &lt;code&gt;seq_matrix_rotate_first&lt;/code&gt; which (like &lt;code&gt;seq_matrix_lp&lt;/code&gt;) also decomposes a matrix into rotation and other components. Rather than interpolating these separately and then recomposing them (as &lt;code&gt;seq_matrix_lp&lt;/code&gt; does) &lt;code&gt;seq_matrix_rotate_first&lt;/code&gt; works by interpolating them separately and then applying the decomposed sequences sequentially – so the entire rotation component of the transformation will be animated and then the ‘other’ component will be animated (this makes for twice as many frames when there is a ‘rotation’ and ‘other’ component in the transformation matrix).&lt;/p&gt;
+&lt;p&gt;I.e. starting from our identity matrix and applying a single matrix transformation, it will automatically decompose this and animate the decomposed parts in two steps, &lt;span class=&#34;math inline&#34;&gt;\(I\)&lt;/span&gt; –&amp;gt; &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; and then from &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; –&amp;gt; &lt;span class=&#34;math inline&#34;&gt;\(M\)&lt;/span&gt;. Below is an example of the animation for the transformation matrix:
+&lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} 0 &amp;amp; -1\\1  &amp;amp; -0.5 \end{array}\right)\]&lt;/span&gt;
+(which could be decomposed into a rotation and a sheer part).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;transformation_matrix &amp;lt;- sheer_vertical %*% animatrixr::rotation_matrix(pi/4)
+
+matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
+  add_transformation(transformation_matrix, seq_fun = seq_matrix_rotate_first) %&amp;gt;% 
+  animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-sheer-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;There are (especially) a lot of problems with this function currently and I don’t recommend using it e.g.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;only works (at all correctly) if starting from standard unit vectors (hence cannot really be combined into a chain of matrix transformations)&lt;/li&gt;
+&lt;li&gt;rotation component extracted will vary depending on what ‘other’ is within M
+E.g. if M = {rotation}{vertical sheer} vs. M = {rotation}{horizontal sheer} – rotation component will look different&lt;/li&gt;
+&lt;li&gt;I defaulted the amount of frames given to the rotation component to be the same as the amount of frames given to other component. If the size of the rotation is small relative to the other part of the transformation (or vice versa) the timing will feel slow/jumpy.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Provides a cleaner approach for doing this compared to the clunky method I walked through in my post last week.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;All visualizations from last week used this linear interpolation method.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I discuss this at more length in my previous post – see the sub-section in the “Appendix”, “Problem of squeezing during rotation”.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;However I also hadn’t planned on writing a follow-up post… so who knows…&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;See &lt;a href=&#34;https://computergraphics.stackexchange.com/questions/3932/animating-a-smooth-linear-transformation&#34;&gt;post&lt;/a&gt; referencing this.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;To find the ‘other’ component of a matrix transformation… say &lt;em&gt;M&lt;/em&gt; represents the overall matrix transformation, in &lt;a href=&#34;#showing-rotations&#34;&gt;Showing rotations&lt;/a&gt; I described how to calculate &lt;em&gt;R&lt;/em&gt; (the rotation component), hence to calculate &lt;em&gt;A&lt;/em&gt;, ‘other’, I do:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AR = M\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[ARR^{-1} = MR^{-1}\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[A = MR^{-1}\]&lt;/span&gt;&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -65,9 +1240,459 @@ As with the last post, I’ll describe trying to (very loosely) recreate a small
       <pubDate>Thu, 20 Feb 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/02/20/visualizing-matrix-transformations-with-gganimate/</guid>
-      <description>I highly recommend the fantastic video series Essence of Linear Algebra by Grant Sanderson. In this post I’ll walk through how you can use gganimate and the tidyverse to (very loosely) recreate some of the visualizations shown in that series. Specifically those on matrix transformations and changing the basis vectors1.
+      <description>
 
-This post is an offshoot of a post of my solutions to this week’s FiveThirtyEight Riddler. To support my solution, I was trying to visualize matrix transformations.</description>
+
+&lt;p&gt;I highly recommend the fantastic video series &lt;a href=&#34;https://www.youtube.com/watch?v=fNk_zzaMoSs&amp;amp;list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab&#34;&gt;Essence of Linear Algebra&lt;/a&gt; by &lt;a href=&#34;https://twitter.com/3blue1brown&#34;&gt;Grant Sanderson&lt;/a&gt;. In this post I’ll walk through how you can use &lt;code&gt;gganimate&lt;/code&gt; and the &lt;code&gt;tidyverse&lt;/code&gt; to (very loosely) recreate some of the visualizations shown in that series. Specifically those on matrix transformations and changing the basis vectors&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/kYB8IZa5AuE?start=234&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;&lt;br/&gt;&lt;/p&gt;
+This post is an offshoot of a &lt;a href=&#34;https://www.bryanshalloway.com/2020/03/04/riddler-solutions-pedestrian-puzzles/&#34;&gt;post of my solutions&lt;/a&gt; to this week’s &lt;a href=&#34;https://fivethirtyeight.com/features/can-you-solve-this-rather-pedestrian-puzzle/&#34;&gt;FiveThirtyEight Riddler&lt;/a&gt;. To support my solution, I was trying to visualize matrix transformations. I reached-out to &lt;a href=&#34;https://twitter.com/thomasp85&#34;&gt;Thomas Lin Peterson&lt;/a&gt;:
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+I do not. Would love to see it, though🙂
+&lt;/p&gt;
+— Thomas Lin Pedersen (&lt;span class=&#34;citation&#34;&gt;@thomasp85&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/thomasp85/status/1230171239077105666?ref_src=twsrc%5Etfw&#34;&gt;February 19, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;p&gt;… figured I’d share what I’ve patched together so far 🎉 (will just be looking at transformations by 2x2 matrices).&lt;/p&gt;
+&lt;p&gt;In this post (unlike in those previous) I’ve exposed most of the code directly in the blog, but the raw RMD file is also on my &lt;a href=&#34;https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-20-visualizing-matrix-transformations-with-gganimate.Rmd&#34;&gt;github page&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I also wrote a follow-up to this blog post that can be found &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/&#34;&gt;here&lt;/a&gt;, which walks through &lt;a href=&#34;https://github.com/brshallo/animatrixr&#34;&gt;animatrixr&lt;/a&gt;: a rudimentary package I wrote for piping together matrix transformations for animations. This first post provides some documentation on some of the functions that ended-up within &lt;code&gt;animatrixr&lt;/code&gt;, but you might also just start directly on the follow-up post.&lt;/p&gt;
+&lt;div id=&#34;quick-start&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Quick start&lt;/h1&gt;
+&lt;p&gt;I made a &lt;a href=&#34;https://gist.github.com/brshallo/6a125f9c96dac5445cebb97cc62bfc9c&#34;&gt;gist&lt;/a&gt;&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt; containing the functions needed to produce a simple animation of a 2x2 matrix transformation. If you are reading this post with the sole goal of creating an animation like the one below&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;, you can copy and run this code chunk to render a 2x2 matrix transformation gif (the input to argument &lt;code&gt;m&lt;/code&gt; can be any &lt;em&gt;2x2&lt;/em&gt; matrix of interest).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;if (!requireNamespace(&amp;quot;devtools&amp;quot;)) install.packages(&amp;quot;devtools&amp;quot;)
+devtools::source_gist(&amp;quot;https://gist.github.com/brshallo/6a125f9c96dac5445cebb97cc62bfc9c&amp;quot;)
+
+animate_matrix_transformation(m = matrix(c(0.5, 0.5, 0.5, -0.25), nrow = 2))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/unnamed-chunk-13-1.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Over the next several sections I’ll walk through the thinking behind this code (culminating in the &lt;a href=&#34;#visualizations&#34;&gt;Visualizations&lt;/a&gt; section, where this animation will be shown again). Sections in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; contain variations on this animation that add-on additional simple transformations and layers.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;helper-functions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Helper functions&lt;/h1&gt;
+&lt;p&gt;&lt;code&gt;construct_grid()&lt;/code&gt;: given vectors of x and y intercepts, return a dataframe with columns &lt;code&gt;x&lt;/code&gt;, &lt;code&gt;y&lt;/code&gt;, &lt;code&gt;xend&lt;/code&gt;, &lt;code&gt;yend&lt;/code&gt; (meant for input into &lt;code&gt;geom_segment()&lt;/code&gt;).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;construct_grid &amp;lt;- function(xintercepts = -5:5, yintercepts = -5:5){
+  bind_rows(
+    crossing(x = xintercepts,
+             y = min(yintercepts),
+             yend = max(yintercepts)) %&amp;gt;%
+      mutate(xend = x),
+    crossing(y = yintercepts,
+             x = min(xintercepts),
+             xend = max(xintercepts)) %&amp;gt;%
+      mutate(yend = y)
+  ) %&amp;gt;% 
+    select(x, y, xend, yend)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;Use with &lt;code&gt;geom_segment()&lt;/code&gt; to make simple grids:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;construct_grid() %&amp;gt;% 
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend))+
+  geom_segment()+
+  coord_fixed()+
+  ggforce::theme_no_axes()+
+  theme(panel.border = element_blank())&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;transform_df_coords()&lt;/code&gt;: Given dataframe, column names of coordinates&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;, and a transformation matrix, return dataframe with transformed coordinates.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;transform_df_coords &amp;lt;- function(df, ..., m = diag(length(df))){
+  
+  df_names &amp;lt;- names(df)
+  
+  df_coords &amp;lt;- df %&amp;gt;% 
+    select(...)
+  
+  df_coords_names &amp;lt;- names(df_coords)
+  
+  df_matrix &amp;lt;- df_coords %&amp;gt;% 
+    as.matrix() %&amp;gt;% 
+    t()
+  
+  df_coords_new &amp;lt;- (m %*% df_matrix) %&amp;gt;% 
+    t() %&amp;gt;% 
+    as_tibble() %&amp;gt;% 
+    set_names(df_coords_names)
+  
+  df_other &amp;lt;- df %&amp;gt;% 
+    select(-one_of(df_coords_names))
+  
+  bind_cols(df_coords_new, df_other) %&amp;gt;% 
+    select(df_names)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;transform_df_coords()&lt;/code&gt; is just matrix multiplication, but facilitates applying matrix transformations on a dataframe where each row (in specified columns) represents a vector / coordinate point&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Example in&lt;/em&gt; &lt;span class=&#34;math inline&#34;&gt;\(\mathbb{R}^2\)&lt;/span&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;transform_df_coords(tibble(x = 1:4, y = 1:4), x, y, m = matrix(1:4, nrow = 2)) %&amp;gt;% 
+  knitr::kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;x&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;y&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;4&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;8&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;12&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;12&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;18&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;16&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;24&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Again, this is the same as:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} 1 &amp;amp; 3\\ 2 &amp;amp; 4 \end{array}\right)
+\left(\begin{array}{cc} 1 &amp;amp; 2 &amp;amp; 3 &amp;amp; 4 \\ 1 &amp;amp; 2 &amp;amp; 3 &amp;amp; 4 \end{array}\right) 
+= \left(\begin{array}{cc} 4 &amp;amp; 8 &amp;amp; 12 &amp;amp; 16 \\ 6 &amp;amp; 12 &amp;amp; 18 &amp;amp; 24 \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;(Just with a ‘tidy’ dataframe as output.)&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Also works with more dimensions, see example in&lt;/em&gt; &lt;span class=&#34;math inline&#34;&gt;\(\mathbb{R}^3\)&lt;/span&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;transform_df_coords(tibble(x = 1:5, y = 1:5, z = 1:5), x, y, z, m = matrix(1:9, nrow = 3)) %&amp;gt;% 
+  knitr::kable()&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;x&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;y&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;z&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;12&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;15&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;18&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;24&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;30&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;36&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;36&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;45&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;54&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;48&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;60&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;72&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;60&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;75&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;90&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;However for our visualizations, we only care about examples in 2 dimensions (when we are applying a 2x2 matrix transformation).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;construct-objects-for-graph&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Construct objects for graph&lt;/h1&gt;
+&lt;p&gt;For a simple animation I will build dataframes that contain the coordinates for the following objects&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a &lt;em&gt;starting grid&lt;/em&gt; and a &lt;em&gt;transformed grid&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;a &lt;em&gt;starting basis vector&lt;/em&gt; and a &lt;em&gt;transformed basis vector&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To play nicely with &lt;code&gt;gganimate&lt;/code&gt; the start and transformed objects need to have additional properties&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a field that groups like objects across the animation (e.g. &lt;code&gt;id&lt;/code&gt; column)&lt;/li&gt;
+&lt;li&gt;a field that designates transitions between &lt;em&gt;start&lt;/em&gt; and &lt;em&gt;transformed&lt;/em&gt; states (e.g. &lt;code&gt;time&lt;/code&gt; column)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For my example I will be applying the following matrix transformation to our basis vectors&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;.
+&lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} 0.5 &amp;amp; 0.5\\ 0.5 &amp;amp; -0.25 \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Define transformation matrix:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# same as above examples using `matrix()` but I find inputting into tribble more
+# intuitive for 2x2 matrix
+transformation_matrix &amp;lt;- tribble(~ x, ~ y,
+                                 0.5, 0.5,
+                                 0.5, -0.25) %&amp;gt;% 
+  as.matrix()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;Construct grids:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;grid_start &amp;lt;- construct_grid() %&amp;gt;% 
+  mutate(id = row_number())
+
+grid_trans &amp;lt;- grid_start %&amp;gt;% 
+  # need to `transform_df_coords()` twice as each segment is made up of 2 points
+  transform_df_coords(x, y, m = transformation_matrix) %&amp;gt;% 
+  transform_df_coords(xend, yend, m = transformation_matrix)
+
+grid_all &amp;lt;- bind_rows(
+  mutate(grid_start, time = 1),
+  mutate(grid_trans, time = 2)
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;Construct basis vectors:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;basis_start &amp;lt;- tibble(
+  x = c(0, 0),
+  y = c(0, 0),
+  xend = c(1, 0),
+  yend = c(0, 1),
+  # `vec` is unnecessary, will just use to differentiate colors
+  vec = c(&amp;quot;i&amp;quot;, &amp;quot;j&amp;quot;)
+) %&amp;gt;% 
+  mutate(id = nrow(grid_start) + row_number())
+
+basis_trans &amp;lt;- basis_start %&amp;gt;% 
+  transform_df_coords(x, y, m = transformation_matrix) %&amp;gt;% 
+  transform_df_coords(xend, yend, m = transformation_matrix)
+
+basis_all &amp;lt;- bind_rows(
+  mutate(basis_start, time = 1),
+  mutate(basis_trans, time = 2)
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;build-visualization&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Build visualization&lt;/h1&gt;
+&lt;p&gt;&lt;em&gt;Define breaks in grid:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# If you just want to use the starting grid for the breaks, could do
+x_breaks &amp;lt;- unique(grid_start$x)
+y_breaks &amp;lt;- unique(grid_start$y)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;Define visualization:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p &amp;lt;- ggplot(aes(x = x, y = y, group = id), data = grid_all)+
+  geom_segment(aes(xend = xend, yend = yend))+
+  geom_segment(aes(xend = xend, yend = yend, colour = vec), data = basis_all, arrow = arrow(length = unit(0.02, &amp;quot;npc&amp;quot;)), size = 1.2)+
+  scale_x_continuous(breaks = x_breaks, minor_breaks = NULL)+
+  scale_y_continuous(breaks = y_breaks, minor_breaks = NULL)+
+  coord_fixed()+
+  theme_minimal()+
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        legend.position = &amp;quot;none&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;visualizations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Visualizations&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;Static image:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Animation&lt;/em&gt;&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p + gganimate::transition_states(time, wrap = FALSE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-14-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;And there it is. To view a different matrix transformation, simply change the &lt;code&gt;transformation_matrix&lt;/code&gt; defined above and re-run the code chunks&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt; or see the &lt;a href=&#34;#quick-start&#34;&gt;Quick start&lt;/a&gt; section.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;p&gt;The code used to construct images within the appendix is very similar to code already shown&lt;a href=&#34;#fn11&#34; class=&#34;footnote-ref&#34; id=&#34;fnref11&#34;&gt;&lt;sup&gt;11&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;on-changes&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;On changes&lt;/h2&gt;
+&lt;p&gt;In the few days after sharing this post on 2020-02-20, I made several changes to the images and notes (especially those within the appendix) that I think better clarified points or corrected mistakes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;multiple-matrix-transformations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Multiple matrix transformations&lt;/h2&gt;
+&lt;p&gt;I love how the “Essence of Linear Algebra” series explains how matrix transformations can be thought-of / broken-down sequentially. The same visualization can (kind-of) be set-up here – you just need to add-in an additional layer.&lt;/p&gt;
+&lt;p&gt;E.g. say, we want to apply a &lt;em&gt;rotation&lt;/em&gt; and then a &lt;em&gt;sheer&lt;/em&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rotate_trans &amp;lt;- tribble(~ x, ~ y,
+                        cos(pi / 2), -sin(pi / 2),
+                        sin(pi / 2), cos(pi / 2)) %&amp;gt;%
+  as.matrix()
+
+sheer_trans &amp;lt;- tribble(~ x, ~ y,
+                      1, 0,
+                      0.5, 1) %&amp;gt;%
+  as.matrix() &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I.e.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[\begin{bmatrix}
+1 &amp;amp; 0\\
+0.5 &amp;amp; 1 \\
+\end{bmatrix}
+\begin{bmatrix}
+0 &amp;amp; -1\\
+1 &amp;amp; 0 \\
+\end{bmatrix}X\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;I say &lt;em&gt;kind-of&lt;/em&gt; animate these because &lt;code&gt;gganimate&lt;/code&gt; transforms coordinates linearly, hence while a transformation may result in a rotation, the in-between states (where &lt;code&gt;gganimate&lt;/code&gt; fills in the gaps) will not look like a pure rotation. See &lt;a href=&#34;#potential-improvements&#34;&gt;Potential improvements&lt;/a&gt; for additional notes.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Construct grids:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;grid_start &amp;lt;- construct_grid() %&amp;gt;% 
+  mutate(id = row_number())
+
+grid_trans &amp;lt;- grid_start %&amp;gt;% 
+  # need to `transform_df_coords()` twice as each segment is made up of 2 points
+  transform_df_coords(x, y, m = rotate_trans) %&amp;gt;% 
+  transform_df_coords(xend, yend, m = rotate_trans)
+
+grid_trans2 &amp;lt;- grid_trans %&amp;gt;% 
+  # need to `transform_df_coords()` twice as each segment is made up of 2 points
+  transform_df_coords(x, y, m = sheer_trans) %&amp;gt;% 
+  transform_df_coords(xend, yend, m = sheer_trans)
+
+grid_all &amp;lt;- bind_rows(
+  mutate(grid_start, time = 1),
+  mutate(grid_trans, time = 2),
+  mutate(grid_trans2, time = 3)
+) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;Basis vectors:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;basis_start &amp;lt;- tibble(
+  x = c(0, 0),
+  y = c(0, 0),
+  xend = c(1, 0),
+  yend = c(0, 1),
+  # `vec` is unnecessary, will just use to differentiate colors
+  vec = c(&amp;quot;i&amp;quot;, &amp;quot;j&amp;quot;)
+) %&amp;gt;% 
+  mutate(id = nrow(grid_start) + row_number())
+
+basis_trans &amp;lt;- basis_start %&amp;gt;% 
+  # need to `transform_df_coords()` twice as each segment is made up of 2 points
+  transform_df_coords(x, y, m = rotate_trans) %&amp;gt;% 
+  transform_df_coords(xend, yend, m = rotate_trans)
+
+basis_trans2 &amp;lt;- basis_trans %&amp;gt;% 
+  # need to `transform_df_coords()` twice as each segment is made up of 2 points
+  transform_df_coords(x, y, m = sheer_trans) %&amp;gt;% 
+  transform_df_coords(xend, yend, m = sheer_trans)
+
+basis_all &amp;lt;- bind_rows(
+  mutate(basis_start, time = 1),
+  mutate(basis_trans, time = 2),
+  mutate(basis_trans2, time = 3)
+) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;Define visualization:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p_mult &amp;lt;- ggplot(aes(x = x, y = y, group = id), data = grid_all)+
+  geom_segment(aes(xend = xend, yend = yend))+
+  geom_segment(aes(xend = xend, yend = yend, colour = vec), data = basis_all, arrow = arrow(length = unit(0.02, &amp;quot;npc&amp;quot;)), size = 1.2)+
+  scale_x_continuous(breaks = x_breaks, minor_breaks = NULL)+
+  scale_y_continuous(breaks = y_breaks, minor_breaks = NULL)+
+  coord_fixed()+
+  theme_minimal()+
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        legend.position = &amp;quot;none&amp;quot;) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;Static image:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p_mult &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-19-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Animation:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p_mult + 
+  gganimate::transition_states(time, wrap = FALSE) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-20-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;Notice that we see the transformations done sequentially. We could also have just inputted the single (simplified) matrix transformation:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[\begin{bmatrix}
+-0.5 &amp;amp; -1\\
+1 &amp;amp; 0 \\
+\end{bmatrix}
+X\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;But thinking of the matrix transformations separately can be helpful!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;potential-improvements&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Potential improvements&lt;/h2&gt;
+&lt;p&gt;I have no (current) plans of fleshing this out further. (Though I think a ggplot extension – e.g. &lt;code&gt;ggbasis&lt;/code&gt;, &lt;code&gt;gglineartrans&lt;/code&gt; – or something could be cool.) In this section I’ll give a few notes regarding short-term things I’d change or fix-up (if I were to keep working on this – maybe I’ll get to a couple of these). Really I should dive into &lt;code&gt;tweenr&lt;/code&gt; and &lt;code&gt;transformr&lt;/code&gt; packages and associated concepts to get these worked out further.&lt;/p&gt;
+&lt;div id=&#34;problem-of-squeezing-during-rotation&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Problem of squeezing during rotation&lt;/h3&gt;
+&lt;p&gt;You might notice that something about the rotation transformation looks a little off. During the animation, the grid becomes temporarily squished in at some points. We can better see this by placing a circle on the interior of our grid and looking at the rotation of the exterior segments. The exterior segments of the grid &lt;em&gt;should&lt;/em&gt; remain tangent to our circle at all points.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;circle_df &amp;lt;- tibble(x0 = 0, y0 = 0, r = 5)
+
+p_rotation &amp;lt;- ggplot(aes(), data = filter(grid_all, time &amp;lt;= 2))+
+  geom_segment(aes(x = x, y = y, group = id, xend = xend, yend = yend))+
+  geom_segment(aes(x = x, y = y, group = id, xend = xend, yend = yend, colour = vec), arrow = arrow(length = unit(0.02, &amp;quot;npc&amp;quot;)), size = 1.2, data = filter(basis_all, time &amp;lt;= 2 ))+
+  scale_x_continuous(breaks = x_breaks, minor_breaks = NULL)+
+  scale_y_continuous(breaks = y_breaks, minor_breaks = NULL)+
+  coord_fixed()+
+  ggforce::geom_circle(aes(x0 = 0, y0 = 0, r = 5), data = circle_df)+
+  theme_minimal()+
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        legend.position = &amp;quot;none&amp;quot;)
+
+p_rotation + gganimate::transition_states(time, wrap = FALSE) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-21-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;However we can see this doesn’t happen (the grid scrunches up and the exterior segments cut into the circle). The reason this occurs is that during the animation the coordinates follow a straight line path to their new location as explained:&lt;/p&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+The problem is that coords are tweened linearly which doesn&#39;t match a rotation where the tweening should be done on the radians (or, better, tween the transformation matrix instead). There is no support for this in gganimate yet because I haven&#39;t figured out the right interface
+&lt;/p&gt;
+— Thomas Lin Pedersen (&lt;span class=&#34;citation&#34;&gt;@thomasp85&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/thomasp85/status/1230773860321988608?ref_src=twsrc%5Etfw&#34;&gt;February 21, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;p&gt;Transformations that you &lt;em&gt;could&lt;/em&gt; conceptualize of as rotations will be animated as linear changes to coordinates. As a more extreme example, see animation of a matrix transformation for a &lt;span class=&#34;math inline&#34;&gt;\(180^\circ\)&lt;/span&gt; rotation:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;animate_matrix_transformation(m = matrix(c(-1, 0, 0, 1), nrow = 2))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/transform_180degrees.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;One fix (irrespective of tweening method in &lt;code&gt;gganimate&lt;/code&gt;) could be to set specific coordinates at each frame (so that the lack of a true rotation wouldn’t be noticable)&lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;problem-of-jittery-points-during-rotation&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Problem of jittery points during rotation&lt;/h3&gt;
+&lt;p&gt;Beyond the squishing, it appears coordinate points (added via &lt;code&gt;geom_point()&lt;/code&gt;) also look a little jittery during rotations.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;For example:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;points_start &amp;lt;- crossing(x = c(-3.5:3.5), y = c(-3.5:3.5)) %&amp;gt;% 
+  mutate(id = nrow(grid_start) + nrow(basis_start) + row_number())
+ 
+points_trans &amp;lt;- points_start %&amp;gt;% 
+  transform_df_coords(x, y, m = rotate_trans)
+
+points_all &amp;lt;- bind_rows(
+  mutate(points_start, time = 1),
+  mutate(points_trans, time = 2))
+
+p_points &amp;lt;- p +
+  geom_point(data = points_all, colour = &amp;quot;royalblue3&amp;quot;)
+
+p_points + gganimate::transition_states(time, wrap = FALSE)
+
+# maybe just my eyes... maybe need to increase framerate... or something
+
+p_points &amp;lt;- p_rotation +
+  geom_point(aes(x, y), data = points_all, colour = &amp;quot;royalblue3&amp;quot;)
+
+p_points + gganimate::transition_states(time, wrap = FALSE) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-23-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;miscellaneous-notes&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Miscellaneous notes&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;I could not figure out how to add &lt;a href=&#34;https://ggplot2.tidyverse.org/reference/geom_polygon.html&#34;&gt;multiple polygons&lt;/a&gt; via &lt;code&gt;geom_polygon()&lt;/code&gt; in a way that kept smooth transitions&lt;a href=&#34;#fn13&#34; class=&#34;footnote-ref&#34; id=&#34;fnref13&#34;&gt;&lt;sup&gt;13&lt;/sup&gt;&lt;/a&gt;. Would likely need to explore &lt;code&gt;tweenr&lt;/code&gt;, &lt;code&gt;transformr&lt;/code&gt;….&lt;/li&gt;
+&lt;li&gt;Would be nice to add &lt;code&gt;title&lt;/code&gt; of image as the matrix transformation being conducted&lt;a href=&#34;#fn14&#34; class=&#34;footnote-ref&#34; id=&#34;fnref14&#34;&gt;&lt;sup&gt;14&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;May be better to render to video (rather than gif) so could pause to view&lt;/li&gt;
+&lt;li&gt;In general, could make more elegant / sophisticated… especially regarding how transformations are applied across layers
+&lt;ul&gt;
+&lt;li&gt;Would be nice if was set-up to apply the transformations across all (or specified layers).&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;note-on-scales&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Note on scales&lt;/h2&gt;
+&lt;p&gt;May want to make breaks extend across entire range (rather than just over x, y ranges of &lt;code&gt;grid_start&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Expand breaks in scales:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;x_breaks &amp;lt;-
+  seq(
+    from = 
+      floor(min(c(grid_all$x, grid_all$xend))), 
+    to = 
+      ceiling(max(c(grid_all$x, grid_all$xend))), 
+    by = 1)
+
+y_breaks &amp;lt;-
+  seq(
+    from = 
+      floor(min(c(grid_all$y, grid_all$yend))), 
+    to = 
+      ceiling(max(c(grid_all$y, grid_all$yend))), 
+    by = 1)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Which are shown throughout the series and most notably in chapters 3 and 13.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;See section [Problems and potential improvements] for notes on a couple potential updates I’ll make… not positive I’ll keep the gist code updated.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;And may not care about understanding how to do multiple transformations, adding additional layers, etc.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;/ vectors&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;I’m guessing there is a better / more elegant function already out there for ‘tidy matrix multiplication’ or something… but couldn’t immediately think of anything.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;You could add additional objects to the image – just need to ensure you create &lt;em&gt;start&lt;/em&gt; and &lt;em&gt;transformed&lt;/em&gt; versions of each object.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Creating these is not needed if you just wanted to create static images for the below examples.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;No real reason for choosing this transformation, just thought it looked cool.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;If wrap = TRUE (default) the reverse looping of the image is inaccurate as the transformation back to the original basis actually represents a transformation by the inverse of the &lt;code&gt;transformation matrix&lt;/code&gt;. Though leaving it in would look cooler.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;Could functionalize more… or make a shiny app, or do more with, see [Problems and potential improvements] for notes…&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Can largely skim over&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Though this gets into decomposing the rotation, etc. components of the matrix transformation of interest for each frame.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Seems issue has to do with &lt;code&gt;group&lt;/code&gt; needing to apply both to the polygon at a given time as well as points on the polygon across time.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Would require latex title which I don’t know if is supported by &lt;code&gt;gganimate&lt;/code&gt;&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
     </item>
     
   </channel>

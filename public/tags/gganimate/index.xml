@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>gganimate on Bryan Shalloway&#39;s Blog</title>
@@ -6,19 +6,165 @@
     <description>Recent content in gganimate on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 24 Feb 2020 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/tags/gganimate/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Mon, 24 Feb 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/gganimate/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>animatrixr &amp; Visualizing Matrix Transformations pt. 2</title>
       <link>/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</link>
       <pubDate>Mon, 24 Feb 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</guid>
-      <description>This post is a continuation on my post from last week on Visualizing Matrix Transformations with gganimate. Both posts are largely inspired by Grant Sanderson’s beautiful video series The Essence of Linear Algebra and wanting to continue messing around with Thomas Lin Peterson’s fantastic gganimate package in R.
-As with the last post, I’ll describe trying to (very loosely) recreate a small part of the visualizations showing the geometry of matrix multiplication and changing basis vectors (using gganimate in R).</description>
+      <description>
+
+
+&lt;p&gt;This post is a continuation on my post from last week on &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/&#34;&gt;Visualizing Matrix Transformations with gganimate&lt;/a&gt;. Both posts are largely inspired by &lt;a href=&#34;https://twitter.com/3blue1brown&#34;&gt;Grant Sanderson’s&lt;/a&gt; beautiful video series &lt;a href=&#34;https://www.youtube.com/watch?v=kYB8IZa5AuE&amp;amp;list=PL_w8oSr1JpVCZ5pKXHKz6PkjGCbPbSBYv&amp;amp;index=4&#34;&gt;The Essence of Linear Algebra&lt;/a&gt; and wanting to continue messing around with &lt;a href=&#34;https://github.com/thomasp85/gganimate&#34;&gt;Thomas Lin Peterson’s&lt;/a&gt; fantastic &lt;a href=&#34;https://github.com/thomasp85/gganimate&#34;&gt;gganimate&lt;/a&gt; package in R.&lt;/p&gt;
+&lt;p&gt;As with the last post, I’ll describe trying to (very loosely) recreate a &lt;em&gt;small&lt;/em&gt; part of the visualizations showing the geometry of matrix multiplication and changing basis vectors (using &lt;code&gt;gganimate&lt;/code&gt; in R). (Once again, just in the 2x2 case.)&lt;/p&gt;
+&lt;p&gt;If you are &lt;em&gt;really&lt;/em&gt; interested in building visualizations like the ones shown on 3Blue1Brown, you should check-out the associated &lt;a href=&#34;https://github.com/3b1b/manim&#34;&gt;manim&lt;/a&gt; project on github.&lt;/p&gt;
+&lt;div id=&#34;topics-to-cover&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Topics to cover&lt;/h1&gt;
+&lt;p&gt;I had two major sections in the Appendix of last week’s post:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;“Multiple matrix transformations”&lt;/li&gt;
+&lt;li&gt;“Potential improvements” (where I mostly describe limitations around visualizing rotations)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This post expands on these topics.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;animatrixr-and-multiple-matrix-transformations&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;code&gt;animatrixr&lt;/code&gt; and multiple matrix transformations&lt;/h1&gt;
+&lt;p&gt;Sanderson discusses the value in sometimes decomposing a matrix transformation and thinking of its parts sequentially. I created a &lt;strong&gt;toy&lt;/strong&gt; package &lt;code&gt;animatrixr&lt;/code&gt; for building chained matrix transformations that can then be animated using &lt;code&gt;gganimate&lt;/code&gt;&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The function &lt;code&gt;animatrixr::add_transformation()&lt;/code&gt; lets you chain together matrix transformations with R’s pipe operator &lt;code&gt;%&amp;gt;%&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;For example, let’s consider three matrix transformations: horizontal sheer –&amp;gt; vertical sheer –&amp;gt; reflection across x-axis:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)
+
+if (!requireNamespace(&amp;quot;animatrixr&amp;quot;)) devtools::install_github(&amp;#39;brshallo/animatrixr&amp;#39;)
+library(animatrixr)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sheer_horizontal &amp;lt;- tribble(~ x, ~ y,
+                      1, 0.5,
+                      0, 1) %&amp;gt;%
+  as.matrix()
+
+sheer_vertical &amp;lt;- tribble(~ x, ~ y,
+                      1, 0,
+                      0.5, 1) %&amp;gt;%
+  as.matrix()
+
+reflect_x &amp;lt;- tribble(~ x, ~ y,
+                      1, 0,
+                      0, -1) %&amp;gt;%
+  as.matrix() &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now let’s visualize the transformations being applied sequentially:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
+  add_transformation(sheer_horizontal) %&amp;gt;% 
+  add_transformation(sheer_vertical) %&amp;gt;% 
+  add_transformation(reflect_x, 
+                     seq_fun = animatrixr::seq_matrix_l,
+                     n_frames = 40) %&amp;gt;% 
+  animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/vsheer-hsheer-reflect-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;add_transformation()&lt;/code&gt; explicitly creates in-between frames for a given transformation. The &lt;code&gt;seq_fun&lt;/code&gt; argument allows you to define the interpolation method, for example whether the coordinates should (during the animation) follow a linear path (default) or the angle of a rotation.&lt;/p&gt;
+&lt;p&gt;It would be nice to add-in functionality where the final transformation object could then be added to layers of a ggplot (though I’ve done nothing towards this except add an argument in &lt;code&gt;animatrixr::animate_matrix()&lt;/code&gt; for displaying the &lt;a href=&#34;https://github.com/lockedata/datasauRus&#34;&gt;datasauRus&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;(Warning: &lt;code&gt;animatrixr&lt;/code&gt; is severely limited, as discussed in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; and in package documentation. However you can find it at the “brshallo/animatrixr” repo on &lt;a href=&#34;https://github.com/brshallo/animatrixr&#34;&gt;my github page&lt;/a&gt;.)&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visualizing-rotations&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Visualizing rotations&lt;/h1&gt;
+&lt;p&gt;The &lt;code&gt;seq_fun&lt;/code&gt; argument within &lt;code&gt;add_transformation()&lt;/code&gt; specifies frames in-between the start and end states after a matrix transformation. By default it uses &lt;code&gt;animatrixr::seq_matrix_l&lt;/code&gt; which changes in-between coordinates linearly (as does &lt;code&gt;gganimate&lt;/code&gt;&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;Let’s look at a rotation where the in-between coordinates are interpolated linearly:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rotate_90 &amp;lt;- tribble(~ x, ~ y,
+                        cos(pi / 2), -sin(pi / 2),
+                        sin(pi / 2), cos(pi / 2)) %&amp;gt;%
+  as.matrix()
+
+matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
+  add_transformation(rotate_90) %&amp;gt;% 
+  animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-linear-1.gif&#34; width=&#34;71%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Linear interpolation makes the rotation transformation appear scrunched during the animation (from how we intuitively think of a rotation) as the coordinate points take a straight line path to their positions after applying the transformation&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;To make the in-between coordinates instead follow the angle of rotation we could change the &lt;code&gt;seq_fun&lt;/code&gt; from &lt;code&gt;animatrixr::seq_matrix_l&lt;/code&gt; to &lt;code&gt;animatrixr::seq_matrix_lp&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
+  add_transformation(rotate_90, seq_fun = animatrixr::seq_matrix_lp) %&amp;gt;% 
+  animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-polar-sheer-linear-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;During the rotation portion of the animation &lt;code&gt;gganimate&lt;/code&gt; is still tweening images linearly, however the frames &lt;code&gt;add_transformation()&lt;/code&gt; creates are now following along the angle of rotation of the transformation. Hence the animation ends-up approximating a curved path.&lt;/p&gt;
+&lt;p&gt;However, &lt;code&gt;seq_matrix_lp()&lt;/code&gt; needs improvement and was just set-up to work for toy examples – it really only looks ‘right’ if doing rotations off of &lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} 1 &amp;amp; 0\\0  &amp;amp; 1 \end{array}\right)\]&lt;/span&gt; See &lt;a href=&#34;#showing-rotations&#34;&gt;Showing rotations&lt;/a&gt; in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; for additional detail on how this is set-up and the various limitations with &lt;code&gt;animatrixr&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Happy animatrixing!&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# animatrixr::rotation_matrix() is helper function for creating matrix
+# transformations of rotations
+matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
+  add_transformation(animatrixr::rotation_matrix(pi / 2),
+                     seq_fun = animatrixr::seq_matrix_lp) %&amp;gt;% 
+  add_transformation(matrix(c(1, 0.5, 0, 1), nrow = 2)) %&amp;gt;% 
+  add_transformation(matrix(c(1, 0, 0, -1), nrow = 2)) %&amp;gt;% 
+  animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/unnamed-chunk-1-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;div id=&#34;using-animatrixr&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Using &lt;code&gt;animatrixr&lt;/code&gt;?&lt;/h2&gt;
+&lt;p&gt;This is a toy package (very hastily written). I have not put effort into thinking about making it usable for others. Also, some parts just don’t really work or aren’t set-up quite right… (as noted in the README and elsewhere in the package). But feel free to check-it out / improve it / make something better! Let me know if you do!&lt;/p&gt;
+&lt;p&gt;This has been a fun dabble into thinking (at least surface level) about animation. Though I don’t have any plans to add onto this (or write any more posts on this topic). If I do add anything, it will most likely just be cleaning-up the decomposition methods in the &lt;code&gt;seq_matrix*()&lt;/code&gt; functions. But no plans&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;notes-on-seq-functions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Notes on seq functions&lt;/h2&gt;
+&lt;p&gt;Below are additional notes on the &lt;code&gt;animatrixr::seq_matrix*&lt;/code&gt; functions. They need some work, but here is a description of how they are currently set-up.&lt;/p&gt;
+&lt;div id=&#34;showing-rotations&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Showing rotations&lt;/h3&gt;
+&lt;p&gt;To animate the rotation of a transformation, &lt;code&gt;add_transformation(m = matrix(c(0, 1, -1, 0), nrow = 2), seq_fun = seq_matrix_lp)&lt;/code&gt; explicitly creates in-between frames on the path the points would follow if they were instead following polar coordinates along the angle of rotation. In the next few sections I’ll discuss the process for doing this (again, this is not necessarily an ideal set-up).&lt;/p&gt;
+&lt;p&gt;Given any 2x2 matrix:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} a &amp;amp; b\\ c &amp;amp; d \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;you can use the equation &lt;code&gt;atan2(c, a)&lt;/code&gt; to extract the angle of rotation from the matrix&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt; and then create a sequence from the starting angle of rotation to the final angle of rotation.&lt;/p&gt;
+&lt;p&gt;For example, if my start angle is &lt;span class=&#34;math inline&#34;&gt;\(0^\circ\)&lt;/span&gt;, and final angle of rotation is at &lt;span class=&#34;math inline&#34;&gt;\(38^\circ\)&lt;/span&gt; and I have 20 frames, then my sequence would be:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[0^\circ, 2^\circ, ... 38^\circ\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;A rotation matrix is defined as:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} cos(\theta) &amp;amp; -sin(\theta)\\ sin(\theta) &amp;amp; cos(\theta) \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Hence I can convert my sequence of angles into a sequence of matrices that define the rotations applied for each explicit in-between frame.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+\left(\begin{array}{cc} cos(0^\circ) &amp;amp; -sin(0^\circ)\\ sin(0^\circ) &amp;amp; cos(0^\circ) \end{array}\right), 
+\left(\begin{array}{cc} cos(2^\circ) &amp;amp; -sin(2^\circ)\\ sin(2^\circ) &amp;amp; cos(2^\circ) \end{array}\right)...
+\left(\begin{array}{cc} cos(28^\circ) &amp;amp; -sin(28^\circ)\\ sin(28^\circ) &amp;amp; cos(28^\circ) \end{array}\right)
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;seq_matrix_lp-applied-on-non-standard-unit-basis-vectors&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;code&gt;seq_matrix_lp&lt;/code&gt; applied on non-standard unit basis vectors&lt;/h3&gt;
+&lt;p&gt;If you input a matrix transformation into &lt;code&gt;seq_matrix_lp&lt;/code&gt; that is not a pure rotation from the unit vectors it will decompose the matrix into a &lt;em&gt;rotation&lt;/em&gt; component and &lt;em&gt;other&lt;/em&gt; component&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;, the &lt;em&gt;other&lt;/em&gt; component creates a sequence of matrices that have the in-between frames interpolated linearly. The sequence of &lt;em&gt;rotation&lt;/em&gt; and &lt;em&gt;other&lt;/em&gt; matrices are then recomposed to provide the final sequence.&lt;/p&gt;
+&lt;p&gt;This approach means that non-pure rotations on the unit vectors, etc. will not really look like rotations. I would need to factor in other components (e.g. scale) to improve this.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;show-rotation-first&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Show rotation first&lt;/h3&gt;
+&lt;p&gt;Beyond &lt;code&gt;seq_matrip_l()&lt;/code&gt; and &lt;code&gt;seq_matrix_lp()&lt;/code&gt;, I made another seq_matrix* function: &lt;code&gt;seq_matrix_rotate_first&lt;/code&gt; which (like &lt;code&gt;seq_matrix_lp&lt;/code&gt;) also decomposes a matrix into rotation and other components. Rather than interpolating these separately and then recomposing them (as &lt;code&gt;seq_matrix_lp&lt;/code&gt; does) &lt;code&gt;seq_matrix_rotate_first&lt;/code&gt; works by interpolating them separately and then applying the decomposed sequences sequentially – so the entire rotation component of the transformation will be animated and then the ‘other’ component will be animated (this makes for twice as many frames when there is a ‘rotation’ and ‘other’ component in the transformation matrix).&lt;/p&gt;
+&lt;p&gt;I.e. starting from our identity matrix and applying a single matrix transformation, it will automatically decompose this and animate the decomposed parts in two steps, &lt;span class=&#34;math inline&#34;&gt;\(I\)&lt;/span&gt; –&amp;gt; &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; and then from &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; –&amp;gt; &lt;span class=&#34;math inline&#34;&gt;\(M\)&lt;/span&gt;. Below is an example of the animation for the transformation matrix:
+&lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} 0 &amp;amp; -1\\1  &amp;amp; -0.5 \end{array}\right)\]&lt;/span&gt;
+(which could be decomposed into a rotation and a sheer part).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;transformation_matrix &amp;lt;- sheer_vertical %*% animatrixr::rotation_matrix(pi/4)
+
+matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
+  add_transformation(transformation_matrix, seq_fun = seq_matrix_rotate_first) %&amp;gt;% 
+  animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-sheer-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;There are (especially) a lot of problems with this function currently and I don’t recommend using it e.g.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;only works (at all correctly) if starting from standard unit vectors (hence cannot really be combined into a chain of matrix transformations)&lt;/li&gt;
+&lt;li&gt;rotation component extracted will vary depending on what ‘other’ is within M
+E.g. if M = {rotation}{vertical sheer} vs. M = {rotation}{horizontal sheer} – rotation component will look different&lt;/li&gt;
+&lt;li&gt;I defaulted the amount of frames given to the rotation component to be the same as the amount of frames given to other component. If the size of the rotation is small relative to the other part of the transformation (or vice versa) the timing will feel slow/jumpy.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Provides a cleaner approach for doing this compared to the clunky method I walked through in my post last week.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;All visualizations from last week used this linear interpolation method.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I discuss this at more length in my previous post – see the sub-section in the “Appendix”, “Problem of squeezing during rotation”.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;However I also hadn’t planned on writing a follow-up post… so who knows…&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;See &lt;a href=&#34;https://computergraphics.stackexchange.com/questions/3932/animating-a-smooth-linear-transformation&#34;&gt;post&lt;/a&gt; referencing this.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;To find the ‘other’ component of a matrix transformation… say &lt;em&gt;M&lt;/em&gt; represents the overall matrix transformation, in &lt;a href=&#34;#showing-rotations&#34;&gt;Showing rotations&lt;/a&gt; I described how to calculate &lt;em&gt;R&lt;/em&gt; (the rotation component), hence to calculate &lt;em&gt;A&lt;/em&gt;, ‘other’, I do:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AR = M\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[ARR^{-1} = MR^{-1}\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[A = MR^{-1}\]&lt;/span&gt;&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
     </item>
     
   </channel>

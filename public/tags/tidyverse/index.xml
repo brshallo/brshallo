@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>tidyverse on Bryan Shalloway&#39;s Blog</title>
@@ -6,18 +6,134 @@
     <description>Recent content in tidyverse on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 24 Jun 2020 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/tags/tidyverse/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Wed, 24 Jun 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/tidyverse/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Use Flipbooks to Explain Your Code and Thought Process</title>
       <link>/2020/06/24/use-flipbooks-to-explain-your-code-and-thought-process/</link>
       <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/06/24/use-flipbooks-to-explain-your-code-and-thought-process/</guid>
-      <description>Learning R’s %&amp;gt;%Using the pipe operator (%&amp;gt;%) is one of my favorite things about coding in R and the tidyverse. However when it was first shown to me, I couldn’t understand what the #rstats nut describing it was so enthusiastic about. They tried to explain, “It means and then do the next operation.” When that didn’t click for me, they continued (while becoming ever more excited) “It passes the previous steps output into the first argument of the next function,” still… 😐😐😕.</description>
+      <description>
+
+
+&lt;div id=&#34;learning-rs&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Learning R’s &lt;code&gt;%&amp;gt;%&lt;/code&gt;&lt;/h1&gt;
+&lt;p&gt;Using the pipe operator (&lt;code&gt;%&amp;gt;%&lt;/code&gt;) is one of my favorite things about coding in R and the &lt;a href=&#34;https://www.tidyverse.org/&#34;&gt;tidyverse&lt;/a&gt;. However when it was first shown to me, I couldn’t understand what the &lt;a href=&#34;https://twitter.com/search?q=%23rstats&amp;amp;src=typed_query&#34;&gt;#rstats&lt;/a&gt; nut describing it was &lt;em&gt;so enthusiastic&lt;/em&gt; about. They tried to explain, “It means &lt;em&gt;and then&lt;/em&gt; do the next operation.” When that didn’t click for me, they continued (while becoming ever more excited) “It &lt;em&gt;passes the previous steps output into the first argument&lt;/em&gt; of the next function,” still… 😐😐😕.
+Self-evident verbs in their code like &lt;code&gt;select()&lt;/code&gt;, &lt;code&gt;filter()&lt;/code&gt;, &lt;code&gt;summarise()&lt;/code&gt; helped me nod along, partly following the operations. Though it wasn’t until I evaluated the code &lt;em&gt;line-by-line&lt;/em&gt; that I recognized the pipe’s elegance, power, beauty, simplicity 😄!&lt;/p&gt;
+&lt;p&gt;Now, a few years and reads through &lt;a href=&#34;https://r4ds.had.co.nz/&#34;&gt;R for Data Science&lt;/a&gt; later&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;, I will often share my work by keeping the code and output together and showing, line-by-line, what I am building towards. For example when…&lt;/p&gt;
+&lt;p&gt;… giving a 2019 talk on &lt;em&gt;“Managing objects in analytics workflows, using lists as columns in dataframes”&lt;/em&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/gme4Fb9JVjk?start=258&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;… giving a 2017 talk on &lt;em&gt;“Getting started with ‘tidy’ data science in R”&lt;/em&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/eeCELJNWEuw?start=474&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;… promoting a recent blog post on &lt;em&gt;“Tidy pairwise operations”&lt;/em&gt; (though in this case I removed the code):&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+What is your &lt;a href=&#34;https://twitter.com/hashtag/tidyverse?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#tidyverse&lt;/a&gt; (or other &lt;a href=&#34;https://twitter.com/hashtag/rstats?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#rstats&lt;/a&gt; ) approach for doing arbitrary pairwise operations across variables? Mine is frequently something like:&lt;br&gt;&lt;br&gt;I. nest…&lt;br&gt;II. expand combos… &lt;br&gt;III. filter…&lt;br&gt;IV. map fun(s)…&lt;br&gt;…&lt;br&gt;&lt;br&gt;I wrote a post walking through this: &lt;a href=&#34;https://t.co/xRnRf5yh3m&#34;&gt;https://t.co/xRnRf5yh3m&lt;/a&gt; &lt;a href=&#34;https://t.co/Zvxey2gm3H&#34;&gt;pic.twitter.com/Zvxey2gm3H&lt;/a&gt;
+&lt;/p&gt;
+— Bryan Shalloway (&lt;span class=&#34;citation&#34;&gt;@brshallo&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/brshallo/status/1271194908477591553?ref_src=twsrc%5Etfw&#34;&gt;June 11, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;However each of these examples were built using PowerPoint (and a lot of copy and pasting of code + output). The series of images cannot be easily reproduced. In this post I’ll point to resources on how to create these sorts of code communication materials in ways that &lt;em&gt;are reproducible&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;flipbooks&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Flipbooks&lt;/h1&gt;
+&lt;p&gt;When I started writing this post, I planned to call this type of output a “&lt;strong&gt;LEXPREX&lt;/strong&gt;” for “&lt;strong&gt;L&lt;/strong&gt;ine-by-line &lt;strong&gt;EX&lt;/strong&gt;ecution with &lt;strong&gt;PR&lt;/strong&gt;inted &lt;strong&gt;EX&lt;/strong&gt;amples” (and a name evocative of the inspiring &lt;a href=&#34;https://github.com/tidyverse/reprex&#34;&gt;reprex&lt;/a&gt; package by &lt;a href=&#34;https://twitter.com/JennyBryan%5D&#34;&gt;Jenny Bryan&lt;/a&gt;&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;). But, thankfully, an excellent solution containing thorough explanations (and a much better name) already existed, &lt;em&gt;flipbooks&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;As described in the &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;flipbookr documentation&lt;/a&gt;, “flipbooks are tools that present side-by-side, aligned, incremental code-output.”&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-r4ds.gif?raw=true&#34; alt=&#34;(Example inspired by ‘Many Models’ chapter of ‘R For Data Science’ by Grolemund &amp;amp; Wickham.)&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;(Example inspired by ‘Many Models’ chapter of ‘R For Data Science’ by Grolemund &amp;amp; Wickham.)&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;At this point you should stop reading this blog and instead go learn about &lt;a href=&#34;https://github.com/EvaMaeRey/flipbookr&#34;&gt;flipbookr&lt;/a&gt;. My post was largely written before I learned about this package. Hence, starting at &lt;a href=&#34;https://rstudio.com/resources/rstudioconf-2020/flipbooks-evangeline-reynolds/&#34;&gt;this presentation&lt;/a&gt; by &lt;a href=&#34;https://twitter.com/EvaMaeRey&#34;&gt;Gina Reynolds&lt;/a&gt; or &lt;code&gt;flipbookr&lt;/code&gt;’s &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;about page&lt;/a&gt; will generally be a more productive use of your time. The remainder of this post discusses either tools adjacent to flipbooks or describes workflows that can also be found within &lt;code&gt;flipbookr&lt;/code&gt; documentation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;example-with-xaringan&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Example with xaringan&lt;/h1&gt;
+&lt;p&gt;The &lt;a href=&#34;https://github.com/yihui/xaringan&#34;&gt;xaringan&lt;/a&gt; package for making slideshows contains highlighting features (and is what &lt;code&gt;flipbookr&lt;/code&gt; is built-on). For highlighting &lt;em&gt;code&lt;/em&gt; you can use the trailing comment &lt;code&gt;#&amp;lt;&amp;lt;&lt;/code&gt;&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;. For highlighting &lt;em&gt;output&lt;/em&gt; there is the &lt;code&gt;highlight.output&lt;/code&gt; code chunk option.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;iframe src=&#34;https://slides.yihui.org/xaringan/#31&#34; style=&#34;width: 560px; height: 315px;&#34;&gt;
+&lt;/iframe&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://twitter.com/mitchoharawild&#34;&gt;Mitchell O’Hara-Wild&lt;/a&gt;’s 2019 presentation on &lt;em&gt;“Flexible futures for &lt;a href=&#34;https://github.com/tidyverts/fable&#34;&gt;fable&lt;/a&gt; functionality”&lt;/em&gt; contains a helpful example where he uses these features to walk-through &lt;a href=&#34;https://github.com/mitchelloharawild/fable-combinations-2019/blob/6a55628e1ad156c0040676b7881a799f7f75370a/user2019/index.Rmd&#34;&gt;his code&lt;/a&gt;.&lt;/p&gt;
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/DhDOTxojQ3k?start=554&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;See &lt;a href=&#34;#more-sophisticated-highlighting&#34;&gt;More sophisticated highlighting&lt;/a&gt; if your use-case requires more than line-level highlighting.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;animating-a-flipbook&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Animating a flipbook&lt;/h1&gt;
+&lt;p&gt;I sometimes want to convert a flipbook into a gif, e.g. when sharing an example in a README or a snippet of a concept on social media. If you ignored my prior entreaty, this is a second reminder to stop and go read about &lt;code&gt;flipbookr&lt;/code&gt;. The &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;template file&lt;/a&gt; now shows how to create gifs using &lt;code&gt;flipbookr&lt;/code&gt; (html) –&amp;gt; &lt;code&gt;pagedown&lt;/code&gt; (pdf) –&amp;gt; &lt;code&gt;magick&lt;/code&gt; (gif). I also describe this workflow and provide examples &lt;a href=&#34;https://github.com/brshallo/flipbookr-gifs-examples&#34;&gt;here&lt;/a&gt;, e.g.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-riddler-solution.gif&#34; alt=&#34;(Example from a prior blog post, “Riddler Solutions: Pedestrian Puzzles”)&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;(Example from a prior blog post, “Riddler Solutions: Pedestrian Puzzles”)&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;closing-note&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Closing note&lt;/h1&gt;
+&lt;p&gt;I recommend exploring the &lt;a href=&#34;https://education.rstudio.com/blog/&#34;&gt;Rstudio Education blog&lt;/a&gt;. The site contains helpful resources for improving your technical communication. It was here that I stumbled on the post &lt;a href=&#34;https://education.rstudio.com/blog/2020/05/flair/&#34;&gt;Decorate your R code with flair&lt;/a&gt;. Reading this inspired me to make a first attempt at building a reproducible animation of line-by-line execution of R code (something I’d been wanting to do for ages). The positive response &amp;amp; feedback to my initial tweet led me to learn about &lt;code&gt;flipbookr&lt;/code&gt; and motivated additional actions (described in &lt;a href=&#34;#engagement-contributions&#34;&gt;Engagement &amp;amp; contributions&lt;/a&gt;) including the review and completion of this blog post.&lt;/p&gt;
+&lt;p&gt;Finally, please go enjoy the beautiful examples you can find at the &lt;code&gt;flipbookr&lt;/code&gt; &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;about page&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;&lt;img src=&#34;/post/2020-06-16-use-flipbooks-to-explain-your-code-and-thought-process_files/flipbookr-example.gif&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;div id=&#34;more-sophisticated-highlighting&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;More sophisticated highlighting&lt;/h2&gt;
+&lt;p&gt;For more sophisticated highlighting of &lt;em&gt;code&lt;/em&gt;, use the &lt;a href=&#34;https://github.com/kbodwin/flair&#34;&gt;flair package&lt;/a&gt;. I’m not sure what to recommend for highlighting changes in &lt;em&gt;output&lt;/em&gt; to the console… perhaps &lt;a href=&#34;https://github.com/brodieG/diffobj&#34;&gt;diffobj&lt;/a&gt; would be an option. You could also just explicitly format the output, e.g. using &lt;a href=&#34;https://github.com/rstudio/gt&#34;&gt;gt&lt;/a&gt; or &lt;a href=&#34;https://github.com/haozhu233/kableExtra&#34;&gt;kableExtra&lt;/a&gt; for tabular outputs, or using geoms, annotations, etc. in &lt;a href=&#34;https://github.com/tidyverse/ggplot2&#34;&gt;ggplot&lt;/a&gt;s. And, of course, you can always dive into the html.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;engagement-contributions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Engagement &amp;amp; contributions&lt;/h2&gt;
+&lt;p&gt;Blogging is time consuming. Reaching out to package maintainers or making contributions (even small ones) on open-source software projects can be intimidating. As a &lt;em&gt;tiny&lt;/em&gt; success story, I documented actions that stemmed (in some part) from engaging with the #rstats online communities while working on this blog post topic:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;While this post was in draft form, I tweeted out my initial approach (that used the &lt;a href=&#34;https://github.com/kbodwin/flair&#34;&gt;flair&lt;/a&gt; package).
+&lt;ul&gt;
+&lt;li&gt;The next step might have been trying to improve upon this. Thankfully, instead, &lt;a href=&#34;https://twitter.com/KellyBodwin&#34;&gt;Kelly Bodwin&lt;/a&gt; pointed me to &lt;code&gt;flipbookr&lt;/code&gt;!&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+P.S. &lt;br&gt;&lt;br&gt;The &lt;code&gt;flair_lines()&lt;/code&gt; function lets you highlight whole line(s) if you want! &lt;br&gt;&lt;br&gt;{flipbookr} is a better option for making gifs/slides like this, but {flair} + {pagedown} + {magick} might help if you want specialty or layered highlighting.
+&lt;/p&gt;
+— Kelly Bodwin (&lt;span class=&#34;citation&#34;&gt;@KellyBodwin&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/KellyBodwin/status/1272741205365764097?ref_src=twsrc%5Etfw&#34;&gt;June 16, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Kelly also created an &lt;a href=&#34;https://github.com/kbodwin/flair/issues/15&#34;&gt;issue&lt;/a&gt; to further discuss possible integrations between &lt;code&gt;flair&lt;/code&gt; and &lt;code&gt;flipbookr&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;I remade my initial example using &lt;code&gt;flipbookr&lt;/code&gt; (&lt;a href=&#34;https://github.com/EvaMaeRey/flipbookr/issues/22&#34;&gt;see issue&lt;/a&gt;).
+&lt;ul&gt;
+&lt;li&gt;I first created an &lt;a href=&#34;https://github.com/EvaMaeRey/flipbookr/issues/21&#34;&gt;issue&lt;/a&gt; showing how to print &lt;code&gt;xaringan&lt;/code&gt; slides incrementally using &lt;code&gt;pagedown::chrome_print()&lt;/code&gt;.
+&lt;ul&gt;
+&lt;li&gt;Which helped to close a related &lt;a href=&#34;https://github.com/rstudio/pagedown/issues/110&#34;&gt;issue&lt;/a&gt; on &lt;code&gt;xaringan&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Gina Reynolds made a variety of updates to &lt;code&gt;flipbookr&lt;/code&gt;, one of which included adding the html –&amp;gt; pdf –&amp;gt; gif workflow to the template 😄.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+Big thanks to &lt;a href=&#34;https://twitter.com/grrrck?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@grrrck&lt;/span&gt;&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/statsgen?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@statsgen&lt;/span&gt;&lt;/a&gt; for helps and &lt;a href=&#34;https://twitter.com/xieyihui?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@xieyihui&lt;/span&gt;&lt;/a&gt; because {xaringan}! And to &lt;a href=&#34;https://twitter.com/brshallo?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@brshallo&lt;/span&gt;&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/KellyBodwin?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@KellyBodwin&lt;/span&gt;&lt;/a&gt; for new ideas about how to share flipbooks, html -&amp;gt; pdf -&amp;gt; gif. Guidance now included in template update on this - this gif created w/ that workflow!🙏🤩
+&lt;/p&gt;
+— Gina Reynolds (&lt;span class=&#34;citation&#34;&gt;@EvaMaeRey&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/EvaMaeRey/status/1274837474460626945?ref_src=twsrc%5Etfw&#34;&gt;June 21, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;See my notes and solutions &lt;a href=&#34;https://brshallo.github.io/r4ds_solutions/&#34;&gt;here&lt;/a&gt;.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;I also considered names such as &lt;code&gt;pexprex&lt;/code&gt;, &lt;code&gt;sexprex&lt;/code&gt;, &lt;code&gt;pripex&lt;/code&gt;, … I’ll let the reader guess at the acronyms.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Which I prefer over the alternatives of using the leading &lt;code&gt;*&lt;/code&gt; or wrapping the message in&lt;code&gt;{{}}&lt;/code&gt;.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -26,7 +142,495 @@
       <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/06/03/tidy-2-way-column-combinations/</guid>
-      <description>OverviewI. Nest and pivotII. Expand combinationsIII. Filter redundanciesIV. Map function(s)V. Return to normal dataframeVI. Bind back to dataFunctionalizeExample creating &amp;amp; evaluating featuresWhen is this approach inappropriate?AppendixInteractions example, tidymodelsExpand via joinNested tibblesPivot and then summariseGif for social mediaSession infoOverviewSay you want to map an operation or list of operations across all two-way1 combinations of a set of variables/columns in a dataframe.</description>
+      <description>
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#overview&#34;&gt;Overview&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#i.-nest-and-pivot&#34;&gt;I. Nest and pivot&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#ii.-expand-combinations&#34;&gt;II. Expand combinations&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#iii.-filter-redundancies&#34;&gt;III. Filter redundancies&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#iv.-map-functions&#34;&gt;IV. Map function(s)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#v.-return-to-normal-dataframe&#34;&gt;V. Return to normal dataframe&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#vi.-bind-back-to-data&#34;&gt;VI. Bind back to data&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#functionalize&#34;&gt;Functionalize&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#example-creating-evaluating-features&#34;&gt;Example creating &amp;amp; evaluating features&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#when-is-this-approach-inappropriate&#34;&gt;When is this approach inappropriate?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#interactions-example-tidymodels&#34;&gt;Interactions example, tidymodels&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#expand-via-join&#34;&gt;Expand via join&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#nested-tibbles&#34;&gt;Nested tibbles&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#pivot-and-then-summarise&#34;&gt;Pivot and then summarise&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#gif-for-social-media&#34;&gt;Gif for social media&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-info&#34;&gt;Session info&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;div id=&#34;overview&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Overview&lt;/h1&gt;
+&lt;p&gt;Say you want to map an operation or list of operations across all two-way&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt; combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;. In some cases there may be a pairwise implementation already available, e.g. R’s &lt;code&gt;cor()&lt;/code&gt; function for computing correlations&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;. In other cases one may not exist or is not easy to use&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;. In this post I’ll walk through an example&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt; explaining code and steps for setting-up arbitrary pairwise operations across sets of variables.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;I’ll break my approach down into several steps:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;I. Nest and pivot&lt;br /&gt;
+II. Expand combinations&lt;br /&gt;
+III. Filter redundancies&lt;br /&gt;
+IV. Map function(s)&lt;br /&gt;
+V. Return to normal dataframe&lt;br /&gt;
+VI. Bind back to data&lt;/p&gt;
+&lt;p&gt;If your interest is only in computing summary statistics (as opposed to modifying an existing dataframe with new columns / features), then only steps I - IV are needed.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Relevant software and style:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I will primarily be using R’s &lt;code&gt;tidyverse&lt;/code&gt; packages. I make frequent use of lists as columns within dataframes – if you are new to these, see my previous &lt;a href=&#34;https://www.youtube.com/watch?v=gme4Fb9JVjk&#34;&gt;talk&lt;/a&gt; and the resources&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt; I link to in the description.&lt;/p&gt;
+&lt;p&gt;Throughout this post, wherever I write “dataframe” I really mean “tibble” (a dataframe with minor changes to default options and printing behavior). Also note that I am using &lt;code&gt;dplyr&lt;/code&gt; 0.8.3 rather than the newly released 1.0.0&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Other resources and open issues (updated 2020-06-14):&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;In particular, the comments in issue &lt;a href=&#34;https://github.com/tidymodels/corrr/issues/44&#34;&gt;44&lt;/a&gt; for the &lt;code&gt;corrr&lt;/code&gt; package contain excellent solutions for doing pairwise operations (the subject of this post)&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt;. Issue &lt;a href=&#34;https://github.com/tidymodels/corrr/issues/94&#34;&gt;94&lt;/a&gt; also features discussion on this topic. Throughout this post I will reference other alternative code/approaches (especially in the footnotes and the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Data:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I’ll use the ames housing dataset across examples.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ames &amp;lt;- AmesHousing::make_ames()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Specifically, I’ll focus on ten numeric columns that, based on a random sample of 1000 rows, show the highest correlation with &lt;code&gt;Sale_Price&lt;/code&gt;&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+
+set.seed(2020)
+ames_cols &amp;lt;- ames %&amp;gt;% 
+  select_if(is.numeric) %&amp;gt;% 
+  sample_n(1000) %&amp;gt;% 
+  corrr::correlate() %&amp;gt;% 
+  corrr::focus(Sale_Price) %&amp;gt;% 
+  arrange(-abs(Sale_Price)) %&amp;gt;% 
+  head(10) %&amp;gt;% 
+  pull(rowname)
+
+ames_subset &amp;lt;- select(ames, ames_cols) %&amp;gt;% 
+  # Could normalize data or do other prep 
+  # but is not pertinent for examples
+  mutate_all(as.double)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;i.-nest-and-pivot&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;I. Nest and pivot&lt;/h2&gt;
+&lt;p&gt;There are a variety of ways to make lists into columns within a dataframe. In the example below, I first use &lt;code&gt;summarise_all(.tbl = ames_subset, .funs = list)&lt;/code&gt; to create a one row dataframe where each column is a list containing a single element and each individual element corresponds with a numeric vector of length 2930.&lt;/p&gt;
+&lt;p&gt;After nesting, I pivot&lt;a href=&#34;#fn11&#34; class=&#34;footnote-ref&#34; id=&#34;fnref11&#34;&gt;&lt;sup&gt;11&lt;/sup&gt;&lt;/a&gt; the columns leaving a dataframe with two columns:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;var&lt;/code&gt; the variable names&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;vector&lt;/code&gt; a list where each element contains the associated vector&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_lists &amp;lt;- ames_subset %&amp;gt;% 
+  summarise_all(list) %&amp;gt;% 
+  pivot_longer(cols = everything(), 
+               names_to = &amp;quot;var&amp;quot;, 
+               values_to = &amp;quot;vector&amp;quot;) %&amp;gt;% 
+  print()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 10 x 2
+##    var            vector       
+##    &amp;lt;chr&amp;gt;          &amp;lt;list&amp;gt;       
+##  1 Gr_Liv_Area    &amp;lt;dbl [2,930]&amp;gt;
+##  2 Garage_Cars    &amp;lt;dbl [2,930]&amp;gt;
+##  3 Garage_Area    &amp;lt;dbl [2,930]&amp;gt;
+##  4 Total_Bsmt_SF  &amp;lt;dbl [2,930]&amp;gt;
+##  5 First_Flr_SF   &amp;lt;dbl [2,930]&amp;gt;
+##  6 Year_Built     &amp;lt;dbl [2,930]&amp;gt;
+##  7 Full_Bath      &amp;lt;dbl [2,930]&amp;gt;
+##  8 Year_Remod_Add &amp;lt;dbl [2,930]&amp;gt;
+##  9 TotRms_AbvGrd  &amp;lt;dbl [2,930]&amp;gt;
+## 10 Fireplaces     &amp;lt;dbl [2,930]&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;See &lt;a href=&#34;#pivot-and-then-summarise&#34;&gt;Pivot and then summarise&lt;/a&gt; for a nearly identical approach with just an altered order of steps. Also see &lt;a href=&#34;#nested-tibbles&#34;&gt;Nested tibbles&lt;/a&gt; for how you could create a list-column of dataframes&lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt; rather than vectors.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;What if my variables are across rows not columns?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;For example, pretend you want to see if &lt;code&gt;Sale_Price&lt;/code&gt; is different across &lt;code&gt;Mo_Sold&lt;/code&gt;. Perhaps you started by doing an F-test, found that to be significant, and now want to do pairwise t-tests across the samples of &lt;code&gt;Sale_Price&lt;/code&gt; for each &lt;code&gt;Mo_Sold&lt;/code&gt;. To set this up, you will want a &lt;code&gt;group_by()&lt;/code&gt; rather than a &lt;code&gt;pivot_longer()&lt;/code&gt; step. E.g.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ames %&amp;gt;% 
+  group_by(Mo_Sold) %&amp;gt;% 
+  summarise(Sale_Price = list(Sale_Price)) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 12 x 2
+##    Mo_Sold Sale_Price 
+##      &amp;lt;int&amp;gt; &amp;lt;list&amp;gt;     
+##  1       1 &amp;lt;int [123]&amp;gt;
+##  2       2 &amp;lt;int [133]&amp;gt;
+##  3       3 &amp;lt;int [232]&amp;gt;
+##  4       4 &amp;lt;int [279]&amp;gt;
+##  5       5 &amp;lt;int [395]&amp;gt;
+##  6       6 &amp;lt;int [505]&amp;gt;
+##  7       7 &amp;lt;int [449]&amp;gt;
+##  8       8 &amp;lt;int [233]&amp;gt;
+##  9       9 &amp;lt;int [161]&amp;gt;
+## 10      10 &amp;lt;int [173]&amp;gt;
+## 11      11 &amp;lt;int [143]&amp;gt;
+## 12      12 &amp;lt;int [104]&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;At which point your data is in fundamentally the same form as was created in the previous code chunk (at least for if we only care about computing summary metrics that don’t require vectors of equal length&lt;a href=&#34;#fn13&#34; class=&#34;footnote-ref&#34; id=&#34;fnref13&#34;&gt;&lt;sup&gt;13&lt;/sup&gt;&lt;/a&gt;) so you can move onto &lt;a href=&#34;#ii.-expand-combinations&#34;&gt;II. Expand combinations&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;If the variables needed for your combinations of interest are across both rows and columns, you may want to use both &lt;code&gt;pivot_longer()&lt;/code&gt; and &lt;code&gt;group_by()&lt;/code&gt; steps and may need to make a few small modifications.&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ii.-expand-combinations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;II. Expand combinations&lt;/h2&gt;
+&lt;p&gt;I then use &lt;code&gt;tidyr::nesting()&lt;/code&gt; within &lt;code&gt;tidyr::expand()&lt;/code&gt; to make all 2-way combinations of our rows.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_lists_comb &amp;lt;- expand(df_lists,
+                        nesting(var, vector),
+                        nesting(var2 = var, vector2 = vector)) %&amp;gt;% 
+  print()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 100 x 4
+##    var        vector        var2           vector2      
+##    &amp;lt;chr&amp;gt;      &amp;lt;list&amp;gt;        &amp;lt;chr&amp;gt;          &amp;lt;list&amp;gt;       
+##  1 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Fireplaces     &amp;lt;dbl [2,930]&amp;gt;
+##  2 Fireplaces &amp;lt;dbl [2,930]&amp;gt; First_Flr_SF   &amp;lt;dbl [2,930]&amp;gt;
+##  3 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Full_Bath      &amp;lt;dbl [2,930]&amp;gt;
+##  4 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Garage_Area    &amp;lt;dbl [2,930]&amp;gt;
+##  5 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Garage_Cars    &amp;lt;dbl [2,930]&amp;gt;
+##  6 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Gr_Liv_Area    &amp;lt;dbl [2,930]&amp;gt;
+##  7 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Total_Bsmt_SF  &amp;lt;dbl [2,930]&amp;gt;
+##  8 Fireplaces &amp;lt;dbl [2,930]&amp;gt; TotRms_AbvGrd  &amp;lt;dbl [2,930]&amp;gt;
+##  9 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Year_Built     &amp;lt;dbl [2,930]&amp;gt;
+## 10 Fireplaces &amp;lt;dbl [2,930]&amp;gt; Year_Remod_Add &amp;lt;dbl [2,930]&amp;gt;
+## # ... with 90 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;See &lt;a href=&#34;#expand-via-join&#34;&gt;Expand via join&lt;/a&gt; for an alternative approach using the &lt;code&gt;dplyr::*_join()&lt;/code&gt; operations.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;You could make a strong case that this step should be after &lt;a href=&#34;#iii.-filter-redundancies&#34;&gt;III. Filter redundancies&lt;/a&gt;&lt;a href=&#34;#fn14&#34; class=&#34;footnote-ref&#34; id=&#34;fnref14&#34;&gt;&lt;sup&gt;14&lt;/sup&gt;&lt;/a&gt;. However putting it beforehand makes the required code easier to write and to read.&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;iii.-filter-redundancies&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;III. Filter redundancies&lt;/h2&gt;
+&lt;p&gt;Filter-out redundant columns, sort the rows, better organize the columns.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_lists_comb &amp;lt;- df_lists_comb %&amp;gt;% 
+  filter(var != var2) %&amp;gt;% 
+  arrange(var, var2) %&amp;gt;% 
+  mutate(vars = paste0(var, &amp;quot;.&amp;quot;, var2)) %&amp;gt;% 
+  select(contains(&amp;quot;var&amp;quot;), everything()) %&amp;gt;% 
+  print()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 90 x 5
+##    var          var2           vars                    vector       vector2     
+##    &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;          &amp;lt;chr&amp;gt;                   &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;      
+##  1 Fireplaces   First_Flr_SF   Fireplaces.First_Flr_SF &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  2 Fireplaces   Full_Bath      Fireplaces.Full_Bath    &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  3 Fireplaces   Garage_Area    Fireplaces.Garage_Area  &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  4 Fireplaces   Garage_Cars    Fireplaces.Garage_Cars  &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  5 Fireplaces   Gr_Liv_Area    Fireplaces.Gr_Liv_Area  &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  6 Fireplaces   Total_Bsmt_SF  Fireplaces.Total_Bsmt_~ &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  7 Fireplaces   TotRms_AbvGrd  Fireplaces.TotRms_AbvG~ &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  8 Fireplaces   Year_Built     Fireplaces.Year_Built   &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##  9 Fireplaces   Year_Remod_Add Fireplaces.Year_Remod_~ &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+## 10 First_Flr_SF Fireplaces     First_Flr_SF.Fireplaces &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+## # ... with 80 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If your operation of interest is associative&lt;a href=&#34;#fn15&#34; class=&#34;footnote-ref&#34; id=&#34;fnref15&#34;&gt;&lt;sup&gt;15&lt;/sup&gt;&lt;/a&gt;, apply a filter to remove additional redundant combinations.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;c_sort_collapse &amp;lt;- function(...){
+  c(...) %&amp;gt;% 
+    sort() %&amp;gt;% 
+    str_c(collapse = &amp;quot;.&amp;quot;)
+}
+
+df_lists_comb_as &amp;lt;- df_lists_comb %&amp;gt;% 
+  mutate(vars = map2_chr(.x = var, 
+                         .y = var2, 
+                         .f = c_sort_collapse)) %&amp;gt;%
+  distinct(vars, .keep_all = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;iv.-map-functions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;IV. Map function(s)&lt;/h2&gt;
+&lt;p&gt;Each row of your dataframe now contains the relevant combinations of variables and is ready to have any arbitrary function(s) mapped across them.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Example with summary statistic&lt;a href=&#34;#fn16&#34; class=&#34;footnote-ref&#34; id=&#34;fnref16&#34;&gt;&lt;sup&gt;16&lt;/sup&gt;&lt;/a&gt;:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;For example, let’s say we want to compute the p-value of the correlation coefficient for each pair&lt;a href=&#34;#fn17&#34; class=&#34;footnote-ref&#34; id=&#34;fnref17&#34;&gt;&lt;sup&gt;17&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pairs_cor_pvalues &amp;lt;- df_lists_comb_as %&amp;gt;% 
+  mutate(cor_pvalue = map2(vector, vector2, cor.test) %&amp;gt;% map_dbl(&amp;quot;p.value&amp;quot;),
+         vars = fct_reorder(vars, -cor_pvalue)) %&amp;gt;% 
+  arrange(cor_pvalue) %&amp;gt;% 
+  print()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 45 x 6
+##    var        var2         vars                vector     vector2     cor_pvalue
+##    &amp;lt;chr&amp;gt;      &amp;lt;chr&amp;gt;        &amp;lt;fct&amp;gt;               &amp;lt;list&amp;gt;     &amp;lt;list&amp;gt;           &amp;lt;dbl&amp;gt;
+##  1 First_Flr~ Total_Bsmt_~ First_Flr_SF.Total~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  0.       
+##  2 Full_Bath  Gr_Liv_Area  Full_Bath.Gr_Liv_A~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  0.       
+##  3 Garage_Ar~ Garage_Cars  Garage_Area.Garage~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  0.       
+##  4 Gr_Liv_Ar~ TotRms_AbvG~ Gr_Liv_Area.TotRms~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  0.       
+##  5 Year_Built Year_Remod_~ Year_Built.Year_Re~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  7.85e-301
+##  6 First_Flr~ Gr_Liv_Area  First_Flr_SF.Gr_Li~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  8.17e-244
+##  7 Garage_Ca~ Year_Built   Garage_Cars.Year_B~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  1.57e-219
+##  8 Full_Bath  TotRms_AbvG~ Full_Bath.TotRms_A~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  1.24e-210
+##  9 First_Flr~ Garage_Area  First_Flr_SF.Garag~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  8.16e-178
+## 10 Garage_Ca~ Gr_Liv_Area  Garage_Cars.Gr_Liv~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  4.80e-175
+## # ... with 35 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;For fun, let’s plot the most significant associations onto a bar graph.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pairs_cor_pvalues %&amp;gt;% 
+  head(15) %&amp;gt;% 
+  mutate(cor_pvalue_nlog = -log(cor_pvalue)) %&amp;gt;% 
+  ggplot(aes(x = vars, 
+             y = cor_pvalue_nlog, 
+             fill = is.infinite(cor_pvalue_nlog) %&amp;gt;% factor(c(T, F))))+
+  geom_col()+
+  coord_flip()+
+  theme_bw()+
+  labs(title = &amp;quot;We are confident that garage area and # of garage cars are correlated&amp;quot;,
+       y = &amp;quot;Negative log of p-value of correlation coefficient&amp;quot;,
+       x = &amp;quot;Variable combinations&amp;quot;,
+       fill = &amp;quot;Too high to\nmeaningfully\ndifferentiate:&amp;quot;)+
+  theme(plot.title.position = &amp;quot;plot&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;You could use this approach to calculate any pairwise summary statistic. For example, see &lt;a href=&#34;https://gist.github.com/brshallo/dc3c1f2f34519ca2a8a68024bc3a22e5&#34;&gt;gist&lt;/a&gt; where I calculate the K-S statistic across each combination of a group of distributions.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;If you only care about computing summary statistics on your pairwise combinations, (and not adding new columns onto your original dataframe) you can stop here.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Example with transformations&lt;a href=&#34;#fn18&#34; class=&#34;footnote-ref&#34; id=&#34;fnref18&#34;&gt;&lt;sup&gt;18&lt;/sup&gt;&lt;/a&gt;:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Back to the feature engineering example, perhaps we want to create new features of the difference and quotient of each combination of our variables.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;new_features_prep1 &amp;lt;- df_lists_comb %&amp;gt;% 
+  mutate(difference = map2(vector, vector2, `-`),
+         ratio = map2(vector, vector2, `/`))&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;v.-return-to-normal-dataframe&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;V. Return to normal dataframe&lt;/h2&gt;
+&lt;p&gt;The next set of steps will put our data back into a more traditional form consistent with our starting dataframe/tibble.&lt;/p&gt;
+&lt;p&gt;First let’s revert our data to a form similar to where it was at the end of &lt;a href=&#34;#i.-nest-and-pivot&#34;&gt;I. Nest and pivot&lt;/a&gt; where we had two columns:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;one with our variable names&lt;/li&gt;
+&lt;li&gt;a second containing a list-column of vectors&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;new_features_prep2 &amp;lt;- new_features_prep1 %&amp;gt;% 
+  pivot_longer(cols = c(difference, ratio)) %&amp;gt;% # 1
+  mutate(name_vars = str_c(var, name, var2, sep = &amp;quot;.&amp;quot;)) %&amp;gt;% # 2
+  select(name_vars, value) # 3&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;At the end of each line of code above is a number corresponding with the following explanations:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;if we had done just one operation, this step would not be needed, but we did multiple operations, created multiple list-columns (&lt;code&gt;difference&lt;/code&gt; and &lt;code&gt;ratio&lt;/code&gt;) which we need to get into a single list-column&lt;/li&gt;
+&lt;li&gt;create new variable name that combines constituent variable names with name of transformation&lt;/li&gt;
+&lt;li&gt;remove old columns&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Next we simply apply the inverse of those operations performed in &lt;a href=&#34;#i.-nest-and-pivot&#34;&gt;I. Nest and pivot&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;new_features &amp;lt;- new_features_prep2 %&amp;gt;% 
+  pivot_wider(values_from = value,
+              names_from = name_vars) %&amp;gt;%
+  unnest(cols = everything())&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The new features will add a good number of columns onto our original dataset&lt;a href=&#34;#fn19&#34; class=&#34;footnote-ref&#34; id=&#34;fnref19&#34;&gt;&lt;sup&gt;19&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dim(new_features)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 2930  180&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;vi.-bind-back-to-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;VI. Bind back to data&lt;/h2&gt;
+&lt;p&gt;I then bind the new features back onto the original subsetted dataframe.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ames_data_features &amp;lt;- bind_cols(ames_subset, new_features)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;At which point I could do further exploring, feature engineering, model building, etc.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;functionalize&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Functionalize&lt;/h1&gt;
+&lt;p&gt;I put these steps into a few (unpolished) functions found at &lt;a href=&#34;https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1&#34;&gt;this gist&lt;/a&gt;&lt;a href=&#34;#fn20&#34; class=&#34;footnote-ref&#34; id=&#34;fnref20&#34;&gt;&lt;sup&gt;20&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::source_gist(&amp;quot;https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;operations_combinations()&lt;/code&gt; takes in your dataframe, the set of numeric columns to create pairwise combinations from, and a list of functions&lt;a href=&#34;#fn21&#34; class=&#34;footnote-ref&#34; id=&#34;fnref21&#34;&gt;&lt;sup&gt;21&lt;/sup&gt;&lt;/a&gt; to apply.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;example-creating-evaluating-features&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Example creating &amp;amp; evaluating features&lt;/h1&gt;
+&lt;p&gt;Let’s use the new &lt;code&gt;operations_combinations()&lt;/code&gt; function to create new columns for the differences and quotients between all pairwise combinations of our variables of interest.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ames_data_features_example &amp;lt;- operations_combinations(
+  df = mutate_if(ames, is.numeric, as.double),
+  one_of(ames_cols),
+  funs = list(&amp;quot;/&amp;quot;, &amp;quot;-&amp;quot;),
+  funs_names = list(&amp;quot;ratio&amp;quot;, &amp;quot;difference&amp;quot;),
+  associative = FALSE
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Perhaps you want to calculate some measure of association between your features and a target of interest. To keep things simple, I’ll remove any columns that contain any NA’s or infinite values.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;features_keep &amp;lt;- ames_data_features_example %&amp;gt;% 
+  keep(is.numeric) %&amp;gt;% 
+  keep(~sum(is.na(.) | is.infinite(.)) == 0) %&amp;gt;% 
+  colnames()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Maybe, for some reason, you want to see the statistical significance of the correlation of each feature with &lt;code&gt;Sale_Price&lt;/code&gt; when weighting by &lt;code&gt;Lot_Area&lt;/code&gt;. I’ll calculate these across variables (and a random sample of 1500 observations) then plot them on a histogram.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(1234)
+ames_data_features_example %&amp;gt;% 
+  sample_n(1500) %&amp;gt;% 
+  summarise_at(
+    .vars = features_keep[!(features_keep %in% c(&amp;quot;Sale_Price&amp;quot;, &amp;quot;Lot_Area&amp;quot;))],
+    .funs = ~weights::wtd.cor(., Sale_Price, weight = Lot_Area)[1]) %&amp;gt;% 
+  gather() %&amp;gt;% # gather() is an older version of pivot_longer() w/ fewer parameters
+  ggplot(aes(x = value))+
+  geom_vline(xintercept = 0, colour = &amp;quot;lightgray&amp;quot;, size = 2)+
+  geom_histogram()+
+  scale_x_continuous(labels = scales::comma)+
+  labs(title = &amp;quot;Distribution of correlations with Sale_Price&amp;quot;,
+       subtitle = &amp;quot;Weighted by Lot Area&amp;quot;,
+       x = &amp;quot;Weighted correlation coefficient&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-18-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;If doing predictive modeling or inference you may want to fit any transformations and analysis into a &lt;code&gt;tidymodels&lt;/code&gt; pipeline or other framework. For some brief notes on this see &lt;a href=&#34;#interactions-example-tidymodels&#34;&gt;Interactions example, tidymodels&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;when-is-this-approach-inappropriate&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;When is this approach inappropriate?&lt;/h1&gt;
+&lt;p&gt;Combinatorial growth is very fast&lt;a href=&#34;#fn22&#34; class=&#34;footnote-ref&#34; id=&#34;fnref22&#34;&gt;&lt;sup&gt;22&lt;/sup&gt;&lt;/a&gt;. As you increase either the number of variables in your pool or the size of each set, you will quickly bump into computational limitations.&lt;/p&gt;
+&lt;p&gt;Tidyverse packages are optimized to be efficient. However operations with matrices or other specialized formats&lt;a href=&#34;#fn23&#34; class=&#34;footnote-ref&#34; id=&#34;fnref23&#34;&gt;&lt;sup&gt;23&lt;/sup&gt;&lt;/a&gt; are generally faster&lt;a href=&#34;#fn24&#34; class=&#34;footnote-ref&#34; id=&#34;fnref24&#34;&gt;&lt;sup&gt;24&lt;/sup&gt;&lt;/a&gt; than with dataframes/tibbles. If you are running into computational challenges but prefer to stick with a tidyverse aesthetic (which uses dataframes as a cornerstone), you might:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Use heuristics to reduce the number of variables or operations you need to perform (e.g. take a sample, use a preliminary filter, a step-wise like iteration, etc.)&lt;/li&gt;
+&lt;li&gt;Look for packages that abstract the storage and computationally heavy operations away&lt;a href=&#34;#fn25&#34; class=&#34;footnote-ref&#34; id=&#34;fnref25&#34;&gt;&lt;sup&gt;25&lt;/sup&gt;&lt;/a&gt; and then return back an output in a convenient form&lt;a href=&#34;#fn26&#34; class=&#34;footnote-ref&#34; id=&#34;fnref26&#34;&gt;&lt;sup&gt;26&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Improve the efficiency of your code (e.g. filter redundancies before rather than after expanding combinations)&lt;a href=&#34;#fn27&#34; class=&#34;footnote-ref&#34; id=&#34;fnref27&#34;&gt;&lt;sup&gt;27&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Consider parralelizing&lt;/li&gt;
+&lt;li&gt;Use matrices&lt;a href=&#34;#fn28&#34; class=&#34;footnote-ref&#34; id=&#34;fnref28&#34;&gt;&lt;sup&gt;28&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;There is sometimes an urge to do &lt;em&gt;everything&lt;/em&gt; in a tidy way, which is not necessary. For example, you &lt;em&gt;could&lt;/em&gt; use an approach like the one I walk through to calculate pairwise correlations between each of your variables. However, the &lt;code&gt;cor()&lt;/code&gt; function would do this much more efficiently if called on a matrix or traditional dataframe without list-columns (though you could also use the &lt;code&gt;corrr&lt;/code&gt; package within the &lt;code&gt;tidymodels&lt;/code&gt; suite which calls &lt;code&gt;cor()&lt;/code&gt; in the back-end&lt;a href=&#34;#fn29&#34; class=&#34;footnote-ref&#34; id=&#34;fnref29&#34;&gt;&lt;sup&gt;29&lt;/sup&gt;&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;However, for many operations…&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;there may not be an efficient pairwise implementation available / accessible&lt;/li&gt;
+&lt;li&gt;the slower computation may not matter or can be mitigated in some way&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These situations&lt;a href=&#34;#fn30&#34; class=&#34;footnote-ref&#34; id=&#34;fnref30&#34;&gt;&lt;sup&gt;30&lt;/sup&gt;&lt;/a&gt; are where the approach I walked through is most appropriate.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;div id=&#34;interactions-example-tidymodels&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Interactions example, tidymodels&lt;/h2&gt;
+&lt;p&gt;A good example for creating and evaluating interaction terms&lt;a href=&#34;#fn31&#34; class=&#34;footnote-ref&#34; id=&#34;fnref31&#34;&gt;&lt;sup&gt;31&lt;/sup&gt;&lt;/a&gt; is in &lt;a href=&#34;http://www.feat.engineering/complete-enumeration.html#complete-enumeration-simple-screening&#34;&gt;The Brute-Force Approach to Identifying Predictive Interactions, Simple Screening&lt;/a&gt; section of &lt;em&gt;Max Kuhn&lt;/em&gt; and &lt;em&gt;Kjell Johnson’s&lt;/em&gt; (free) online book “Feature Engineering and Selection: A Practical Approach for Predictive Models”.&lt;/p&gt;
+&lt;p&gt;The &lt;a href=&#34;https://github.com/topepo/FES/blob/master/07_Detecting_Interaction_Effects/7_04_The_Brute-Force_Approach_to_Identifying_Predictive_Interactions/ames_pairwise.R&#34;&gt;source code&lt;/a&gt; shows another approach for combining variables. The author uses…&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;combn()&lt;/code&gt; to create all combinations of variable names which are then…&lt;/li&gt;
+&lt;li&gt;turned into formulas and passed into &lt;code&gt;recipes::step_interact()&lt;/code&gt;, specifying the new columns to be created&lt;a href=&#34;#fn32&#34; class=&#34;footnote-ref&#34; id=&#34;fnref32&#34;&gt;&lt;sup&gt;32&lt;/sup&gt;&lt;/a&gt;…&lt;/li&gt;
+&lt;li&gt;for each interaction term…&lt;/li&gt;
+&lt;li&gt;in each associated model being evaluated&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The example uses a mix of packages and styles and is not a purely tidy approach – &lt;code&gt;tidymodels&lt;/code&gt; has also gone through a lot of development since “Feature Engineering and Selection…” was published in 2019&lt;a href=&#34;#fn33&#34; class=&#34;footnote-ref&#34; id=&#34;fnref33&#34;&gt;&lt;sup&gt;33&lt;/sup&gt;&lt;/a&gt;. Section 11.2 on &lt;a href=&#34;http://www.feat.engineering/greedy-simple-filters.html&#34;&gt;Greedy Search Methods, Simple Filters&lt;/a&gt; is also highly relevant.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;expand-via-join&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Expand via join&lt;/h2&gt;
+&lt;p&gt;You can take advantage of join&lt;a href=&#34;#fn34&#34; class=&#34;footnote-ref&#34; id=&#34;fnref34&#34;&gt;&lt;sup&gt;34&lt;/sup&gt;&lt;/a&gt; behavior to create all possible row combinations. In this case, the output will be the same as shown when using &lt;code&gt;expand()&lt;/code&gt; (except row order will be different).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;left_join(mutate(df_lists, id = 1),
+          mutate(df_lists, id = 1) %&amp;gt;% rename_at(vars(-one_of(&amp;quot;id&amp;quot;)), paste0, &amp;quot;2&amp;quot;)) %&amp;gt;%
+  select(-id)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;nested-tibbles&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Nested tibbles&lt;/h2&gt;
+&lt;p&gt;Creates list of tibbles rather than list of vectors – typically the first way lists as columns in dataframes is introduced.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ames_subset %&amp;gt;% 
+  pivot_longer(everything(), names_to = &amp;quot;var&amp;quot;, values_to = &amp;quot;list&amp;quot;) %&amp;gt;% 
+  group_by(var) %&amp;gt;% 
+  nest()&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pivot-and-then-summarise&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Pivot and then summarise&lt;/h2&gt;
+&lt;p&gt;(Almost) equivalent to the example in &lt;a href=&#34;#i.-nest-and-pivot&#34;&gt;I. Nest and pivot&lt;/a&gt;. Steps just run in a different order (row order will also be different).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ames_test %&amp;gt;% 
+  pivot_longer(cols = everything(), 
+             names_to = &amp;quot;var&amp;quot;, 
+             values_to = &amp;quot;vector&amp;quot;) %&amp;gt;% 
+  group_by(var) %&amp;gt;% 
+  summarise_all(list)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;gif-for-social-media&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Gif for social media&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;AmesHousing::make_ames() %&amp;gt;% 
+  select(Year = Year_Sold, Price = Sale_Price) %&amp;gt;% 
+  # I.
+  group_by(Year) %&amp;gt;% 
+  summarise(Price = list(Gr_Liv_Area)) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  # II.
+  expand(nesting(Year, Price),
+         nesting(Year2 = Year, Price2 = Price)
+  ) %&amp;gt;%
+  # III.
+  filter(Year != Year2) %&amp;gt;% 
+  mutate(Years = map2_chr(.x = Year, 
+                          .y = Year2, 
+                          .f = c_sort_collapse)) %&amp;gt;%
+  distinct(Years, .keep_all = TRUE) %&amp;gt;% 
+  select(-Years) %&amp;gt;% 
+  #IV.
+  mutate(ks_test = map2(Price, 
+                        Price2, 
+                        stats::ks.test) %&amp;gt;% map_dbl(&amp;quot;p.value&amp;quot;)
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-05-31-tidy-2-way-column-combinations_files/pairwise-comparison-gif-edit.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Actual gif was created by embedding above code into a presentation and exporting it as a gif and then making a few minor edits.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;session-info&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Session info&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sessionInfo()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## R version 3.5.1 (2018-07-02)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 10 x64 (build 18363)
+## 
+## Matrix products: default
+## 
+## locale:
+## [1] LC_COLLATE=English_United States.1252 
+## [2] LC_CTYPE=English_United States.1252   
+## [3] LC_MONETARY=English_United States.1252
+## [4] LC_NUMERIC=C                          
+## [5] LC_TIME=English_United States.1252    
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] forcats_0.4.0   stringr_1.4.0   dplyr_1.0.1     purrr_0.3.4    
+## [5] readr_1.3.1     tidyr_1.1.1     tibble_3.0.3    ggplot2_3.3.2  
+## [9] tidyverse_1.2.1
+## 
+## loaded via a namespace (and not attached):
+##  [1] fs_1.3.2            usethis_1.4.0       lubridate_1.7.4    
+##  [4] devtools_2.0.0      RColorBrewer_1.1-2  httr_1.4.0         
+##  [7] rprojroot_1.3-2     tools_3.5.1         backports_1.1.8    
+## [10] utf8_1.1.4          R6_2.4.1            rpart_4.1-13       
+## [13] Hmisc_4.1-1         colorspace_1.4-1    nnet_7.3-12        
+## [16] withr_2.2.0         gridExtra_2.3       tidyselect_1.1.0   
+## [19] prettyunits_1.1.1   processx_3.4.2      curl_3.3           
+## [22] compiler_3.5.1      cli_2.0.2           rvest_0.3.4        
+## [25] htmlTable_1.12      mice_3.8.0          xml2_1.2.0         
+## [28] desc_1.2.0          labeling_0.3        bookdown_0.11      
+## [31] checkmate_2.0.0     scales_1.1.1        corrr_0.4.2.9000   
+## [34] callr_3.4.3         digest_0.6.25       foreign_0.8-70     
+## [37] rmarkdown_1.13      base64enc_0.1-3     pkgconfig_2.0.3    
+## [40] htmltools_0.5.0     sessioninfo_1.1.1   htmlwidgets_1.3    
+## [43] rlang_0.4.7         readxl_1.3.1        rstudioapi_0.11    
+## [46] farver_2.0.3        generics_0.0.2      jsonlite_1.6.1     
+## [49] gtools_3.8.2        acepack_1.4.1       magrittr_1.5       
+## [52] Formula_1.2-3       Matrix_1.2-14       Rcpp_1.0.4.6       
+## [55] munsell_0.5.0       fansi_0.4.1         lifecycle_0.2.0    
+## [58] weights_1.0.1       stringi_1.4.6       yaml_2.2.1         
+## [61] pkgbuild_1.1.0      grid_3.5.1          gdata_2.18.0       
+## [64] crayon_1.3.4        lattice_0.20-35     haven_2.1.0        
+## [67] splines_3.5.1       hms_0.5.2           knitr_1.29         
+## [70] ps_1.3.2            pillar_1.4.6        pkgload_1.0.2      
+## [73] glue_1.4.1          evaluate_0.14       blogdown_0.15      
+## [76] latticeExtra_0.6-28 data.table_1.12.8   remotes_2.1.0      
+## [79] modelr_0.1.4        vctrs_0.3.2         testthat_2.3.2     
+## [82] cellranger_1.1.0    gtable_0.3.0        assertthat_0.2.1   
+## [85] xfun_0.16           broom_0.7.0         AmesHousing_0.0.3  
+## [88] survival_2.42-3     memoise_1.1.0       cluster_2.0.7-1    
+## [91] ellipsis_0.3.1&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Will focus on two-way example in this post, but could use similar methods to make more generalizable solution across n-way examples. If I were to do this, the code below would change. E.g.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;to use &lt;code&gt;pmap*()&lt;/code&gt; operations over &lt;code&gt;map2*()&lt;/code&gt; operations&lt;/li&gt;
+&lt;li&gt;I’d need to make some functions that make it so I can remove all the places where I have &lt;code&gt;var&lt;/code&gt; and &lt;code&gt;var2&lt;/code&gt; type column names hard-coded&lt;/li&gt;
+&lt;li&gt;Alternatively, I might shift approaches and make better use of &lt;code&gt;combn()&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Though this “throw everything and the kitchen-sink” approach may not always be a good idea.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I’ve done this type of operation in a variety of ways. Sometimes without any really good reason as to why I used one approach or another. It isn’t completely clear (at least to me) the recommended way of doing these type of operations within the tidyverse – hence the diversity of my approaches in the past and deciding to document the typical steps in the approach I take… via writing this post.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;Or the tidymodels implementation &lt;code&gt;corrr::correlate()&lt;/code&gt; in the &lt;a href=&#34;https://corrr.tidymodels.org/&#34;&gt;corrr&lt;/a&gt; package.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;or is not in a style you prefer&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;I’ll also reference related approaches / small tweaks (putting those materials in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;. This is by no means an exhaustive list (e.g. don’t have an example with a &lt;code&gt;for&lt;/code&gt; loop or with a &lt;code&gt;%do%&lt;/code&gt; operator). The source code of my post on &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/&#34;&gt;Ambiguous Absolute Value&lt;/a&gt; signs shows a related but more complex / messy approach on a combinatorics problem.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;In particular, the chapters on “Iteration” and “Many Models” in &lt;a href=&#34;https://r4ds.had.co.nz/iteration.html&#34;&gt;R for Data Science&lt;/a&gt;. I would also recommend Rebecca Barter’s &lt;a href=&#34;http://www.rebeccabarter.com/blog/2019-08-19_purrr/&#34;&gt;Learn to purrr&lt;/a&gt; blog post.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;The new &lt;code&gt;dplyr&lt;/code&gt; 1.0.0. contains new functions that would have been potentially useful for several of these operations. I highly recommend checking these updates out in the various &lt;a href=&#34;https://www.tidyverse.org/tags/dplyr-1-0-0/&#34;&gt;recent posts&lt;/a&gt; by Hadley Wickham. Some of the major updates (potentially relevant to the types of operations I’ll be discussing in my post):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;new approach for across-column operations (replacing &lt;code&gt;_at()&lt;/code&gt;, &lt;code&gt;_if()&lt;/code&gt;, &lt;code&gt;_all()&lt;/code&gt; variants with &lt;code&gt;across()&lt;/code&gt; function)&lt;/li&gt;
+&lt;li&gt;brought-back rowwise operations&lt;/li&gt;
+&lt;li&gt;emphasize ability to output tibbles / multiple columns in core &lt;code&gt;dplyr&lt;/code&gt; verbs. This is something I had only taken advantage of occassionally in the past (&lt;a href=&#34;https://stackoverflow.com/a/54725732/9059865&#34;&gt;example&lt;/a&gt;), but will look to use more going forward.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;f I’d spotted this issue initially I’m not sure I would have written this post. However what this post offers is a more verbose treatment of the problem which may be useful for people newer to pairwise operations or the tidyverse.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;For technical reasons, I also converted all integer types to doubles – was getting integer overflow problems in later operations before changing. &lt;a href=&#34;https://stackoverflow.com/questions/8804779/what-is-integer-overflow-in-r-and-how-can-it-happen&#34;&gt;Thread&lt;/a&gt; on integer overflow in R. In this post I’m not taking a disciplined approach to feature engineering. For example it may make sense to normalize the variables so that variable combinations would be starting on a similar scale. This could be done using &lt;code&gt;recipes::step_normalize()&lt;/code&gt; or with code like &lt;code&gt;dplyr::mutate_all(df, ~(. - mean(.)) / sd(.))&lt;/code&gt; .&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Note that this part of the problem is one where I actually find using &lt;code&gt;tidyr::gather()&lt;/code&gt; easier – but I’ve been forcing myself to switch over to using the &lt;code&gt;pivot_()&lt;/code&gt; functions over &lt;code&gt;spread()&lt;/code&gt; and &lt;code&gt;gather()&lt;/code&gt;.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;The more common approach.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;If your variables are across rows you are likely concerned with getting summary metrics rather than creating new features – as if your data is across rows there is nothing guaranteeing you have the same number of observations or that they are lined-up appropriately. If you &lt;em&gt;are&lt;/em&gt; interested in creating new features, you should probably have first reshaped your data to ensure each column represented a variable.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;As switching these would be more computationally efficient – see &lt;a href=&#34;#when-is-this-approach-inappropriate&#34;&gt;When is this approach inappropriate?&lt;/a&gt; for notes related to this. Switching the order here would suggest using approaches with the&lt;code&gt;combn()&lt;/code&gt; function.&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;I.e. has the same output regardless of the order of the variables. E.g. multiplication or addition but not subtraction or division.&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;Function(s) that output vectors of length 1 (or less than length of input vectors).&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;Note that the pairwise implementation &lt;code&gt;psych::corr.test()&lt;/code&gt; could have been used on your original subsetted dataframe, see &lt;a href=&#34;https://stackoverflow.com/questions/13112238/a-matrix-version-of-cor-test&#34;&gt;stack overflow thread&lt;/a&gt;.&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn18&#34;&gt;&lt;p&gt;Function(s) that output vector of length equal to length of input vectors.&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;Did not print this output because cluttered-up page with so many column names.&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn20&#34;&gt;&lt;p&gt;Steps I - III and V &amp;amp; VI are essentially direct copies of the code above. The approach I took with Step IV may take more effort to follow as it requires understanding a little &lt;code&gt;rlang&lt;/code&gt; and could likely have been done more simply.&lt;a href=&#34;#fnref20&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn21&#34;&gt;&lt;p&gt;Must have two vectors as input, but do not need to be infix functions.&lt;a href=&#34;#fnref21&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn22&#34;&gt;&lt;p&gt;Non-technical article discussing combinatorial explosion in context of company user growth targets: &lt;a href=&#34;https://medium.com/@TorBair/exponential-growth-isn-t-cool-combinatorial-growth-is-85a0b1fdb6a5&#34;&gt;Exponential Growth Isn’t Cool. Combinatorial Growth Is.&lt;/a&gt;.&lt;a href=&#34;#fnref22&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn23&#34;&gt;&lt;p&gt;E.g. &lt;a href=&#34;https://github.com/Rdatatable/data.table&#34;&gt;data.table&lt;/a&gt; dataframes&lt;a href=&#34;#fnref23&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;Hence, if you are doing operations across combinations of lots of variables it may not make sense to do the operations directly within dataframes.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;Much (if not most) of the &lt;code&gt;tidyverse&lt;/code&gt; (and the R programming language generally) is about creating a smooth interface between the analyst/scientist and the back-end complexity of the operations they are performing. Projects like &lt;a href=&#34;https://spark.rstudio.com/&#34;&gt;sparklyr&lt;/a&gt;, &lt;a href=&#34;https://db.rstudio.com/dbi/&#34;&gt;DBI&lt;/a&gt;, &lt;a href=&#34;https://github.com/rstudio/reticulate&#34;&gt;reticulate&lt;/a&gt;, &lt;a href=&#34;https://www.tidymodels.org/&#34;&gt;tidymodels&lt;/a&gt;, and &lt;a href=&#34;https://github.com/paul-buerkner/brms&#34;&gt;brms&lt;/a&gt; (to name a few) represent cases where this &lt;em&gt;interface&lt;/em&gt; role of R is most apparent.&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn26&#34;&gt;&lt;p&gt;For tidyverse packages, this is often returned into or in the form of a dataframe.&lt;a href=&#34;#fnref26&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn27&#34;&gt;&lt;p&gt;Could make better use of &lt;code&gt;combn()&lt;/code&gt; function to help.&lt;a href=&#34;#fnref27&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn28&#34;&gt;&lt;p&gt;Depending on the complexity may just need to brush-up on your linear algebra.&lt;a href=&#34;#fnref28&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn29&#34;&gt;&lt;p&gt;&lt;code&gt;corrr&lt;/code&gt; can also be used to run the operation on databases that may have larger data than you could fit on your computer.&lt;a href=&#34;#fnref29&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn30&#34;&gt;&lt;p&gt;Likely more common for many, if not most, analysts and data scientists.&lt;a href=&#34;#fnref30&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn31&#34;&gt;&lt;p&gt;I.e. multiplying two variables together&lt;a href=&#34;#fnref31&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn32&#34;&gt;&lt;p&gt;Created upon the recipe being &lt;em&gt;baked&lt;/em&gt; or &lt;em&gt;juiced&lt;/em&gt; – if you have not checked it out, &lt;a href=&#34;https://github.com/tidymodels/recipes&#34;&gt;recipes&lt;/a&gt; is AWESOME!&lt;a href=&#34;#fnref32&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn33&#34;&gt;&lt;p&gt;Maybe at a future date I’ll make a post writing out the example here using the newer approaches now available in &lt;code&gt;tidymodels&lt;/code&gt;. &lt;a href=&#34;https://gist.github.com/brshallo/674ff06608c1a55fefb8d5dc49896d65&#34;&gt;Gist&lt;/a&gt; of &lt;code&gt;combn_ttible()&lt;/code&gt;… starting place for if I ever get to that write-up.&lt;a href=&#34;#fnref33&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn34&#34;&gt;&lt;p&gt;Could also have used &lt;code&gt;right_join()&lt;/code&gt; or &lt;code&gt;full_join()&lt;/code&gt;.&lt;a href=&#34;#fnref34&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
     </item>
     
   </channel>
