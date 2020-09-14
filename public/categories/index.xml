@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Bryan&#39;s website</title>
@@ -6,11 +6,7 @@
     <description>Recent content in Categories on Bryan&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 11 Sep 2020 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Fri, 11 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>politics</title>
       <link>/categories/politics/</link>
@@ -39,6 +35,15 @@
     </item>
     
     <item>
+      <title>ai</title>
+      <link>/categories/ai/</link>
+      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/ai/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>javascript</title>
       <link>/categories/javascript/</link>
       <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
@@ -48,11 +53,11 @@
     </item>
     
     <item>
-      <title>visu</title>
-      <link>/categories/visu/</link>
+      <title>visualization</title>
+      <link>/categories/visualization/</link>
       <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>/categories/visu/</guid>
+      <guid>/categories/visualization/</guid>
       <description></description>
     </item>
     
@@ -66,18 +71,9 @@
     </item>
     
     <item>
-      <title>r</title>
-      <link>/categories/r/</link>
-      <pubDate>Thu, 25 Jun 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/r/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>rstats</title>
       <link>/categories/rstats/</link>
-      <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 25 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>/categories/rstats/</guid>
       <description></description>
@@ -93,11 +89,11 @@
     </item>
     
     <item>
-      <title>visualization</title>
-      <link>/categories/visualization/</link>
+      <title>r</title>
+      <link>/categories/r/</link>
       <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>/categories/visualization/</guid>
+      <guid>/categories/r/</guid>
       <description></description>
     </item>
     

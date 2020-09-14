@@ -18,6 +18,11 @@
   </url>
   
   <url>
+    <loc>/tags/collective-action-problem/</loc>
+    <lastmod>2020-09-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/tags/data-journalism/</loc>
     <lastmod>2020-09-11T00:00:00+00:00</lastmod>
   </url>
@@ -68,18 +73,23 @@
   </url>
   
   <url>
-    <loc>/tags/pricing/</loc>
+    <loc>/categories/pricing/</loc>
     <lastmod>2020-08-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/pricing/</loc>
+    <loc>/tags/pricing/</loc>
     <lastmod>2020-08-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/tags/rstats/</loc>
     <lastmod>2020-08-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/ai/</loc>
+    <lastmod>2020-07-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -93,17 +103,12 @@
   </url>
   
   <url>
-    <loc>/tags/api/</loc>
-    <lastmod>2020-07-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/tags/chrome/</loc>
     <lastmod>2020-07-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/javascript/</loc>
+    <loc>/tags/image-recognition/</loc>
     <lastmod>2020-07-20T00:00:00+00:00</lastmod>
   </url>
   
@@ -113,7 +118,12 @@
   </url>
   
   <url>
-    <loc>/categories/visu/</loc>
+    <loc>/tags/javascript/</loc>
+    <lastmod>2020-07-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/visualization/</loc>
     <lastmod>2020-07-20T00:00:00+00:00</lastmod>
   </url>
   
@@ -123,7 +133,7 @@
   </url>
   
   <url>
-    <loc>/categories/r/</loc>
+    <loc>/categories/rstats/</loc>
     <lastmod>2020-06-25T00:00:00+00:00</lastmod>
   </url>
   
@@ -148,16 +158,6 @@
   </url>
   
   <url>
-    <loc>/tags/r/</loc>
-    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/rstats/</loc>
-    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/2020/06/03/tidy-2-way-column-combinations/</loc>
     <lastmod>2020-06-03T00:00:00+00:00</lastmod>
   </url>
@@ -178,17 +178,22 @@
   </url>
   
   <url>
+    <loc>/tags/r/</loc>
+    <lastmod>2020-03-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/r/</loc>
+    <lastmod>2020-03-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/2020/03/04/riddler-solutions-pedestrian-puzzles/</loc>
     <lastmod>2020-03-04T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/tags/riddles/</loc>
-    <lastmod>2020-03-04T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/visualization/</loc>
     <lastmod>2020-03-04T00:00:00+00:00</lastmod>
   </url>
   
@@ -243,12 +248,12 @@
   </url>
   
   <url>
-    <loc>/tags/travel/</loc>
+    <loc>/categories/travel/</loc>
     <lastmod>2020-01-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/travel/</loc>
+    <loc>/tags/travel/</loc>
     <lastmod>2020-01-01T00:00:00+00:00</lastmod>
   </url>
   

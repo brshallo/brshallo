@@ -1,4 +1,4 @@
-baseurl = "/"
+baseurl = "https://www.bryanshalloway.com/"
 languageCode = "en-us"
 title = "Bryan's website"
 theme = "hugo-lithium"
@@ -52,4 +52,4 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     width = 60
     height = 60
     alt = "Logo"
-
+    

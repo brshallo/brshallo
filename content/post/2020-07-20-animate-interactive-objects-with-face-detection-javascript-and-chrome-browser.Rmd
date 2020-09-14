@@ -2,15 +2,16 @@
 title: Animate interactive objects with Face Detection, JavaScript and Chrome Browser
 author: Bryan Shalloway
 date: '2020-07-20'
-slug: animate-interactive-objects-with-face-detection-javascript-and-chrome-browser
 categories:
-  - visu
   - javascript
+  - visualization
+  - ai
 tags:
-  - javascript
-  - chrome
-  - api
   - animation
+  - image-recognition
+  - chrome
+  - javascript
+slug: animate-interactive-objects-with-face-detection-javascript-and-chrome-browser
 thumbnail: /post/2020-07-20-animate-interactive-objects-with-face-detection-javascript-and-chrome-browser_files/eye-track-small.gif
 ---
 

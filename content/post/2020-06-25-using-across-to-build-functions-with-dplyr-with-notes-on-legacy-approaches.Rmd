@@ -4,7 +4,7 @@ author: Bryan Shalloway
 date: '2020-06-25'
 categories:
   - programming
-  - r
+  - rstats
 tags:
   - rstats
 slug: using-across-to-build-functions-with-dplyr-with-notes-on-legacy-approaches

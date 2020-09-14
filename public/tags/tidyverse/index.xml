@@ -20,5 +20,14 @@
       <description>Learning R’s %&amp;gt;%Using the pipe operator (%&amp;gt;%) is one of my favorite things about coding in R and the tidyverse. However when it was first shown to me, I couldn’t understand what the #rstats nut describing it was so enthusiastic about. They tried to explain, “It means and then do the next operation.” When that didn’t click for me, they continued (while becoming ever more excited) “It passes the previous steps output into the first argument of the next function,” still… 😐😐😕.</description>
     </item>
     
+    <item>
+      <title>Tidy Pairwise Operations</title>
+      <link>/2020/06/03/tidy-2-way-column-combinations/</link>
+      <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/03/tidy-2-way-column-combinations/</guid>
+      <description>OverviewI. Nest and pivotII. Expand combinationsIII. Filter redundanciesIV. Map function(s)V. Return to normal dataframeVI. Bind back to dataFunctionalizeExample creating &amp;amp; evaluating featuresWhen is this approach inappropriate?AppendixInteractions example, tidymodelsExpand via joinNested tibblesPivot and then summariseGif for social mediaSession infoOverviewSay you want to map an operation or list of operations across all two-way1 combinations of a set of variables/columns in a dataframe.</description>
+    </item>
+    
   </channel>
 </rss>

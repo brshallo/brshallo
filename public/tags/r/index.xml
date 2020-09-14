@@ -6,19 +6,10 @@
     <description>Recent content in r on Bryan&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 03 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 04 Mar 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/r/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Tidy Pairwise Operations</title>
-      <link>/2020/06/03/tidy-2-way-column-combinations/</link>
-      <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/2020/06/03/tidy-2-way-column-combinations/</guid>
-      <description>OverviewI. Nest and pivotII. Expand combinationsIII. Filter redundanciesIV. Map function(s)V. Return to normal dataframeVI. Bind back to dataFunctionalizeExample creating &amp;amp; evaluating featuresWhen is this approach inappropriate?AppendixInteractions example, tidymodelsExpand via joinNested tibblesPivot and then summariseGif for social mediaSession infoOverviewSay you want to map an operation or list of operations across all two-way1 combinations of a set of variables/columns in a dataframe.</description>
-    </item>
     
     <item>
       <title>Riddler Solutions: Pedestrian Puzzles</title>
@@ -29,16 +20,6 @@
       <description>Riddler expressRiddler classicAppendixTime to centerTransform grid, rotate firstTransform city, prettyThis post contains solutions to FiveThirtyEight’s two riddles released 2020-02-14, Riddler Express and Riddler Classic. I created a toy package animatrixr to help with some of the visualizations and computations for my solutions1.
 Riddler expressThe riddle:
 Riddler City is a large circular metropolis, with countless square city blocks that each have a side length of 1 km.</description>
-    </item>
-    
-    <item>
-      <title>animatrixr &amp; Visualizing Matrix Transformations pt. 2</title>
-      <link>/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</link>
-      <pubDate>Mon, 24 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</guid>
-      <description>This post is a continuation on my post from last week on Visualizing Matrix Transformations with gganimate. Both posts are largely inspired by Grant Sanderson’s beautiful video series The Essence of Linear Algebra and wanting to continue messing around with Thomas Lin Peterson’s fantastic gganimate package in R.
-As with the last post, I’ll describe trying to (very loosely) recreate a small part of the visualizations showing the geometry of matrix multiplication and changing basis vectors (using gganimate in R).</description>
     </item>
     
   </channel>

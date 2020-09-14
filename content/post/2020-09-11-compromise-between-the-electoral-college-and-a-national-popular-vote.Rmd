@@ -8,6 +8,7 @@ tags:
   - data journalism
   - electoral college
   - popular vote
+  - collective action problem
 slug: compromise-between-the-electoral-college-and-a-national-popular-vote
 output:
   blogdown::html_page:

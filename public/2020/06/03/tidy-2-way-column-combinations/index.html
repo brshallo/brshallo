@@ -223,18 +223,18 @@ ames_subset &lt;- select(ames, ames_cols) %&gt;%
   select(contains(&quot;var&quot;), everything()) %&gt;% 
   print()</code></pre>
 <pre><code>## # A tibble: 90 x 5
-##    var         var2          vars                   vector      vector2    
-##    &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;                  &lt;list&gt;      &lt;list&gt;     
-##  1 Fireplaces  First_Flr_SF  Fireplaces.First_Flr_~ &lt;dbl [2,93~ &lt;dbl [2,93~
-##  2 Fireplaces  Full_Bath     Fireplaces.Full_Bath   &lt;dbl [2,93~ &lt;dbl [2,93~
-##  3 Fireplaces  Garage_Area   Fireplaces.Garage_Area &lt;dbl [2,93~ &lt;dbl [2,93~
-##  4 Fireplaces  Garage_Cars   Fireplaces.Garage_Cars &lt;dbl [2,93~ &lt;dbl [2,93~
-##  5 Fireplaces  Gr_Liv_Area   Fireplaces.Gr_Liv_Area &lt;dbl [2,93~ &lt;dbl [2,93~
-##  6 Fireplaces  Total_Bsmt_SF Fireplaces.Total_Bsmt~ &lt;dbl [2,93~ &lt;dbl [2,93~
-##  7 Fireplaces  TotRms_AbvGrd Fireplaces.TotRms_Abv~ &lt;dbl [2,93~ &lt;dbl [2,93~
-##  8 Fireplaces  Year_Built    Fireplaces.Year_Built  &lt;dbl [2,93~ &lt;dbl [2,93~
-##  9 Fireplaces  Year_Remod_A~ Fireplaces.Year_Remod~ &lt;dbl [2,93~ &lt;dbl [2,93~
-## 10 First_Flr_~ Fireplaces    First_Flr_SF.Fireplac~ &lt;dbl [2,93~ &lt;dbl [2,93~
+##    var          var2           vars                    vector       vector2     
+##    &lt;chr&gt;        &lt;chr&gt;          &lt;chr&gt;                   &lt;list&gt;       &lt;list&gt;      
+##  1 Fireplaces   First_Flr_SF   Fireplaces.First_Flr_SF &lt;dbl [2,930~ &lt;dbl [2,930~
+##  2 Fireplaces   Full_Bath      Fireplaces.Full_Bath    &lt;dbl [2,930~ &lt;dbl [2,930~
+##  3 Fireplaces   Garage_Area    Fireplaces.Garage_Area  &lt;dbl [2,930~ &lt;dbl [2,930~
+##  4 Fireplaces   Garage_Cars    Fireplaces.Garage_Cars  &lt;dbl [2,930~ &lt;dbl [2,930~
+##  5 Fireplaces   Gr_Liv_Area    Fireplaces.Gr_Liv_Area  &lt;dbl [2,930~ &lt;dbl [2,930~
+##  6 Fireplaces   Total_Bsmt_SF  Fireplaces.Total_Bsmt_~ &lt;dbl [2,930~ &lt;dbl [2,930~
+##  7 Fireplaces   TotRms_AbvGrd  Fireplaces.TotRms_AbvG~ &lt;dbl [2,930~ &lt;dbl [2,930~
+##  8 Fireplaces   Year_Built     Fireplaces.Year_Built   &lt;dbl [2,930~ &lt;dbl [2,930~
+##  9 Fireplaces   Year_Remod_Add Fireplaces.Year_Remod_~ &lt;dbl [2,930~ &lt;dbl [2,930~
+## 10 First_Flr_SF Fireplaces     First_Flr_SF.Fireplaces &lt;dbl [2,930~ &lt;dbl [2,930~
 ## # ... with 80 more rows</code></pre>
 <p>If your operation of interest is associative<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>, apply a filter to remove additional redundant combinations.</p>
 <pre class="r"><code>c_sort_collapse &lt;- function(...){
@@ -260,18 +260,18 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
   arrange(cor_pvalue) %&gt;% 
   print()</code></pre>
 <pre><code>## # A tibble: 45 x 6
-##    var        var2       vars              vector     vector2    cor_pvalue
-##    &lt;chr&gt;      &lt;chr&gt;      &lt;fct&gt;             &lt;list&gt;     &lt;list&gt;          &lt;dbl&gt;
-##  1 First_Flr~ Total_Bsm~ First_Flr_SF.Tot~ &lt;dbl [2,9~ &lt;dbl [2,9~  0.       
-##  2 Full_Bath  Gr_Liv_Ar~ Full_Bath.Gr_Liv~ &lt;dbl [2,9~ &lt;dbl [2,9~  0.       
-##  3 Garage_Ar~ Garage_Ca~ Garage_Area.Gara~ &lt;dbl [2,9~ &lt;dbl [2,9~  0.       
-##  4 Gr_Liv_Ar~ TotRms_Ab~ Gr_Liv_Area.TotR~ &lt;dbl [2,9~ &lt;dbl [2,9~  0.       
-##  5 Year_Built Year_Remo~ Year_Built.Year_~ &lt;dbl [2,9~ &lt;dbl [2,9~  7.85e-301
-##  6 First_Flr~ Gr_Liv_Ar~ First_Flr_SF.Gr_~ &lt;dbl [2,9~ &lt;dbl [2,9~  8.17e-244
-##  7 Garage_Ca~ Year_Built Garage_Cars.Year~ &lt;dbl [2,9~ &lt;dbl [2,9~  1.57e-219
-##  8 Full_Bath  TotRms_Ab~ Full_Bath.TotRms~ &lt;dbl [2,9~ &lt;dbl [2,9~  1.24e-210
-##  9 First_Flr~ Garage_Ar~ First_Flr_SF.Gar~ &lt;dbl [2,9~ &lt;dbl [2,9~  8.16e-178
-## 10 Garage_Ca~ Gr_Liv_Ar~ Garage_Cars.Gr_L~ &lt;dbl [2,9~ &lt;dbl [2,9~  4.80e-175
+##    var        var2         vars                vector     vector2     cor_pvalue
+##    &lt;chr&gt;      &lt;chr&gt;        &lt;fct&gt;               &lt;list&gt;     &lt;list&gt;           &lt;dbl&gt;
+##  1 First_Flr~ Total_Bsmt_~ First_Flr_SF.Total~ &lt;dbl [2,9~ &lt;dbl [2,93~  0.       
+##  2 Full_Bath  Gr_Liv_Area  Full_Bath.Gr_Liv_A~ &lt;dbl [2,9~ &lt;dbl [2,93~  0.       
+##  3 Garage_Ar~ Garage_Cars  Garage_Area.Garage~ &lt;dbl [2,9~ &lt;dbl [2,93~  0.       
+##  4 Gr_Liv_Ar~ TotRms_AbvG~ Gr_Liv_Area.TotRms~ &lt;dbl [2,9~ &lt;dbl [2,93~  0.       
+##  5 Year_Built Year_Remod_~ Year_Built.Year_Re~ &lt;dbl [2,9~ &lt;dbl [2,93~  7.85e-301
+##  6 First_Flr~ Gr_Liv_Area  First_Flr_SF.Gr_Li~ &lt;dbl [2,9~ &lt;dbl [2,93~  8.17e-244
+##  7 Garage_Ca~ Year_Built   Garage_Cars.Year_B~ &lt;dbl [2,9~ &lt;dbl [2,93~  1.57e-219
+##  8 Full_Bath  TotRms_AbvG~ Full_Bath.TotRms_A~ &lt;dbl [2,9~ &lt;dbl [2,93~  1.24e-210
+##  9 First_Flr~ Garage_Area  First_Flr_SF.Garag~ &lt;dbl [2,9~ &lt;dbl [2,93~  8.16e-178
+## 10 Garage_Ca~ Gr_Liv_Area  Garage_Cars.Gr_Liv~ &lt;dbl [2,9~ &lt;dbl [2,93~  4.80e-175
 ## # ... with 35 more rows</code></pre>
 <p>For fun, let’s plot the most significant associations onto a bar graph.</p>
 <pre class="r"><code>pairs_cor_pvalues %&gt;% 
@@ -475,42 +475,42 @@ ames_data_features_example %&gt;%
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] forcats_0.4.0   stringr_1.4.0   dplyr_0.8.3     purrr_0.3.3    
-## [5] readr_1.3.1     tidyr_1.0.0     tibble_2.1.3    ggplot2_3.3.0  
+## [1] forcats_0.4.0   stringr_1.4.0   dplyr_1.0.1     purrr_0.3.4    
+## [5] readr_1.3.1     tidyr_1.1.1     tibble_3.0.3    ggplot2_3.3.2  
 ## [9] tidyverse_1.2.1
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] nlme_3.1-137        fs_1.3.2            usethis_1.4.0      
-##  [4] lubridate_1.7.4     devtools_2.0.0      RColorBrewer_1.1-2 
-##  [7] progress_1.2.2      httr_1.4.0          rprojroot_1.3-2    
-## [10] tools_3.5.1         backports_1.1.5     utf8_1.1.4         
-## [13] R6_2.4.1            rpart_4.1-13        Hmisc_4.1-1        
-## [16] colorspace_1.4-1    nnet_7.3-12         withr_2.1.2        
-## [19] gridExtra_2.3       tidyselect_0.2.5    prettyunits_1.0.2  
-## [22] processx_3.3.1      curl_3.3            compiler_3.5.1     
-## [25] cli_1.9.9.9000      rvest_0.3.4         htmlTable_1.12     
-## [28] mice_3.8.0          xml2_1.2.0          desc_1.2.0         
-## [31] labeling_0.3        bookdown_0.11       checkmate_1.8.5    
-## [34] scales_1.1.0        corrr_0.4.2         callr_3.2.0        
-## [37] digest_0.6.25       foreign_0.8-70      rmarkdown_1.13     
-## [40] base64enc_0.1-3     pkgconfig_2.0.3     htmltools_0.3.6    
-## [43] sessioninfo_1.1.1   htmlwidgets_1.3     rlang_0.4.5        
-## [46] readxl_1.3.1        rstudioapi_0.10     farver_2.0.1       
-## [49] generics_0.0.2      jsonlite_1.6.1      gtools_3.8.1       
-## [52] acepack_1.4.1       magrittr_1.5        Formula_1.2-3      
-## [55] Matrix_1.2-14       Rcpp_1.0.4          munsell_0.5.0      
-## [58] fansi_0.4.0         lifecycle_0.1.0     weights_1.0.1      
-## [61] stringi_1.4.6       yaml_2.2.0          pkgbuild_1.0.2     
-## [64] grid_3.5.1          gdata_2.18.0        crayon_1.3.4       
-## [67] lattice_0.20-35     haven_2.1.0         splines_3.5.1      
-## [70] hms_0.5.2           knitr_1.23          ps_1.3.0           
-## [73] pillar_1.4.2        pkgload_1.0.2       glue_1.3.1         
-## [76] evaluate_0.14       blogdown_0.15       latticeExtra_0.6-28
-## [79] data.table_1.12.8   remotes_2.1.0       modelr_0.1.4       
-## [82] vctrs_0.2.4         testthat_2.0.0      cellranger_1.1.0   
-## [85] gtable_0.3.0        assertthat_0.2.1    xfun_0.8           
-## [88] broom_0.5.2         AmesHousing_0.0.3   survival_2.42-3    
-## [91] memoise_1.1.0       cluster_2.0.7-1     ellipsis_0.3.0</code></pre>
+##  [1] fs_1.3.2            usethis_1.4.0       lubridate_1.7.4    
+##  [4] devtools_2.0.0      RColorBrewer_1.1-2  httr_1.4.0         
+##  [7] rprojroot_1.3-2     tools_3.5.1         backports_1.1.8    
+## [10] utf8_1.1.4          R6_2.4.1            rpart_4.1-13       
+## [13] Hmisc_4.1-1         colorspace_1.4-1    nnet_7.3-12        
+## [16] withr_2.2.0         gridExtra_2.3       tidyselect_1.1.0   
+## [19] prettyunits_1.1.1   processx_3.4.2      curl_3.3           
+## [22] compiler_3.5.1      cli_2.0.2           rvest_0.3.4        
+## [25] htmlTable_1.12      mice_3.8.0          xml2_1.2.0         
+## [28] desc_1.2.0          labeling_0.3        bookdown_0.11      
+## [31] checkmate_2.0.0     scales_1.1.1        corrr_0.4.2.9000   
+## [34] callr_3.4.3         digest_0.6.25       foreign_0.8-70     
+## [37] rmarkdown_1.13      base64enc_0.1-3     pkgconfig_2.0.3    
+## [40] htmltools_0.5.0     sessioninfo_1.1.1   htmlwidgets_1.3    
+## [43] rlang_0.4.7         readxl_1.3.1        rstudioapi_0.11    
+## [46] farver_2.0.3        generics_0.0.2      jsonlite_1.6.1     
+## [49] gtools_3.8.2        acepack_1.4.1       magrittr_1.5       
+## [52] Formula_1.2-3       Matrix_1.2-14       Rcpp_1.0.4.6       
+## [55] munsell_0.5.0       fansi_0.4.1         lifecycle_0.2.0    
+## [58] weights_1.0.1       stringi_1.4.6       yaml_2.2.1         
+## [61] pkgbuild_1.1.0      grid_3.5.1          gdata_2.18.0       
+## [64] crayon_1.3.4        lattice_0.20-35     haven_2.1.0        
+## [67] splines_3.5.1       hms_0.5.2           knitr_1.29         
+## [70] ps_1.3.2            pillar_1.4.6        pkgload_1.0.2      
+## [73] glue_1.4.1          evaluate_0.14       blogdown_0.15      
+## [76] latticeExtra_0.6-28 data.table_1.12.8   remotes_2.1.0      
+## [79] modelr_0.1.4        vctrs_0.3.2         testthat_2.3.2     
+## [82] cellranger_1.1.0    gtable_0.3.0        assertthat_0.2.1   
+## [85] xfun_0.16           broom_0.7.0         AmesHousing_0.0.3  
+## [88] survival_2.42-3     memoise_1.1.0       cluster_2.0.7-1    
+## [91] ellipsis_0.3.1</code></pre>
 </div>
 </div>
 <div class="footnotes">
@@ -599,10 +599,10 @@ ames_data_features_example %&gt;%
       <footer class="footer">
         <ul class="footer-links">
           <li>
-            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+            <a href="/" type="application/rss+xml" target="_blank">RSS feed</a>
           </li>
           <li>
-            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a> and <a href="https://bookdown.org/yihui/blogdown/" class="footer-links-kudos">  <img src="/images/hex-blogdown.png" width="22" height="22"></a>
+            <a class="footer-links-kudos">Blogroll:</a><a href="https://www.r-bloggers.com/" class="footer-links-kudos">R-Bloggers</a>
           </li>
         </ul>
       </footer>

@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>collective action problem</title>
+      <link>/tags/collective-action-problem/</link>
+      <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/collective-action-problem/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>data journalism</title>
       <link>/tags/data-journalism/</link>
       <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
@@ -84,20 +93,20 @@
     </item>
     
     <item>
-      <title>api</title>
-      <link>/tags/api/</link>
-      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/api/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>chrome</title>
       <link>/tags/chrome/</link>
       <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>/tags/chrome/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>image-recognition</title>
+      <link>/tags/image-recognition/</link>
+      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/image-recognition/</guid>
       <description></description>
     </item>
     
@@ -129,15 +138,6 @@
     </item>
     
     <item>
-      <title>r</title>
-      <link>/tags/r/</link>
-      <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/r/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>geometry</title>
       <link>/tags/geometry/</link>
       <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
@@ -152,6 +152,15 @@
       <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
       
       <guid>/tags/math/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>r</title>
+      <link>/tags/r/</link>
+      <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/r/</guid>
       <description></description>
     </item>
     

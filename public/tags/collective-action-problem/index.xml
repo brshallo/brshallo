@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>collective action problem on Bryan&#39;s website</title>
+    <link>/tags/collective-action-problem/</link>
+    <description>Recent content in collective action problem on Bryan&#39;s website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 11 Sep 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/collective-action-problem/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>A National Popular Vote Weighted by the Electoral College</title>
+      <link>/2020/09/11/compromise-between-the-electoral-college-and-a-national-popular-vote/</link>
+      <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/09/11/compromise-between-the-electoral-college-and-a-national-popular-vote/</guid>
+      <description>In this post I discuss using a national popular vote weighted by the electoral college to elect the president. This approach would empower voters by expanding political influence outside of ‘battleground states.’ It would also preserve the existing biases built into the American electoral college (thereby making such a system legislatively palatable across party affiliations and electoral college traditionalists)1.
+Irrespective of political party or disposition towards direct democracy, the winner-take-all approach (currently applied by most US states to allocate their electoral votes for the president) has clear drawbacks.</description>
+    </item>
+    
+  </channel>
+</rss>
