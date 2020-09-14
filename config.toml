@@ -1,4 +1,4 @@
-baseurl = "https://www.bryanshalloway.com/"
+baseurl = "/"
 languageCode = "en-us"
 title = "Bryan Shalloway's Blog"
 theme = "hugo-lithium"
