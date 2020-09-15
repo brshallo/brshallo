@@ -2589,28 +2589,21 @@ gganimate::anim_save(here::here(&amp;quot;static/post/2020-02-13-fivethirtyeight
       
       <guid>/about/</guid>
       <description>&lt;p&gt;&lt;em&gt;Schooling &amp;amp; Early Career:&lt;/em&gt;&lt;/p&gt;
-
 &lt;p&gt;Bryan graduated with honors in Cognitive Neuroscience from Washington University in St. Louis where he also studied American Culture Studies and Political Science. He spent the majority of his high school and undergraduate summers in a Neuropathology research lab studying Alzheimer&amp;rsquo;s disease. His postgraduate career started as a high school math teacher in Durham Public Schools, North Carolina through Teach for America. In 2015 he moved into analytics as a School Performance Analyst in Colorado through an Education Pioneers fellowship, before returning to North Carolina where he completed a Master&amp;rsquo;s in Advanced Analytics from NC State University.&lt;/p&gt;
-
 &lt;p&gt;&lt;em&gt;Career in Data Science:&lt;/em&gt;&lt;/p&gt;
-
 &lt;p&gt;Bryan has been a Data Scientist at NetApp in the Raleigh-Durham area since July of 2017. He has worked on a wide range of problems in customer support and sales. Examples of projects he has taken leading roles on:&lt;/p&gt;
-
 &lt;ul&gt;
 &lt;li&gt;Support ticket prioritization: ranking several thousand open support tickets (on an hourly basis) based on risk of escalation for critical case managers&lt;/li&gt;
 &lt;li&gt;Sales forecasting: regular updating sales projections across firm products and geographies for operational and planning purposes&lt;/li&gt;
 &lt;li&gt;Pricing optimization: used statistical measures for setting pricing guidelines and evaluating trends in pricing&lt;/li&gt;
 &lt;/ul&gt;
-
 &lt;p&gt;Outside of his direct responsibilities, Bryan is active in fostering internal and local Data Science communities. Examples of his engagements:&lt;/p&gt;
-
 &lt;ul&gt;
 &lt;li&gt;Co-lead NetApp Data Science study group, sessions have included series on &lt;em&gt;Feature Engineering&lt;/em&gt;, &lt;em&gt;Statistical Learning&lt;/em&gt;, &lt;em&gt;R for Data Science&lt;/em&gt;, &lt;em&gt;Pricing Optimization&lt;/em&gt; and internal prediction competitions&lt;/li&gt;
 &lt;li&gt;Promote adoption of best practices, e.g. developing start-to-finish guidelines on how to effectively screen and hire Data Scientists internally&lt;/li&gt;
 &lt;li&gt;Frequent technical talks in NetApp Data Science communities or Meetups in RTP&lt;/li&gt;
 &lt;li&gt;Mentor emerging talent at NetApp and partnered with local universities to support students completing their cap-stone projects in data analytics&lt;/li&gt;
 &lt;/ul&gt;
-
 &lt;p&gt;Bryan created this blog as a place to document some of his ideas and learning. He wanted to do so in a way that was consistent with the open tutorials, books, and communities he has learned from over the course of his career.&lt;/p&gt;
 </description>
     </item>

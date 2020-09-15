@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
@@ -73,12 +73,12 @@
   </url>
   
   <url>
-    <loc>/categories/pricing/</loc>
+    <loc>/tags/pricing/</loc>
     <lastmod>2020-08-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/pricing/</loc>
+    <loc>/categories/pricing/</loc>
     <lastmod>2020-08-17T00:00:00+00:00</lastmod>
   </url>
   
@@ -113,12 +113,12 @@
   </url>
   
   <url>
-    <loc>/categories/javascript/</loc>
+    <loc>/tags/javascript/</loc>
     <lastmod>2020-07-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/javascript/</loc>
+    <loc>/categories/javascript/</loc>
     <lastmod>2020-07-20T00:00:00+00:00</lastmod>
   </url>
   
@@ -168,12 +168,12 @@
   </url>
   
   <url>
-    <loc>/categories/math/</loc>
+    <loc>/tags/math/</loc>
     <lastmod>2020-03-04T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/math/</loc>
+    <loc>/categories/math/</loc>
     <lastmod>2020-03-04T00:00:00+00:00</lastmod>
   </url>
   
@@ -248,12 +248,12 @@
   </url>
   
   <url>
-    <loc>/categories/travel/</loc>
+    <loc>/tags/travel/</loc>
     <lastmod>2020-01-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/travel/</loc>
+    <loc>/categories/travel/</loc>
     <lastmod>2020-01-01T00:00:00+00:00</lastmod>
   </url>
   
