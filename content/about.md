@@ -13,7 +13,7 @@ Bryan graduated with honors in Cognitive Neuroscience from Washington University
 Bryan has been a Data Scientist at NetApp in the Raleigh-Durham area since July of 2017. He has worked on a wide range of problems in customer support and sales. Examples of projects he has taken leading roles on:
 
 * Support ticket prioritization: ranking several thousand open support tickets (on an hourly basis) based on risk of escalation for critical case managers
-* Sales forecasting: regular updating sales projections across firm products and geographies for operational and planning purposes
+* Sales forecasting: regular updates across firm products and geographies for operational and planning purposes
 * Pricing optimization: used statistical measures for setting pricing guidelines and evaluating trends in pricing
 
 Outside of his direct responsibilities, Bryan is active in fostering internal and local Data Science communities. Examples of his engagements:
