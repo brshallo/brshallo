@@ -32,7 +32,7 @@ Pretend we want to create a function that calculates the sum of a given variable
 ```{r}
 sum_var <- function(df, var){
   
-  summarise(df, {{var_quo}} := sum({{var_quo}}))
+  summarise(df, {{var}} := sum({{var}}))
 }
 ```
 

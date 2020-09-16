@@ -691,7 +691,7 @@ New addition to the livingroom, giant eyeball that follows you around when you l
 &lt;p&gt;Pretend we want to create a function that calculates the sum of a given variable in a dataframe:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_var &amp;lt;- function(df, var){
   
-  summarise(df, {{var_quo}} := sum({{var_quo}}))
+  summarise(df, {{var}} := sum({{var}}))
 }&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;To run this function:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum_vars(mpg, cty)&lt;/code&gt;&lt;/pre&gt;

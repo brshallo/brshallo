@@ -96,7 +96,7 @@
 <p>Pretend we want to create a function that calculates the sum of a given variable in a dataframe:</p>
 <pre class="r"><code>sum_var &lt;- function(df, var){
   
-  summarise(df, {{var_quo}} := sum({{var_quo}}))
+  summarise(df, {{var}} := sum({{var}}))
 }</code></pre>
 <p>To run this function:</p>
 <pre class="r"><code>sum_vars(mpg, cty)</code></pre>
