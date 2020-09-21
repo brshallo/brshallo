@@ -9,6 +9,7 @@ tags:
   - travel
   - iceland
 thumbnail: https://i.imgur.com/U7aHuTI.jpg
+disable_comments: true
 ---
 
 I did my best to convince Britney and my parents that we should start the morning with a 'polar bear plunge' in the ocean but was unsuccessful in convincing anyone (including myself) to participate. We slept in and had a relaxing morning before leaving the Airbnb at around 12PM. 
