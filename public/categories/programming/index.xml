@@ -283,6 +283,7 @@ Big thanks to &lt;a href=&#34;https://twitter.com/grrrck?ref_src=twsrc%5Etfw&#34
 &lt;li&gt;&lt;a href=&#34;#nested-tibbles&#34;&gt;Nested tibbles&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#pivot-and-then-summarise&#34;&gt;Pivot and then summarise&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#gif-for-social-media&#34;&gt;Gif for social media&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#tweets&#34;&gt;Tweets&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#session-info&#34;&gt;Session info&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -641,6 +642,41 @@ ames_data_features_example %&amp;gt;%
 &lt;p&gt;&lt;img src=&#34;/post/2020-05-31-tidy-2-way-column-combinations_files/pairwise-comparison-gif-edit.gif&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Actual gif was created by embedding above code into a presentation and exporting it as a gif and then making a few minor edits.&lt;/p&gt;
 &lt;/div&gt;
+&lt;div id=&#34;tweets&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Tweets&lt;/h2&gt;
+&lt;p&gt;A few tweets as documentation of thinking.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Original tweet + R bloggers tweet:&lt;/em&gt;&lt;/p&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+What is your &lt;a href=&#34;https://twitter.com/hashtag/tidyverse?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#tidyverse&lt;/a&gt; (or other &lt;a href=&#34;https://twitter.com/hashtag/rstats?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#rstats&lt;/a&gt; ) approach for doing arbitrary pairwise operations across variables? Mine is frequently something like:&lt;br&gt;&lt;br&gt;I. nest…&lt;br&gt;II. expand combos… &lt;br&gt;III. filter…&lt;br&gt;IV. map fun(s)…&lt;br&gt;…&lt;br&gt;&lt;br&gt;I wrote a post walking through this: &lt;a href=&#34;https://t.co/xRnRf5yh3m&#34;&gt;https://t.co/xRnRf5yh3m&lt;/a&gt; &lt;a href=&#34;https://t.co/Zvxey2gm3H&#34;&gt;pic.twitter.com/Zvxey2gm3H&lt;/a&gt;
+&lt;/p&gt;
+— Bryan Shalloway (&lt;span class=&#34;citation&#34;&gt;@brshallo&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/brshallo/status/1271194908477591553?ref_src=twsrc%5Etfw&#34;&gt;June 11, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+Tidy Pairwise Operations {&lt;a href=&#34;https://t.co/mI5r2e5ttN&#34;&gt;https://t.co/mI5r2e5ttN&lt;/a&gt;} &lt;a href=&#34;https://twitter.com/hashtag/rstats?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#rstats&lt;/a&gt; &lt;a href=&#34;https://twitter.com/hashtag/DataScience?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#DataScience&lt;/a&gt;
+&lt;/p&gt;
+— R-bloggers (&lt;span class=&#34;citation&#34;&gt;@Rbloggers&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/Rbloggers/status/1307007573611155456?ref_src=twsrc%5Etfw&#34;&gt;September 18, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;p&gt;&lt;em&gt;Tweet with link to gist of other example applying this approach:&lt;/em&gt;&lt;/p&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+&lt;a href=&#34;https://twitter.com/W_R_Chase?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@W_R_Chase&lt;/span&gt;&lt;/a&gt; alludes to using &lt;code&gt;expand()&lt;/code&gt; for a solution but takes a different approach. I wrote a short gist that fleshes in what a &lt;code&gt;tidyr::expand()&lt;/code&gt; approach to this problem could look like: &lt;a href=&#34;https://t.co/agloPgJR1r&#34;&gt;https://t.co/agloPgJR1r&lt;/a&gt; (2/3)
+&lt;/p&gt;
+— Bryan Shalloway (&lt;span class=&#34;citation&#34;&gt;@brshallo&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/brshallo/status/1272411480193974273?ref_src=twsrc%5Etfw&#34;&gt;June 15, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;p&gt;&lt;em&gt;Tweet about &lt;code&gt;widyr&lt;/code&gt;:&lt;/em&gt;&lt;/p&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+Will add &lt;code&gt;widyr&lt;/code&gt; to my set of tools for tidy pairwise operations: &lt;a href=&#34;https://t.co/NSxNC3nehK&#34;&gt;https://t.co/NSxNC3nehK&lt;/a&gt; !&lt;br&gt;&lt;br&gt;Seems to overlap some w/ tidymodels, eg &lt;code&gt;corrr&lt;/code&gt;📦 (&lt;a href=&#34;https://twitter.com/thisisdaryn?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@thisisdaryn&lt;/span&gt;&lt;/a&gt; ) or could imagine widely_kmeans() as a &lt;code&gt;recipe&lt;/code&gt;/&lt;code&gt;embed&lt;/code&gt; step…&lt;a href=&#34;https://twitter.com/drob?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@drob&lt;/span&gt;&lt;/a&gt; any tips on when/how you use these in combination? &lt;a href=&#34;https://t.co/dAsJtNW7Vo&#34;&gt;https://t.co/dAsJtNW7Vo&lt;/a&gt;
+&lt;/p&gt;
+— Bryan Shalloway (&lt;span class=&#34;citation&#34;&gt;@brshallo&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/brshallo/status/1313966803488583686?ref_src=twsrc%5Etfw&#34;&gt;October 7, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;/div&gt;
 &lt;div id=&#34;session-info&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Session info&lt;/h2&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sessionInfo()&lt;/code&gt;&lt;/pre&gt;
@@ -666,7 +702,7 @@ ames_data_features_example %&amp;gt;%
 ## [9] tidyverse_1.2.1
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] fs_1.3.2            usethis_1.4.0       lubridate_1.7.4    
+##  [1] fs_1.3.2            usethis_1.4.0       lubridate_1.7.9    
 ##  [4] devtools_2.0.0      RColorBrewer_1.1-2  httr_1.4.0         
 ##  [7] rprojroot_1.3-2     tools_3.5.1         backports_1.1.8    
 ## [10] utf8_1.1.4          R6_2.4.1            rpart_4.1-13       

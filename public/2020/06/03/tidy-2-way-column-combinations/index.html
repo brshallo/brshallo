@@ -66,7 +66,7 @@
 
   <article class="article">
     
-    <span class="article-duration">19 min read</span>
+    <span class="article-duration">20 min read</span>
     
 
     <h1 class="article-title">Tidy Pairwise Operations</h1>
@@ -97,6 +97,7 @@
 <li><a href="#nested-tibbles">Nested tibbles</a></li>
 <li><a href="#pivot-and-then-summarise">Pivot and then summarise</a></li>
 <li><a href="#gif-for-social-media">Gif for social media</a></li>
+<li><a href="#tweets">Tweets</a></li>
 <li><a href="#session-info">Session info</a></li>
 </ul></li>
 </ul>
@@ -455,6 +456,41 @@ ames_data_features_example %&gt;%
 <p><img src="/post/2020-05-31-tidy-2-way-column-combinations_files/pairwise-comparison-gif-edit.gif" /></p>
 <p>Actual gif was created by embedding above code into a presentation and exporting it as a gif and then making a few minor edits.</p>
 </div>
+<div id="tweets" class="section level2">
+<h2>Tweets</h2>
+<p>A few tweets as documentation of thinking.</p>
+<p><em>Original tweet + R bloggers tweet:</em></p>
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+What is your <a href="https://twitter.com/hashtag/tidyverse?src=hash&amp;ref_src=twsrc%5Etfw">#tidyverse</a> (or other <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> ) approach for doing arbitrary pairwise operations across variables? Mine is frequently something like:<br><br>I. nest…<br>II. expand combos… <br>III. filter…<br>IV. map fun(s)…<br>…<br><br>I wrote a post walking through this: <a href="https://t.co/xRnRf5yh3m">https://t.co/xRnRf5yh3m</a> <a href="https://t.co/Zvxey2gm3H">pic.twitter.com/Zvxey2gm3H</a>
+</p>
+— Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1271194908477591553?ref_src=twsrc%5Etfw">June 11, 2020</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+Tidy Pairwise Operations {<a href="https://t.co/mI5r2e5ttN">https://t.co/mI5r2e5ttN</a>} <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> <a href="https://twitter.com/hashtag/DataScience?src=hash&amp;ref_src=twsrc%5Etfw">#DataScience</a>
+</p>
+— R-bloggers (<span class="citation">@Rbloggers</span>) <a href="https://twitter.com/Rbloggers/status/1307007573611155456?ref_src=twsrc%5Etfw">September 18, 2020</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p><em>Tweet with link to gist of other example applying this approach:</em></p>
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+<a href="https://twitter.com/W_R_Chase?ref_src=twsrc%5Etfw"><span class="citation">@W_R_Chase</span></a> alludes to using <code>expand()</code> for a solution but takes a different approach. I wrote a short gist that fleshes in what a <code>tidyr::expand()</code> approach to this problem could look like: <a href="https://t.co/agloPgJR1r">https://t.co/agloPgJR1r</a> (2/3)
+</p>
+— Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1272411480193974273?ref_src=twsrc%5Etfw">June 15, 2020</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p><em>Tweet about <code>widyr</code>:</em></p>
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+Will add <code>widyr</code> to my set of tools for tidy pairwise operations: <a href="https://t.co/NSxNC3nehK">https://t.co/NSxNC3nehK</a> !<br><br>Seems to overlap some w/ tidymodels, eg <code>corrr</code>📦 (<a href="https://twitter.com/thisisdaryn?ref_src=twsrc%5Etfw"><span class="citation">@thisisdaryn</span></a> ) or could imagine widely_kmeans() as a <code>recipe</code>/<code>embed</code> step…<a href="https://twitter.com/drob?ref_src=twsrc%5Etfw"><span class="citation">@drob</span></a> any tips on when/how you use these in combination? <a href="https://t.co/dAsJtNW7Vo">https://t.co/dAsJtNW7Vo</a>
+</p>
+— Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1313966803488583686?ref_src=twsrc%5Etfw">October 7, 2020</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
 <div id="session-info" class="section level2">
 <h2>Session info</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
@@ -480,7 +516,7 @@ ames_data_features_example %&gt;%
 ## [9] tidyverse_1.2.1
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] fs_1.3.2            usethis_1.4.0       lubridate_1.7.4    
+##  [1] fs_1.3.2            usethis_1.4.0       lubridate_1.7.9    
 ##  [4] devtools_2.0.0      RColorBrewer_1.1-2  httr_1.4.0         
 ##  [7] rprojroot_1.3-2     tools_3.5.1         backports_1.1.8    
 ## [10] utf8_1.1.4          R6_2.4.1            rpart_4.1-13       
