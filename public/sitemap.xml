@@ -3,12 +3,22 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/2020/09/11/compromise-between-the-electoral-college-and-a-national-popular-vote/</loc>
-    <lastmod>2020-09-11T00:00:00+00:00</lastmod>
+    <loc>/</loc>
+    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/</loc>
+    <loc>/post/</loc>
+    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2020/10/12/window-functions-for-resampling/</loc>
+    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2020/09/11/compromise-between-the-electoral-college-and-a-national-popular-vote/</loc>
     <lastmod>2020-09-11T00:00:00+00:00</lastmod>
   </url>
   
@@ -39,11 +49,6 @@
   
   <url>
     <loc>/tags/popular-vote/</loc>
-    <lastmod>2020-09-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/</loc>
     <lastmod>2020-09-11T00:00:00+00:00</lastmod>
   </url>
   

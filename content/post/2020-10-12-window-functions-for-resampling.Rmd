@@ -1,0 +1,275 @@
+---
+title: Window Functions for Resampling
+author: Bryan Shalloway
+date: '2020-10-12'
+slug: window-functions-for-resampling
+categories: []
+tags: []
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+I'm excited about the addition of the `sliding_*()`[^2] functions to the [rsample](https://github.com/tidymodels/rsample) package^[See [#168](https://github.com/tidymodels/rsample/pull/168) and NEWS for [0.0.8](https://github.com/tidymodels/rsample/blob/master/NEWS.md).]. These additions bring the windowing approaches used in [slider](https://github.com/DavisVaughan/slider) to the sampling procedures used in [tidymodels]()^[Previously users would have needed to use `rsample::rolling_origin()`.] framework, thereby making evaluation of models with time-based features easier. 
+
+```{r load-in-packages}
+library(tidyverse)
+library(lubridate)
+library(httr)
+library(jsonlite)
+```
+
+For a brief example, I will use data from Wake County food inspections. I load the data into R using Wake County's open API (does not require a login/account) and the [httr](https://github.com/r-lib/httr) and [jsonlite](https://github.com/jeroen/jsonlite) packages. You could also download the data directly from their [website](https://data.wakegov.com/datasets/1b08c4eb32f44a198277c418b71b3a48_2).
+
+```{r load-in-data}
+r_insp <- GET("https://opendata.arcgis.com/datasets/ebe3ae7f76954fad81411612d7c4fb17_1.geojson")
+
+inspections <- content(r_insp, "text") %>% 
+  fromJSON() %>% 
+  .$features %>%
+  .$properties %>% 
+  as_tibble()
+
+inspections_clean <- inspections %>% 
+  mutate(DATE = ymd_hms(DATE_) %>% as.Date()) %>% 
+  select(-c(DATE_, DESCRIPTION)) %>% 
+  filter(SCORE > 50, TYPE == "Inspection") %>% 
+  print()
+```
+
+We'll say that we only care about the most recent 5 years of data.
+```{r}
+inspections_clean <- inspections_clean %>% 
+  filter(DATE >= (max(DATE) - years(5)))
+```
+
+Fields of interest:
+
+`SCORE`: Food inspection score
+`HSISID`: Restaurant ID
+`INSPECTOR`: Who is doing the inspection
+
+Let's pretend we want to predict the inspection `SCORE` that a restaurant (i.e. `HSISID`) will get on it's upcoming inspection. An obvious predictor would be to consider what the restaurant's most recent `SCORE` was^[You typically want to do feature engineering *after* splitting your data (and likely using the `recipes` package). However time-based features should actually be done prior to data splitting, as discussed in this github [issue](https://github.com/tidymodels/rsample/pull/168).].
+
+```{r}
+inspections_prep <- inspections_clean %>% 
+  group_by(HSISID) %>% 
+  mutate(SCORE_lag = lag(SCORE)) %>% 
+  ungroup() %>% 
+  arrange(DATE)
+```
+
+We'll pretend the model is only intended to be used on restaurants that have had at least one prior inspection within the last 5 years^[Hence is not set-up to be used for new restaurants.].
+
+```{r}
+inspections_prep <- inspections_prep %>% 
+  filter(!is.na(SCORE_lag))
+```
+
+We should use time-series cross validation[^1] to evaluate our model. Ideally, our resampling scheme used for model evaluation mirrors how the model will be built and evaluated in production. For example, imagine we plan on updating the model once a month -- then it makes sense to use assessment sets that each contain a month of data. We can use `rsample::sliding_period()` to set this up^[I'm not worrying about a training / testing split... point of post is to focus on analysis / assessment sets in cross-validation.].
+
+[^1]: Two helpful resources on time series cross-validation:
+    
+    1. From [uber engineering](https://eng.uber.com/forecasting-introduction/) 
+    1. From [Forecasting Principles and Practices](https://otexts.com/fpp3/tscv.html)
+
+For this example, we'll say we'll use 36 months of training data for each split, and then one month of data for evaluation.
+
+```{r}
+resamples <- rsample::sliding_period(inspections_prep, index = DATE, period = "month", lookback = 36)
+```
+
+I made some functions you can find here: ___ as helpers for reviewing the dates covered within your resampling scheme.
+
+```{r}
+extract_dates_rsplit <- function(rsplit_object, date_col_name = "DATE"){
+  an_obj <- analysis(rsplit_object)
+  as_obj <- assessment(rsplit_object)
+  
+  tibble(an_min = min(an_obj[[date_col_name]]),
+         an_max = max(an_obj[[date_col_name]]),
+         as_min = min(as_obj[[date_col_name]]),
+         as_max = max(as_obj[[date_col_name]])
+  )
+}
+
+extract_dates_rsplit <- function(rsplit_object, date_col_name = "DATE"){
+  an_obj <- analysis(rsplit_object)
+  as_obj <- assessment(rsplit_object)
+  
+  tibble(an_min = min(an_obj[[date_col_name]]),
+         an_max = max(an_obj[[date_col_name]]),
+         as_min = min(as_obj[[date_col_name]]),
+         as_max = max(as_obj[[date_col_name]])
+  )
+}
+
+extract_dates_rset <- function(rset_object, date_col_name = "DATE"){
+  rset_object %>% 
+    mutate(dates = map(splits, extract_dates_rsplit, date_col_name = date_col_name)) %>% 
+    unnest(dates)
+}
+
+resamples %>% 
+  extract_dates_rsplit() %>% 
+  print()
+
+```
+
+We can then use other tidymodels tools to build and train a model.
+
+# Appendix
+
+Some features we might try:
+
+* What was the HSISID's most recent score?
+* What was the average HSISID score over the last several years?
+* What is the trend of inspection scores?
+* What is the average score of the inspector?
+* What is the type of the restaurant?
+* How long has the restaurant been open for?
+* Who is the inspector?
+
+# Resources
+
+Link on doing regressions in slider: 
+
+https://twitter.com/dvaughan32/status/1247270052782637056?s=20
+
+Rstudio presentation at Rstudio:
+
+https://rstudio.com/resources/rstudioconf-2020/sliding-windows-and-calendars-davis-vaughan/
+
+## Examples
+
+`sliding_window()` and `sliding_period()` are likely the most helpful additions as they allow you to do resampling based on a date/time index.
+
+[^2]: The help pages for `rsample` (as well as the `slider` package) are helpful resources for understanding the three types of sliding you can use, briefly these are
+    
+    * `sliding_window()`: only takes into account order / position of dates
+    * `sliding_index()`: slide according to an index
+    * `sliding_period()`: slide according to an index and specified period
+
+For now it seems that `rsample::sliding_period()` is easier to use as `period` helps to set-up reasonable defaults.
+
+An important difference between `rsample::sliding_index()` and `rsample::sliding_period()` is that `rsample::sliding_period()` defaults to return the number of splits that the period length would fit in, whereas `rsample::sliding_index()` defaults to have a period length of one day (if using a Date format), so you need to use the`step` argument to increment between splits. It seems like `rsample::sliding_index()` is still in-progress as it does not yet support the `period` argument, which would make it more similar to `slider::slide_index()` which allows inputs like "2 weeks". Instead the values for `lookup`, `assess_start`, `assess_stop` 
+
+for `sliding_index()` you need to specify how many steps you want to move ahead between splits (default is one) by using the `step` argument. `sliding_period()` on the otherhand automatically figures out the step length between splits (based on the specified period). 
+
+```{r}
+library(rsample)
+
+# Starting on the 6th rather than the 1st, because is the start of the week, so makes examples easier
+df_test <- tibble(x = 1:364, DATE = ymd(20171228) + days(0:363))
+
+df_test <- tibble(DATE = ymd(20171228) + days(0:(363*30))) %>% 
+  mutate(x = row_number())
+
+# df_test <- mutate(df_test, DATE = tsibble::yearmonth(DATE))
+
+sampling_test <- rsample::sliding_period(df_test, index = DATE, period = "week", lookback = 4, every = 2)
+
+sampling_test <- rsample::sliding_index(df_test, index = DATE, lookback = 27, assess_start = 1, assess_stop = 28, step = 28)
+
+sampling_test <- rsample::sliding_index(df_test, index = DATE, lookback = "2 weeks")
+
+sampling_test <- rsample::sliding_period(df_test, index = DATE, period = "month", lookback = 36, assess_stop = 3)
+
+```
+
+To concretely understand how this split our data up, let's review what our min and max date values are for each of our `rsplit` values.
+
+```{r}
+extract_dates_rsplit <- function(rsplit_object, date_col_name = "DATE"){
+  an_obj <- analysis(rsplit_object)
+  as_obj <- assessment(rsplit_object)
+  
+  tibble(an_min = min(an_obj[[date_col_name]]),
+         an_max = max(an_obj[[date_col_name]]),
+         as_min = min(as_obj[[date_col_name]]),
+         as_max = max(as_obj[[date_col_name]])
+  )
+}
+
+extract_dates_rset <- function(rset_object, date_col_name = "DATE"){
+  rset_object %>% 
+    mutate(dates = map(splits, extract_dates_rsplit, date_col_name = date_col_name)) %>% 
+    unnest(dates)
+}
+
+plot_dates_rset <- function(rset_object_with_dates){
+
+  rset_object_with_dates %>% 
+    select(-one_of("splits")) %>%
+    pivot_longer(cols = where(is.Date),
+                 names_to = "type",
+                 values_to = "date") %>% 
+    separate(type, c("data_type", "range_type"), "_") %>% 
+    ggplot(aes(y = fct_rev(id), x = date, colour = fct_rev(data_type)))+
+    geom_line()+
+    theme_bw()+
+    theme(legend.position = "none",
+          axis.title.x = element_blank(),
+          axis.title.y = element_blank())
+}
+
+
+sampling_dates <- sampling_test %>% 
+  mutate(dates = map(splits, extract_dates_rsplit)) %>% 
+  unnest(dates) %>% 
+  print()
+
+sampling_dates %>% 
+  select(-c(1:2)) %>% 
+  mutate_all(wday)
+
+
+resamples %>% 
+  extract_dates_rset() %>% 
+  select(-one_of("splits")) %>%
+  pivot_longer(cols = where(is.Date),
+               names_to = "type",
+               values_to = "date") %>% 
+  separate(type, c("data_type", "range_type"), "_") %>% 
+  ggplot(aes(y = fct_rev(id), x = date, colour = fct_rev(data_type)))+
+  geom_line()+
+  theme_bw()+
+  theme(legend.position = "none",
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
+```
+
+
+```{r}
+extract_dates_rsplit <- function(rsplit_object, date_col = "DATE"){
+  an_obj <- analysis(rsplit_object)
+  as_obj <- assessment(rsplit_object)
+  
+  tibble(an_min = min(an_obj[[date_col]]),
+         an_max = max(an_obj[[date_col]]),
+         as_min = min(as_obj[[date_col]]),
+         as_max = max(as_obj[[date_col]])
+  )
+}
+
+sampling_dates <- sampling_test %>% 
+  mutate(dates = map(splits, extract_dates_rsplit)) %>% 
+  unnest(dates) %>% 
+  print()
+
+sampling_dates %>% 
+  select(-c(1:2)) %>% 
+  mutate_all(wday)
+
+sampling_dates %>% 
+  select(-splits) %>%
+  pivot_longer(cols = where(is.Date),
+               names_to = "type",
+               values_to = "date") %>% 
+  separate(type, c("data_type", "range_type"), "_") %>% 
+  ggplot(aes(y = fct_rev(id), x = date, colour = fct_rev(data_type)))+
+  geom_line()+
+  theme_bw()
+```

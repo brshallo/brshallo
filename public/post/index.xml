@@ -6,7 +6,252 @@
     <description>Recent content in Posts on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 11 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 12 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Window Functions for Resampling</title>
+      <link>/2020/10/12/window-functions-for-resampling/</link>
+      <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/10/12/window-functions-for-resampling/</guid>
+      <description>
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#resources&#34;&gt;Resources&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#examples&#34;&gt;Examples&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;p&gt;I’m excited about the addition of the &lt;code&gt;sliding_*()&lt;/code&gt;&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt; functions to the &lt;a href=&#34;https://github.com/tidymodels/rsample&#34;&gt;rsample&lt;/a&gt; package&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;. These additions bring the windowing approaches used in &lt;a href=&#34;https://github.com/DavisVaughan/slider&#34;&gt;slider&lt;/a&gt; to the sampling procedures used in &lt;a href=&#34;&#34;&gt;tidymodels&lt;/a&gt;&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt; framework, thereby making evaluation of models with time-based features easier.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(lubridate)
+library(httr)
+library(jsonlite)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;For a brief example, I will use data from Wake County food inspections. I load the data into R using Wake County’s open API (does not require a login/account) and the &lt;a href=&#34;https://github.com/r-lib/httr&#34;&gt;httr&lt;/a&gt; and &lt;a href=&#34;https://github.com/jeroen/jsonlite&#34;&gt;jsonlite&lt;/a&gt; packages. You could also download the data directly from their &lt;a href=&#34;https://data.wakegov.com/datasets/1b08c4eb32f44a198277c418b71b3a48_2&#34;&gt;website&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;r_insp &amp;lt;- GET(&amp;quot;https://opendata.arcgis.com/datasets/ebe3ae7f76954fad81411612d7c4fb17_1.geojson&amp;quot;)
+
+inspections &amp;lt;- content(r_insp, &amp;quot;text&amp;quot;) %&amp;gt;% 
+  fromJSON() %&amp;gt;% 
+  .$features %&amp;gt;%
+  .$properties %&amp;gt;% 
+  as_tibble()
+
+inspections_clean &amp;lt;- inspections %&amp;gt;% 
+  mutate(DATE = ymd_hms(DATE_) %&amp;gt;% as.Date()) %&amp;gt;% 
+  select(-c(DATE_, DESCRIPTION)) %&amp;gt;% 
+  filter(SCORE &amp;gt; 50, TYPE == &amp;quot;Inspection&amp;quot;) %&amp;gt;% 
+  print()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We’ll say that we only care about the most recent 5 years of data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;inspections_clean &amp;lt;- inspections_clean %&amp;gt;% 
+  filter(DATE &amp;gt;= (max(DATE) - years(5)))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Fields of interest:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;SCORE&lt;/code&gt;: Food inspection score
+&lt;code&gt;HSISID&lt;/code&gt;: Restaurant ID
+&lt;code&gt;INSPECTOR&lt;/code&gt;: Who is doing the inspection&lt;/p&gt;
+&lt;p&gt;Let’s pretend we want to predict the inspection &lt;code&gt;SCORE&lt;/code&gt; that a restaurant (i.e. &lt;code&gt;HSISID&lt;/code&gt;) will get on it’s upcoming inspection. An obvious predictor would be to consider what the restaurant’s most recent &lt;code&gt;SCORE&lt;/code&gt; was&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;inspections_prep &amp;lt;- inspections_clean %&amp;gt;% 
+  group_by(HSISID) %&amp;gt;% 
+  mutate(SCORE_lag = lag(SCORE)) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  arrange(DATE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We’ll pretend the model is only intended to be used on restaurants that have had at least one prior inspection within the last 5 years&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;inspections_prep &amp;lt;- inspections_prep %&amp;gt;% 
+  filter(!is.na(SCORE_lag))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We should use time-series cross validation&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt; to evaluate our model. Ideally, our resampling scheme used for model evaluation mirrors how the model will be built and evaluated in production. For example, imagine we plan on updating the model once a month – then it makes sense to use assessment sets that each contain a month of data. We can use &lt;code&gt;rsample::sliding_period()&lt;/code&gt; to set this up&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For this example, we’ll say we’ll use 36 months of training data for each split, and then one month of data for evaluation.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;resamples &amp;lt;- rsample::sliding_period(inspections_prep, index = DATE, period = &amp;quot;month&amp;quot;, lookback = 36)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I made some functions you can find here: ___ as helpers for reviewing the dates covered within your resampling scheme.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;extract_dates_rsplit &amp;lt;- function(rsplit_object, date_col_name = &amp;quot;DATE&amp;quot;){
+  an_obj &amp;lt;- analysis(rsplit_object)
+  as_obj &amp;lt;- assessment(rsplit_object)
+  
+  tibble(an_min = min(an_obj[[date_col_name]]),
+         an_max = max(an_obj[[date_col_name]]),
+         as_min = min(as_obj[[date_col_name]]),
+         as_max = max(as_obj[[date_col_name]])
+  )
+}
+
+extract_dates_rsplit &amp;lt;- function(rsplit_object, date_col_name = &amp;quot;DATE&amp;quot;){
+  an_obj &amp;lt;- analysis(rsplit_object)
+  as_obj &amp;lt;- assessment(rsplit_object)
+  
+  tibble(an_min = min(an_obj[[date_col_name]]),
+         an_max = max(an_obj[[date_col_name]]),
+         as_min = min(as_obj[[date_col_name]]),
+         as_max = max(as_obj[[date_col_name]])
+  )
+}
+
+extract_dates_rset &amp;lt;- function(rset_object, date_col_name = &amp;quot;DATE&amp;quot;){
+  rset_object %&amp;gt;% 
+    mutate(dates = map(splits, extract_dates_rsplit, date_col_name = date_col_name)) %&amp;gt;% 
+    unnest(dates)
+}
+
+resamples %&amp;gt;% 
+  extract_dates_rsplit() %&amp;gt;% 
+  print()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can then use other tidymodels tools to build and train a model.&lt;/p&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;p&gt;Some features we might try:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What was the HSISID’s most recent score?&lt;/li&gt;
+&lt;li&gt;What was the average HSISID score over the last several years?&lt;/li&gt;
+&lt;li&gt;What is the trend of inspection scores?&lt;/li&gt;
+&lt;li&gt;What is the average score of the inspector?&lt;/li&gt;
+&lt;li&gt;What is the type of the restaurant?&lt;/li&gt;
+&lt;li&gt;How long has the restaurant been open for?&lt;/li&gt;
+&lt;li&gt;Who is the inspector?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;resources&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Resources&lt;/h1&gt;
+&lt;p&gt;Link on doing regressions in slider:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://twitter.com/dvaughan32/status/1247270052782637056?s=20&#34; class=&#34;uri&#34;&gt;https://twitter.com/dvaughan32/status/1247270052782637056?s=20&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Rstudio presentation at Rstudio:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://rstudio.com/resources/rstudioconf-2020/sliding-windows-and-calendars-davis-vaughan/&#34; class=&#34;uri&#34;&gt;https://rstudio.com/resources/rstudioconf-2020/sliding-windows-and-calendars-davis-vaughan/&lt;/a&gt;&lt;/p&gt;
+&lt;div id=&#34;examples&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Examples&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;sliding_window()&lt;/code&gt; and &lt;code&gt;sliding_period()&lt;/code&gt; are likely the most helpful additions as they allow you to do resampling based on a date/time index.&lt;/p&gt;
+&lt;p&gt;For now it seems that &lt;code&gt;rsample::sliding_period()&lt;/code&gt; is easier to use as &lt;code&gt;period&lt;/code&gt; helps to set-up reasonable defaults.&lt;/p&gt;
+&lt;p&gt;An important difference between &lt;code&gt;rsample::sliding_index()&lt;/code&gt; and &lt;code&gt;rsample::sliding_period()&lt;/code&gt; is that &lt;code&gt;rsample::sliding_period()&lt;/code&gt; defaults to return the number of splits that the period length would fit in, whereas &lt;code&gt;rsample::sliding_index()&lt;/code&gt; defaults to have a period length of one day (if using a Date format), so you need to use the&lt;code&gt;step&lt;/code&gt; argument to increment between splits. It seems like &lt;code&gt;rsample::sliding_index()&lt;/code&gt; is still in-progress as it does not yet support the &lt;code&gt;period&lt;/code&gt; argument, which would make it more similar to &lt;code&gt;slider::slide_index()&lt;/code&gt; which allows inputs like “2 weeks”. Instead the values for &lt;code&gt;lookup&lt;/code&gt;, &lt;code&gt;assess_start&lt;/code&gt;, &lt;code&gt;assess_stop&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;for &lt;code&gt;sliding_index()&lt;/code&gt; you need to specify how many steps you want to move ahead between splits (default is one) by using the &lt;code&gt;step&lt;/code&gt; argument. &lt;code&gt;sliding_period()&lt;/code&gt; on the otherhand automatically figures out the step length between splits (based on the specified period).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rsample)
+
+# Starting on the 6th rather than the 1st, because is the start of the week, so makes examples easier
+df_test &amp;lt;- tibble(x = 1:364, DATE = ymd(20171228) + days(0:363))
+
+df_test &amp;lt;- tibble(DATE = ymd(20171228) + days(0:(363*30))) %&amp;gt;% 
+  mutate(x = row_number())
+
+# df_test &amp;lt;- mutate(df_test, DATE = tsibble::yearmonth(DATE))
+
+sampling_test &amp;lt;- rsample::sliding_period(df_test, index = DATE, period = &amp;quot;week&amp;quot;, lookback = 4, every = 2)
+
+sampling_test &amp;lt;- rsample::sliding_index(df_test, index = DATE, lookback = 27, assess_start = 1, assess_stop = 28, step = 28)
+
+sampling_test &amp;lt;- rsample::sliding_index(df_test, index = DATE, lookback = &amp;quot;2 weeks&amp;quot;)
+
+sampling_test &amp;lt;- rsample::sliding_period(df_test, index = DATE, period = &amp;quot;month&amp;quot;, lookback = 36, assess_stop = 3)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To concretely understand how this split our data up, let’s review what our min and max date values are for each of our &lt;code&gt;rsplit&lt;/code&gt; values.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;extract_dates_rsplit &amp;lt;- function(rsplit_object, date_col_name = &amp;quot;DATE&amp;quot;){
+  an_obj &amp;lt;- analysis(rsplit_object)
+  as_obj &amp;lt;- assessment(rsplit_object)
+  
+  tibble(an_min = min(an_obj[[date_col_name]]),
+         an_max = max(an_obj[[date_col_name]]),
+         as_min = min(as_obj[[date_col_name]]),
+         as_max = max(as_obj[[date_col_name]])
+  )
+}
+
+extract_dates_rset &amp;lt;- function(rset_object, date_col_name = &amp;quot;DATE&amp;quot;){
+  rset_object %&amp;gt;% 
+    mutate(dates = map(splits, extract_dates_rsplit, date_col_name = date_col_name)) %&amp;gt;% 
+    unnest(dates)
+}
+
+plot_dates_rset &amp;lt;- function(rset_object_with_dates){
+
+  rset_object_with_dates %&amp;gt;% 
+    select(-one_of(&amp;quot;splits&amp;quot;)) %&amp;gt;%
+    pivot_longer(cols = where(is.Date),
+                 names_to = &amp;quot;type&amp;quot;,
+                 values_to = &amp;quot;date&amp;quot;) %&amp;gt;% 
+    separate(type, c(&amp;quot;data_type&amp;quot;, &amp;quot;range_type&amp;quot;), &amp;quot;_&amp;quot;) %&amp;gt;% 
+    ggplot(aes(y = fct_rev(id), x = date, colour = fct_rev(data_type)))+
+    geom_line()+
+    theme_bw()+
+    theme(legend.position = &amp;quot;none&amp;quot;,
+          axis.title.x = element_blank(),
+          axis.title.y = element_blank())
+}
+
+
+sampling_dates &amp;lt;- sampling_test %&amp;gt;% 
+  mutate(dates = map(splits, extract_dates_rsplit)) %&amp;gt;% 
+  unnest(dates) %&amp;gt;% 
+  print()
+
+sampling_dates %&amp;gt;% 
+  select(-c(1:2)) %&amp;gt;% 
+  mutate_all(wday)
+
+
+resamples %&amp;gt;% 
+  extract_dates_rset() %&amp;gt;% 
+  select(-one_of(&amp;quot;splits&amp;quot;)) %&amp;gt;%
+  pivot_longer(cols = where(is.Date),
+               names_to = &amp;quot;type&amp;quot;,
+               values_to = &amp;quot;date&amp;quot;) %&amp;gt;% 
+  separate(type, c(&amp;quot;data_type&amp;quot;, &amp;quot;range_type&amp;quot;), &amp;quot;_&amp;quot;) %&amp;gt;% 
+  ggplot(aes(y = fct_rev(id), x = date, colour = fct_rev(data_type)))+
+  geom_line()+
+  theme_bw()+
+  theme(legend.position = &amp;quot;none&amp;quot;,
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;extract_dates_rsplit &amp;lt;- function(rsplit_object, date_col = &amp;quot;DATE&amp;quot;){
+  an_obj &amp;lt;- analysis(rsplit_object)
+  as_obj &amp;lt;- assessment(rsplit_object)
+  
+  tibble(an_min = min(an_obj[[date_col]]),
+         an_max = max(an_obj[[date_col]]),
+         as_min = min(as_obj[[date_col]]),
+         as_max = max(as_obj[[date_col]])
+  )
+}
+
+sampling_dates &amp;lt;- sampling_test %&amp;gt;% 
+  mutate(dates = map(splits, extract_dates_rsplit)) %&amp;gt;% 
+  unnest(dates) %&amp;gt;% 
+  print()
+
+sampling_dates %&amp;gt;% 
+  select(-c(1:2)) %&amp;gt;% 
+  mutate_all(wday)
+
+sampling_dates %&amp;gt;% 
+  select(-splits) %&amp;gt;%
+  pivot_longer(cols = where(is.Date),
+               names_to = &amp;quot;type&amp;quot;,
+               values_to = &amp;quot;date&amp;quot;) %&amp;gt;% 
+  separate(type, c(&amp;quot;data_type&amp;quot;, &amp;quot;range_type&amp;quot;), &amp;quot;_&amp;quot;) %&amp;gt;% 
+  ggplot(aes(y = fct_rev(id), x = date, colour = fct_rev(data_type)))+
+  geom_line()+
+  theme_bw()&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;The help pages for &lt;code&gt;rsample&lt;/code&gt; (as well as the &lt;code&gt;slider&lt;/code&gt; package) are helpful resources for understanding the three types of sliding you can use, briefly these are&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;sliding_window()&lt;/code&gt;: only takes into account order / position of dates&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sliding_index()&lt;/code&gt;: slide according to an index&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sliding_period()&lt;/code&gt;: slide according to an index and specified period&lt;/li&gt;
+&lt;/ul&gt;
+&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;See &lt;a href=&#34;https://github.com/tidymodels/rsample/pull/168&#34;&gt;#168&lt;/a&gt; and NEWS for &lt;a href=&#34;https://github.com/tidymodels/rsample/blob/master/NEWS.md&#34;&gt;0.0.8&lt;/a&gt;.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Previously users would have needed to use &lt;code&gt;rsample::rolling_origin()&lt;/code&gt;.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;You typically want to do feature engineering &lt;em&gt;after&lt;/em&gt; splitting your data (and likely using the &lt;code&gt;recipes&lt;/code&gt; package). However time-based features should actually be done prior to data splitting, as discussed in this github &lt;a href=&#34;https://github.com/tidymodels/rsample/pull/168&#34;&gt;issue&lt;/a&gt;.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;Hence is not set-up to be used for new restaurants.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;Two helpful resources on time series cross-validation:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;From &lt;a href=&#34;https://eng.uber.com/forecasting-introduction/&#34;&gt;uber engineering&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;From &lt;a href=&#34;https://otexts.com/fpp3/tscv.html&#34;&gt;Forecasting Principles and Practices&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;I’m not worrying about a training / testing split… point of post is to focus on analysis / assessment sets in cross-validation.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
     <item>
       <title>A National Popular Vote Weighted by the Electoral College</title>
       <link>/2020/09/11/compromise-between-the-electoral-college-and-a-national-popular-vote/</link>

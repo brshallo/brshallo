@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.75.0" />
+
+
+<title>Window Functions for Resampling - Bryan Shalloway&#39;s Blog</title>
+<meta property="og:title" content="Window Functions for Resampling - Bryan Shalloway&#39;s Blog">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/bryan_edit.jpg"
+         width="60"
+         height="60"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://twitter.com/brshallo">Twitter</a></li>
+    
+    <li><a href="https://github.com/brshallo">GitHub</a></li>
+    
+    <li><a href="https://www.linkedin.com/in/bryanshalloway/">LinkedIn</a></li>
+    
+    <li><a href="https://www.youtube.com/channel/UCDVMC4-VRU-tR2Z4nYc1mDA">YouTube</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">6 min read</span>
+    
+
+    <h1 class="article-title">Window Functions for Resampling</h1>
+
+    
+    <span class="article-date">2020-10-12</span>
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#appendix">Appendix</a></li>
+<li><a href="#resources">Resources</a><ul>
+<li><a href="#examples">Examples</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p>I’m excited about the addition of the <code>sliding_*()</code><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> functions to the <a href="https://github.com/tidymodels/rsample">rsample</a> package<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. These additions bring the windowing approaches used in <a href="https://github.com/DavisVaughan/slider">slider</a> to the sampling procedures used in <a href="">tidymodels</a><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> framework, thereby making evaluation of models with time-based features easier.</p>
+<pre class="r"><code>library(tidyverse)
+library(lubridate)
+library(httr)
+library(jsonlite)</code></pre>
+<p>For a brief example, I will use data from Wake County food inspections. I load the data into R using Wake County’s open API (does not require a login/account) and the <a href="https://github.com/r-lib/httr">httr</a> and <a href="https://github.com/jeroen/jsonlite">jsonlite</a> packages. You could also download the data directly from their <a href="https://data.wakegov.com/datasets/1b08c4eb32f44a198277c418b71b3a48_2">website</a>.</p>
+<pre class="r"><code>r_insp &lt;- GET(&quot;https://opendata.arcgis.com/datasets/ebe3ae7f76954fad81411612d7c4fb17_1.geojson&quot;)
+
+inspections &lt;- content(r_insp, &quot;text&quot;) %&gt;% 
+  fromJSON() %&gt;% 
+  .$features %&gt;%
+  .$properties %&gt;% 
+  as_tibble()
+
+inspections_clean &lt;- inspections %&gt;% 
+  mutate(DATE = ymd_hms(DATE_) %&gt;% as.Date()) %&gt;% 
+  select(-c(DATE_, DESCRIPTION)) %&gt;% 
+  filter(SCORE &gt; 50, TYPE == &quot;Inspection&quot;) %&gt;% 
+  print()</code></pre>
+<p>We’ll say that we only care about the most recent 5 years of data.</p>
+<pre class="r"><code>inspections_clean &lt;- inspections_clean %&gt;% 
+  filter(DATE &gt;= (max(DATE) - years(5)))</code></pre>
+<p>Fields of interest:</p>
+<p><code>SCORE</code>: Food inspection score
+<code>HSISID</code>: Restaurant ID
+<code>INSPECTOR</code>: Who is doing the inspection</p>
+<p>Let’s pretend we want to predict the inspection <code>SCORE</code> that a restaurant (i.e. <code>HSISID</code>) will get on it’s upcoming inspection. An obvious predictor would be to consider what the restaurant’s most recent <code>SCORE</code> was<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
+<pre class="r"><code>inspections_prep &lt;- inspections_clean %&gt;% 
+  group_by(HSISID) %&gt;% 
+  mutate(SCORE_lag = lag(SCORE)) %&gt;% 
+  ungroup() %&gt;% 
+  arrange(DATE)</code></pre>
+<p>We’ll pretend the model is only intended to be used on restaurants that have had at least one prior inspection within the last 5 years<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.</p>
+<pre class="r"><code>inspections_prep &lt;- inspections_prep %&gt;% 
+  filter(!is.na(SCORE_lag))</code></pre>
+<p>We should use time-series cross validation<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> to evaluate our model. Ideally, our resampling scheme used for model evaluation mirrors how the model will be built and evaluated in production. For example, imagine we plan on updating the model once a month – then it makes sense to use assessment sets that each contain a month of data. We can use <code>rsample::sliding_period()</code> to set this up<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
+<p>For this example, we’ll say we’ll use 36 months of training data for each split, and then one month of data for evaluation.</p>
+<pre class="r"><code>resamples &lt;- rsample::sliding_period(inspections_prep, index = DATE, period = &quot;month&quot;, lookback = 36)</code></pre>
+<p>I made some functions you can find here: ___ as helpers for reviewing the dates covered within your resampling scheme.</p>
+<pre class="r"><code>extract_dates_rsplit &lt;- function(rsplit_object, date_col_name = &quot;DATE&quot;){
+  an_obj &lt;- analysis(rsplit_object)
+  as_obj &lt;- assessment(rsplit_object)
+  
+  tibble(an_min = min(an_obj[[date_col_name]]),
+         an_max = max(an_obj[[date_col_name]]),
+         as_min = min(as_obj[[date_col_name]]),
+         as_max = max(as_obj[[date_col_name]])
+  )
+}
+
+extract_dates_rsplit &lt;- function(rsplit_object, date_col_name = &quot;DATE&quot;){
+  an_obj &lt;- analysis(rsplit_object)
+  as_obj &lt;- assessment(rsplit_object)
+  
+  tibble(an_min = min(an_obj[[date_col_name]]),
+         an_max = max(an_obj[[date_col_name]]),
+         as_min = min(as_obj[[date_col_name]]),
+         as_max = max(as_obj[[date_col_name]])
+  )
+}
+
+extract_dates_rset &lt;- function(rset_object, date_col_name = &quot;DATE&quot;){
+  rset_object %&gt;% 
+    mutate(dates = map(splits, extract_dates_rsplit, date_col_name = date_col_name)) %&gt;% 
+    unnest(dates)
+}
+
+resamples %&gt;% 
+  extract_dates_rsplit() %&gt;% 
+  print()</code></pre>
+<p>We can then use other tidymodels tools to build and train a model.</p>
+<div id="appendix" class="section level1">
+<h1>Appendix</h1>
+<p>Some features we might try:</p>
+<ul>
+<li>What was the HSISID’s most recent score?</li>
+<li>What was the average HSISID score over the last several years?</li>
+<li>What is the trend of inspection scores?</li>
+<li>What is the average score of the inspector?</li>
+<li>What is the type of the restaurant?</li>
+<li>How long has the restaurant been open for?</li>
+<li>Who is the inspector?</li>
+</ul>
+</div>
+<div id="resources" class="section level1">
+<h1>Resources</h1>
+<p>Link on doing regressions in slider:</p>
+<p><a href="https://twitter.com/dvaughan32/status/1247270052782637056?s=20" class="uri">https://twitter.com/dvaughan32/status/1247270052782637056?s=20</a></p>
+<p>Rstudio presentation at Rstudio:</p>
+<p><a href="https://rstudio.com/resources/rstudioconf-2020/sliding-windows-and-calendars-davis-vaughan/" class="uri">https://rstudio.com/resources/rstudioconf-2020/sliding-windows-and-calendars-davis-vaughan/</a></p>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<p><code>sliding_window()</code> and <code>sliding_period()</code> are likely the most helpful additions as they allow you to do resampling based on a date/time index.</p>
+<p>For now it seems that <code>rsample::sliding_period()</code> is easier to use as <code>period</code> helps to set-up reasonable defaults.</p>
+<p>An important difference between <code>rsample::sliding_index()</code> and <code>rsample::sliding_period()</code> is that <code>rsample::sliding_period()</code> defaults to return the number of splits that the period length would fit in, whereas <code>rsample::sliding_index()</code> defaults to have a period length of one day (if using a Date format), so you need to use the<code>step</code> argument to increment between splits. It seems like <code>rsample::sliding_index()</code> is still in-progress as it does not yet support the <code>period</code> argument, which would make it more similar to <code>slider::slide_index()</code> which allows inputs like “2 weeks”. Instead the values for <code>lookup</code>, <code>assess_start</code>, <code>assess_stop</code></p>
+<p>for <code>sliding_index()</code> you need to specify how many steps you want to move ahead between splits (default is one) by using the <code>step</code> argument. <code>sliding_period()</code> on the otherhand automatically figures out the step length between splits (based on the specified period).</p>
+<pre class="r"><code>library(rsample)
+
+# Starting on the 6th rather than the 1st, because is the start of the week, so makes examples easier
+df_test &lt;- tibble(x = 1:364, DATE = ymd(20171228) + days(0:363))
+
+df_test &lt;- tibble(DATE = ymd(20171228) + days(0:(363*30))) %&gt;% 
+  mutate(x = row_number())
+
+# df_test &lt;- mutate(df_test, DATE = tsibble::yearmonth(DATE))
+
+sampling_test &lt;- rsample::sliding_period(df_test, index = DATE, period = &quot;week&quot;, lookback = 4, every = 2)
+
+sampling_test &lt;- rsample::sliding_index(df_test, index = DATE, lookback = 27, assess_start = 1, assess_stop = 28, step = 28)
+
+sampling_test &lt;- rsample::sliding_index(df_test, index = DATE, lookback = &quot;2 weeks&quot;)
+
+sampling_test &lt;- rsample::sliding_period(df_test, index = DATE, period = &quot;month&quot;, lookback = 36, assess_stop = 3)</code></pre>
+<p>To concretely understand how this split our data up, let’s review what our min and max date values are for each of our <code>rsplit</code> values.</p>
+<pre class="r"><code>extract_dates_rsplit &lt;- function(rsplit_object, date_col_name = &quot;DATE&quot;){
+  an_obj &lt;- analysis(rsplit_object)
+  as_obj &lt;- assessment(rsplit_object)
+  
+  tibble(an_min = min(an_obj[[date_col_name]]),
+         an_max = max(an_obj[[date_col_name]]),
+         as_min = min(as_obj[[date_col_name]]),
+         as_max = max(as_obj[[date_col_name]])
+  )
+}
+
+extract_dates_rset &lt;- function(rset_object, date_col_name = &quot;DATE&quot;){
+  rset_object %&gt;% 
+    mutate(dates = map(splits, extract_dates_rsplit, date_col_name = date_col_name)) %&gt;% 
+    unnest(dates)
+}
+
+plot_dates_rset &lt;- function(rset_object_with_dates){
+
+  rset_object_with_dates %&gt;% 
+    select(-one_of(&quot;splits&quot;)) %&gt;%
+    pivot_longer(cols = where(is.Date),
+                 names_to = &quot;type&quot;,
+                 values_to = &quot;date&quot;) %&gt;% 
+    separate(type, c(&quot;data_type&quot;, &quot;range_type&quot;), &quot;_&quot;) %&gt;% 
+    ggplot(aes(y = fct_rev(id), x = date, colour = fct_rev(data_type)))+
+    geom_line()+
+    theme_bw()+
+    theme(legend.position = &quot;none&quot;,
+          axis.title.x = element_blank(),
+          axis.title.y = element_blank())
+}
+
+
+sampling_dates &lt;- sampling_test %&gt;% 
+  mutate(dates = map(splits, extract_dates_rsplit)) %&gt;% 
+  unnest(dates) %&gt;% 
+  print()
+
+sampling_dates %&gt;% 
+  select(-c(1:2)) %&gt;% 
+  mutate_all(wday)
+
+
+resamples %&gt;% 
+  extract_dates_rset() %&gt;% 
+  select(-one_of(&quot;splits&quot;)) %&gt;%
+  pivot_longer(cols = where(is.Date),
+               names_to = &quot;type&quot;,
+               values_to = &quot;date&quot;) %&gt;% 
+  separate(type, c(&quot;data_type&quot;, &quot;range_type&quot;), &quot;_&quot;) %&gt;% 
+  ggplot(aes(y = fct_rev(id), x = date, colour = fct_rev(data_type)))+
+  geom_line()+
+  theme_bw()+
+  theme(legend.position = &quot;none&quot;,
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())</code></pre>
+<pre class="r"><code>extract_dates_rsplit &lt;- function(rsplit_object, date_col = &quot;DATE&quot;){
+  an_obj &lt;- analysis(rsplit_object)
+  as_obj &lt;- assessment(rsplit_object)
+  
+  tibble(an_min = min(an_obj[[date_col]]),
+         an_max = max(an_obj[[date_col]]),
+         as_min = min(as_obj[[date_col]]),
+         as_max = max(as_obj[[date_col]])
+  )
+}
+
+sampling_dates &lt;- sampling_test %&gt;% 
+  mutate(dates = map(splits, extract_dates_rsplit)) %&gt;% 
+  unnest(dates) %&gt;% 
+  print()
+
+sampling_dates %&gt;% 
+  select(-c(1:2)) %&gt;% 
+  mutate_all(wday)
+
+sampling_dates %&gt;% 
+  select(-splits) %&gt;%
+  pivot_longer(cols = where(is.Date),
+               names_to = &quot;type&quot;,
+               values_to = &quot;date&quot;) %&gt;% 
+  separate(type, c(&quot;data_type&quot;, &quot;range_type&quot;), &quot;_&quot;) %&gt;% 
+  ggplot(aes(y = fct_rev(id), x = date, colour = fct_rev(data_type)))+
+  geom_line()+
+  theme_bw()</code></pre>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>The help pages for <code>rsample</code> (as well as the <code>slider</code> package) are helpful resources for understanding the three types of sliding you can use, briefly these are</p>
+<ul>
+<li><code>sliding_window()</code>: only takes into account order / position of dates</li>
+<li><code>sliding_index()</code>: slide according to an index</li>
+<li><code>sliding_period()</code>: slide according to an index and specified period</li>
+</ul>
+<a href="#fnref1" class="footnote-back">↩</a></li>
+<li id="fn2"><p>See <a href="https://github.com/tidymodels/rsample/pull/168">#168</a> and NEWS for <a href="https://github.com/tidymodels/rsample/blob/master/NEWS.md">0.0.8</a>.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>Previously users would have needed to use <code>rsample::rolling_origin()</code>.<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>You typically want to do feature engineering <em>after</em> splitting your data (and likely using the <code>recipes</code> package). However time-based features should actually be done prior to data splitting, as discussed in this github <a href="https://github.com/tidymodels/rsample/pull/168">issue</a>.<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>Hence is not set-up to be used for new restaurants.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>Two helpful resources on time series cross-validation:</p>
+<ol style="list-style-type: decimal">
+<li>From <a href="https://eng.uber.com/forecasting-introduction/">uber engineering</a></li>
+<li>From <a href="https://otexts.com/fpp3/tscv.html">Forecasting Principles and Practices</a></li>
+</ol>
+<a href="#fnref6" class="footnote-back">↩</a></li>
+<li id="fn7"><p>I’m not worrying about a training / testing split… point of post is to focus on analysis / assessment sets in cross-validation.<a href="#fnref7" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+
+    </div>
+  </article>
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//bryanshalloway.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+</main>
+
+  
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a>Blogroll:</a><a href="https://www.r-bloggers.com/" class="footer-links-kudos">R-Bloggers</a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+
+    
+  </body>
+</html>
+
