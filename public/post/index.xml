@@ -23,7 +23,7 @@
 &lt;li&gt;&lt;a href=&#34;#data-splits&#34;&gt;Data Splits&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#other-features-after-split-use-recipes&#34;&gt;Other Features (After Split, use &lt;code&gt;recipes&lt;/code&gt;)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#model-specification&#34;&gt;Model Specification&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#model-specification-and-training&#34;&gt;Model Specification and Training&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#model-evaluation&#34;&gt;Model Evaluation&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#model-building-with-hyperparameter-tuning&#34;&gt;Model Building with Hyperparameter Tuning&lt;/a&gt;&lt;/li&gt;
@@ -42,7 +42,7 @@
 &lt;p&gt;For my example I will use data from Wake County food inspections. I will try to predict the &lt;code&gt;SCORE&lt;/code&gt; for upcoming restaurant food inspections.&lt;/p&gt;
 &lt;div id=&#34;load-data&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Load data&lt;/h1&gt;
-&lt;p&gt;You can use Wake County’s open API (does not require a login/account) and the &lt;a href=&#34;https://github.com/r-lib/httr&#34;&gt;httr&lt;/a&gt; and &lt;a href=&#34;https://github.com/jeroen/jsonlite&#34;&gt;jsonlite&lt;/a&gt; packages to load in the data. You can also download the data directly from the Wake County &lt;a href=&#34;https://data.wakegov.com/datasets/1b08c4eb32f44a198277c418b71b3a48_2&#34;&gt;website&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;You can use Wake County’s open API (does not require a login/account) and the &lt;a href=&#34;https://github.com/r-lib/httr&#34;&gt;httr&lt;/a&gt; and &lt;a href=&#34;https://github.com/jeroen/jsonlite&#34;&gt;jsonlite&lt;/a&gt; packages to load in the data. You can also download the data directly from the Wake County &lt;a href=&#34;https://data.wakegov.com/datasets/1b08c4eb32f44a198277c418b71b3a48_2&#34;&gt;website&lt;/a&gt;&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
 library(lubridate)
 library(httr)
@@ -74,11 +74,11 @@ restauraunts &amp;lt;- restauraunts %&amp;gt;%
   mutate(RESTAURANTOPENDATE = ymd_hms(RESTAURANTOPENDATE) %&amp;gt;% as.Date())&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;em&gt;Further prep:&lt;/em&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Join the &lt;code&gt;inspections&lt;/code&gt; and &lt;code&gt;restaurants&lt;/code&gt; datasets&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Join the &lt;code&gt;inspections&lt;/code&gt; and &lt;code&gt;restaurants&lt;/code&gt; datasets&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Filter out extreme outliers in &lt;code&gt;SCORE&lt;/code&gt; (likely data entry errors)&lt;/li&gt;
-&lt;li&gt;Filter to only locations of &lt;code&gt;TYPE&lt;/code&gt; restaurant&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Filter out duplicate entries&lt;/li&gt;
-&lt;li&gt;It’s important to consider which fields should be excluded for ethical reasons. For our problem, we will say that any restaurant name or location information must be excluded&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Filter to only locations of &lt;code&gt;TYPE&lt;/code&gt; restaurant&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Filter out potential duplicate entries&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;It’s important to consider which fields should be excluded for ethical reasons. For our problem, we will say that any restaurant name or location information must be excluded&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;inspections_restaurants &amp;lt;- inspections_clean %&amp;gt;% 
   left_join(restauraunts, by = c(&amp;quot;HSISID&amp;quot;, &amp;quot;PERMITID&amp;quot;)) %&amp;gt;% 
@@ -99,15 +99,15 @@ restauraunts &amp;lt;- restauraunts %&amp;gt;%
 &lt;/div&gt;
 &lt;div id=&#34;feature-engineering-data-splits&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Feature Engineering &amp;amp; Data Splits&lt;/h1&gt;
-&lt;p&gt;Discussion on issue &lt;a href=&#34;https://github.com/tidymodels/rsample/pull/168&#34;&gt;#168&lt;/a&gt; suggests that some features (those depending on prior observations) should be created before the data is split&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;. The first and last sub-sections:&lt;/p&gt;
+&lt;p&gt;Discussion on issue &lt;a href=&#34;https://github.com/tidymodels/rsample/pull/168&#34;&gt;#168&lt;/a&gt; suggests that some features (those depending on prior observations) should be created before the data is split&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt;. The first and last sub-sections:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#lag-based-features-before-split-use-dplyr-or-similar&#34;&gt;Lag Based Features (Before Split, use &lt;code&gt;dplyr&lt;/code&gt; or similar)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#other-features-after-split-use-recipes&#34;&gt;Other Features (After Split, use &lt;code&gt;recipes&lt;/code&gt;)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;provide examples of the types of features that should be created before and after splitting your data. Lag-based features can, in some ways, be thought of as ‘raw inputs’ as they should be created prior to building a a &lt;code&gt;recipe&lt;/code&gt;&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;provide examples of the types of features that should be created before and after splitting your data respectively. Lag based features can, in some ways, be thought of as ‘raw inputs’ as they should be created prior to building a &lt;code&gt;recipe&lt;/code&gt;&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;div id=&#34;lag-based-features-before-split-use-dplyr-or-similar&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Lag Based Features (Before Split, use &lt;code&gt;dplyr&lt;/code&gt; or similar)&lt;/h2&gt;
-&lt;p&gt;Lag based features should generally be computed prior to splitting your data into “training” / “testing” (or “analysis” / “assessment”&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt;) sets. This is because calculation of these features may depend on observations in prior splits&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt;. Let’s build a few features where this is the case:&lt;/p&gt;
+&lt;p&gt;Lag based features should generally be computed prior to splitting your data into “training” / “testing” (or “analysis” / “assessment”&lt;a href=&#34;#fn11&#34; class=&#34;footnote-ref&#34; id=&#34;fnref11&#34;&gt;&lt;sup&gt;11&lt;/sup&gt;&lt;/a&gt;) sets. This is because calculation of these features may depend on observations in prior splits&lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt;. Let’s build a few features where this is the case:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Prior &lt;code&gt;SCORE&lt;/code&gt; for &lt;code&gt;HSISID&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Average of prior 3 years of &lt;code&gt;SCORE&lt;/code&gt; for &lt;code&gt;HSISISD&lt;/code&gt;&lt;/li&gt;
@@ -137,12 +137,12 @@ restauraunts &amp;lt;- restauraunts %&amp;gt;%
          days_since_last = (date - lag(date)) / ddays(1)) %&amp;gt;% 
   ungroup() %&amp;gt;% 
   arrange(date)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The use of &lt;code&gt;.after = -lubridate::days(1)&lt;/code&gt; prevents data leakage by ensuring that this feature does not include information from the current day in its calculation&lt;a href=&#34;#fn11&#34; class=&#34;footnote-ref&#34; id=&#34;fnref11&#34;&gt;&lt;sup&gt;11&lt;/sup&gt;&lt;/a&gt; &lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The use of &lt;code&gt;.after = -lubridate::days(1)&lt;/code&gt; prevents data leakage by ensuring that this feature does not include information from the current day in its calculation&lt;a href=&#34;#fn13&#34; class=&#34;footnote-ref&#34; id=&#34;fnref13&#34;&gt;&lt;sup&gt;13&lt;/sup&gt;&lt;/a&gt; &lt;a href=&#34;#fn14&#34; class=&#34;footnote-ref&#34; id=&#34;fnref14&#34;&gt;&lt;sup&gt;14&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;data-splits&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Data Splits&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;Additional Filtering:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;We will presume that the model is only intended for restaurants that have previous inspections on record&lt;a href=&#34;#fn13&#34; class=&#34;footnote-ref&#34; id=&#34;fnref13&#34;&gt;&lt;sup&gt;13&lt;/sup&gt;&lt;/a&gt; and will use only the most recent seven years of data.&lt;/p&gt;
+&lt;p&gt;We will presume that the model is only intended for restaurants that have previous inspections on record&lt;a href=&#34;#fn15&#34; class=&#34;footnote-ref&#34; id=&#34;fnref15&#34;&gt;&lt;sup&gt;15&lt;/sup&gt;&lt;/a&gt; and will use only the most recent seven years of data.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data_time_feats &amp;lt;- data_time_feats %&amp;gt;% 
   filter(date &amp;gt;= (max(date) - years(7)), !is.na(SCORE_lag))&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;strong&gt;Initial Split:&lt;/strong&gt;&lt;/p&gt;
@@ -151,8 +151,8 @@ restauraunts &amp;lt;- restauraunts %&amp;gt;%
 train &amp;lt;- rsample::training(initial_split)
 test &amp;lt;- rsample::testing(initial_split)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;strong&gt;Resampling (Time Series Cross-Validation):&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;For this problem we should evaluate our models using time series cross-validation&lt;a href=&#34;#fn14&#34; class=&#34;footnote-ref&#34; id=&#34;fnref14&#34;&gt;&lt;sup&gt;14&lt;/sup&gt;&lt;/a&gt;. This entails creating multiple ordered subsets of the training data where each set has a different assignment of observations into “analysis” or “assessment” data&lt;a href=&#34;#fn15&#34; class=&#34;footnote-ref&#34; id=&#34;fnref15&#34;&gt;&lt;sup&gt;15&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Ideally the resampling scheme used for model evaluation mirrors how the model will be built and evaluated in production. For example, if the production model will be updated once every three months it makes sense that the “assessment” set be this length. We can use &lt;code&gt;rsample::sliding_period()&lt;/code&gt; to set this up.&lt;/p&gt;
+&lt;p&gt;For this problem we should evaluate our models using time series cross-validation&lt;a href=&#34;#fn16&#34; class=&#34;footnote-ref&#34; id=&#34;fnref16&#34;&gt;&lt;sup&gt;16&lt;/sup&gt;&lt;/a&gt;. This entails creating multiple ordered subsets of the training data where each set has a different assignment of observations into “analysis” or “assessment” data&lt;a href=&#34;#fn17&#34; class=&#34;footnote-ref&#34; id=&#34;fnref17&#34;&gt;&lt;sup&gt;17&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Ideally the resampling scheme used for model evaluation mirrors how the model will be built and evaluated in production. For example, if the production model will be updated once every three months it makes sense that the “assessment” sets be this length. We can use &lt;code&gt;rsample::sliding_period()&lt;/code&gt; to set things up.&lt;/p&gt;
 &lt;p&gt;For each set, we will use three years of “analysis” data for training a model and then three months of “assessment” data for evaluation.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;resamples &amp;lt;- rsample::sliding_period(train, 
                                      index = date, 
@@ -160,7 +160,7 @@ test &amp;lt;- rsample::testing(initial_split)&lt;/code&gt;&lt;/pre&gt;
                                      lookback = 36, 
                                      assess_stop = 3, 
                                      step = 3)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;I will load in some helper functions I created for reviewing the dates for our resampling windows&lt;a href=&#34;#fn16&#34; class=&#34;footnote-ref&#34; id=&#34;fnref16&#34;&gt;&lt;sup&gt;16&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I will load in some helper functions I created for reviewing the dates of our resampling windows&lt;a href=&#34;#fn18&#34; class=&#34;footnote-ref&#34; id=&#34;fnref18&#34;&gt;&lt;sup&gt;18&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::source_gist(&amp;quot;https://gist.github.com/brshallo/7d180bde932628a151a4d935ffa586a5&amp;quot;)
 
 resamples  %&amp;gt;% 
@@ -183,12 +183,12 @@ resamples  %&amp;gt;%
 ## 11 &amp;lt;split [9.9K/~ Slice~ 2016-04-01   2019-04-30   2019-05-01     2019-07-31    
 ## 12 &amp;lt;split [10.4K~ Slice~ 2016-07-01   2019-07-31   2019-08-01     2019-10-31&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-10-12-window-functions-for-resampling_files/figure-html/check-resampling-splits-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;For purposes of overall &lt;a href=&#34;#model-evaluation&#34;&gt;Model Evaluation&lt;/a&gt;, performance across each period will be weighted equally (regardless of number of observations in a period)&lt;a href=&#34;#fn17&#34; class=&#34;footnote-ref&#34; id=&#34;fnref17&#34;&gt;&lt;sup&gt;17&lt;/sup&gt;&lt;/a&gt; &lt;a href=&#34;#fn18&#34; class=&#34;footnote-ref&#34; id=&#34;fnref18&#34;&gt;&lt;sup&gt;18&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For purposes of overall &lt;a href=&#34;#model-evaluation&#34;&gt;Model Evaluation&lt;/a&gt;, performance across each period will be weighted equally (regardless of number of observations in a period)&lt;a href=&#34;#fn19&#34; class=&#34;footnote-ref&#34; id=&#34;fnref19&#34;&gt;&lt;sup&gt;19&lt;/sup&gt;&lt;/a&gt; &lt;a href=&#34;#fn20&#34; class=&#34;footnote-ref&#34; id=&#34;fnref20&#34;&gt;&lt;sup&gt;20&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;other-features-after-split-use-recipes&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Other Features (After Split, use &lt;code&gt;recipes&lt;/code&gt;)&lt;/h2&gt;
-&lt;p&gt;Where possible, features should be created using the &lt;a href=&#34;https://github.com/tidymodels/recipes&#34;&gt;recipes&lt;/a&gt; package&lt;a href=&#34;#fn19&#34; class=&#34;footnote-ref&#34; id=&#34;fnref19&#34;&gt;&lt;sup&gt;19&lt;/sup&gt;&lt;/a&gt;. &lt;code&gt;recipes&lt;/code&gt; makes pre-processing convenient and helps prevent data leakage.&lt;/p&gt;
-&lt;p&gt;It is OK to modify or transform a previously created lag based feature in a &lt;code&gt;recipes&lt;/code&gt; step. Assuming that you created the lag based input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues when modifying the variables during feature engineering steps&lt;a href=&#34;#fn20&#34; class=&#34;footnote-ref&#34; id=&#34;fnref20&#34;&gt;&lt;sup&gt;20&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Where possible, features should be created using the &lt;a href=&#34;https://github.com/tidymodels/recipes&#34;&gt;recipes&lt;/a&gt; package&lt;a href=&#34;#fn21&#34; class=&#34;footnote-ref&#34; id=&#34;fnref21&#34;&gt;&lt;sup&gt;21&lt;/sup&gt;&lt;/a&gt;. &lt;code&gt;recipes&lt;/code&gt; makes pre-processing convenient and helps prevent data leakage.&lt;/p&gt;
+&lt;p&gt;It is OK to modify or transform a previously created lag based feature in a &lt;code&gt;recipes&lt;/code&gt; step. Assuming that you created the lag based input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues when modifying the variables during later feature engineering steps&lt;a href=&#34;#fn22&#34; class=&#34;footnote-ref&#34; id=&#34;fnref22&#34;&gt;&lt;sup&gt;22&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Some features / transformations I’ll make with &lt;code&gt;recipes&lt;/code&gt;:&lt;/em&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;collapse rare values for &lt;code&gt;INSPECTOR&lt;/code&gt; and &lt;code&gt;TYPE&lt;/code&gt;&lt;/li&gt;
@@ -205,7 +205,7 @@ resamples  %&amp;gt;%
   step_date(date, features = c(&amp;quot;dow&amp;quot;, &amp;quot;month&amp;quot;)) %&amp;gt;% 
   update_role(date, new_role = &amp;quot;ID&amp;quot;) %&amp;gt;% 
   step_zv(all_predictors()) &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Let’s peak at which features we will be passing into the model:&lt;/p&gt;
+&lt;p&gt;Let’s peak at the features we will be passing into the model building step:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;prep(rec_general, data = train) %&amp;gt;% 
   juice() %&amp;gt;% 
   glimpse() &lt;/code&gt;&lt;/pre&gt;
@@ -225,8 +225,8 @@ resamples  %&amp;gt;%
 ## $ date_month       &amp;lt;fct&amp;gt; Oct, Oct, Oct, Oct, Oct, Oct, Oct, Oct, Oct, Oct, ...&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;model-specification&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Model Specification&lt;/h1&gt;
+&lt;div id=&#34;model-specification-and-training&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Model Specification and Training&lt;/h1&gt;
 &lt;p&gt;&lt;strong&gt;Simple linear regression model:&lt;/strong&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lm_mod &amp;lt;- parsnip::linear_reg() %&amp;gt;% 
   set_engine(&amp;quot;lm&amp;quot;) %&amp;gt;% 
@@ -258,11 +258,11 @@ null_workflow_rs &amp;lt;- workflow() %&amp;gt;%
   add_formula(SCORE ~ NULL) %&amp;gt;%
   fit_resamples(resamples,
                 control = control_resamples(save_pred = TRUE))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;See code in &lt;a href=&#34;#model-building-with-hyperparameter-tuning&#34;&gt;Model Building with Hyperparameter Tuning&lt;/a&gt; for more sophisticated examples that include hyperparameter tuning for &lt;code&gt;glmnet&lt;/code&gt;&lt;a href=&#34;#fn21&#34; class=&#34;footnote-ref&#34; id=&#34;fnref21&#34;&gt;&lt;sup&gt;21&lt;/sup&gt;&lt;/a&gt; and &lt;code&gt;ranger&lt;/code&gt; models.&lt;/p&gt;
+&lt;p&gt;See code in &lt;a href=&#34;#model-building-with-hyperparameter-tuning&#34;&gt;Model Building with Hyperparameter Tuning&lt;/a&gt; for more sophisticated examples that include hyperparameter tuning for &lt;code&gt;glmnet&lt;/code&gt;&lt;a href=&#34;#fn23&#34; class=&#34;footnote-ref&#34; id=&#34;fnref23&#34;&gt;&lt;sup&gt;23&lt;/sup&gt;&lt;/a&gt; and &lt;code&gt;ranger&lt;/code&gt; models.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;model-evaluation&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Model Evaluation&lt;/h1&gt;
-&lt;p&gt;The next several code chunks extract the &lt;em&gt;average&lt;/em&gt; performance across “assessment” sets&lt;a href=&#34;#fn22&#34; class=&#34;footnote-ref&#34; id=&#34;fnref22&#34;&gt;&lt;sup&gt;22&lt;/sup&gt;&lt;/a&gt; or extract the performance across each of the individual “assessment” sets.&lt;/p&gt;
+&lt;p&gt;The next several code chunks extract the &lt;em&gt;average&lt;/em&gt; performance across “assessment” sets&lt;a href=&#34;#fn24&#34; class=&#34;footnote-ref&#34; id=&#34;fnref24&#34;&gt;&lt;sup&gt;24&lt;/sup&gt;&lt;/a&gt; or extract the performance across each of the individual “assessment” sets.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mod_types &amp;lt;- list(&amp;quot;lm&amp;quot;, &amp;quot;rf&amp;quot;, &amp;quot;null&amp;quot;)
 
 avg_perf &amp;lt;- map(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs), 
@@ -281,7 +281,7 @@ splits_perf &amp;lt;- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs
      mod_types, 
      extract_splits_metrics) %&amp;gt;% 
   bind_rows()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The overall performance as well as the performance across splits suggests that both models were better than the baseline (the mean within the analysis set)&lt;a href=&#34;#fn23&#34; class=&#34;footnote-ref&#34; id=&#34;fnref23&#34;&gt;&lt;sup&gt;23&lt;/sup&gt;&lt;/a&gt; and that the linear model outperformed the random forest model.&lt;/p&gt;
+&lt;p&gt;The overall performance as well as the performance across splits suggests that both models were better than the baseline (the mean within the analysis set)&lt;a href=&#34;#fn25&#34; class=&#34;footnote-ref&#34; id=&#34;fnref25&#34;&gt;&lt;sup&gt;25&lt;/sup&gt;&lt;/a&gt; and that the linear model outperformed the random forest model.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;splits_perf %&amp;gt;% 
   mutate(id = forcats::fct_rev(id)) %&amp;gt;% 
   ggplot(aes(x = .estimate, y = id, colour = source))+
@@ -331,13 +331,13 @@ splits_perf &amp;lt;- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs
 &lt;/table&gt;
 &lt;p&gt;This suggests the better performance by the linear model &lt;em&gt;is&lt;/em&gt; statistically significant.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Other potential steps:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;There is lots more we could do from here&lt;a href=&#34;#fn24&#34; class=&#34;footnote-ref&#34; id=&#34;fnref24&#34;&gt;&lt;sup&gt;24&lt;/sup&gt;&lt;/a&gt;. However the purpose of this post was to provide a short &lt;code&gt;tidymodels&lt;/code&gt; example that incorporates window functions from &lt;code&gt;rsample&lt;/code&gt; and &lt;code&gt;slider&lt;/code&gt; on a regression problem. For more resources on modeling and the &lt;code&gt;tidymodels&lt;/code&gt; framework, see &lt;a href=&#34;https://www.tidymodels.org/&#34;&gt;tidymodels.org&lt;/a&gt;, &lt;a href=&#34;https://www.tmwr.org/&#34;&gt;Tidy Modeling with R&lt;/a&gt; or check-out the &lt;a href=&#34;#resources&#34;&gt;Resources&lt;/a&gt; section in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;There is lots more we could do from here&lt;a href=&#34;#fn26&#34; class=&#34;footnote-ref&#34; id=&#34;fnref26&#34;&gt;&lt;sup&gt;26&lt;/sup&gt;&lt;/a&gt;. However the purpose of this post was to provide a short &lt;code&gt;tidymodels&lt;/code&gt; example that incorporates window functions from &lt;code&gt;rsample&lt;/code&gt; and &lt;code&gt;slider&lt;/code&gt; on a regression problem. For more resources on modeling and the &lt;code&gt;tidymodels&lt;/code&gt; framework, see &lt;a href=&#34;https://www.tidymodels.org/&#34;&gt;tidymodels.org&lt;/a&gt; or &lt;a href=&#34;https://www.tmwr.org/&#34;&gt;Tidy Modeling with R&lt;/a&gt;&lt;a href=&#34;#fn27&#34; class=&#34;footnote-ref&#34; id=&#34;fnref27&#34;&gt;&lt;sup&gt;27&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Appendix&lt;/h1&gt;
 &lt;div id=&#34;model-building-with-hyperparameter-tuning&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Model Building with Hyperparameter Tuning&lt;/h2&gt;
-&lt;p&gt;Below is code for tuning a &lt;code&gt;glmnet&lt;/code&gt; linear regression model (use &lt;code&gt;tune&lt;/code&gt; to optimize the L1/L2 penalty)&lt;a href=&#34;#fn25&#34; class=&#34;footnote-ref&#34; id=&#34;fnref25&#34;&gt;&lt;sup&gt;25&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Below is code for tuning a &lt;code&gt;glmnet&lt;/code&gt; linear regression model (use &lt;code&gt;tune&lt;/code&gt; to optimize the L1/L2 penalty)&lt;a href=&#34;#fn28&#34; class=&#34;footnote-ref&#34; id=&#34;fnref28&#34;&gt;&lt;sup&gt;28&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rec_glmnet &amp;lt;- rec_general %&amp;gt;% 
   step_dummy(all_predictors(), -all_numeric()) %&amp;gt;%
   step_normalize(all_predictors(), -all_nominal()) %&amp;gt;% 
@@ -358,7 +358,7 @@ glmnet_tune &amp;lt;- tune::tune_grid(glmnet_workflow,
                          resamples = resamples, 
                          control = control_grid(save_pred = TRUE), 
                          grid = glmnet_grid)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;And code to tune a &lt;code&gt;ranger&lt;/code&gt; Random Forest model, tuning the &lt;code&gt;mtry&lt;/code&gt; and &lt;code&gt;min_n&lt;/code&gt; parameters&lt;a href=&#34;#fn26&#34; class=&#34;footnote-ref&#34; id=&#34;fnref26&#34;&gt;&lt;sup&gt;26&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;And code to tune a &lt;code&gt;ranger&lt;/code&gt; Random Forest model, tuning the &lt;code&gt;mtry&lt;/code&gt; and &lt;code&gt;min_n&lt;/code&gt; parameters&lt;a href=&#34;#fn29&#34; class=&#34;footnote-ref&#34; id=&#34;fnref29&#34;&gt;&lt;sup&gt;29&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rand_mod &amp;lt;- parsnip::rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %&amp;gt;% 
   set_engine(&amp;quot;ranger&amp;quot;) %&amp;gt;% 
   set_mode(&amp;quot;regression&amp;quot;)
@@ -394,18 +394,20 @@ rf_tune &amp;lt;- tune_grid(rf_workflow,
 &lt;li&gt;&lt;code&gt;sliding_period()&lt;/code&gt;: slide according to an index and set k split points based on period (and other function arguments)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;code&gt;rsample::sliding_index()&lt;/code&gt; and &lt;code&gt;rsample::sliding_period()&lt;/code&gt; are maybe the most useful additions as they allow you to do resampling based on a date/time index. For &lt;code&gt;sliding_index()&lt;/code&gt;, you usually want to make use of the &lt;code&gt;step&lt;/code&gt; argument (otherwise it defaults to having a split for every observation).&lt;/p&gt;
-&lt;p&gt;I found &lt;code&gt;rsample::sliding_period()&lt;/code&gt; easier to get acquantied with&lt;code&gt;than rsample::sliding_index()&lt;/code&gt;. However within the &lt;code&gt;slider&lt;/code&gt; package I found &lt;code&gt;slider::sliding_index()&lt;/code&gt; easier to use than &lt;code&gt;slider::sliding_period()&lt;/code&gt;. Perhaps this makes sense as when setting sampling windows you are usually trying to return an object with far fewer rows, that is, collapsed to k number of rows (unless you are doing Leave-One-Out cross-validation). On the other hand, the &lt;code&gt;slider&lt;/code&gt; package is often used in a &lt;code&gt;mutate()&lt;/code&gt; step where you often want to output the same number of observations as are inputted. Perhaps then it is unsurprising the different scenarios when the &lt;code&gt;index&lt;/code&gt; vs &lt;code&gt;period&lt;/code&gt; approach feels more intuitive.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;I found &lt;code&gt;rsample::sliding_period()&lt;/code&gt; easier to get acquantied with than &lt;code&gt;rsample::sliding_index()&lt;/code&gt;. However within the &lt;code&gt;slider&lt;/code&gt; package I found &lt;code&gt;slider::sliding_index()&lt;/code&gt; easier to use than &lt;code&gt;slider::sliding_period()&lt;/code&gt;. Perhaps this makes sense as when setting sampling windows you are usually trying to return an object with far fewer rows, that is, collapsed to k number of rows (unless you are doing Leave-One-Out cross-validation). On the other hand, the &lt;code&gt;slider&lt;/code&gt; package is often used in a &lt;code&gt;mutate()&lt;/code&gt; step where you often want to output the same number of observations as are inputted. Perhaps then it is unsurprising the different scenarios when the &lt;code&gt;index&lt;/code&gt; vs &lt;code&gt;period&lt;/code&gt; approach feels more intuitive.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Previously users would have needed to use &lt;code&gt;rsample::rolling_origin()&lt;/code&gt;.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;As opposed to a more specialized time-series modeling approach.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;There is also “violations” dataset available, which may have additional useful features, but which I will ignore for this example.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;For this example I’m pretending that we only care about predicting &lt;code&gt;SCORE&lt;/code&gt; for restaurants… as opposed to food trucks or other entities that may receive inspections.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;In some cases you may need to be more careful than this and exclude information that are proxies for inappropriate fields as well. For example, pretend that the &lt;code&gt;INSPECTOR&lt;/code&gt;s are assigned based on region. In this case, &lt;code&gt;INSPECTOR&lt;/code&gt; would be a proxy for geographic information and perhaps warranting exclusion as well (in certain cases).&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Into training / testing sets or analysis / assessment sets.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;As discussed by Davis Vaughn at the end of this &lt;a href=&#34;https://gist.github.com/DavisVaughan/433dbdceb439c9be30ddcc78d836450d&#34;&gt;gist&lt;/a&gt;.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;An “Analysis” / “Assessment” split is similar to a “training” / “testing” split but within the training dataset (and typically multiple of these are created on the same training dataset). See section 3.4 of &lt;a href=&#34;http://www.feat.engineering/resampling.html&#34;&gt;Feature Engineering and Selection…&lt;/a&gt; for further explanation.]&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;It is important that these features be created in a way that does not cause data leakage.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Which would not be available at the time of prediction.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;I’m a fan of the ability to use negative values in the &lt;code&gt;.after&lt;/code&gt; argument:&lt;/p&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;This dataset is updated on an ongoing basis as Food Inspections are conducted. This makes it a poor choice as an example dataset (because results will vary if running in the future when more data has been collected). I used it because I am familiar with the dataset, it made for a good example, and because I wanted a publicly documented example of pulling in data using an API (even a simple one).&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;There is also “violations” dataset available, which may have additional useful features, but which I will ignore for this example.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;For this example I’m pretending that we only care about predicting &lt;code&gt;SCORE&lt;/code&gt; for restaurants… as opposed to food trucks or other entities that may receive inspections.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Or at least cases where historical data is claiming there were multiple inspections on the same day.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;In some cases you may need to be more careful than this and exclude information that are proxies for inappropriate fields as well. For example, pretend that the &lt;code&gt;INSPECTOR&lt;/code&gt;s are assigned based on region. In this case, &lt;code&gt;INSPECTOR&lt;/code&gt; would be a proxy for geographic information and perhaps warranting exclusion as well (in certain cases).&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;Into training / testing sets or analysis / assessment sets.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;As discussed by Davis Vaughn at the end of this &lt;a href=&#34;https://gist.github.com/DavisVaughan/433dbdceb439c9be30ddcc78d836450d&#34;&gt;gist&lt;/a&gt;.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;An “Analysis” / “Assessment” split is similar to a “training” / “testing” split but within the training dataset (and typically multiple of these are created on the same training dataset). See section 3.4 of &lt;a href=&#34;http://www.feat.engineering/resampling.html&#34;&gt;Feature Engineering and Selection…&lt;/a&gt; for further explanation.]&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;It is important that these features be created in a way that does not cause data leakage.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Which would not be available at the time of prediction.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;I’m a fan of the ability to use negative values in the &lt;code&gt;.after&lt;/code&gt; argument:&lt;/p&gt;
 &lt;blockquote class=&#34;twitter-tweet&#34;&gt;
 &lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
 This is a fairly obscure feature in {slider}, but I love it. Don’t want the current day in your rolling window? Set a negative &lt;code&gt;.after&lt;/code&gt; value to shift the end of the window backwards. For example:&lt;br&gt;&lt;br&gt;On day 5&lt;br&gt;.before = days(3)&lt;br&gt;.after = -days(1)&lt;br&gt;&lt;br&gt;Includes days:&lt;br&gt;[2, 4] &lt;a href=&#34;https://t.co/rG0IGuTj1c&#34;&gt;https://t.co/rG0IGuTj1c&lt;/a&gt;
@@ -413,16 +415,16 @@ This is a fairly obscure feature in {slider}, but I love it. Don’t want the cu
 — Davis Vaughan (&lt;span class=&#34;citation&#34;&gt;@dvaughan32&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/dvaughan32/status/1233116713010573312?ref_src=twsrc%5Etfw&#34;&gt;February 27, 2020&lt;/a&gt;
 &lt;/blockquote&gt;
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
-&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;If I did not make this assumption, I would need to impute the time based features at this point.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Two helpful resources for understanding time series cross-validation:&lt;/p&gt;
+&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;If I did not make this assumption, I would need to impute the time based features at this point.&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;Two helpful resources for understanding time series cross-validation:&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;From &lt;a href=&#34;https://eng.uber.com/forecasting-introduction/&#34;&gt;uber engineering&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;From &lt;a href=&#34;https://otexts.com/fpp3/tscv.html&#34;&gt;Forecasting Principles and Practices&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;An “Analysis” / “Assessment” split is similar to a “training” / “testing” split but within the training dataset (and typically multiple of these are created on the same training dataset). See section 3.4 of &lt;a href=&#34;http://www.feat.engineering/resampling.html&#34;&gt;Feature Engineering and Selection…&lt;/a&gt; for further explanation.]&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;I’ve tweeted previously about helper functions for reviewing your resampling scheme:&lt;/p&gt;
+&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;An “Analysis” / “Assessment” split is similar to a “training” / “testing” split but within the training dataset (and typically multiple of these are created on the same training dataset). See section 3.4 of &lt;a href=&#34;http://www.feat.engineering/resampling.html&#34;&gt;Feature Engineering and Selection…&lt;/a&gt; for further explanation.]&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn18&#34;&gt;&lt;p&gt;I’ve tweeted previously about helper functions for reviewing your resampling scheme:&lt;/p&gt;
 &lt;blockquote class=&#34;twitter-tweet&#34;&gt;
 &lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
 ❤️new &lt;code&gt;rsample::sliding_*()&lt;/code&gt; funs by &lt;a href=&#34;https://twitter.com/dvaughan32?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@dvaughan32&lt;/span&gt;&lt;/a&gt;. It can take a minute to check that all arguments are set correctly. Here are helper funs I&#39;ve used to check that my resampling windows are constructed as intended: &lt;a href=&#34;https://t.co/HhSjuRzAsB&#34;&gt;https://t.co/HhSjuRzAsB&lt;/a&gt; may make into an &lt;a href=&#34;https://twitter.com/hashtag/rstats?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#rstats&lt;/a&gt; &lt;a href=&#34;https://twitter.com/hashtag/shiny?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#shiny&lt;/a&gt; dashboard. &lt;a href=&#34;https://t.co/sNloHfkh4a&#34;&gt;pic.twitter.com/sNloHfkh4a&lt;/a&gt;
@@ -430,17 +432,18 @@ This is a fairly obscure feature in {slider}, but I love it. Don’t want the cu
 — Bryan Shalloway (&lt;span class=&#34;citation&#34;&gt;@brshallo&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/brshallo/status/1314720234373287937?ref_src=twsrc%5Etfw&#34;&gt;October 10, 2020&lt;/a&gt;
 &lt;/blockquote&gt;
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
-&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;Note that using &lt;code&gt;rsample::sliding_period()&lt;/code&gt; is likely to produce different numbers of observations between splits.&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn18&#34;&gt;&lt;p&gt;It could also make sense to weight performance metrics by number of observations. One way to do this, would be to use a control function to extract the predictions, and then evaluate the performance across the predictions. In my examples below I do keep the predictions, but end-up not making use of them…&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;For each split, this will then build the features for the assessment set based on each analysis set.&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn20&#34;&gt;&lt;p&gt;Although I just do a simple &lt;code&gt;step_log()&lt;/code&gt; transform here, more sophisticated steps would also be kosher, e.g. &lt;code&gt;step_pca()&lt;/code&gt;.&lt;a href=&#34;#fnref20&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn21&#34;&gt;&lt;p&gt;Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties. While working interactively, I did not see any substantive difference in performance.&lt;a href=&#34;#fnref21&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn22&#34;&gt;&lt;p&gt;Remember that this is not weighted by observations, so each assessment set impacts the overall performance equally, regardless of small differences in number of observations.&lt;a href=&#34;#fnref22&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn23&#34;&gt;&lt;p&gt;There is no baseline performance for Rsquared because the metric itself is based off amount of variance that is explained compared to the baseline (i.e. the mean).&lt;a href=&#34;#fnref23&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;You would likely iterate on the model building process (e.g. perform exploratory data analysis, review outliers in initial models, etc.) and eventually get to a final set of models to evaluate on the test set.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties.&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn26&#34;&gt;&lt;p&gt;This was taking a &lt;em&gt;long&lt;/em&gt; time and is part of why I decided to move the tuned examples to the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;.&lt;a href=&#34;#fnref26&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;Note that using &lt;code&gt;rsample::sliding_period()&lt;/code&gt; is likely to produce different numbers of observations between splits.&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn20&#34;&gt;&lt;p&gt;It could also make sense to weight performance metrics by number of observations. One way to do this, would be to use a control function to extract the predictions, and then evaluate the performance across the predictions. In my examples below I do keep the predictions, but end-up not doing anything with them. Alternatively you could weight the performance metric by number of observations. The justification for weighting periods of different number of observations equally is that noise may vary consistently across time windows – weighting by observations may allow an individual time period too much influence (simply because it happened to be that there were a greater proportion of inspections at that period).&lt;a href=&#34;#fnref20&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn21&#34;&gt;&lt;p&gt;For each split, this will then build the features for the assessment set based on each analysis set.&lt;a href=&#34;#fnref21&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn22&#34;&gt;&lt;p&gt;Although I just do a simple &lt;code&gt;step_log()&lt;/code&gt; transform below, more sophisticated steps on lag based inputs would also be kosher, e.g. &lt;code&gt;step_pca()&lt;/code&gt;.&lt;a href=&#34;#fnref22&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn23&#34;&gt;&lt;p&gt;Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties. While working interactively, I did not see any substantive difference in performance.&lt;a href=&#34;#fnref23&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;Remember that this is not weighted by observations, so each assessment set impacts the overall performance equally, regardless of small differences in number of observations.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;There is no baseline performance for Rsquared because the metric itself is based off amount of variance that is explained compared to the baseline (i.e. the mean).&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn26&#34;&gt;&lt;p&gt;You would likely iterate on the model building process (e.g. perform exploratory data analysis, review outliers in initial models, etc.) and eventually get to a final set of models to evaluate on the test set.&lt;a href=&#34;#fnref26&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn27&#34;&gt;&lt;p&gt;I added a few other links to the &lt;a href=&#34;#resources&#34;&gt;Resources&lt;/a&gt; section in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;a href=&#34;#fnref27&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn28&#34;&gt;&lt;p&gt;Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties.&lt;a href=&#34;#fnref28&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn29&#34;&gt;&lt;p&gt;This was taking a &lt;em&gt;long&lt;/em&gt; time and is part of why I decided to move the tuned examples to the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;.&lt;a href=&#34;#fnref29&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>

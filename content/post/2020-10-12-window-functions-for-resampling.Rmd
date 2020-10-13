@@ -6,7 +6,7 @@ slug: window-functions-for-resampling
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = TRUE)
 ```
 
 The new `rsample::sliding_*()` functions bring the windowing approaches used in [slider](https://github.com/DavisVaughan/slider) to the sampling procedures used in the [tidymodels](https://github.com/tidymodels) framework[^2]. These functions make evaluation of models with time-dependent variables easier^[Previously users would have needed to use `rsample::rolling_origin()`.].
@@ -25,13 +25,13 @@ For some problems you may want to take a traditional regression or classificatio
     
     `rsample::sliding_index()` and `rsample::sliding_period()` are maybe the most useful additions as they allow you to do resampling based on a date/time index. For `sliding_index()`, you usually want to make use of the `step` argument (otherwise it defaults to having a split for every observation). 
     
-    I found `rsample::sliding_period()` easier to get acquantied with`than rsample::sliding_index()`. However within the `slider` package I found `slider::sliding_index()` easier to use than `slider::sliding_period()`. Perhaps this makes sense as when setting sampling windows you are usually trying to return an object with far fewer rows, that is, collapsed to k number of rows (unless you are doing Leave-One-Out cross-validation). On the other hand, the `slider` package is often used in a `mutate()` step where you often want to output the same number of observations as are inputted. Perhaps then it is unsurprising the different scenarios when the `index` vs `period` approach feels more intuitive.
+    I found `rsample::sliding_period()` easier to get acquantied with than `rsample::sliding_index()`. However within the `slider` package I found `slider::sliding_index()` easier to use than `slider::sliding_period()`. Perhaps this makes sense as when setting sampling windows you are usually trying to return an object with far fewer rows, that is, collapsed to k number of rows (unless you are doing Leave-One-Out cross-validation). On the other hand, the `slider` package is often used in a `mutate()` step where you often want to output the same number of observations as are inputted. Perhaps then it is unsurprising the different scenarios when the `index` vs `period` approach feels more intuitive.
 
 For my example I will use data from Wake County food inspections. I will try to predict the `SCORE` for upcoming restaurant food inspections.
 
 # Load data
 
-You can use Wake County's open API (does not require a login/account) and the [httr](https://github.com/r-lib/httr) and [jsonlite](https://github.com/jeroen/jsonlite) packages to load in the data. You can also download the data directly from the Wake County [website](https://data.wakegov.com/datasets/1b08c4eb32f44a198277c418b71b3a48_2).
+You can use Wake County's open API (does not require a login/account) and the [httr](https://github.com/r-lib/httr) and [jsonlite](https://github.com/jeroen/jsonlite) packages to load in the data. You can also download the data directly from the Wake County [website](https://data.wakegov.com/datasets/1b08c4eb32f44a198277c418b71b3a48_2)^[This dataset is updated on an ongoing basis as Food Inspections are conducted. This makes it a poor choice as an example dataset (because results will vary if running in the future when more data has been collected). I used it because I am familiar with the dataset, it made for a good example, and because I wanted a publicly documented example of pulling in data using an API (even a simple one).].
 
 ```{r load-in-packages}
 library(tidyverse)
@@ -76,7 +76,7 @@ restauraunts <- restauraunts %>%
 * Join the `inspections` and `restaurants` datasets^[There is also "violations" dataset available, which may have additional useful features, but which I will ignore for this example.]
 * Filter out extreme outliers in `SCORE` (likely data entry errors) 
 * Filter to only locations of `TYPE` restaurant^[For this example I'm pretending that we only care about predicting `SCORE` for restaurants... as opposed to food trucks or other entities that may receive inspections.]
-* Filter out duplicate entries
+* Filter out potential duplicate entries^[Or at least cases where historical data is claiming there were multiple inspections on the same day.]
 * It's important to consider which fields should be excluded for ethical reasons. For our problem, we will say that any restaurant name or location information must be excluded^[In some cases you may need to be more careful than this and exclude information that are proxies for inappropriate fields as well. For example, pretend that the `INSPECTOR`s are assigned based on region. In this case, `INSPECTOR` would be a proxy for geographic information and perhaps warranting exclusion as well (in certain cases).].
 
 ```{r join-data-restaurants-inspections}
@@ -100,7 +100,7 @@ Discussion on issue [#168](https://github.com/tidymodels/rsample/pull/168) sugge
 * [Lag Based Features (Before Split, use `dplyr` or similar)] 
 * [Other Features (After Split, use `recipes`)]
 
-provide examples of the types of features that should be created before and after splitting your data. Lag-based features can, in some ways, be thought of as 'raw inputs' as they should be created prior to building a a `recipe`^[As discussed by Davis Vaughn at the end of this [gist](https://gist.github.com/DavisVaughan/433dbdceb439c9be30ddcc78d836450d).].
+provide examples of the types of features that should be created before and after splitting your data respectively. Lag based features can, in some ways, be thought of as 'raw inputs' as they should be created prior to building a `recipe`^[As discussed by Davis Vaughn at the end of this [gist](https://gist.github.com/DavisVaughan/433dbdceb439c9be30ddcc78d836450d).].
 
 ## Lag Based Features (Before Split, use `dplyr` or similar)
 
@@ -168,7 +168,7 @@ test <- rsample::testing(initial_split)
 
 For this problem we should evaluate our models using time series cross-validation[^1]. This entails creating multiple ordered subsets of the training data where each set has a different assignment of observations into "analysis" or "assessment" data[^4]. 
 
-Ideally the resampling scheme used for model evaluation mirrors how the model will be built and evaluated in production. For example, if the production model will be updated once every three months it makes sense that the "assessment" set be this length. We can use `rsample::sliding_period()` to set this up.
+Ideally the resampling scheme used for model evaluation mirrors how the model will be built and evaluated in production. For example, if the production model will be updated once every three months it makes sense that the "assessment" sets be this length. We can use `rsample::sliding_period()` to set things up.
 
 [^4]: An "Analysis" / "Assessment" split is similar to a "training" / "testing" split but within the training dataset (and typically multiple of these are created on the same training dataset). See section 3.4 of [Feature Engineering and Selection...](http://www.feat.engineering/resampling.html) for further explanation.]
 
@@ -188,7 +188,7 @@ resamples <- rsample::sliding_period(train,
                                      step = 3)
 ```
 
-I will load in some helper functions I created for reviewing the dates for our resampling windows[^6].
+I will load in some helper functions I created for reviewing the dates of our resampling windows[^6].
 
 [^6]: I've tweeted previously about helper functions for reviewing your resampling scheme:
     
@@ -203,13 +203,13 @@ resamples  %>%
   plot_dates_rset() 
 ```
 
-For purposes of overall [Model Evaluation], performance across each period will be weighted equally (regardless of number of observations in a period)^[Note that using `rsample::sliding_period()` is likely to produce different numbers of observations between splits.] ^[It could also make sense to weight performance metrics by number of observations. One way to do this, would be to use a control function to extract the predictions, and then evaluate the performance across the predictions. In my examples below I do keep the predictions, but end-up not making use of them...].
+For purposes of overall [Model Evaluation], performance across each period will be weighted equally (regardless of number of observations in a period)^[Note that using `rsample::sliding_period()` is likely to produce different numbers of observations between splits.] ^[It could also make sense to weight performance metrics by number of observations. One way to do this, would be to use a control function to extract the predictions, and then evaluate the performance across the predictions. In my examples below I do keep the predictions, but end-up not doing anything with them. Alternatively you could weight the performance metric by number of observations. The justification for weighting periods of different number of observations equally is that noise may vary consistently across time windows -- weighting by observations may allow an individual time period too much influence (simply because it happened to be that there were a greater proportion of inspections at that period).].
 
 ## Other Features (After Split, use `recipes`)
 
 Where possible, features should be created using the [recipes](https://github.com/tidymodels/recipes) package^[For each split, this will then build the features for the assessment set based on each analysis set.]. `recipes` makes pre-processing convenient and helps prevent data leakage.
 
-It is OK to modify or transform a previously created lag based feature in a `recipes` step. Assuming that you created the lag based input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues when modifying the variables during feature engineering steps^[Although I just do a simple `step_log()` transform here, more sophisticated steps would also be kosher, e.g. `step_pca()`.].
+It is OK to modify or transform a previously created lag based feature in a `recipes` step. Assuming that you created the lag based input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues when modifying the variables during later feature engineering steps^[Although I just do a simple `step_log()` transform below, more sophisticated steps on lag based inputs would also be kosher, e.g. `step_pca()`.].
 
 *Some features / transformations I'll make with `recipes`:*
 
@@ -230,7 +230,7 @@ rec_general <- recipes::recipe(SCORE ~ ., data = train) %>%
   step_zv(all_predictors()) 
 ```
 
-Let's peak at which features we will be passing into the model:
+Let's peak at the features we will be passing into the model building step:
 
 ```{r peak-prepped-recipe}
 prep(rec_general, data = train) %>% 
@@ -238,7 +238,7 @@ prep(rec_general, data = train) %>%
   glimpse() 
 ```
 
-# Model Specification
+# Model Specification and Training
 
 **Simple linear regression model:**
 ```{r specify-linear-model}
@@ -344,7 +344,7 @@ This suggests the better performance by the linear model *is* statistically sign
 
 **Other potential steps:**
 
-There is lots more we could do from here^[You would likely iterate on the model building process (e.g. perform exploratory data analysis, review outliers in initial models, etc.) and eventually get to a final set of models to evaluate on the test set.]. However the purpose of this post was to provide a short `tidymodels` example that incorporates window functions from `rsample` and `slider` on a regression problem. For more resources on modeling and the `tidymodels` framework, see [tidymodels.org](https://www.tidymodels.org/), [Tidy Modeling with R](https://www.tmwr.org/) or check-out the [Resources] section in the [Appendix].
+There is lots more we could do from here^[You would likely iterate on the model building process (e.g. perform exploratory data analysis, review outliers in initial models, etc.) and eventually get to a final set of models to evaluate on the test set.]. However the purpose of this post was to provide a short `tidymodels` example that incorporates window functions from `rsample` and `slider` on a regression problem. For more resources on modeling and the `tidymodels` framework, see [tidymodels.org](https://www.tidymodels.org/) or [Tidy Modeling with R](https://www.tmwr.org/)^[I added a few other links to the [Resources] section in the [Appendix]].
 
 # Appendix
 
