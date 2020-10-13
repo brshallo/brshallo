@@ -5,9 +5,8 @@ date: '2020-10-12'
 slug: window-functions-for-resampling
 ---
 
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
 The new `rsample::sliding_*()` functions bring the windowing approaches used in [slider](https://github.com/DavisVaughan/slider) to the sampling procedures used in the [tidymodels](https://github.com/tidymodels) framework[^2]. These functions make evaluation of models with time-dependent variables easier^[Previously users would have needed to use `rsample::rolling_origin()`.].
@@ -18,7 +17,7 @@ For some problems you may want to take a traditional regression or classificatio
 * set-up appropriate time series cross-validation windows 
 * evaluate performance of linear regression and random forest models on a regression problem
 
-[^2]: These were  announced with version [0.0.8](https://github.com/tidymodels/rsample/blob/master/NEWS.md).The help pages for `rsample` (as well as the `slider` package) are helpful resources for understanding the three types of sliding you can use, briefly these are:
+[^2]: These were  announced with version [0.0.8](https://github.com/tidymodels/rsample/blob/master/NEWS.md). The help pages for `rsample` (as well as the `slider` package) are helpful resources for understanding the three types of sliding you can use, briefly these are:
     
     * `sliding_window()`: only takes into account order / position of dates
     * `sliding_index()`: slide according to an index
@@ -28,11 +27,11 @@ For some problems you may want to take a traditional regression or classificatio
     
     I found `rsample::sliding_period()` easier to get acquantied with`than rsample::sliding_index()`. However within the `slider` package I found `slider::sliding_index()` easier to use than `slider::sliding_period()`. Perhaps this makes sense as when setting sampling windows you are usually trying to return an object with far fewer rows, that is, collapsed to k number of rows (unless you are doing Leave-One-Out cross-validation). On the other hand, the `slider` package is often used in a `mutate()` step where you often want to output the same number of observations as are inputted. Perhaps then it is unsurprising the different scenarios when the `index` vs `period` approach feels more intuitive.
 
-For my example I will use data from Wake County food inspections and will try to predict the `SCORE` for upcoming restaurant food inspections.
+For my example I will use data from Wake County food inspections. I will try to predict the `SCORE` for upcoming restaurant food inspections.
 
 # Load data
 
-You can use Wake County's open API (does not require a login/account) and the [httr](https://github.com/r-lib/httr) and [jsonlite](https://github.com/jeroen/jsonlite) packages to load in the data. You can also download the data directly from their [website](https://data.wakegov.com/datasets/1b08c4eb32f44a198277c418b71b3a48_2).
+You can use Wake County's open API (does not require a login/account) and the [httr](https://github.com/r-lib/httr) and [jsonlite](https://github.com/jeroen/jsonlite) packages to load in the data. You can also download the data directly from the Wake County [website](https://data.wakegov.com/datasets/1b08c4eb32f44a198277c418b71b3a48_2).
 
 ```{r load-in-packages}
 library(tidyverse)
@@ -77,12 +76,14 @@ restauraunts <- restauraunts %>%
 * Join the `inspections` and `restaurants` datasets^[There is also "violations" dataset available, which may have additional useful features, but which I will ignore for this example.]
 * Filter out extreme outliers in `SCORE` (likely data entry errors) 
 * Filter to only locations of `TYPE` restaurant^[For this example I'm pretending that we only care about predicting `SCORE` for restaurants... as opposed to food trucks or other entities that may receive inspections.]
+* Filter out duplicate entries
 * It's important to consider which fields should be excluded for ethical reasons. For our problem, we will say that any restaurant name or location information must be excluded^[In some cases you may need to be more careful than this and exclude information that are proxies for inappropriate fields as well. For example, pretend that the `INSPECTOR`s are assigned based on region. In this case, `INSPECTOR` would be a proxy for geographic information and perhaps warranting exclusion as well (in certain cases).].
 
 ```{r join-data-restaurants-inspections}
 inspections_restaurants <- inspections_clean %>% 
   left_join(restauraunts, by = c("HSISID", "PERMITID")) %>% 
   filter(SCORE > 50, FACILITYTYPE == "Restaurant") %>% 
+  distinct(HSISID, date, .keep_all = TRUE) %>% 
   select(-c(FACILITYTYPE, PERMITID)) %>% 
   select(-c(NAME, contains("ADDRESS"), CITY, STATE, POSTALCODE, PHONENUMBER, X, Y, GEOCODESTATUS))
 ```
@@ -99,7 +100,7 @@ Discussion on issue [#168](https://github.com/tidymodels/rsample/pull/168) sugge
 * [Lag Based Features (Before Split, use `dplyr` or similar)] 
 * [Other Features (After Split, use `recipes`)]
 
-provide examples of the types of features that should be created before and after splitting your data. Lag-based features can, in some ways, be thought of as 'raw inputs' as they should be created prior to a `recipes` step^[As discussed by Davis Vaughn at the end of this [gist](https://gist.github.com/DavisVaughan/433dbdceb439c9be30ddcc78d836450d).].
+provide examples of the types of features that should be created before and after splitting your data. Lag-based features can, in some ways, be thought of as 'raw inputs' as they should be created prior to building a a `recipe`^[As discussed by Davis Vaughn at the end of this [gist](https://gist.github.com/DavisVaughan/433dbdceb439c9be30ddcc78d836450d).].
 
 ## Lag Based Features (Before Split, use `dplyr` or similar)
 
@@ -107,7 +108,7 @@ Lag based features should generally be computed prior to splitting your data int
 
 * Prior `SCORE` for `HSISID`
 * Average of prior 3 years of `SCORE` for `HSISISD`
-* Overall recent prior average `SCORE`
+* Overall recent (year) prior average `SCORE` (across `HSISISD`)
 * Days since `RESTAURANTOPENDATE`
 * Days since last inspection `date`
 
@@ -144,13 +145,13 @@ The use of `.after = -lubridate::days(1)` prevents data leakage by ensuring that
 
 ## Data Splits
 
-**Some Filters:**
+**Additional Filtering:**
 
-We will presume that the model is only intended for restaurants that have previous inspections on record^[If I did not make this assumption, I would need to impute the time based features at this point.] and will use only the most recent five years of data.
+We will presume that the model is only intended for restaurants that have previous inspections on record^[If I did not make this assumption, I would need to impute the time based features at this point.] and will use only the most recent seven years of data.
 
 ```{r filter-data}
 data_time_feats <- data_time_feats %>% 
-  filter(date >= (max(date) - years(5)), !is.na(SCORE_lag))
+  filter(date >= (max(date) - years(7)), !is.na(SCORE_lag))
 ```
 
 **Initial Split:**
@@ -183,10 +184,11 @@ resamples <- rsample::sliding_period(train,
                                      index = date, 
                                      period = "month", 
                                      lookback = 36, 
-                                     assess_stop = 3)
+                                     assess_stop = 3, 
+                                     step = 3)
 ```
 
-I will load in some helper functions I created for reviewing our resampling windows[^6].
+I will load in some helper functions I created for reviewing the dates for our resampling windows[^6].
 
 [^6]: I've tweeted previously about helper functions for reviewing your resampling scheme:
     
@@ -198,16 +200,16 @@ devtools::source_gist("https://gist.github.com/brshallo/7d180bde932628a151a4d935
 resamples  %>% 
   extract_dates_rset() %>% 
   print() %>% 
-  plot_dates_rset()
+  plot_dates_rset() 
 ```
 
-For purposes of [Model Evaluation], performance across each period will be weighted equally when reviewing overall performance (regardless of number of observations in a period)^[Note that using `rsample::sliding_period()` is likely to produce different numbers of observations between splits.] ^[It could also make sense to weight performance metrics by number of observations. One way to do this, would be to use a control function to extract the predictions, and then evaluate the performance across the predictions. In my examples below I do keep the predictions, but end-up not making use of them...].
+For purposes of overall [Model Evaluation], performance across each period will be weighted equally (regardless of number of observations in a period)^[Note that using `rsample::sliding_period()` is likely to produce different numbers of observations between splits.] ^[It could also make sense to weight performance metrics by number of observations. One way to do this, would be to use a control function to extract the predictions, and then evaluate the performance across the predictions. In my examples below I do keep the predictions, but end-up not making use of them...].
 
 ## Other Features (After Split, use `recipes`)
 
-Where possible, features should be created using the [recipes](https://github.com/tidymodels/recipes) package^[For each split, this will then build the features for the assessment set based on each analysis set.] (i.e. those that do not depend on lagged values). `recipes` makes pre-processing convenient and helps prevent data leakage into the assessment set.
+Where possible, features should be created using the [recipes](https://github.com/tidymodels/recipes) package^[For each split, this will then build the features for the assessment set based on each analysis set.]. `recipes` makes pre-processing convenient and helps prevent data leakage.
 
-It is OK to modify or transform a previously created lag based feature in a `recipes` step. Assuming you created the lag based input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues when modifying the variables during feature engineering steps^[Although I just do a simple `step_log()` transform here, more sophisticated steps would also be kosher, e.g. `step_pca()`.].
+It is OK to modify or transform a previously created lag based feature in a `recipes` step. Assuming that you created the lag based input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues when modifying the variables during feature engineering steps^[Although I just do a simple `step_log()` transform here, more sophisticated steps would also be kosher, e.g. `step_pca()`.].
 
 *Some features / transformations I'll make with `recipes`:*
 
@@ -225,21 +227,21 @@ rec_general <- recipes::recipe(SCORE ~ ., data = train) %>%
   step_log(days_since_open, days_since_last) %>% 
   step_date(date, features = c("dow", "month")) %>% 
   update_role(date, new_role = "ID") %>% 
-  step_zv(all_predictors())
+  step_zv(all_predictors()) 
 ```
 
 Let's peak at which features we will be passing into the model:
 
-```{r}
+```{r peak-prepped-recipe}
 prep(rec_general, data = train) %>% 
   juice() %>% 
-  glimpse()
+  glimpse() 
 ```
 
 # Model Specification
 
 **Simple linear regression model:**
-```{r}
+```{r specify-linear-model}
 lm_mod <- parsnip::linear_reg() %>% 
   set_engine("lm") %>% 
   set_mode("regression")
@@ -252,7 +254,7 @@ lm_workflow_rs <- workflows::workflow() %>%
 ```
 
 **`ranger` Random Forest model (using defaults):**
-```{r}
+```{r specify-rf-model}
 rand_mod <- parsnip::rand_forest() %>% 
   set_engine("ranger") %>% 
   set_mode("regression")
@@ -268,7 +270,7 @@ rf_workflow_rs <- workflow() %>%
 **`parsnip::null_model`:**
 
 The NULL model will be helpful as a baseline Root Mean Square Error (RMSE) comparison.
-```{r}
+```{r specify-null-model}
 null_mod <- parsnip::null_model(mode = "regression") %>% 
   set_engine("parsnip")
 
@@ -283,7 +285,7 @@ See code in [Model Building with Hyperparameter Tuning] for more sophisticated e
 
 # Model Evaluation
 
-The next several code chunks extract the *average* performance across "assessment" sets^[Remember that this is not weighted by observations, so each assessment set impacts the overall performance equally, regardless of small differences in number of observations.] of samples or extract the performance across each of the individual "assessment" sets.
+The next several code chunks extract the *average* performance across "assessment" sets^[Remember that this is not weighted by observations, so each assessment set impacts the overall performance equally, regardless of small differences in number of observations.] or extract the performance across each of the individual "assessment" sets.
 
 ```{r collect-overall-performance}
 mod_types <- list("lm", "rf", "null")
@@ -291,7 +293,7 @@ mod_types <- list("lm", "rf", "null")
 avg_perf <- map(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs), 
                 collect_metrics) %>% 
   map2(mod_types, ~mutate(.x, source = .y)) %>% 
-  bind_rows()
+  bind_rows() 
 ```
 
 ```{r extract-performance-each-split}
@@ -309,25 +311,25 @@ splits_perf <- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs),
   bind_rows()
 ```
 
-The overall performance as well as the performance within splits suggests that both models were better than the baseline (the mean within the analysis set)^[There is no baseline performance for Rsquared because the metric itself is based off amount of variance that is explained compared to the baseline (i.e. the mean).] and that the linear model outperformed the random forest model.
+The overall performance as well as the performance across splits suggests that both models were better than the baseline (the mean within the analysis set)^[There is no baseline performance for Rsquared because the metric itself is based off amount of variance that is explained compared to the baseline (i.e. the mean).] and that the linear model outperformed the random forest model.
 
-```{r}
+```{r plot-performance}
 splits_perf %>% 
   mutate(id = forcats::fct_rev(id)) %>% 
   ggplot(aes(x = .estimate, y = id, colour = source))+
-  geom_vline(aes(xintercept = mean, colour = source), 
-           alpha = 0.5,
+  geom_vline(aes(xintercept = mean, colour = fct_relevel(source, c("lm", "rf", "null"))), 
+           alpha = 0.4,
            data = avg_perf)+
   geom_point()+
   facet_wrap(~.metric, scales = "free_x")+
   xlim(c(0, NA))+
   theme_bw()+
-  labs(caption = "Vertical lines are average performance as captured by `collect_metrics()`")
+  labs(caption = "Vertical lines are average performance as captured by `tune::collect_metrics()`")
 ```
 
 We could use a paired sample t-test to formally compare the random forest and linear models' out-of-sample RMSE performance.
 
-```{r}
+```{r t-test-mod-performance}
 t.test(
   filter(splits_perf, source == "lm", .metric == "rmse") %>% pull(.estimate),
   filter(splits_perf, source == "rf", .metric == "rmse") %>% pull(.estimate),
@@ -335,7 +337,7 @@ t.test(
 ) %>% 
   broom::tidy() %>% 
   mutate(across(where(is.numeric), round, 4)) %>% 
-  knitr::kable()
+  knitr::kable() 
 ```
 
 This suggests the better performance by the linear model *is* statistically significant.

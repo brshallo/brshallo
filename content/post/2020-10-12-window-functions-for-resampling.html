@@ -30,10 +30,10 @@ slug: window-functions-for-resampling
 <li>set-up appropriate time series cross-validation windows</li>
 <li>evaluate performance of linear regression and random forest models on a regression problem</li>
 </ul>
-<p>For my example I will use data from Wake County food inspections and will try to predict the <code>SCORE</code> for upcoming restaurant food inspections.</p>
+<p>For my example I will use data from Wake County food inspections. I will try to predict the <code>SCORE</code> for upcoming restaurant food inspections.</p>
 <div id="load-data" class="section level1">
 <h1>Load data</h1>
-<p>You can use Wake County’s open API (does not require a login/account) and the <a href="https://github.com/r-lib/httr">httr</a> and <a href="https://github.com/jeroen/jsonlite">jsonlite</a> packages to load in the data. You can also download the data directly from their <a href="https://data.wakegov.com/datasets/1b08c4eb32f44a198277c418b71b3a48_2">website</a>.</p>
+<p>You can use Wake County’s open API (does not require a login/account) and the <a href="https://github.com/r-lib/httr">httr</a> and <a href="https://github.com/jeroen/jsonlite">jsonlite</a> packages to load in the data. You can also download the data directly from the Wake County <a href="https://data.wakegov.com/datasets/1b08c4eb32f44a198277c418b71b3a48_2">website</a>.</p>
 <pre class="r"><code>library(tidyverse)
 library(lubridate)
 library(httr)
@@ -68,19 +68,21 @@ restauraunts &lt;- restauraunts %&gt;%
 <li>Join the <code>inspections</code> and <code>restaurants</code> datasets<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></li>
 <li>Filter out extreme outliers in <code>SCORE</code> (likely data entry errors)</li>
 <li>Filter to only locations of <code>TYPE</code> restaurant<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></li>
+<li>Filter out duplicate entries</li>
 <li>It’s important to consider which fields should be excluded for ethical reasons. For our problem, we will say that any restaurant name or location information must be excluded<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>.</li>
 </ul>
 <pre class="r"><code>inspections_restaurants &lt;- inspections_clean %&gt;% 
   left_join(restauraunts, by = c(&quot;HSISID&quot;, &quot;PERMITID&quot;)) %&gt;% 
   filter(SCORE &gt; 50, FACILITYTYPE == &quot;Restaurant&quot;) %&gt;% 
+  distinct(HSISID, date, .keep_all = TRUE) %&gt;% 
   select(-c(FACILITYTYPE, PERMITID)) %&gt;% 
   select(-c(NAME, contains(&quot;ADDRESS&quot;), CITY, STATE, POSTALCODE, PHONENUMBER, X, Y, GEOCODESTATUS))</code></pre>
 <pre class="r"><code>inspections_restaurants %&gt;% 
   glimpse()</code></pre>
-<pre><code>## Rows: 24,276
+<pre><code>## Rows: 24,294
 ## Columns: 6
 ## $ HSISID             &lt;chr&gt; &quot;04092017542&quot;, &quot;04092017542&quot;, &quot;04092017542&quot;, &quot;04...
-## $ SCORE              &lt;dbl&gt; 94.5, 92.0, 95.0, 93.5, 93.0, 93.5, 92.5, 96.0, ...
+## $ SCORE              &lt;dbl&gt; 94.5, 92.0, 95.0, 93.5, 93.0, 93.5, 92.5, 94.0, ...
 ## $ TYPE               &lt;chr&gt; &quot;Inspection&quot;, &quot;Inspection&quot;, &quot;Inspection&quot;, &quot;Inspe...
 ## $ INSPECTOR          &lt;chr&gt; &quot;Anne-Kathrin Bartoli&quot;, &quot;Laura McNeill&quot;, &quot;Laura ...
 ## $ date               &lt;date&gt; 2017-04-07, 2017-11-08, 2018-03-23, 2018-09-07,...
@@ -93,14 +95,14 @@ restauraunts &lt;- restauraunts %&gt;%
 <li><a href="#lag-based-features-before-split-use-dplyr-or-similar">Lag Based Features (Before Split, use <code>dplyr</code> or similar)</a></li>
 <li><a href="#other-features-after-split-use-recipes">Other Features (After Split, use <code>recipes</code>)</a></li>
 </ul>
-<p>provide examples of the types of features that should be created before and after splitting your data. Lag-based features can, in some ways, be thought of as ‘raw inputs’ as they should be created prior to a <code>recipes</code> step<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
+<p>provide examples of the types of features that should be created before and after splitting your data. Lag-based features can, in some ways, be thought of as ‘raw inputs’ as they should be created prior to building a a <code>recipe</code><a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
 <div id="lag-based-features-before-split-use-dplyr-or-similar" class="section level2">
 <h2>Lag Based Features (Before Split, use <code>dplyr</code> or similar)</h2>
 <p>Lag based features should generally be computed prior to splitting your data into “training” / “testing” (or “analysis” / “assessment”<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>) sets. This is because calculation of these features may depend on observations in prior splits<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>. Let’s build a few features where this is the case:</p>
 <ul>
 <li>Prior <code>SCORE</code> for <code>HSISID</code></li>
 <li>Average of prior 3 years of <code>SCORE</code> for <code>HSISISD</code></li>
-<li>Overall recent prior average <code>SCORE</code></li>
+<li>Overall recent (year) prior average <code>SCORE</code> (across <code>HSISISD</code>)</li>
 <li>Days since <code>RESTAURANTOPENDATE</code></li>
 <li>Days since last inspection <code>date</code></li>
 </ul>
@@ -130,10 +132,10 @@ restauraunts &lt;- restauraunts %&gt;%
 </div>
 <div id="data-splits" class="section level2">
 <h2>Data Splits</h2>
-<p><strong>Some Filters:</strong></p>
-<p>We will presume that the model is only intended for restaurants that have previous inspections on record<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a> and will use only the most recent five years of data.</p>
+<p><strong>Additional Filtering:</strong></p>
+<p>We will presume that the model is only intended for restaurants that have previous inspections on record<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a> and will use only the most recent seven years of data.</p>
 <pre class="r"><code>data_time_feats &lt;- data_time_feats %&gt;% 
-  filter(date &gt;= (max(date) - years(5)), !is.na(SCORE_lag))</code></pre>
+  filter(date &gt;= (max(date) - years(7)), !is.na(SCORE_lag))</code></pre>
 <p><strong>Initial Split:</strong></p>
 <p>After creating our lag based features, we can split our data into training and testing splits.</p>
 <pre class="r"><code>initial_split &lt;- rsample::initial_time_split(data_time_feats, prop = .8)
@@ -147,37 +149,37 @@ test &lt;- rsample::testing(initial_split)</code></pre>
                                      index = date, 
                                      period = &quot;month&quot;, 
                                      lookback = 36, 
-                                     assess_stop = 3)</code></pre>
-<p>I will load in some helper functions I created for reviewing our resampling windows<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
+                                     assess_stop = 3, 
+                                     step = 3)</code></pre>
+<p>I will load in some helper functions I created for reviewing the dates for our resampling windows<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
 <pre class="r"><code>devtools::source_gist(&quot;https://gist.github.com/brshallo/7d180bde932628a151a4d935ffa586a5&quot;)
 
 resamples  %&gt;% 
   extract_dates_rset() %&gt;% 
   print() %&gt;% 
-  plot_dates_rset()</code></pre>
-<pre><code>## # A tibble: 13 x 6
+  plot_dates_rset() </code></pre>
+<pre><code>## # A tibble: 12 x 6
 ##    splits         id     analysis_min analysis_max assessment_min assessment_max
 ##    &lt;list&gt;         &lt;chr&gt;  &lt;date&gt;       &lt;date&gt;       &lt;date&gt;         &lt;date&gt;        
-##  1 &lt;split [9K/1K~ Slice~ 2015-10-08   2018-10-31   2018-11-01     2019-01-31    
-##  2 &lt;split [9.1K/~ Slice~ 2015-11-02   2018-11-30   2018-12-03     2019-02-28    
-##  3 &lt;split [9.3K/~ Slice~ 2015-12-01   2018-12-31   2019-01-02     2019-03-31    
-##  4 &lt;split [9.5K/~ Slice~ 2016-01-04   2019-01-31   2019-02-01     2019-04-30    
-##  5 &lt;split [9.7K/~ Slice~ 2016-02-01   2019-02-28   2019-03-01     2019-05-31    
-##  6 &lt;split [9.8K/~ Slice~ 2016-03-01   2019-03-31   2019-04-01     2019-06-28    
-##  7 &lt;split [9.9K/~ Slice~ 2016-04-01   2019-04-30   2019-05-01     2019-07-31    
-##  8 &lt;split [10.1K~ Slice~ 2016-05-02   2019-05-31   2019-06-03     2019-08-30    
-##  9 &lt;split [10.2K~ Slice~ 2016-06-01   2019-06-28   2019-07-01     2019-09-30    
-## 10 &lt;split [10.4K~ Slice~ 2016-07-01   2019-07-31   2019-08-01     2019-10-31    
-## 11 &lt;split [10.6K~ Slice~ 2016-08-01   2019-08-30   2019-09-03     2019-11-27    
-## 12 &lt;split [10.7K~ Slice~ 2016-09-01   2019-09-30   2019-10-01     2019-12-31    
-## 13 &lt;split [10.8K~ Slice~ 2016-10-03   2019-10-31   2019-11-01     2020-01-16</code></pre>
+##  1 &lt;split [6.2K/~ Slice~ 2013-10-09   2016-10-31   2016-11-01     2017-01-31    
+##  2 &lt;split [6.3K/~ Slice~ 2014-01-02   2017-01-31   2017-02-01     2017-04-28    
+##  3 &lt;split [6.6K/~ Slice~ 2014-04-01   2017-04-28   2017-05-01     2017-07-31    
+##  4 &lt;split [7.1K/~ Slice~ 2014-07-01   2017-07-31   2017-08-01     2017-10-31    
+##  5 &lt;split [7.5K/~ Slice~ 2014-10-01   2017-10-31   2017-11-01     2018-01-31    
+##  6 &lt;split [7.9K/~ Slice~ 2015-01-02   2018-01-31   2018-02-01     2018-04-30    
+##  7 &lt;split [8.3K/~ Slice~ 2015-04-01   2018-04-30   2018-05-01     2018-07-31    
+##  8 &lt;split [8.6K/~ Slice~ 2015-07-01   2018-07-31   2018-08-01     2018-10-31    
+##  9 &lt;split [9K/1K~ Slice~ 2015-10-01   2018-10-31   2018-11-01     2019-01-31    
+## 10 &lt;split [9.5K/~ Slice~ 2016-01-04   2019-01-31   2019-02-01     2019-04-30    
+## 11 &lt;split [9.9K/~ Slice~ 2016-04-01   2019-04-30   2019-05-01     2019-07-31    
+## 12 &lt;split [10.4K~ Slice~ 2016-07-01   2019-07-31   2019-08-01     2019-10-31</code></pre>
 <p><img src="/post/2020-10-12-window-functions-for-resampling_files/figure-html/check-resampling-splits-1.png" width="672" /></p>
-<p>For purposes of <a href="#model-evaluation">Model Evaluation</a>, performance across each period will be weighted equally when reviewing overall performance (regardless of number of observations in a period)<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a> <a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>.</p>
+<p>For purposes of overall <a href="#model-evaluation">Model Evaluation</a>, performance across each period will be weighted equally (regardless of number of observations in a period)<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a> <a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>.</p>
 </div>
 <div id="other-features-after-split-use-recipes" class="section level2">
 <h2>Other Features (After Split, use <code>recipes</code>)</h2>
-<p>Where possible, features should be created using the <a href="https://github.com/tidymodels/recipes">recipes</a> package<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a> (i.e. those that do not depend on lagged values). <code>recipes</code> makes pre-processing convenient and helps prevent data leakage into the assessment set.</p>
-<p>It is OK to modify or transform a previously created lag based feature in a <code>recipes</code> step. Assuming you created the lag based input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues when modifying the variables during feature engineering steps<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>.</p>
+<p>Where possible, features should be created using the <a href="https://github.com/tidymodels/recipes">recipes</a> package<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>. <code>recipes</code> makes pre-processing convenient and helps prevent data leakage.</p>
+<p>It is OK to modify or transform a previously created lag based feature in a <code>recipes</code> step. Assuming that you created the lag based input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues when modifying the variables during feature engineering steps<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>.</p>
 <p><em>Some features / transformations I’ll make with <code>recipes</code>:</em></p>
 <ul>
 <li>collapse rare values for <code>INSPECTOR</code> and <code>TYPE</code></li>
@@ -193,24 +195,24 @@ resamples  %&gt;%
   step_log(days_since_open, days_since_last) %&gt;% 
   step_date(date, features = c(&quot;dow&quot;, &quot;month&quot;)) %&gt;% 
   update_role(date, new_role = &quot;ID&quot;) %&gt;% 
-  step_zv(all_predictors())</code></pre>
+  step_zv(all_predictors()) </code></pre>
 <p>Let’s peak at which features we will be passing into the model:</p>
 <pre class="r"><code>prep(rec_general, data = train) %&gt;% 
   juice() %&gt;% 
-  glimpse()</code></pre>
-<pre><code>## Rows: 13,960
+  glimpse() </code></pre>
+<pre><code>## Rows: 17,048
 ## Columns: 12
-## $ HSISID           &lt;fct&gt; 04092016286, 04092016487, 04092016210, 04092011828...
+## $ HSISID           &lt;fct&gt; 04092016152, 04092014520, 04092014483, 04092012102...
 ## $ TYPE             &lt;fct&gt; Inspection, Inspection, Inspection, Inspection, In...
-## $ INSPECTOR        &lt;fct&gt; Laura McNeill, Angela Myers, Jennifer Edwards, And...
-## $ date             &lt;date&gt; 2015-10-08, 2015-10-08, 2015-10-08, 2015-10-08, 2...
-## $ SCORE_yr_overall &lt;dbl&gt; 95.50647, 95.50647, 95.50647, 95.50647, 95.50647, ...
-## $ SCORE_lag        &lt;dbl&gt; 94.5, 99.0, 96.0, 95.0, 94.0, 95.5, 92.5, 96.5, 98...
-## $ SCORE_recent     &lt;dbl&gt; 94.30000, 99.00000, 93.42857, 95.55556, 96.20000, ...
-## $ days_since_open  &lt;dbl&gt; 6.976348, 6.665684, 7.090077, 8.884472, 8.200288, ...
-## $ days_since_last  &lt;dbl&gt; 5.476464, 5.075174, 5.176150, 4.276666, 5.129899, ...
-## $ SCORE            &lt;dbl&gt; 96.0, 95.5, 94.0, 98.0, 95.5, 92.5, 95.0, 97.0, 98...
-## $ date_dow         &lt;fct&gt; Thu, Thu, Thu, Thu, Thu, Thu, Thu, Thu, Thu, Thu, ...
+## $ INSPECTOR        &lt;fct&gt; David Adcock, Naterra McQueen, Andrea Anover, othe...
+## $ date             &lt;date&gt; 2013-10-09, 2013-10-09, 2013-10-09, 2013-10-09, 2...
+## $ SCORE_yr_overall &lt;dbl&gt; 96.22766, 96.22766, 96.22766, 96.22766, 96.22766, ...
+## $ SCORE_lag        &lt;dbl&gt; 96.0, 95.5, 97.0, 94.5, 97.5, 99.0, 96.0, 96.0, 10...
+## $ SCORE_recent     &lt;dbl&gt; 96.75000, 95.75000, 97.50000, 95.25000, 96.75000, ...
+## $ days_since_open  &lt;dbl&gt; 6.410175, 7.926964, 7.959276, 8.682029, 8.970432, ...
+## $ days_since_last  &lt;dbl&gt; 4.709530, 4.941642, 4.934474, 4.875197, 5.117994, ...
+## $ SCORE            &lt;dbl&gt; 98.5, 96.0, 96.0, 93.0, 95.0, 93.5, 95.0, 92.0, 98...
+## $ date_dow         &lt;fct&gt; Wed, Wed, Wed, Wed, Wed, Wed, Wed, Wed, Wed, Thu, ...
 ## $ date_month       &lt;fct&gt; Oct, Oct, Oct, Oct, Oct, Oct, Oct, Oct, Oct, Oct, ...</code></pre>
 </div>
 </div>
@@ -251,13 +253,13 @@ null_workflow_rs &lt;- workflow() %&gt;%
 </div>
 <div id="model-evaluation" class="section level1">
 <h1>Model Evaluation</h1>
-<p>The next several code chunks extract the <em>average</em> performance across “assessment” sets<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a> of samples or extract the performance across each of the individual “assessment” sets.</p>
+<p>The next several code chunks extract the <em>average</em> performance across “assessment” sets<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a> or extract the performance across each of the individual “assessment” sets.</p>
 <pre class="r"><code>mod_types &lt;- list(&quot;lm&quot;, &quot;rf&quot;, &quot;null&quot;)
 
 avg_perf &lt;- map(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs), 
                 collect_metrics) %&gt;% 
   map2(mod_types, ~mutate(.x, source = .y)) %&gt;% 
-  bind_rows()</code></pre>
+  bind_rows() </code></pre>
 <pre class="r"><code>extract_splits_metrics &lt;- function(rs_obj, name){
   
   rs_obj %&gt;% 
@@ -270,19 +272,19 @@ splits_perf &lt;- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs),
      mod_types, 
      extract_splits_metrics) %&gt;% 
   bind_rows()</code></pre>
-<p>The overall performance as well as the performance within splits suggests that both models were better than the baseline (the mean within the analysis set)<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a> and that the linear model outperformed the random forest model.</p>
+<p>The overall performance as well as the performance across splits suggests that both models were better than the baseline (the mean within the analysis set)<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a> and that the linear model outperformed the random forest model.</p>
 <pre class="r"><code>splits_perf %&gt;% 
   mutate(id = forcats::fct_rev(id)) %&gt;% 
   ggplot(aes(x = .estimate, y = id, colour = source))+
-  geom_vline(aes(xintercept = mean, colour = source), 
-           alpha = 0.5,
+  geom_vline(aes(xintercept = mean, colour = fct_relevel(source, c(&quot;lm&quot;, &quot;rf&quot;, &quot;null&quot;))), 
+           alpha = 0.4,
            data = avg_perf)+
   geom_point()+
   facet_wrap(~.metric, scales = &quot;free_x&quot;)+
   xlim(c(0, NA))+
   theme_bw()+
-  labs(caption = &quot;Vertical lines are average performance as captured by `collect_metrics()`&quot;)</code></pre>
-<p><img src="/post/2020-10-12-window-functions-for-resampling_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+  labs(caption = &quot;Vertical lines are average performance as captured by `tune::collect_metrics()`&quot;)</code></pre>
+<p><img src="/post/2020-10-12-window-functions-for-resampling_files/figure-html/plot-performance-1.png" width="672" /></p>
 <p>We could use a paired sample t-test to formally compare the random forest and linear models’ out-of-sample RMSE performance.</p>
 <pre class="r"><code>t.test(
   filter(splits_perf, source == &quot;lm&quot;, .metric == &quot;rmse&quot;) %&gt;% pull(.estimate),
@@ -291,7 +293,7 @@ splits_perf &lt;- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs),
 ) %&gt;% 
   broom::tidy() %&gt;% 
   mutate(across(where(is.numeric), round, 4)) %&gt;% 
-  knitr::kable()</code></pre>
+  knitr::kable() </code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -307,12 +309,12 @@ splits_perf &lt;- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs),
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">-0.0758</td>
-<td align="right">-4.9392</td>
-<td align="right">3e-04</td>
-<td align="right">12</td>
-<td align="right">-0.1092</td>
-<td align="right">-0.0423</td>
+<td align="right">-0.0839</td>
+<td align="right">-3.7277</td>
+<td align="right">0.0033</td>
+<td align="right">11</td>
+<td align="right">-0.1334</td>
+<td align="right">-0.0343</td>
 <td align="left">Paired t-test</td>
 <td align="left">two.sided</td>
 </tr>
@@ -376,7 +378,7 @@ rf_tune &lt;- tune_grid(rf_workflow,
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>These were announced with version <a href="https://github.com/tidymodels/rsample/blob/master/NEWS.md">0.0.8</a>.The help pages for <code>rsample</code> (as well as the <code>slider</code> package) are helpful resources for understanding the three types of sliding you can use, briefly these are:</p>
+<li id="fn1"><p>These were announced with version <a href="https://github.com/tidymodels/rsample/blob/master/NEWS.md">0.0.8</a>. The help pages for <code>rsample</code> (as well as the <code>slider</code> package) are helpful resources for understanding the three types of sliding you can use, briefly these are:</p>
 <ul>
 <li><code>sliding_window()</code>: only takes into account order / position of dates</li>
 <li><code>sliding_index()</code>: slide according to an index</li>
