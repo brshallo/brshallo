@@ -142,13 +142,13 @@ test &lt;- rsample::testing(initial_split)</code></pre>
 <p><strong>Resampling (Time Series Cross-Validation):</strong></p>
 <p>For this problem we should evaluate our models using time series cross-validation<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>. This entails creating multiple ordered subsets of the training data where each set has a different assignment of observations into “analysis” or “assessment” data<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>.</p>
 <p>Ideally the resampling scheme used for model evaluation mirrors how the model will be built and evaluated in production. For example, if the production model will be updated once every three months it makes sense that the “assessment” set be this length. We can use <code>rsample::sliding_period()</code> to set this up.</p>
-<p>For each set, we will use three years of “analysis” data for training and then three months of “assessment” data for evaluation.</p>
+<p>For each set, we will use three years of “analysis” data for training a model and then three months of “assessment” data for evaluation.</p>
 <pre class="r"><code>resamples &lt;- rsample::sliding_period(train, 
                                      index = date, 
                                      period = &quot;month&quot;, 
                                      lookback = 36, 
                                      assess_stop = 3)</code></pre>
-<p>I will load in some functions I made to review our resampling windows<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
+<p>I will load in some helper functions I created for reviewing our resampling windows<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
 <pre class="r"><code>devtools::source_gist(&quot;https://gist.github.com/brshallo/7d180bde932628a151a4d935ffa586a5&quot;)
 
 resamples  %&gt;% 
@@ -177,8 +177,8 @@ resamples  %&gt;%
 <div id="other-features-after-split-use-recipes" class="section level2">
 <h2>Other Features (After Split, use <code>recipes</code>)</h2>
 <p>Where possible, features should be created using the <a href="https://github.com/tidymodels/recipes">recipes</a> package<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a> (i.e. those that do not depend on lagged values). <code>recipes</code> makes pre-processing convenient and helps prevent data leakage into the assessment set.</p>
+<p>It is OK to modify or transform a previously created lag based feature in a <code>recipes</code> step. Assuming you created the lag based input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues when modifying the variables during feature engineering steps<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>.</p>
 <p><em>Some features / transformations I’ll make with <code>recipes</code>:</em></p>
-<p>Note that it is OK to modify or transform a previously created lag-based feature in a <code>recipes</code> step, as assuming you created the raw input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>.</p>
 <ul>
 <li>collapse rare values for <code>INSPECTOR</code> and <code>TYPE</code></li>
 <li>log transform <code>days_since_open</code> and <code>days_since_last</code></li>
@@ -194,7 +194,7 @@ resamples  %&gt;%
   step_date(date, features = c(&quot;dow&quot;, &quot;month&quot;)) %&gt;% 
   update_role(date, new_role = &quot;ID&quot;) %&gt;% 
   step_zv(all_predictors())</code></pre>
-<p>Let’s peak at what these features will look look like:</p>
+<p>Let’s peak at which features we will be passing into the model:</p>
 <pre class="r"><code>prep(rec_general, data = train) %&gt;% 
   juice() %&gt;% 
   glimpse()</code></pre>
@@ -226,7 +226,7 @@ lm_workflow_rs &lt;- workflows::workflow() %&gt;%
   add_recipe(rec_general) %&gt;% 
   fit_resamples(resamples,
                 control = control_resamples(save_pred = TRUE))</code></pre>
-<p><strong><code>ranger</code> Random Forest model using default hyper-parameter values:</strong></p>
+<p><strong><code>ranger</code> Random Forest model (using defaults):</strong></p>
 <pre class="r"><code>rand_mod &lt;- parsnip::rand_forest() %&gt;% 
   set_engine(&quot;ranger&quot;) %&gt;% 
   set_mode(&quot;regression&quot;)
@@ -237,7 +237,7 @@ rf_workflow_rs &lt;- workflow() %&gt;%
   add_recipe(rec_general) %&gt;% 
   fit_resamples(resamples,
                 control = control_resamples(save_pred = TRUE))</code></pre>
-<p><strong>A <code>parsnip::null_model</code>:</strong></p>
+<p><strong><code>parsnip::null_model</code>:</strong></p>
 <p>The NULL model will be helpful as a baseline Root Mean Square Error (RMSE) comparison.</p>
 <pre class="r"><code>null_mod &lt;- parsnip::null_model(mode = &quot;regression&quot;) %&gt;% 
   set_engine(&quot;parsnip&quot;)
@@ -251,7 +251,7 @@ null_workflow_rs &lt;- workflow() %&gt;%
 </div>
 <div id="model-evaluation" class="section level1">
 <h1>Model Evaluation</h1>
-<p>The next several code chunks extract the <em>average</em> performance across “assessment” sets of samples or extract the performance across each of the individual “assessment” sets.</p>
+<p>The next several code chunks extract the <em>average</em> performance across “assessment” sets<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a> of samples or extract the performance across each of the individual “assessment” sets.</p>
 <pre class="r"><code>mod_types &lt;- list(&quot;lm&quot;, &quot;rf&quot;, &quot;null&quot;)
 
 avg_perf &lt;- map(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs), 
@@ -270,7 +270,7 @@ splits_perf &lt;- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs),
      mod_types, 
      extract_splits_metrics) %&gt;% 
   bind_rows()</code></pre>
-<p>The overall performance as well as the performance within splits suggests that both models were better than the baseline (the mean within the analysis set)<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a> and that the linear model outperformed the random forest model.</p>
+<p>The overall performance as well as the performance within splits suggests that both models were better than the baseline (the mean within the analysis set)<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a> and that the linear model outperformed the random forest model.</p>
 <pre class="r"><code>splits_perf %&gt;% 
   mutate(id = forcats::fct_rev(id)) %&gt;% 
   ggplot(aes(x = .estimate, y = id, colour = source))+
@@ -320,13 +320,13 @@ splits_perf &lt;- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs),
 </table>
 <p>This suggests the better performance by the linear model <em>is</em> statistically significant.</p>
 <p><strong>Other potential steps:</strong></p>
-<p>There is lots more we could do from here<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a>. However the purpose of this post was to provide a short <code>tidymodels</code> example that incorporated some of the sliding functions in <code>rsample</code> and <code>slider</code>. For more resources on modeling and the <code>tidymodels</code> framework, see <a href="https://www.tidymodels.org/">tidymodels.org</a>, <a href="https://www.tmwr.org/">Tidy Modeling with R</a> or check-out the <a href="#resources">Resources</a> section in the <a href="#appendix">Appendix</a>.</p>
+<p>There is lots more we could do from here<a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a>. However the purpose of this post was to provide a short <code>tidymodels</code> example that incorporates window functions from <code>rsample</code> and <code>slider</code> on a regression problem. For more resources on modeling and the <code>tidymodels</code> framework, see <a href="https://www.tidymodels.org/">tidymodels.org</a>, <a href="https://www.tmwr.org/">Tidy Modeling with R</a> or check-out the <a href="#resources">Resources</a> section in the <a href="#appendix">Appendix</a>.</p>
 </div>
 <div id="appendix" class="section level1">
 <h1>Appendix</h1>
 <div id="model-building-with-hyperparameter-tuning" class="section level2">
 <h2>Model Building with Hyperparameter Tuning</h2>
-<p>Below is code for tuning a <code>glmnet</code> linear regression model (use <code>tune</code> to optimize the L1/L2 penalty)<a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a>.</p>
+<p>Below is code for tuning a <code>glmnet</code> linear regression model (use <code>tune</code> to optimize the L1/L2 penalty)<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a>.</p>
 <pre class="r"><code>rec_glmnet &lt;- rec_general %&gt;% 
   step_dummy(all_predictors(), -all_numeric()) %&gt;%
   step_normalize(all_predictors(), -all_nominal()) %&gt;% 
@@ -347,7 +347,7 @@ glmnet_tune &lt;- tune::tune_grid(glmnet_workflow,
                          resamples = resamples, 
                          control = control_grid(save_pred = TRUE), 
                          grid = glmnet_grid)</code></pre>
-<p>And code to tune a <code>ranger</code> Random Forest model, tuning the <code>mtry</code> and <code>min_n</code> parameters<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a>.</p>
+<p>And code to tune a <code>ranger</code> Random Forest model, tuning the <code>mtry</code> and <code>min_n</code> parameters<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a>.</p>
 <pre class="r"><code>rand_mod &lt;- parsnip::rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %&gt;% 
   set_engine(&quot;ranger&quot;) %&gt;% 
   set_mode(&quot;regression&quot;)
@@ -424,10 +424,11 @@ This is a fairly obscure feature in {slider}, but I love it. Don’t want the cu
 <li id="fn18"><p>It could also make sense to weight performance metrics by number of observations. One way to do this, would be to use a control function to extract the predictions, and then evaluate the performance across the predictions. In my examples below I do keep the predictions, but end-up not making use of them…<a href="#fnref18" class="footnote-back">↩</a></p></li>
 <li id="fn19"><p>For each split, this will then build the features for the assessment set based on each analysis set.<a href="#fnref19" class="footnote-back">↩</a></p></li>
 <li id="fn20"><p>Although I just do a simple <code>step_log()</code> transform here, more sophisticated steps would also be kosher, e.g. <code>step_pca()</code>.<a href="#fnref20" class="footnote-back">↩</a></p></li>
-<li id="fn21"><p>Our number of observations is realtively high compared to the number of features, so there is a good chance we will have relatively low penalties. While working interactively, I did not see any substantive difference in performance.<a href="#fnref21" class="footnote-back">↩</a></p></li>
-<li id="fn22"><p>There is no baseline performance for Rsquared because the metric itself is based off amount of variance that is explained compared to the baseline (i.e. the mean).<a href="#fnref22" class="footnote-back">↩</a></p></li>
-<li id="fn23"><p>You would likely iterate on the model building process (e.g. perform exploratory data analysis, review outliers in initial models, etc.) and eventually get to a final set of models to evaluate on the test set.<a href="#fnref23" class="footnote-back">↩</a></p></li>
-<li id="fn24"><p>Our number of observations is realtively high compared to the number of features, so there is a good chance we will have relatively low penalties.<a href="#fnref24" class="footnote-back">↩</a></p></li>
-<li id="fn25"><p>This was taking a <em>long</em> time and is part of why I decided to move the tuned examples to teh <a href="#appendix">Appendix</a>.<a href="#fnref25" class="footnote-back">↩</a></p></li>
+<li id="fn21"><p>Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties. While working interactively, I did not see any substantive difference in performance.<a href="#fnref21" class="footnote-back">↩</a></p></li>
+<li id="fn22"><p>Remember that this is not weighted by observations, so each assessment set impacts the overall performance equally, regardless of small differences in number of observations.<a href="#fnref22" class="footnote-back">↩</a></p></li>
+<li id="fn23"><p>There is no baseline performance for Rsquared because the metric itself is based off amount of variance that is explained compared to the baseline (i.e. the mean).<a href="#fnref23" class="footnote-back">↩</a></p></li>
+<li id="fn24"><p>You would likely iterate on the model building process (e.g. perform exploratory data analysis, review outliers in initial models, etc.) and eventually get to a final set of models to evaluate on the test set.<a href="#fnref24" class="footnote-back">↩</a></p></li>
+<li id="fn25"><p>Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties.<a href="#fnref25" class="footnote-back">↩</a></p></li>
+<li id="fn26"><p>This was taking a <em>long</em> time and is part of why I decided to move the tuned examples to the <a href="#appendix">Appendix</a>.<a href="#fnref26" class="footnote-back">↩</a></p></li>
 </ol>
 </div>

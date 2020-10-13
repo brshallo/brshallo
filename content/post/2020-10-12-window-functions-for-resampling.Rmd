@@ -176,7 +176,7 @@ Ideally the resampling scheme used for model evaluation mirrors how the model wi
     1. From [uber engineering](https://eng.uber.com/forecasting-introduction/) 
     1. From [Forecasting Principles and Practices](https://otexts.com/fpp3/tscv.html)
 
-For each set, we will use three years of "analysis" data for training and then three months of "assessment" data for evaluation.
+For each set, we will use three years of "analysis" data for training a model and then three months of "assessment" data for evaluation.
 
 ```{r resampling-splits}
 resamples <- rsample::sliding_period(train, 
@@ -186,7 +186,7 @@ resamples <- rsample::sliding_period(train,
                                      assess_stop = 3)
 ```
 
-I will load in some functions I made to review our resampling windows[^6].
+I will load in some helper functions I created for reviewing our resampling windows[^6].
 
 [^6]: I've tweeted previously about helper functions for reviewing your resampling scheme:
     
@@ -207,9 +207,9 @@ For purposes of [Model Evaluation], performance across each period will be weigh
 
 Where possible, features should be created using the [recipes](https://github.com/tidymodels/recipes) package^[For each split, this will then build the features for the assessment set based on each analysis set.] (i.e. those that do not depend on lagged values). `recipes` makes pre-processing convenient and helps prevent data leakage into the assessment set.
 
-*Some features / transformations I'll make with `recipes`:*
+It is OK to modify or transform a previously created lag based feature in a `recipes` step. Assuming you created the lag based input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues when modifying the variables during feature engineering steps^[Although I just do a simple `step_log()` transform here, more sophisticated steps would also be kosher, e.g. `step_pca()`.].
 
-Note that it is OK to modify or transform a previously created lag-based feature in a `recipes` step, as assuming you created the raw input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues^[Although I just do a simple `step_log()` transform here, more sophisticated steps would also be kosher, e.g. `step_pca()`.].
+*Some features / transformations I'll make with `recipes`:*
 
 * collapse rare values for `INSPECTOR` and `TYPE`
 * log transform `days_since_open` and `days_since_last`
@@ -228,7 +228,7 @@ rec_general <- recipes::recipe(SCORE ~ ., data = train) %>%
   step_zv(all_predictors())
 ```
 
-Let's peak at what these features will look look like:
+Let's peak at which features we will be passing into the model:
 
 ```{r}
 prep(rec_general, data = train) %>% 
@@ -251,7 +251,7 @@ lm_workflow_rs <- workflows::workflow() %>%
                 control = control_resamples(save_pred = TRUE))
 ```
 
-**`ranger` Random Forest model using default hyper-parameter values:**
+**`ranger` Random Forest model (using defaults):**
 ```{r}
 rand_mod <- parsnip::rand_forest() %>% 
   set_engine("ranger") %>% 
@@ -265,7 +265,7 @@ rf_workflow_rs <- workflow() %>%
                 control = control_resamples(save_pred = TRUE))
 ```
 
-**A `parsnip::null_model`:**
+**`parsnip::null_model`:**
 
 The NULL model will be helpful as a baseline Root Mean Square Error (RMSE) comparison.
 ```{r}
@@ -279,11 +279,11 @@ null_workflow_rs <- workflow() %>%
                 control = control_resamples(save_pred = TRUE))
 ```
 
-See code in [Model Building with Hyperparameter Tuning] for more sophisticated examples that include hyperparameter tuning for `glmnet`^[Our number of observations is realtively high compared to the number of features, so there is a good chance we will have relatively low penalties. While working interactively, I did not see any substantive difference in performance.] and `ranger` models.
+See code in [Model Building with Hyperparameter Tuning] for more sophisticated examples that include hyperparameter tuning for `glmnet`^[Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties. While working interactively, I did not see any substantive difference in performance.] and `ranger` models.
 
 # Model Evaluation
 
-The next several code chunks extract the *average* performance across "assessment" sets of samples or extract the performance across each of the individual "assessment" sets.
+The next several code chunks extract the *average* performance across "assessment" sets^[Remember that this is not weighted by observations, so each assessment set impacts the overall performance equally, regardless of small differences in number of observations.] of samples or extract the performance across each of the individual "assessment" sets.
 
 ```{r collect-overall-performance}
 mod_types <- list("lm", "rf", "null")
@@ -342,13 +342,13 @@ This suggests the better performance by the linear model *is* statistically sign
 
 **Other potential steps:**
 
-There is lots more we could do from here^[You would likely iterate on the model building process (e.g. perform exploratory data analysis, review outliers in initial models, etc.) and eventually get to a final set of models to evaluate on the test set.]. However the purpose of this post was to provide a short `tidymodels` example that incorporated some of the sliding functions in `rsample` and `slider`. For more resources on modeling and the `tidymodels` framework, see [tidymodels.org](https://www.tidymodels.org/), [Tidy Modeling with R](https://www.tmwr.org/) or check-out the [Resources] section in the [Appendix].
+There is lots more we could do from here^[You would likely iterate on the model building process (e.g. perform exploratory data analysis, review outliers in initial models, etc.) and eventually get to a final set of models to evaluate on the test set.]. However the purpose of this post was to provide a short `tidymodels` example that incorporates window functions from `rsample` and `slider` on a regression problem. For more resources on modeling and the `tidymodels` framework, see [tidymodels.org](https://www.tidymodels.org/), [Tidy Modeling with R](https://www.tmwr.org/) or check-out the [Resources] section in the [Appendix].
 
 # Appendix
 
 ## Model Building with Hyperparameter Tuning
 
-Below is code for tuning a `glmnet` linear regression model (use `tune` to optimize the L1/L2 penalty)^[Our number of observations is realtively high compared to the number of features, so there is a good chance we will have relatively low penalties.].
+Below is code for tuning a `glmnet` linear regression model (use `tune` to optimize the L1/L2 penalty)^[Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties.].
 
 ```{r, eval = FALSE}
 rec_glmnet <- rec_general %>% 
@@ -373,7 +373,7 @@ glmnet_tune <- tune::tune_grid(glmnet_workflow,
                          grid = glmnet_grid)
 ```
 
-And code to tune a `ranger` Random Forest model, tuning the `mtry` and `min_n` parameters^[This was taking a *long* time and is part of why I decided to move the tuned examples to teh [Appendix].].
+And code to tune a `ranger` Random Forest model, tuning the `mtry` and `min_n` parameters^[This was taking a *long* time and is part of why I decided to move the tuned examples to the [Appendix].].
 ```{r, eval = FALSE}
 rand_mod <- parsnip::rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %>% 
   set_engine("ranger") %>% 
