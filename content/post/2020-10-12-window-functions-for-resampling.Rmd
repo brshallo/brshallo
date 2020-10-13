@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE, cache = TRUE, message = FALSE, warning = FALS
 
 The new `rsample::sliding_*()` functions bring the windowing approaches used in [slider](https://github.com/DavisVaughan/slider) to the sampling procedures used in the [tidymodels](https://github.com/tidymodels) framework[^2]. These functions make evaluation of models with time-dependent variables easier^[Previously users would have needed to use `rsample::rolling_origin()`.].
 
-For some problems you may want to take a traditional regression or classification based approach^[As opposed to a more specialized time-series modeling approach.], while still accounting for date/time-sensitive components of your data. In this post I will use the `tidymodels` suite of packages to:
+For some problems you may want to take a traditional regression or classification based approach^[As opposed to a more specialized time-series modeling approach.] while still accounting for the date/time-sensitive components of your data. In this post I will use the `tidymodels` suite of packages to:
 
 * build lag based and non-lag based features 
 * set-up appropriate time series cross-validation windows 
@@ -94,14 +94,14 @@ inspections_restaurants %>%
 
 # Feature Engineering & Data Splits
 
-Discussion on issue [#168](https://github.com/tidymodels/rsample/pull/168) suggests that some features (those depending on prior observations) should be created before the data is split^[Into training / testing sets or analysis / assessment sets.]. The first and last sub-sections of this post:
+Discussion on issue [#168](https://github.com/tidymodels/rsample/pull/168) suggests that some features (those depending on prior observations) should be created before the data is split^[Into training / testing sets or analysis / assessment sets.]. The first and last sub-sections:
 
-* [Lag Based Features (use `dplyr` or similar)] 
-* [Other Features (use `recipes`)]
+* [Lag Based Features (Before Split, use `dplyr` or similar)] 
+* [Other Features (After Split, use `recipes`)]
 
-provide examples of the types of features that should be created either before or after splitting your data. Lag-based features can, in some ways, be thought of as 'raw inputs' as they should be created prior to a `recipes` step^[As discussed by Davis Vaughn at the end of this [gist](https://gist.github.com/DavisVaughan/433dbdceb439c9be30ddcc78d836450d).].
+provide examples of the types of features that should be created before and after splitting your data. Lag-based features can, in some ways, be thought of as 'raw inputs' as they should be created prior to a `recipes` step^[As discussed by Davis Vaughn at the end of this [gist](https://gist.github.com/DavisVaughan/433dbdceb439c9be30ddcc78d836450d).].
 
-## Lag Based Features (use `dplyr` or similar)
+## Lag Based Features (Before Split, use `dplyr` or similar)
 
 Lag based features should generally be computed prior to splitting your data into "training" / "testing" (or "analysis" / "assessment"[^4]) sets. This is because calculation of these features may depend on observations in prior splits^[It is important that these features be created in a way that does not cause data leakage.]. Let's build a few features where this is the case:
 
@@ -203,7 +203,7 @@ resamples  %>%
 
 For purposes of [Model Evaluation], performance across each period will be weighted equally when reviewing overall performance (regardless of number of observations in a period)^[Note that using `rsample::sliding_period()` is likely to produce different numbers of observations between splits.] ^[It could also make sense to weight performance metrics by number of observations. One way to do this, would be to use a control function to extract the predictions, and then evaluate the performance across the predictions. In my examples below I do keep the predictions, but end-up not making use of them...].
 
-## Other Features (use `recipes`)
+## Other Features (After Split, use `recipes`)
 
 Where possible, features should be created using the [recipes](https://github.com/tidymodels/recipes) package^[For each split, this will then build the features for the assessment set based on each analysis set.] (i.e. those that do not depend on lagged values). `recipes` makes pre-processing convenient and helps prevent data leakage into the assessment set.
 
@@ -325,7 +325,7 @@ splits_perf %>%
   labs(caption = "Vertical lines are average performance as captured by `collect_metrics()`")
 ```
 
-We could use a paired sample t-test to formally compare the random forest and linear models out-of-sample RMSE performance.
+We could use a paired sample t-test to formally compare the random forest and linear models' out-of-sample RMSE performance.
 
 ```{r}
 t.test(
@@ -373,7 +373,7 @@ glmnet_tune <- tune::tune_grid(glmnet_workflow,
                          grid = glmnet_grid)
 ```
 
-And code to tune a `ranger` Random Forest model, tuning the `mtry` and `min_n` parameters.
+And code to tune a `ranger` Random Forest model, tuning the `mtry` and `min_n` parameters^[This was taking a *long* time and is part of why I decided to move the tuned examples to teh [Appendix].].
 ```{r, eval = FALSE}
 rand_mod <- parsnip::rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %>% 
   set_engine("ranger") %>% 

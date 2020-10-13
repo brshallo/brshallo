@@ -19,9 +19,9 @@
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#load-data&#34;&gt;Load data&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#feature-engineering-data-splits&#34;&gt;Feature Engineering &amp;amp; Data Splits&lt;/a&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#lag-based-features-use-dplyr-or-similar&#34;&gt;Lag Based Features (use &lt;code&gt;dplyr&lt;/code&gt; or similar)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#lag-based-features-before-split-use-dplyr-or-similar&#34;&gt;Lag Based Features (Before Split, use &lt;code&gt;dplyr&lt;/code&gt; or similar)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#data-splits&#34;&gt;Data Splits&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#other-features-use-recipes&#34;&gt;Other Features (use &lt;code&gt;recipes&lt;/code&gt;)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#other-features-after-split-use-recipes&#34;&gt;Other Features (After Split, use &lt;code&gt;recipes&lt;/code&gt;)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#model-specification&#34;&gt;Model Specification&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#model-evaluation&#34;&gt;Model Evaluation&lt;/a&gt;&lt;/li&gt;
@@ -33,7 +33,7 @@
 &lt;/div&gt;
 
 &lt;p&gt;The new &lt;code&gt;rsample::sliding_*()&lt;/code&gt; functions bring the windowing approaches used in &lt;a href=&#34;https://github.com/DavisVaughan/slider&#34;&gt;slider&lt;/a&gt; to the sampling procedures used in the &lt;a href=&#34;https://github.com/tidymodels&#34;&gt;tidymodels&lt;/a&gt; framework&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;. These functions make evaluation of models with time-dependent variables easier&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;For some problems you may want to take a traditional regression or classification based approach&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;, while still accounting for date/time-sensitive components of your data. In this post I will use the &lt;code&gt;tidymodels&lt;/code&gt; suite of packages to:&lt;/p&gt;
+&lt;p&gt;For some problems you may want to take a traditional regression or classification based approach&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt; while still accounting for the date/time-sensitive components of your data. In this post I will use the &lt;code&gt;tidymodels&lt;/code&gt; suite of packages to:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;build lag based and non-lag based features&lt;/li&gt;
 &lt;li&gt;set-up appropriate time series cross-validation windows&lt;/li&gt;
@@ -97,14 +97,14 @@ restauraunts &amp;lt;- restauraunts %&amp;gt;%
 &lt;/div&gt;
 &lt;div id=&#34;feature-engineering-data-splits&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Feature Engineering &amp;amp; Data Splits&lt;/h1&gt;
-&lt;p&gt;Discussion on issue &lt;a href=&#34;https://github.com/tidymodels/rsample/pull/168&#34;&gt;#168&lt;/a&gt; suggests that some features (those depending on prior observations) should be created before the data is split&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;. The first and last sub-sections of this post:&lt;/p&gt;
+&lt;p&gt;Discussion on issue &lt;a href=&#34;https://github.com/tidymodels/rsample/pull/168&#34;&gt;#168&lt;/a&gt; suggests that some features (those depending on prior observations) should be created before the data is split&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;. The first and last sub-sections:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#lag-based-features-use-dplyr-or-similar&#34;&gt;Lag Based Features (use &lt;code&gt;dplyr&lt;/code&gt; or similar)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#other-features-use-recipes&#34;&gt;Other Features (use &lt;code&gt;recipes&lt;/code&gt;)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#lag-based-features-before-split-use-dplyr-or-similar&#34;&gt;Lag Based Features (Before Split, use &lt;code&gt;dplyr&lt;/code&gt; or similar)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#other-features-after-split-use-recipes&#34;&gt;Other Features (After Split, use &lt;code&gt;recipes&lt;/code&gt;)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;provide examples of the types of features that should be created either before or after splitting your data. Lag-based features can, in some ways, be thought of as ‘raw inputs’ as they should be created prior to a &lt;code&gt;recipes&lt;/code&gt; step&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;div id=&#34;lag-based-features-use-dplyr-or-similar&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Lag Based Features (use &lt;code&gt;dplyr&lt;/code&gt; or similar)&lt;/h2&gt;
+&lt;p&gt;provide examples of the types of features that should be created before and after splitting your data. Lag-based features can, in some ways, be thought of as ‘raw inputs’ as they should be created prior to a &lt;code&gt;recipes&lt;/code&gt; step&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;lag-based-features-before-split-use-dplyr-or-similar&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Lag Based Features (Before Split, use &lt;code&gt;dplyr&lt;/code&gt; or similar)&lt;/h2&gt;
 &lt;p&gt;Lag based features should generally be computed prior to splitting your data into “training” / “testing” (or “analysis” / “assessment”&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt;) sets. This is because calculation of these features may depend on observations in prior splits&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt;. Let’s build a few features where this is the case:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Prior &lt;code&gt;SCORE&lt;/code&gt; for &lt;code&gt;HSISID&lt;/code&gt;&lt;/li&gt;
@@ -183,8 +183,8 @@ resamples  %&amp;gt;%
 &lt;p&gt;&lt;img src=&#34;/post/2020-10-12-window-functions-for-resampling_files/figure-html/check-resampling-splits-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;For purposes of &lt;a href=&#34;#model-evaluation&#34;&gt;Model Evaluation&lt;/a&gt;, performance across each period will be weighted equally when reviewing overall performance (regardless of number of observations in a period)&lt;a href=&#34;#fn17&#34; class=&#34;footnote-ref&#34; id=&#34;fnref17&#34;&gt;&lt;sup&gt;17&lt;/sup&gt;&lt;/a&gt; &lt;a href=&#34;#fn18&#34; class=&#34;footnote-ref&#34; id=&#34;fnref18&#34;&gt;&lt;sup&gt;18&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;other-features-use-recipes&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Other Features (use &lt;code&gt;recipes&lt;/code&gt;)&lt;/h2&gt;
+&lt;div id=&#34;other-features-after-split-use-recipes&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Other Features (After Split, use &lt;code&gt;recipes&lt;/code&gt;)&lt;/h2&gt;
 &lt;p&gt;Where possible, features should be created using the &lt;a href=&#34;https://github.com/tidymodels/recipes&#34;&gt;recipes&lt;/a&gt; package&lt;a href=&#34;#fn19&#34; class=&#34;footnote-ref&#34; id=&#34;fnref19&#34;&gt;&lt;sup&gt;19&lt;/sup&gt;&lt;/a&gt; (i.e. those that do not depend on lagged values). &lt;code&gt;recipes&lt;/code&gt; makes pre-processing convenient and helps prevent data leakage into the assessment set.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Some features / transformations I’ll make with &lt;code&gt;recipes&lt;/code&gt;:&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;Note that it is OK to modify or transform a previously created lag-based feature in a &lt;code&gt;recipes&lt;/code&gt; step, as assuming you created the raw input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues&lt;a href=&#34;#fn20&#34; class=&#34;footnote-ref&#34; id=&#34;fnref20&#34;&gt;&lt;sup&gt;20&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
@@ -292,7 +292,7 @@ splits_perf &amp;lt;- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs
   theme_bw()+
   labs(caption = &amp;quot;Vertical lines are average performance as captured by `collect_metrics()`&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-10-12-window-functions-for-resampling_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;We could use a paired sample t-test to formally compare the random forest and linear models out-of-sample RMSE performance.&lt;/p&gt;
+&lt;p&gt;We could use a paired sample t-test to formally compare the random forest and linear models’ out-of-sample RMSE performance.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;t.test(
   filter(splits_perf, source == &amp;quot;lm&amp;quot;, .metric == &amp;quot;rmse&amp;quot;) %&amp;gt;% pull(.estimate),
   filter(splits_perf, source == &amp;quot;rf&amp;quot;, .metric == &amp;quot;rmse&amp;quot;) %&amp;gt;% pull(.estimate),
@@ -356,7 +356,7 @@ glmnet_tune &amp;lt;- tune::tune_grid(glmnet_workflow,
                          resamples = resamples, 
                          control = control_grid(save_pred = TRUE), 
                          grid = glmnet_grid)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;And code to tune a &lt;code&gt;ranger&lt;/code&gt; Random Forest model, tuning the &lt;code&gt;mtry&lt;/code&gt; and &lt;code&gt;min_n&lt;/code&gt; parameters.&lt;/p&gt;
+&lt;p&gt;And code to tune a &lt;code&gt;ranger&lt;/code&gt; Random Forest model, tuning the &lt;code&gt;mtry&lt;/code&gt; and &lt;code&gt;min_n&lt;/code&gt; parameters&lt;a href=&#34;#fn25&#34; class=&#34;footnote-ref&#34; id=&#34;fnref25&#34;&gt;&lt;sup&gt;25&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rand_mod &amp;lt;- parsnip::rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %&amp;gt;% 
   set_engine(&amp;quot;ranger&amp;quot;) %&amp;gt;% 
   set_mode(&amp;quot;regression&amp;quot;)
@@ -437,6 +437,7 @@ This is a fairly obscure feature in {slider}, but I love it. Don’t want the cu
 &lt;li id=&#34;fn22&#34;&gt;&lt;p&gt;There is no baseline performance for Rsquared because the metric itself is based off amount of variance that is explained compared to the baseline (i.e. the mean).&lt;a href=&#34;#fnref22&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn23&#34;&gt;&lt;p&gt;You would likely iterate on the model building process (e.g. perform exploratory data analysis, review outliers in initial models, etc.) and eventually get to a final set of models to evaluate on the test set.&lt;a href=&#34;#fnref23&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;Our number of observations is realtively high compared to the number of features, so there is a good chance we will have relatively low penalties.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;This was taking a &lt;em&gt;long&lt;/em&gt; time and is part of why I decided to move the tuned examples to teh &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;.&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
