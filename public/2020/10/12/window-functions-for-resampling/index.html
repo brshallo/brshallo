@@ -66,7 +66,7 @@
 
   <article class="article">
     
-    <span class="article-duration">13 min read</span>
+    <span class="article-duration">14 min read</span>
     
 
     <h1 class="article-title">Feature Engineering with Sliding Windows and Lagged Inputs</h1>
@@ -324,9 +324,46 @@ null_workflow_rs &lt;- workflow() %&gt;%
 <div id="model-evaluation" class="section level1">
 <h1>Model Evaluation</h1>
 <p>The next several code chunks extract the <em>average</em> performance across “assessment” sets of samples or extract the performance across each of the individual “assessment” sets.</p>
+<pre class="r"><code>mod_types &lt;- list(&quot;lm&quot;, &quot;rf&quot;, &quot;null&quot;)
+
+avg_perf &lt;- map(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs), 
+                collect_metrics) %&gt;% 
+  map2(mod_types, ~mutate(.x, source = .y)) %&gt;% 
+  bind_rows()</code></pre>
+<pre class="r"><code>extract_splits_metrics &lt;- function(rs_obj, name){
+  
+  rs_obj %&gt;% 
+    select(id, .metrics) %&gt;% 
+    unnest(.metrics) %&gt;% 
+    mutate(source = name)
+}
+
+splits_perf &lt;- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs), 
+     mod_types, 
+     extract_splits_metrics) %&gt;% 
+  bind_rows()</code></pre>
 <p>The overall performance as well as the performance within splits suggests that both models were better than the baseline (the mean within the analysis set)<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a> and that the linear model outperformed the random forest model.</p>
+<pre class="r"><code>splits_perf %&gt;% 
+  mutate(id = forcats::fct_rev(id)) %&gt;% 
+  ggplot(aes(x = .estimate, y = id, colour = source))+
+  geom_vline(aes(xintercept = mean, colour = source), 
+           alpha = 0.5,
+           data = avg_perf)+
+  geom_point()+
+  facet_wrap(~.metric, scales = &quot;free_x&quot;)+
+  xlim(c(0, NA))+
+  theme_bw()+
+  labs(caption = &quot;Vertical lines are average performance as captured by `collect_metrics()`&quot;)</code></pre>
 <p><img src="/post/2020-10-12-window-functions-for-resampling_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>We could use a paired sample t-test to provide a formally compare the random forest and linear models out-of-sample RMSE performance.</p>
+<p>We could use a paired sample t-test to formally compare the random forest and linear models out-of-sample RMSE performance.</p>
+<pre class="r"><code>t.test(
+  filter(splits_perf, source == &quot;lm&quot;, .metric == &quot;rmse&quot;) %&gt;% pull(.estimate),
+  filter(splits_perf, source == &quot;rf&quot;, .metric == &quot;rmse&quot;) %&gt;% pull(.estimate),
+  paired = TRUE
+) %&gt;% 
+  broom::tidy() %&gt;% 
+  mutate(across(where(is.numeric), round, 4)) %&gt;% 
+  knitr::kable()</code></pre>
 <table>
 <thead>
 <tr class="header">

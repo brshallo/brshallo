@@ -261,9 +261,46 @@ null_workflow_rs &amp;lt;- workflow() %&amp;gt;%
 &lt;div id=&#34;model-evaluation&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Model Evaluation&lt;/h1&gt;
 &lt;p&gt;The next several code chunks extract the &lt;em&gt;average&lt;/em&gt; performance across “assessment” sets of samples or extract the performance across each of the individual “assessment” sets.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mod_types &amp;lt;- list(&amp;quot;lm&amp;quot;, &amp;quot;rf&amp;quot;, &amp;quot;null&amp;quot;)
+
+avg_perf &amp;lt;- map(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs), 
+                collect_metrics) %&amp;gt;% 
+  map2(mod_types, ~mutate(.x, source = .y)) %&amp;gt;% 
+  bind_rows()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;extract_splits_metrics &amp;lt;- function(rs_obj, name){
+  
+  rs_obj %&amp;gt;% 
+    select(id, .metrics) %&amp;gt;% 
+    unnest(.metrics) %&amp;gt;% 
+    mutate(source = name)
+}
+
+splits_perf &amp;lt;- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs), 
+     mod_types, 
+     extract_splits_metrics) %&amp;gt;% 
+  bind_rows()&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The overall performance as well as the performance within splits suggests that both models were better than the baseline (the mean within the analysis set)&lt;a href=&#34;#fn22&#34; class=&#34;footnote-ref&#34; id=&#34;fnref22&#34;&gt;&lt;sup&gt;22&lt;/sup&gt;&lt;/a&gt; and that the linear model outperformed the random forest model.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;splits_perf %&amp;gt;% 
+  mutate(id = forcats::fct_rev(id)) %&amp;gt;% 
+  ggplot(aes(x = .estimate, y = id, colour = source))+
+  geom_vline(aes(xintercept = mean, colour = source), 
+           alpha = 0.5,
+           data = avg_perf)+
+  geom_point()+
+  facet_wrap(~.metric, scales = &amp;quot;free_x&amp;quot;)+
+  xlim(c(0, NA))+
+  theme_bw()+
+  labs(caption = &amp;quot;Vertical lines are average performance as captured by `collect_metrics()`&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-10-12-window-functions-for-resampling_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;We could use a paired sample t-test to provide a formally compare the random forest and linear models out-of-sample RMSE performance.&lt;/p&gt;
+&lt;p&gt;We could use a paired sample t-test to formally compare the random forest and linear models out-of-sample RMSE performance.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;t.test(
+  filter(splits_perf, source == &amp;quot;lm&amp;quot;, .metric == &amp;quot;rmse&amp;quot;) %&amp;gt;% pull(.estimate),
+  filter(splits_perf, source == &amp;quot;rf&amp;quot;, .metric == &amp;quot;rmse&amp;quot;) %&amp;gt;% pull(.estimate),
+  paired = TRUE
+) %&amp;gt;% 
+  broom::tidy() %&amp;gt;% 
+  mutate(across(where(is.numeric), round, 4)) %&amp;gt;% 
+  knitr::kable()&lt;/code&gt;&lt;/pre&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr class=&#34;header&#34;&gt;

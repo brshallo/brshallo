@@ -285,7 +285,7 @@ See code in [Model Building with Hyperparameter Tuning] for more sophisticated e
 
 The next several code chunks extract the *average* performance across "assessment" sets of samples or extract the performance across each of the individual "assessment" sets.
 
-```{r collect-overall-performance, echo = FALSE}
+```{r collect-overall-performance}
 mod_types <- list("lm", "rf", "null")
 
 avg_perf <- map(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs), 
@@ -294,7 +294,7 @@ avg_perf <- map(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs),
   bind_rows()
 ```
 
-```{r extract-performance-each-split, echo = FALSE}
+```{r extract-performance-each-split}
 extract_splits_metrics <- function(rs_obj, name){
   
   rs_obj %>% 
@@ -311,7 +311,7 @@ splits_perf <- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs),
 
 The overall performance as well as the performance within splits suggests that both models were better than the baseline (the mean within the analysis set)^[There is no baseline performance for Rsquared because the metric itself is based off amount of variance that is explained compared to the baseline (i.e. the mean).] and that the linear model outperformed the random forest model.
 
-```{r, echo = FALSE}
+```{r}
 splits_perf %>% 
   mutate(id = forcats::fct_rev(id)) %>% 
   ggplot(aes(x = .estimate, y = id, colour = source))+
@@ -325,9 +325,9 @@ splits_perf %>%
   labs(caption = "Vertical lines are average performance as captured by `collect_metrics()`")
 ```
 
-We could use a paired sample t-test to provide a formally compare the random forest and linear models out-of-sample RMSE performance.
+We could use a paired sample t-test to formally compare the random forest and linear models out-of-sample RMSE performance.
 
-```{r, echo = FALSE}
+```{r}
 t.test(
   filter(splits_perf, source == "lm", .metric == "rmse") %>% pull(.estimate),
   filter(splits_perf, source == "rf", .metric == "rmse") %>% pull(.estimate),
