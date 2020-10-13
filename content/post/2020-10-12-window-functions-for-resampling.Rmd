@@ -1,29 +1,49 @@
 ---
-title: Window Functions for Resampling
+title: Feature Engineering with Sliding Windows and Lagged Inputs
 author: Bryan Shalloway
 date: '2020-10-12'
 slug: window-functions-for-resampling
-categories: []
-tags: []
 ---
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, message = FALSE, warning = FALSE)
 ```
 
-I'm excited about the addition of the `sliding_*()`[^2] functions to the [rsample](https://github.com/tidymodels/rsample) package^[See [#168](https://github.com/tidymodels/rsample/pull/168) and NEWS for [0.0.8](https://github.com/tidymodels/rsample/blob/master/NEWS.md).]. These additions bring the windowing approaches used in [slider](https://github.com/DavisVaughan/slider) to the sampling procedures used in [tidymodels]()^[Previously users would have needed to use `rsample::rolling_origin()`.] framework, thereby making evaluation of models with time-based features easier. 
+The new `rsample::sliding_*()` functions bring the windowing approaches used in [slider](https://github.com/DavisVaughan/slider) to the sampling procedures used in the [tidymodels](https://github.com/tidymodels) framework[^2]. These functions make evaluation of models with time-dependent variables easier^[Previously users would have needed to use `rsample::rolling_origin()`.].
+
+For some problems you may want to take a traditional regression or classification based approach^[As opposed to a more specialized time-series modeling approach.], while still accounting for date/time-sensitive components of your data. In this post I will use the `tidymodels` suite of packages to:
+
+* build lag based and non-lag based features 
+* set-up appropriate time series cross-validation windows 
+* evaluate performance of linear regression and random forest models on a regression problem
+
+[^2]: These were  announced with version [0.0.8](https://github.com/tidymodels/rsample/blob/master/NEWS.md).The help pages for `rsample` (as well as the `slider` package) are helpful resources for understanding the three types of sliding you can use, briefly these are:
+    
+    * `sliding_window()`: only takes into account order / position of dates
+    * `sliding_index()`: slide according to an index
+    * `sliding_period()`: slide according to an index and set k split points based on period (and other function arguments)
+    
+    `rsample::sliding_index()` and `rsample::sliding_period()` are maybe the most useful additions as they allow you to do resampling based on a date/time index. For `sliding_index()`, you usually want to make use of the `step` argument (otherwise it defaults to having a split for every observation). 
+    
+    I found `rsample::sliding_period()` easier to get acquantied with`than rsample::sliding_index()`. However within the `slider` package I found `slider::sliding_index()` easier to use than `slider::sliding_period()`. Perhaps this makes sense as when setting sampling windows you are usually trying to return an object with far fewer rows, that is, collapsed to k number of rows (unless you are doing Leave-One-Out cross-validation). On the other hand, the `slider` package is often used in a `mutate()` step where you often want to output the same number of observations as are inputted. Perhaps then it is unsurprising the different scenarios when the `index` vs `period` approach feels more intuitive.
+
+For my example I will use data from Wake County food inspections and will try to predict the `SCORE` for upcoming restaurant food inspections.
+
+# Load data
+
+You can use Wake County's open API (does not require a login/account) and the [httr](https://github.com/r-lib/httr) and [jsonlite](https://github.com/jeroen/jsonlite) packages to load in the data. You can also download the data directly from their [website](https://data.wakegov.com/datasets/1b08c4eb32f44a198277c418b71b3a48_2).
 
 ```{r load-in-packages}
 library(tidyverse)
 library(lubridate)
 library(httr)
 library(jsonlite)
+library(tidymodels)
 ```
 
-For a brief example, I will use data from Wake County food inspections. I load the data into R using Wake County's open API (does not require a login/account) and the [httr](https://github.com/r-lib/httr) and [jsonlite](https://github.com/jeroen/jsonlite) packages. You could also download the data directly from their [website](https://data.wakegov.com/datasets/1b08c4eb32f44a198277c418b71b3a48_2).
-
-```{r load-in-data}
+*Get food inspections data:*
+```{r load-data-inspections}
 r_insp <- GET("https://opendata.arcgis.com/datasets/ebe3ae7f76954fad81411612d7c4fb17_1.geojson")
 
 inspections <- content(r_insp, "text") %>% 
@@ -33,243 +53,347 @@ inspections <- content(r_insp, "text") %>%
   as_tibble()
 
 inspections_clean <- inspections %>% 
-  mutate(DATE = ymd_hms(DATE_) %>% as.Date()) %>% 
-  select(-c(DATE_, DESCRIPTION)) %>% 
-  filter(SCORE > 50, TYPE == "Inspection") %>% 
-  print()
+  mutate(date = ymd_hms(DATE_) %>% as.Date()) %>% 
+  select(-c(DATE_, DESCRIPTION, OBJECTID))
 ```
 
-We'll say that we only care about the most recent 5 years of data.
-```{r}
-inspections_clean <- inspections_clean %>% 
-  filter(DATE >= (max(DATE) - years(5)))
+*Get food locations data:*
+```{r load-data-restaurants}
+r_rest <- GET("https://opendata.arcgis.com/datasets/124c2187da8c41c59bde04fa67eb2872_0.geojson") #json
+
+restauraunts <- content(r_rest, "text") %>% 
+  fromJSON() %>% 
+  .$features %>%
+  .$properties %>% 
+  as_tibble() %>% 
+  select(-OBJECTID)
+
+restauraunts <- restauraunts %>% 
+  mutate(RESTAURANTOPENDATE = ymd_hms(RESTAURANTOPENDATE) %>% as.Date())
 ```
 
-Fields of interest:
+*Further prep:*
 
-`SCORE`: Food inspection score
-`HSISID`: Restaurant ID
-`INSPECTOR`: Who is doing the inspection
+* Join the `inspections` and `restaurants` datasets^[There is also "violations" dataset available, which may have additional useful features, but which I will ignore for this example.]
+* Filter out extreme outliers in `SCORE` (likely data entry errors) 
+* Filter to only locations of `TYPE` restaurant^[For this example I'm pretending that we only care about predicting `SCORE` for restaurants... as opposed to food trucks or other entities that may receive inspections.]
+* It's important to consider which fields should be excluded for ethical reasons. For our problem, we will say that any restaurant name or location information must be excluded^[In some cases you may need to be more careful than this and exclude information that are proxies for inappropriate fields as well. For example, pretend that the `INSPECTOR`s are assigned based on region. In this case, `INSPECTOR` would be a proxy for geographic information and perhaps warranting exclusion as well (in certain cases).].
 
-Let's pretend we want to predict the inspection `SCORE` that a restaurant (i.e. `HSISID`) will get on it's upcoming inspection. An obvious predictor would be to consider what the restaurant's most recent `SCORE` was^[You typically want to do feature engineering *after* splitting your data (and likely using the `recipes` package). However time-based features should actually be done prior to data splitting, as discussed in this github [issue](https://github.com/tidymodels/rsample/pull/168).].
+```{r join-data-restaurants-inspections}
+inspections_restaurants <- inspections_clean %>% 
+  left_join(restauraunts, by = c("HSISID", "PERMITID")) %>% 
+  filter(SCORE > 50, FACILITYTYPE == "Restaurant") %>% 
+  select(-c(FACILITYTYPE, PERMITID)) %>% 
+  select(-c(NAME, contains("ADDRESS"), CITY, STATE, POSTALCODE, PHONENUMBER, X, Y, GEOCODESTATUS))
+```
 
 ```{r}
-inspections_prep <- inspections_clean %>% 
+inspections_restaurants %>% 
+  glimpse()
+```
+
+# Feature Engineering & Data Splits
+
+Discussion on issue [#168](https://github.com/tidymodels/rsample/pull/168) suggests that some features (those depending on prior observations) should be created before the data is split^[Into training / testing sets or analysis / assessment sets.]. The first and last sub-sections of this post:
+
+* [Lag Based Features (use `dplyr` or similar)] 
+* [Other Features (use `recipes`)]
+
+provide examples of the types of features that should be created either before or after splitting your data. Lag-based features can, in some ways, be thought of as 'raw inputs' as they should be created prior to a `recipes` step^[As discussed by Davis Vaughn at the end of this [gist](https://gist.github.com/DavisVaughan/433dbdceb439c9be30ddcc78d836450d).].
+
+## Lag Based Features (use `dplyr` or similar)
+
+Lag based features should generally be computed prior to splitting your data into "training" / "testing" (or "analysis" / "assessment"[^4]) sets. This is because calculation of these features may depend on observations in prior splits^[It is important that these features be created in a way that does not cause data leakage.]. Let's build a few features where this is the case:
+
+* Prior `SCORE` for `HSISID`
+* Average of prior 3 years of `SCORE` for `HSISISD`
+* Overall recent prior average `SCORE`
+* Days since `RESTAURANTOPENDATE`
+* Days since last inspection `date`
+
+```{r time-based-features}
+data_time_feats <- inspections_restaurants %>% 
+  arrange(date) %>% 
+  mutate(SCORE_yr_overall = slider::slide_index_dbl(SCORE, 
+                                                    .i = date, 
+                                                    .f = mean, 
+                                                    na.rm = TRUE, 
+                                                    .before = lubridate::days(365), 
+                                                    .after = -lubridate::days(1))
+         ) %>% 
   group_by(HSISID) %>% 
-  mutate(SCORE_lag = lag(SCORE)) %>% 
+  mutate(SCORE_lag = lag(SCORE),
+         SCORE_recent = slider::slide_index_dbl(SCORE, 
+                                                date, 
+                                                mean, 
+                                                na.rm = TRUE, 
+                                                .before = lubridate::days(365*3), 
+                                                .after = -lubridate::days(1), 
+                                                .complete = FALSE),
+         days_since_open = (date - RESTAURANTOPENDATE) / ddays(1),
+         days_since_last = (date - lag(date)) / ddays(1)) %>% 
   ungroup() %>% 
-  arrange(DATE)
+  arrange(date)
 ```
 
-We'll pretend the model is only intended to be used on restaurants that have had at least one prior inspection within the last 5 years^[Hence is not set-up to be used for new restaurants.].
+The use of `.after = -lubridate::days(1)` prevents data leakage by ensuring that this feature does not include information from the current day in its calculation^[Which would not be available at the time of prediction.] [^5].
 
-```{r}
-inspections_prep <- inspections_prep %>% 
-  filter(!is.na(SCORE_lag))
+[^5]: I'm a fan of the ability to use negative values in the `.after` argument:
+    
+    <blockquote class="twitter-tweet"><p lang="en" dir="ltr">This is a fairly obscure feature in {slider}, but I love it. Don’t want the current day in your rolling window? Set a negative `.after` value to shift the end of the window backwards. For example:<br><br>On day 5<br>.before = days(3)<br>.after = -days(1)<br><br>Includes days:<br>[2, 4] <a href="https://t.co/rG0IGuTj1c">https://t.co/rG0IGuTj1c</a></p>&mdash; Davis Vaughan (@dvaughan32) <a href="https://twitter.com/dvaughan32/status/1233116713010573312?ref_src=twsrc%5Etfw">February 27, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+## Data Splits
+
+**Some Filters:**
+
+We will presume that the model is only intended for restaurants that have previous inspections on record^[If I did not make this assumption, I would need to impute the time based features at this point.] and will use only the most recent five years of data.
+
+```{r filter-data}
+data_time_feats <- data_time_feats %>% 
+  filter(date >= (max(date) - years(5)), !is.na(SCORE_lag))
 ```
 
-We should use time-series cross validation[^1] to evaluate our model. Ideally, our resampling scheme used for model evaluation mirrors how the model will be built and evaluated in production. For example, imagine we plan on updating the model once a month -- then it makes sense to use assessment sets that each contain a month of data. We can use `rsample::sliding_period()` to set this up^[I'm not worrying about a training / testing split... point of post is to focus on analysis / assessment sets in cross-validation.].
+**Initial Split:**
 
-[^1]: Two helpful resources on time series cross-validation:
+After creating our lag based features, we can split our data into training and testing splits.
+
+```{r initial-split}
+initial_split <- rsample::initial_time_split(data_time_feats, prop = .8)
+train <- rsample::training(initial_split)
+test <- rsample::testing(initial_split)
+```
+ 
+**Resampling (Time Series Cross-Validation):**
+
+For this problem we should evaluate our models using time series cross-validation[^1]. This entails creating multiple ordered subsets of the training data where each set has a different assignment of observations into "analysis" or "assessment" data[^4]. 
+
+Ideally the resampling scheme used for model evaluation mirrors how the model will be built and evaluated in production. For example, if the production model will be updated once every three months it makes sense that the "assessment" set be this length. We can use `rsample::sliding_period()` to set this up.
+
+[^4]: An "Analysis" / "Assessment" split is similar to a "training" / "testing" split but within the training dataset (and typically multiple of these are created on the same training dataset). See section 3.4 of [Feature Engineering and Selection...](http://www.feat.engineering/resampling.html) for further explanation.]
+
+[^1]: Two helpful resources for understanding time series cross-validation:
     
     1. From [uber engineering](https://eng.uber.com/forecasting-introduction/) 
     1. From [Forecasting Principles and Practices](https://otexts.com/fpp3/tscv.html)
 
-For this example, we'll say we'll use 36 months of training data for each split, and then one month of data for evaluation.
+For each set, we will use three years of "analysis" data for training and then three months of "assessment" data for evaluation.
 
-```{r}
-resamples <- rsample::sliding_period(inspections_prep, index = DATE, period = "month", lookback = 36)
+```{r resampling-splits}
+resamples <- rsample::sliding_period(train, 
+                                     index = date, 
+                                     period = "month", 
+                                     lookback = 36, 
+                                     assess_stop = 3)
 ```
 
-I made some functions you can find here: ___ as helpers for reviewing the dates covered within your resampling scheme.
+I will load in some functions I made to review our resampling windows[^6].
 
-```{r}
-extract_dates_rsplit <- function(rsplit_object, date_col_name = "DATE"){
-  an_obj <- analysis(rsplit_object)
-  as_obj <- assessment(rsplit_object)
-  
-  tibble(an_min = min(an_obj[[date_col_name]]),
-         an_max = max(an_obj[[date_col_name]]),
-         as_min = min(as_obj[[date_col_name]]),
-         as_max = max(as_obj[[date_col_name]])
-  )
-}
+[^6]: I've tweeted previously about helper functions for reviewing your resampling scheme:
+    
+    <blockquote class="twitter-tweet"><p lang="en" dir="ltr">❤️new `rsample::sliding_*()` funs by <a href="https://twitter.com/dvaughan32?ref_src=twsrc%5Etfw">@dvaughan32</a>. It can take a minute to check that all arguments are set correctly. Here are helper funs I&#39;ve used to check that my resampling windows are constructed as intended: <a href="https://t.co/HhSjuRzAsB">https://t.co/HhSjuRzAsB</a> may make into an <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> <a href="https://twitter.com/hashtag/shiny?src=hash&amp;ref_src=twsrc%5Etfw">#shiny</a> dashboard. <a href="https://t.co/sNloHfkh4a">pic.twitter.com/sNloHfkh4a</a></p>&mdash; Bryan Shalloway (@brshallo) <a href="https://twitter.com/brshallo/status/1314720234373287937?ref_src=twsrc%5Etfw">October 10, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-extract_dates_rsplit <- function(rsplit_object, date_col_name = "DATE"){
-  an_obj <- analysis(rsplit_object)
-  as_obj <- assessment(rsplit_object)
-  
-  tibble(an_min = min(an_obj[[date_col_name]]),
-         an_max = max(an_obj[[date_col_name]]),
-         as_min = min(as_obj[[date_col_name]]),
-         as_max = max(as_obj[[date_col_name]])
-  )
-}
+```{r check-resampling-splits}
+devtools::source_gist("https://gist.github.com/brshallo/7d180bde932628a151a4d935ffa586a5")
 
-extract_dates_rset <- function(rset_object, date_col_name = "DATE"){
-  rset_object %>% 
-    mutate(dates = map(splits, extract_dates_rsplit, date_col_name = date_col_name)) %>% 
-    unnest(dates)
-}
-
-resamples %>% 
-  extract_dates_rsplit() %>% 
-  print()
-
+resamples  %>% 
+  extract_dates_rset() %>% 
+  print() %>% 
+  plot_dates_rset()
 ```
 
-We can then use other tidymodels tools to build and train a model.
+For purposes of [Model Evaluation], performance across each period will be weighted equally when reviewing overall performance (regardless of number of observations in a period)^[Note that using `rsample::sliding_period()` is likely to produce different numbers of observations between splits.] ^[It could also make sense to weight performance metrics by number of observations. One way to do this, would be to use a control function to extract the predictions, and then evaluate the performance across the predictions. In my examples below I do keep the predictions, but end-up not making use of them...].
+
+## Other Features (use `recipes`)
+
+Where possible, features should be created using the [recipes](https://github.com/tidymodels/recipes) package^[For each split, this will then build the features for the assessment set based on each analysis set.] (i.e. those that do not depend on lagged values). `recipes` makes pre-processing convenient and helps prevent data leakage into the assessment set.
+
+*Some features / transformations I'll make with `recipes`:*
+
+Note that it is OK to modify or transform a previously created lag-based feature in a `recipes` step, as assuming you created the raw input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues^[Although I just do a simple `step_log()` transform here, more sophisticated steps would also be kosher, e.g. `step_pca()`.].
+
+* collapse rare values for `INSPECTOR` and `TYPE`
+* log transform `days_since_open` and `days_since_last`
+* add calendar based features
+
+```{r make-recipes}
+rec_general <- recipes::recipe(SCORE ~ ., data = train) %>% 
+  step_rm(RESTAURANTOPENDATE) %>% 
+  update_role(HSISID, new_role = "ID") %>% 
+  step_other(INSPECTOR, TYPE, threshold = 50) %>% 
+  step_string2factor(one_of("TYPE", "INSPECTOR")) %>%
+  step_novel(one_of("TYPE", "INSPECTOR")) %>%
+  step_log(days_since_open, days_since_last) %>% 
+  step_date(date, features = c("dow", "month")) %>% 
+  update_role(date, new_role = "ID") %>% 
+  step_zv(all_predictors())
+```
+
+Let's peak at what these features will look look like:
+
+```{r}
+prep(rec_general, data = train) %>% 
+  juice() %>% 
+  glimpse()
+```
+
+# Model Specification
+
+**Simple linear regression model:**
+```{r}
+lm_mod <- parsnip::linear_reg() %>% 
+  set_engine("lm") %>% 
+  set_mode("regression")
+
+lm_workflow_rs <- workflows::workflow() %>% 
+  add_model(lm_mod) %>% 
+  add_recipe(rec_general) %>% 
+  fit_resamples(resamples,
+                control = control_resamples(save_pred = TRUE))
+```
+
+**`ranger` Random Forest model using default hyper-parameter values:**
+```{r}
+rand_mod <- parsnip::rand_forest() %>% 
+  set_engine("ranger") %>% 
+  set_mode("regression")
+  
+set.seed(1234)
+rf_workflow_rs <- workflow() %>% 
+  add_model(rand_mod) %>% 
+  add_recipe(rec_general) %>% 
+  fit_resamples(resamples,
+                control = control_resamples(save_pred = TRUE))
+```
+
+**A `parsnip::null_model`:**
+
+The NULL model will be helpful as a baseline Root Mean Square Error (RMSE) comparison.
+```{r}
+null_mod <- parsnip::null_model(mode = "regression") %>% 
+  set_engine("parsnip")
+
+null_workflow_rs <- workflow() %>% 
+  add_model(null_mod) %>% 
+  add_formula(SCORE ~ NULL) %>%
+  fit_resamples(resamples,
+                control = control_resamples(save_pred = TRUE))
+```
+
+See code in [Model Building with Hyperparameter Tuning] for more sophisticated examples that include hyperparameter tuning for `glmnet`^[Our number of observations is realtively high compared to the number of features, so there is a good chance we will have relatively low penalties. While working interactively, I did not see any substantive difference in performance.] and `ranger` models.
+
+# Model Evaluation
+
+The next several code chunks extract the *average* performance across "assessment" sets of samples or extract the performance across each of the individual "assessment" sets.
+
+```{r collect-overall-performance, echo = FALSE}
+mod_types <- list("lm", "rf", "null")
+
+avg_perf <- map(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs), 
+                collect_metrics) %>% 
+  map2(mod_types, ~mutate(.x, source = .y)) %>% 
+  bind_rows()
+```
+
+```{r extract-performance-each-split, echo = FALSE}
+extract_splits_metrics <- function(rs_obj, name){
+  
+  rs_obj %>% 
+    select(id, .metrics) %>% 
+    unnest(.metrics) %>% 
+    mutate(source = name)
+}
+
+splits_perf <- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs), 
+     mod_types, 
+     extract_splits_metrics) %>% 
+  bind_rows()
+```
+
+The overall performance as well as the performance within splits suggests that both models were better than the baseline (the mean within the analysis set)^[There is no baseline performance for Rsquared because the metric itself is based off amount of variance that is explained compared to the baseline (i.e. the mean).] and that the linear model outperformed the random forest model.
+
+```{r, echo = FALSE}
+splits_perf %>% 
+  mutate(id = forcats::fct_rev(id)) %>% 
+  ggplot(aes(x = .estimate, y = id, colour = source))+
+  geom_vline(aes(xintercept = mean, colour = source), 
+           alpha = 0.5,
+           data = avg_perf)+
+  geom_point()+
+  facet_wrap(~.metric, scales = "free_x")+
+  xlim(c(0, NA))+
+  theme_bw()+
+  labs(caption = "Vertical lines are average performance as captured by `collect_metrics()`")
+```
+
+We could use a paired sample t-test to provide a formally compare the random forest and linear models out-of-sample RMSE performance.
+
+```{r, echo = FALSE}
+t.test(
+  filter(splits_perf, source == "lm", .metric == "rmse") %>% pull(.estimate),
+  filter(splits_perf, source == "rf", .metric == "rmse") %>% pull(.estimate),
+  paired = TRUE
+) %>% 
+  broom::tidy() %>% 
+  mutate(across(where(is.numeric), round, 4)) %>% 
+  knitr::kable()
+```
+
+This suggests the better performance by the linear model *is* statistically significant.
+
+**Other potential steps:**
+
+There is lots more we could do from here^[You would likely iterate on the model building process (e.g. perform exploratory data analysis, review outliers in initial models, etc.) and eventually get to a final set of models to evaluate on the test set.]. However the purpose of this post was to provide a short `tidymodels` example that incorporated some of the sliding functions in `rsample` and `slider`. For more resources on modeling and the `tidymodels` framework, see [tidymodels.org](https://www.tidymodels.org/), [Tidy Modeling with R](https://www.tmwr.org/) or check-out the [Resources] section in the [Appendix].
 
 # Appendix
 
-Some features we might try:
+## Model Building with Hyperparameter Tuning
 
-* What was the HSISID's most recent score?
-* What was the average HSISID score over the last several years?
-* What is the trend of inspection scores?
-* What is the average score of the inspector?
-* What is the type of the restaurant?
-* How long has the restaurant been open for?
-* Who is the inspector?
+Below is code for tuning a `glmnet` linear regression model (use `tune` to optimize the L1/L2 penalty)^[Our number of observations is realtively high compared to the number of features, so there is a good chance we will have relatively low penalties.].
 
-# Resources
+```{r, eval = FALSE}
+rec_glmnet <- rec_general %>% 
+  step_dummy(all_predictors(), -all_numeric()) %>%
+  step_normalize(all_predictors(), -all_nominal()) %>% 
+  step_zv(all_predictors())
 
-Link on doing regressions in slider: 
+glmnet_mod <- parsnip::linear_reg(penalty = tune(), mixture = tune()) %>% 
+  set_engine("glmnet") %>% 
+  set_mode("regression")
 
-https://twitter.com/dvaughan32/status/1247270052782637056?s=20
+glmnet_workflow <- workflow::workflow() %>% 
+  add_model(glmnet_mod) %>% 
+  add_recipe(rec_glmnet)
 
-Rstudio presentation at Rstudio:
+glmnet_grid <- tidyr::crossing(penalty = 10^seq(-6, -1, length.out = 20), mixture = c(0.05, 
+    0.2, 0.4, 0.6, 0.8, 1))
 
-https://rstudio.com/resources/rstudioconf-2020/sliding-windows-and-calendars-davis-vaughan/
-
-## Examples
-
-`sliding_window()` and `sliding_period()` are likely the most helpful additions as they allow you to do resampling based on a date/time index.
-
-[^2]: The help pages for `rsample` (as well as the `slider` package) are helpful resources for understanding the three types of sliding you can use, briefly these are
-    
-    * `sliding_window()`: only takes into account order / position of dates
-    * `sliding_index()`: slide according to an index
-    * `sliding_period()`: slide according to an index and specified period
-
-For now it seems that `rsample::sliding_period()` is easier to use as `period` helps to set-up reasonable defaults.
-
-An important difference between `rsample::sliding_index()` and `rsample::sliding_period()` is that `rsample::sliding_period()` defaults to return the number of splits that the period length would fit in, whereas `rsample::sliding_index()` defaults to have a period length of one day (if using a Date format), so you need to use the`step` argument to increment between splits. It seems like `rsample::sliding_index()` is still in-progress as it does not yet support the `period` argument, which would make it more similar to `slider::slide_index()` which allows inputs like "2 weeks". Instead the values for `lookup`, `assess_start`, `assess_stop` 
-
-for `sliding_index()` you need to specify how many steps you want to move ahead between splits (default is one) by using the `step` argument. `sliding_period()` on the otherhand automatically figures out the step length between splits (based on the specified period). 
-
-```{r}
-library(rsample)
-
-# Starting on the 6th rather than the 1st, because is the start of the week, so makes examples easier
-df_test <- tibble(x = 1:364, DATE = ymd(20171228) + days(0:363))
-
-df_test <- tibble(DATE = ymd(20171228) + days(0:(363*30))) %>% 
-  mutate(x = row_number())
-
-# df_test <- mutate(df_test, DATE = tsibble::yearmonth(DATE))
-
-sampling_test <- rsample::sliding_period(df_test, index = DATE, period = "week", lookback = 4, every = 2)
-
-sampling_test <- rsample::sliding_index(df_test, index = DATE, lookback = 27, assess_start = 1, assess_stop = 28, step = 28)
-
-sampling_test <- rsample::sliding_index(df_test, index = DATE, lookback = "2 weeks")
-
-sampling_test <- rsample::sliding_period(df_test, index = DATE, period = "month", lookback = 36, assess_stop = 3)
-
+glmnet_tune <- tune::tune_grid(glmnet_workflow, 
+                         resamples = resamples, 
+                         control = control_grid(save_pred = TRUE), 
+                         grid = glmnet_grid)
 ```
 
-To concretely understand how this split our data up, let's review what our min and max date values are for each of our `rsplit` values.
-
-```{r}
-extract_dates_rsplit <- function(rsplit_object, date_col_name = "DATE"){
-  an_obj <- analysis(rsplit_object)
-  as_obj <- assessment(rsplit_object)
+And code to tune a `ranger` Random Forest model, tuning the `mtry` and `min_n` parameters.
+```{r, eval = FALSE}
+rand_mod <- parsnip::rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %>% 
+  set_engine("ranger") %>% 
+  set_mode("regression")
   
-  tibble(an_min = min(an_obj[[date_col_name]]),
-         an_max = max(an_obj[[date_col_name]]),
-         as_min = min(as_obj[[date_col_name]]),
-         as_max = max(as_obj[[date_col_name]])
-  )
-}
+rf_workflow <- workflow() %>% 
+  add_model(rand_mod) %>% 
+  add_recipe(rec_general)
 
-extract_dates_rset <- function(rset_object, date_col_name = "DATE"){
-  rset_object %>% 
-    mutate(dates = map(splits, extract_dates_rsplit, date_col_name = date_col_name)) %>% 
-    unnest(dates)
-}
+cores <- parallel::detectCores()
 
-plot_dates_rset <- function(rset_object_with_dates){
-
-  rset_object_with_dates %>% 
-    select(-one_of("splits")) %>%
-    pivot_longer(cols = where(is.Date),
-                 names_to = "type",
-                 values_to = "date") %>% 
-    separate(type, c("data_type", "range_type"), "_") %>% 
-    ggplot(aes(y = fct_rev(id), x = date, colour = fct_rev(data_type)))+
-    geom_line()+
-    theme_bw()+
-    theme(legend.position = "none",
-          axis.title.x = element_blank(),
-          axis.title.y = element_blank())
-}
-
-
-sampling_dates <- sampling_test %>% 
-  mutate(dates = map(splits, extract_dates_rsplit)) %>% 
-  unnest(dates) %>% 
-  print()
-
-sampling_dates %>% 
-  select(-c(1:2)) %>% 
-  mutate_all(wday)
-
-
-resamples %>% 
-  extract_dates_rset() %>% 
-  select(-one_of("splits")) %>%
-  pivot_longer(cols = where(is.Date),
-               names_to = "type",
-               values_to = "date") %>% 
-  separate(type, c("data_type", "range_type"), "_") %>% 
-  ggplot(aes(y = fct_rev(id), x = date, colour = fct_rev(data_type)))+
-  geom_line()+
-  theme_bw()+
-  theme(legend.position = "none",
-        axis.title.x = element_blank(),
-        axis.title.y = element_blank())
+set.seed(1234)
+rf_tune <- tune_grid(rf_workflow, 
+                         resamples = resamples, 
+                         control = control_grid(save_pred = TRUE), 
+                         grid = 25)
 ```
 
+## Resources
 
-```{r}
-extract_dates_rsplit <- function(rsplit_object, date_col = "DATE"){
-  an_obj <- analysis(rsplit_object)
-  as_obj <- assessment(rsplit_object)
-  
-  tibble(an_min = min(an_obj[[date_col]]),
-         an_max = max(an_obj[[date_col]]),
-         as_min = min(as_obj[[date_col]]),
-         as_max = max(as_obj[[date_col]])
-  )
-}
-
-sampling_dates <- sampling_test %>% 
-  mutate(dates = map(splits, extract_dates_rsplit)) %>% 
-  unnest(dates) %>% 
-  print()
-
-sampling_dates %>% 
-  select(-c(1:2)) %>% 
-  mutate_all(wday)
-
-sampling_dates %>% 
-  select(-splits) %>%
-  pivot_longer(cols = where(is.Date),
-               names_to = "type",
-               values_to = "date") %>% 
-  separate(type, c("data_type", "range_type"), "_") %>% 
-  ggplot(aes(y = fct_rev(id), x = date, colour = fct_rev(data_type)))+
-  geom_line()+
-  theme_bw()
-```
+* Link on doing regressions in slider: https://twitter.com/dvaughan32/status/1247270052782637056?s=20
+* Rstudio lightning talk on `slider`: https://rstudio.com/resources/rstudioconf-2020/sliding-windows-and-calendars-davis-vaughan/
+* `modeltime` package that applies `tidymodels` suite to time series and forecasting problems: https://business-science.github.io/modeltime/ (business-science course has more fully developed training materials on this topic as well)
