@@ -8,7 +8,27 @@
   </url>
   
   <url>
+    <loc>/categories/</loc>
+    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/data-science/</loc>
+    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/2020/10/12/window-functions-for-resampling/</loc>
+    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/httr/</loc>
+    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/jsonlite/</loc>
     <lastmod>2020-10-12T00:00:00+00:00</lastmod>
   </url>
   
@@ -18,12 +38,37 @@
   </url>
   
   <url>
-    <loc>/2020/09/11/compromise-between-the-electoral-college-and-a-national-popular-vote/</loc>
-    <lastmod>2020-09-11T00:00:00+00:00</lastmod>
+    <loc>/categories/programming/</loc>
+    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/</loc>
+    <loc>/tags/rstats/</loc>
+    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/rstats/</loc>
+    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/tidymodels/</loc>
+    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/tidyverse/</loc>
+    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2020/09/11/compromise-between-the-electoral-college-and-a-national-popular-vote/</loc>
     <lastmod>2020-09-11T00:00:00+00:00</lastmod>
   </url>
   
@@ -49,11 +94,6 @@
   
   <url>
     <loc>/tags/popular-vote/</loc>
-    <lastmod>2020-09-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/</loc>
     <lastmod>2020-09-11T00:00:00+00:00</lastmod>
   </url>
   
@@ -84,11 +124,6 @@
   
   <url>
     <loc>/categories/pricing/</loc>
-    <lastmod>2020-08-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/rstats/</loc>
     <lastmod>2020-08-17T00:00:00+00:00</lastmod>
   </url>
   
@@ -133,27 +168,12 @@
   </url>
   
   <url>
-    <loc>/categories/programming/</loc>
-    <lastmod>2020-06-25T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/rstats/</loc>
-    <lastmod>2020-06-25T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/2020/06/25/using-across-to-build-functions-with-dplyr-with-notes-on-legacy-approaches/</loc>
     <lastmod>2020-06-25T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/tags/reproducibility/</loc>
-    <lastmod>2020-06-24T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/tidyverse/</loc>
     <lastmod>2020-06-24T00:00:00+00:00</lastmod>
   </url>
   

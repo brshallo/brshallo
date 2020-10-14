@@ -2,6 +2,16 @@
 title: Feature Engineering with Sliding Windows and Lagged Inputs
 author: Bryan Shalloway
 date: '2020-10-12'
+categories:
+  - rstats
+  - programming
+  - data science
+tags:
+  - rstats
+  - tidyverse
+  - tidymodels
+  - httr
+  - jsonlite
 slug: window-functions-for-resampling
 ---
 
@@ -209,7 +219,7 @@ For purposes of overall [Model Evaluation], performance across each period will 
 
 Where possible, features should be created using the [recipes](https://github.com/tidymodels/recipes) package^[For each split, this will then build the features for the assessment set based on each analysis set.]. `recipes` makes pre-processing convenient and helps prevent data leakage.
 
-It is OK to modify or transform a previously created lag based feature in a `recipes` step. Assuming that you created the lag based input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues when modifying the variables during later feature engineering steps^[Although I just do a simple `step_log()` transform below, more sophisticated steps on lag based inputs would also be kosher, e.g. `step_pca()`.].
+It is OK to modify or transform a previously created lag based feature in a `recipes` step. Assuming that you created the lag based input as well as your resampling windows in an appropriate manner, you should be safe from data leakage issues when modifying the variables during later feature engineering steps^[Although I just do a simple `step_log()` transform below, more sophisticated steps on lag based inputs would also be kosher, e.g. `step_pca()`. However there is a good argument that many of these should be done prior to a `recipes` step. For example, say you have missing values for some of the lag based inputs -- in that case it may make sense to use a lag based method for imputation, which may work better than say a mean imputation using the training set. So, like many things, just be thoughtful and constantly ask youself what will be the ideal method while *being careful* that, to the question of "will this data be available prior to the prediction?" that you can answer in the affirmitive.].
 
 *Some features / transformations I'll make with `recipes`:*
 
