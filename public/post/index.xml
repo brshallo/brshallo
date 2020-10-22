@@ -1622,12 +1622,12 @@ df_lists_comb_as &amp;lt;- df_lists_comb %&amp;gt;%
 &lt;h1&gt;Functionalize&lt;/h1&gt;
 &lt;p&gt;I put these steps into a few (unpolished) functions found at &lt;a href=&#34;https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1&#34;&gt;this gist&lt;/a&gt;&lt;a href=&#34;#fn20&#34; class=&#34;footnote-ref&#34; id=&#34;fnref20&#34;&gt;&lt;sup&gt;20&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::source_gist(&amp;quot;https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;code&gt;operations_combinations()&lt;/code&gt; takes in your dataframe, the set of numeric columns to create pairwise combinations from, and a list of functions&lt;a href=&#34;#fn21&#34; class=&#34;footnote-ref&#34; id=&#34;fnref21&#34;&gt;&lt;sup&gt;21&lt;/sup&gt;&lt;/a&gt; to apply.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;mutate_pairwise()&lt;/code&gt; takes in your dataframe, the set of numeric columns to create pairwise combinations from, and a list of functions&lt;a href=&#34;#fn21&#34; class=&#34;footnote-ref&#34; id=&#34;fnref21&#34;&gt;&lt;sup&gt;21&lt;/sup&gt;&lt;/a&gt; to apply.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;example-creating-evaluating-features&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Example creating &amp;amp; evaluating features&lt;/h1&gt;
-&lt;p&gt;Let’s use the new &lt;code&gt;operations_combinations()&lt;/code&gt; function to create new columns for the differences and quotients between all pairwise combinations of our variables of interest.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ames_data_features_example &amp;lt;- operations_combinations(
+&lt;p&gt;Let’s use the new &lt;code&gt;mutate_pairwise()&lt;/code&gt; function to create new columns for the differences and quotients between all pairwise combinations of our variables of interest.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ames_data_features_example &amp;lt;- mutate_pairwise(
   df = mutate_if(ames, is.numeric, as.double),
   one_of(ames_cols),
   funs = list(&amp;quot;/&amp;quot;, &amp;quot;-&amp;quot;),
@@ -1774,6 +1774,14 @@ Tidy Pairwise Operations {&lt;a href=&#34;https://t.co/mI5r2e5ttN&#34;&gt;https:
 Will add &lt;code&gt;widyr&lt;/code&gt; to my set of tools for tidy pairwise operations: &lt;a href=&#34;https://t.co/NSxNC3nehK&#34;&gt;https://t.co/NSxNC3nehK&lt;/a&gt; !&lt;br&gt;&lt;br&gt;Seems to overlap some w/ tidymodels, eg &lt;code&gt;corrr&lt;/code&gt;📦 (&lt;a href=&#34;https://twitter.com/thisisdaryn?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@thisisdaryn&lt;/span&gt;&lt;/a&gt; ) or could imagine widely_kmeans() as a &lt;code&gt;recipe&lt;/code&gt;/&lt;code&gt;embed&lt;/code&gt; step…&lt;a href=&#34;https://twitter.com/drob?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@drob&lt;/span&gt;&lt;/a&gt; any tips on when/how you use these in combination? &lt;a href=&#34;https://t.co/dAsJtNW7Vo&#34;&gt;https://t.co/dAsJtNW7Vo&lt;/a&gt;
 &lt;/p&gt;
 — Bryan Shalloway (&lt;span class=&#34;citation&#34;&gt;@brshallo&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/brshallo/status/1313966803488583686?ref_src=twsrc%5Etfw&#34;&gt;October 7, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;p&gt;&lt;em&gt;Tweet with more efficient approach (for case when just combining multiple columns and returning output of equal number of rows):&lt;/em&gt;&lt;/p&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+How you can use &lt;code&gt;dplyr::mutate()&lt;/code&gt; to return a dataframe consisting of all combinations of arbitrary pairwise operations across a selection of columns: &lt;a href=&#34;https://t.co/RxwtbmWqap&#34;&gt;https://t.co/RxwtbmWqap&lt;/a&gt; &lt;a href=&#34;https://twitter.com/hashtag/rstats?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#rstats&lt;/a&gt; &lt;a href=&#34;https://twitter.com/hashtag/tidyverse?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#tidyverse&lt;/a&gt; … &lt;a href=&#34;https://t.co/UpJw0pGPUd&#34;&gt;pic.twitter.com/UpJw0pGPUd&lt;/a&gt;
+&lt;/p&gt;
+— Bryan Shalloway (&lt;span class=&#34;citation&#34;&gt;@brshallo&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/brshallo/status/1316851879658356736?ref_src=twsrc%5Etfw&#34;&gt;October 15, 2020&lt;/a&gt;
 &lt;/blockquote&gt;
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 &lt;/div&gt;
