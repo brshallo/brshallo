@@ -1,0 +1,45 @@
+---
+title: Should you use an assignment / exercise as part of your hiring process for
+  a Data Scientist?
+author: Bryan Shalloway
+date: '2020-10-27'
+categories:
+  - business
+  - hiring
+tags:
+  - business
+slug: should-you-use-an-assignment-or-exercise-as-part-of-your-hiring-process-for-a-data-scientist
+---
+
+A version of this question was asked on my alumni Slack channel. There were some excellent points brought up by those answering the question in the negative, including that…
+
+* the practice is exploitative (or at least inconsiderate) of the interviewee’s time.
+* it is not useful for the interviewing team (as the questions / scenarios are often so contrived as to be useless towards evaluating candidates’ future job performance)^[This applies to almost every part of an application process; it’s about where you can gather small pieces of useful information at minimal time / expense.].
+* doing so will turn-off candidates or many of them will simply not complete the activity. Hence the damage done to your applicant pool will be greater than the value you gain from additional information on your existing applicants[^1].
+
+[^1]: However, candidates who remain (and invest their time completing the exercise) may be more likely to accept an offer (falling to some extent for the sunk cost fallacy). Though this reasoning is dubious ethically and should be avoided in decision making.
+
+I think each of these points is (at least to some extent) true. However I answered the question in the positive. I pasted my answer below (making minor edits for clarity) ^[Note that while I have participated in the hiring of a few data science roles I am by no means *seasoned* in hiring data scientists.]. 
+
+-------------
+
+>I'm in favor of using an activity as part of the hiring process for data scientists (at least in part). Though I believe they should be used more for evaluating the hard skills (compared to others who preferred using them for evaluating soft skills) and more as a pass / fail exercise. 
+>
+>I think they are best given as an intermediate step in the application process (e.g. after an initial interview or phone screen). They can serve as a useful filter of if the applicant has some baseline technical competencies / skills you view as prerequisites for the role.
+>
+>I agree with others regarding the importance of being straight forward regarding what candidates will be expected to do in the activity ahead of time. We send an email beforehand that spells out *explicitly* what they will be asked to do several days before the activity (e.g. “You will be asked to use a statistical test to measure the relationship between two variables,” "You will be asked to join data between tables," etc)[^2].
+
+[^2]: RTI has some good examples of data science activities on their github: [RTI exercise 1](https://github.com/rtidatascience/data-scientist-exercise01), [RTI exercise 2](https://github.com/rtidatascience/data-scientist-exercise02).
+
+>In contrast to those who were opposed to the idea of giving a limited time to complete the activity, I actually think setting rigid time constraints is helpful for several reasons:
+>
+>* It prevents the "who has more free time" problem from influencing results.
+>* It also prevents candidates from spending a bunch of time on the task unnecessarily. 
+>
+>We evaluate the task more from the lens of being primarily a pass / fail activity (so just being fast and over achieving on the the activity doesn't get a ton of extra credit). We let the candidates pick their date / time and then expect them to submit within the timeframe.
+>
+>We've shortened the number of questions we ask. Making it as short as possible is considerate to the applicant^[and, depending on the questions, may save the team time in evaluation]. As an example, we may give three hours with the hope that a skilled (highly focused) candidate could complete it in 1 - 1.5 hours. We do not pay candidates for their time completing the exercise. We do provide feedback on the activity (usually either as part of the interview process or immediately afterwards -- including to applicants that ‘fail’ the activity). 
+>
+>We have (usually) used presentations as part of the interview process as well (which are often extensions upon the technical activity), though I'm more ambivalent on the usefulness of these in terms of how well they differentiate candidates. Preparing for a presentation also means asking the candidates to invest substantially more time.
+>
+>Hiring is a highly noisy activity^[particularly in a ‘hot’ field like data science where a lot of people are transitioning into it] with lots of risks for substitution errors and other biases. You're probably not going to know who the "ideal candidate" is (even if you convince yourself that you do). What you (hopefully) can do is set some broadly useful (and ethical) filters that give you a good pool to select from^[and that provides some latitude for constructing a diverse team that fits well together]. For this I think a (relatively) short, well constructed technical activity can be helpful. However, for any individual position you also have to hope you get lucky…

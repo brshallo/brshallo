@@ -6,7 +6,55 @@
     <description>Recent content on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 12 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 27 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Should you use an assignment / exercise as part of your hiring process for a Data Scientist?</title>
+      <link>/2020/10/27/should-you-use-an-assignment-or-exercise-as-part-of-your-hiring-process-for-a-data-scientist/</link>
+      <pubDate>Tue, 27 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/10/27/should-you-use-an-assignment-or-exercise-as-part-of-your-hiring-process-for-a-data-scientist/</guid>
+      <description>
+
+
+&lt;p&gt;A version of this question was asked on my alumni Slack channel. There were some excellent points brought up by those answering the question in the negative, including that…&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the practice is exploitative (or at least inconsiderate) of the interviewee’s time.&lt;/li&gt;
+&lt;li&gt;it is not useful for the interviewing team (as the questions / scenarios are often so contrived as to be useless towards evaluating candidates’ future job performance)&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;doing so will turn-off candidates or many of them will simply not complete the activity. Hence the damage done to your applicant pool will be greater than the value you gain from additional information on your existing applicants&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I think each of these points is (at least to some extent) true. However I answered the question in the positive. I pasted my answer below (making minor edits for clarity) &lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;blockquote&gt;
+&lt;p&gt;I’m in favor of using an activity as part of the hiring process for data scientists (at least in part). Though I believe they should be used more for evaluating the hard skills (compared to others who preferred using them for evaluating soft skills) and more as a pass / fail exercise.&lt;/p&gt;
+&lt;p&gt;I think they are best given as an intermediate step in the application process (e.g. after an initial interview or phone screen). They can serve as a useful filter of if the applicant has some baseline technical competencies / skills you view as prerequisites for the role.&lt;/p&gt;
+&lt;p&gt;I agree with others regarding the importance of being straight forward regarding what candidates will be expected to do in the activity ahead of time. We send an email beforehand that spells out &lt;em&gt;explicitly&lt;/em&gt; what they will be asked to do several days before the activity (e.g. “You will be asked to use a statistical test to measure the relationship between two variables,” “You will be asked to join data between tables,” etc)&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In contrast to those who were opposed to the idea of giving a limited time to complete the activity, I actually think setting rigid time constraints is helpful for several reasons:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It prevents the “who has more free time” problem from influencing results.&lt;/li&gt;
+&lt;li&gt;It also prevents candidates from spending a bunch of time on the task unnecessarily.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We evaluate the task more from the lens of being primarily a pass / fail activity (so just being fast and over achieving on the the activity doesn’t get a ton of extra credit). We let the candidates pick their date / time and then expect them to submit within the timeframe.&lt;/p&gt;
+&lt;p&gt;We’ve shortened the number of questions we ask. Making it as short as possible is considerate to the applicant&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;. As an example, we may give three hours with the hope that a skilled (highly focused) candidate could complete it in 1 - 1.5 hours. We do not pay candidates for their time completing the exercise. We do provide feedback on the activity (usually either as part of the interview process or immediately afterwards – including to applicants that ‘fail’ the activity).&lt;/p&gt;
+&lt;p&gt;We have (usually) used presentations as part of the interview process as well (which are often extensions upon the technical activity), though I’m more ambivalent on the usefulness of these in terms of how well they differentiate candidates. Preparing for a presentation also means asking the candidates to invest substantially more time.&lt;/p&gt;
+&lt;p&gt;Hiring is a highly noisy activity&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt; with lots of risks for substitution errors and other biases. You’re probably not going to know who the “ideal candidate” is (even if you convince yourself that you do). What you (hopefully) can do is set some broadly useful (and ethical) filters that give you a good pool to select from&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;. For this I think a (relatively) short, well constructed technical activity can be helpful. However, for any individual position you also have to hope you get lucky…&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;This applies to almost every part of an application process; it’s about where you can gather small pieces of useful information at minimal time / expense.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;However, candidates who remain (and invest their time completing the exercise) may be more likely to accept an offer (falling to some extent for the sunk cost fallacy). Though this reasoning is dubious ethically and should be avoided in decision making.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Note that while I have participated in the hiring of a few data science roles I am by no means &lt;em&gt;seasoned&lt;/em&gt; in hiring data scientists.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;RTI has some good examples of data science activities on their github: &lt;a href=&#34;https://github.com/rtidatascience/data-scientist-exercise01&#34;&gt;RTI exercise 1&lt;/a&gt;, &lt;a href=&#34;https://github.com/rtidatascience/data-scientist-exercise02&#34;&gt;RTI exercise 2&lt;/a&gt;.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;and, depending on the questions, may save the team time in evaluation&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;particularly in a ‘hot’ field like data science where a lot of people are transitioning into it&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;and that provides some latitude for constructing a diverse team that fits well together&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
     <item>
       <title>Feature Engineering with Sliding Windows and Lagged Inputs</title>
       <link>/2020/10/12/window-functions-for-resampling/</link>
