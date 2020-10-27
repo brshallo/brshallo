@@ -1,6 +1,5 @@
 ---
-title: Should you use an assignment / exercise as part of your hiring process for
-  a Data Scientist?
+title: Should You Use an Assignment as Part of Your Hiring Process for a Data Scientist?
 author: Bryan Shalloway
 date: '2020-10-27'
 categories:
@@ -9,6 +8,7 @@ categories:
 tags:
   - business
 slug: should-you-use-an-assignment-or-exercise-as-part-of-your-hiring-process-for-a-data-scientist
+thumbnail: https://images.unsplash.com/photo-1543286386-713bdd548da4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80
 ---
 
 A version of this question was asked on my alumni Slack channel. There were some excellent points brought up by those answering the question in the negative, including that…
@@ -40,6 +40,6 @@ I think each of these points is in some cases true. However I answered the quest
 >
 >We've shortened the number of questions we ask. Making it as short as possible is considerate to the applicant^[and, depending on the questions, may save the team time in evaluation]. As an example, we may give three hours with the hope that a skilled (highly focused) candidate could complete it in 1 - 1.5 hours. We do not pay candidates for their time completing the exercise. We do provide feedback on the activity (usually either as part of the interview process or immediately afterwards -- including to applicants that ‘fail’ the activity). 
 >
->We have (usually) used presentations as part of the interview process as well (which are often extensions upon the technical activity), though I'm more ambivalent on the usefulness of these in terms of how well they differentiate candidates. Preparing for a presentation also means asking the candidates to invest substantially more time.
+>We have (often) used presentations as part of the interview process as well (which are typically extensions upon the technical activity). I'm more ambivalent on the usefulness of these in terms of how clearly they differentiate candidates. Preparing for a presentation also means asking the candidates to invest substantially more time.
 >
 >Hiring is a highly noisy activity^[particularly in a ‘hot’ field like data science where a lot of people are transitioning into it] with lots of risks for substitution errors and other biases. You're probably not going to know who the "ideal candidate" is (even if you convince yourself that you do). What you (hopefully) can do is set some broadly useful (and ethical) filters that give you a good pool to select from^[and that provides some latitude for constructing a diverse team that fits well together]. For this I think a (relatively) short, well constructed technical activity can be helpful. However, for any individual position you also have to hope you get lucky…
