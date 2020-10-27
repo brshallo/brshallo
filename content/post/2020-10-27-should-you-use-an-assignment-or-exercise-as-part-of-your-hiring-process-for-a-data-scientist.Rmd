@@ -19,7 +19,7 @@ A version of this question was asked on my alumni Slack channel. There were some
 
 [^1]: However, candidates who remain (and invest their time completing the exercise) may be more likely to accept an offer (falling to some extent for the sunk cost fallacy). Though this reasoning is dubious ethically and should be avoided in decision making.
 
-I think each of these points is (at least to some extent) true. However I answered the question in the positive. I pasted my answer below (making minor edits for clarity) ^[Note that while I have participated in the hiring of a few data science roles I am by no means *seasoned* in hiring data scientists.]. 
+I think each of these points is in some cases true. However I answered the question in the positive. I pasted my answer below (making minor edits for clarity) ^[Note that while I have participated in the hiring of a few data science roles I am by no means *seasoned* in hiring data scientists.]. 
 
 -------------
 
@@ -36,7 +36,7 @@ I think each of these points is (at least to some extent) true. However I answer
 >* It prevents the "who has more free time" problem from influencing results.
 >* It also prevents candidates from spending a bunch of time on the task unnecessarily. 
 >
->We evaluate the task more from the lens of being primarily a pass / fail activity (so just being fast and over achieving on the the activity doesn't get a ton of extra credit). We let the candidates pick their date / time and then expect them to submit within the timeframe.
+>We evaluate the task more from the lens of being primarily a pass / fail activity (so just being fast and over achieving on the the activity doesn't get a ton of extra credit). We let the candidates pick their date / time to receive the assignment and then expect them to complete (and submit their work) within the timeframe.
 >
 >We've shortened the number of questions we ask. Making it as short as possible is considerate to the applicant^[and, depending on the questions, may save the team time in evaluation]. As an example, we may give three hours with the hope that a skilled (highly focused) candidate could complete it in 1 - 1.5 hours. We do not pay candidates for their time completing the exercise. We do provide feedback on the activity (usually either as part of the interview process or immediately afterwards -- including to applicants that ‘fail’ the activity). 
 >
