@@ -8,54 +8,49 @@
     <language>en-us</language>
     <lastBuildDate>Thu, 29 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/psychology/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Idea For Casino Games Where The Player Almost Always Win</title>
+      <title>Casino Games Where the House Almost Always Loses... but Still Wins</title>
       <link>/2020/10/29/idea-for-casino-games-where-the-player-almost-always-win/</link>
       <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/10/29/idea-for-casino-games-where-the-player-almost-always-win/</guid>
       <description>
 
-&lt;div id=&#34;TOC&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#implications-for-gambling&#34;&gt;Implications For Gambling&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
 
-&lt;p&gt;I have been coleading an internal study group going on Pricing Strategy. We just finished week 4 of a Coursera course &lt;a href=&#34;https://www.coursera.org/learn/uva-darden-bcg-pricing-strategy-customer-value/home/week/4&#34;&gt;Customer Value in Pricing Strategy&lt;/a&gt; devoted entirely to the various conditions under which people behave ‘irrationally’&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt; and how/when to use these conditions&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt; to demand a higher price on your product. While going through the materials I had an idea for a new casino game.&lt;/p&gt;
-&lt;p&gt;There are a few psychological phenomena from the course that are important primers:&lt;/p&gt;
+&lt;p&gt;I have been coleading an internal study group on Pricing Strategy. We just finished week four of &lt;a href=&#34;https://www.coursera.org/learn/uva-darden-bcg-pricing-strategy-customer-value/home/week/4&#34;&gt;Customer Value in Pricing Strategy&lt;/a&gt;. The material in this section is devoted almost entirely to the various conditions under which people behave ‘irrationally’&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt; and how / when a firm can manipulate the psychology of customers so as to demand a higher price on their products. The material is rife with ethical dilemmas, setting these aside, the materials gave me an idea for a new spin on casino games.&lt;/p&gt;
+&lt;p&gt;There are a few psychological phenomena from the course that are important primers (all images below are screenshotted from the course materials).&lt;/p&gt;
 &lt;p&gt;I. People tend to be &lt;em&gt;risk seeking&lt;/em&gt; when facing &lt;strong&gt;losses&lt;/strong&gt; but &lt;em&gt;risk averse&lt;/em&gt; when facing &lt;strong&gt;gains&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;The example they give in the course is that faced with the scenario below (where each option has the same expected value), people will tend to go for the sure thing to gain the $50.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Image of risk seeking&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;An example in the course is that faced with the scenario below, people will tend to go for the sure thing to gain $50 rather than the chance at gaining $100 (even though each option has the same expected value).&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-29-idea-for-casino-games-where-the-player-almost-always-win_files/gain-example.PNG&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;However in the case of facing a loss, they will tend to prefer testing their chances and taking the riskier option of a 50% chance of losing $100.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# image of risk avoiding&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-29-idea-for-casino-games-where-the-player-almost-always-win_files/loss-example.PNG&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Another psychological phenomena described is:&lt;/p&gt;
 &lt;ol start=&#34;2&#34; style=&#34;list-style-type: upper-roman&#34;&gt;
-&lt;li&gt;People tend to prefer &lt;em&gt;disaggregated&lt;/em&gt; gains but &lt;em&gt;aggregated&lt;/em&gt; losses&lt;/li&gt;
+&lt;li&gt;People tend to prefer &lt;em&gt;disaggregated&lt;/em&gt; &lt;strong&gt;gains&lt;/strong&gt; but &lt;em&gt;aggregated&lt;/em&gt; &lt;strong&gt;losses&lt;/strong&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;People prefer multiple small good things happening to them over just a single good thing occurring (even if the total value of events is equal). For example, people will prefer winning two small scratch cards over winning a single large scratch card:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# example scratch card&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;However people prefer taking bad events in aggregated forms. For example they prefer receiving one large bill over receiving multiple smaller bills:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# example bills&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Even though the value of these events is equal&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-29-idea-for-casino-games-where-the-player-almost-always-win_files/aggregated-gains.PNG&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;However people prefer taking losses in aggregated forms. As described in the course, they prefer receiving one large bill over receiving multiple smaller bills:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-29-idea-for-casino-games-where-the-player-almost-always-win_files/aggregated-loss.PNG&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Even though the value of these events is equal&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;div id=&#34;implications-for-gambling&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Implications For Gambling&lt;/h1&gt;
-&lt;p&gt;Casinos are master psychological manipulators. However many lotteries, slots, and other games run counter to these particular phenomena. They offer repeated gauranteed initial losses (the quarter you put into the machine, the scratch ticket you buy from the counter, etc.) for the chance at a large payoff (winning the jackpot)&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;I thought an interesting set-up for a game would be one that flipped this and made the player &lt;em&gt;very&lt;/em&gt; likely to win a small amount each time they played but that always carried the risk of a single large loss&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;As an example, imagine a roullette-like wheel numbered from 1 to 30. You are instructed to pick a number and as long as you &lt;em&gt;don’t&lt;/em&gt; land on the selected number, you win $5 but if you &lt;em&gt;do&lt;/em&gt; land on it you lose $150&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;. This particular game and bet would yield the casino an expected value of a little under 17 cents&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;. It also yields the player an expected 30 wins in a row&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;. The advert for the game might focus on the idea of “Tempting Fate.”&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;You might course mix and match the ideas of a ‘big loss’ and a ‘big win’. Carrying on from the previous example the board (numbered 1:30) could be set-up where the player picks a big win spot ($150 gain), two big losing spots ($150 loss for either), and the rest all result in small wins ($5), the expected value for the casino is now $0.50.&lt;/p&gt;
-&lt;p&gt;There are a variety of forms this game could take (it doesn’t have to be a roullette-like wheel) the novel phenomena is to focus on ensuring players get repeated small wins while having them pay their losses in one-off large chunks.&lt;/p&gt;
+&lt;p&gt;Many lotteries, slots, and other forms of gambling run counter to these particular phenomena. They offer repeated gauranteed initial losses (the quarter you put into the machine, the scratch ticket you buy from the counter, etc.) for the chance at a large payoff (winning the jackpot)&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I thought an interesting set-up for a game would be one that flipped this and made the player &lt;em&gt;very&lt;/em&gt; likely to win a small amount each time they played but that always carried the risk of a single large loss&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;As an example, imagine a roullette-like wheel numbered from 1 to 30. You are instructed to pick a number. As long as you &lt;em&gt;don’t&lt;/em&gt; land on that number you will win $5. If you &lt;em&gt;do&lt;/em&gt; land on it you will lose $150&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;. This particular game and bet would yield the casino an expected value of a little under 17 cents&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;. It also yields the player an expected 30 wins in a row&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt; (this may be a little too high&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;). The advert for the game might focus on the idea of “Tempting Fate&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt;.”&lt;/p&gt;
+&lt;p&gt;You might mix and match the ideas of a ‘big loss’ and a ‘big win’. Carrying on from the previous example the board (numbered 1:30) could be set-up where the player picks a big win spot ($150 gain), two big losing spots ($150 loss for either), and the rest all result in small wins ($5), the expected value for the casino is now $0.50.&lt;/p&gt;
+&lt;p&gt;There are a variety of forms this game could take (it doesn’t have to be a roullette-like wheel) the novel phenomena is to focus on ensuring players get repeated small wins while having them pay their losses in one-off large chunks (rather than small incremental payments).&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
 &lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;I am also in the middle of reading Khaneman’s seminal book “Thinking Fast and Slow” which is largely devoted to the topic.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;AKA tricks…&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Please ignore the particularities in the examples and focus on what they are designed to illustrate…&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;These games of course play at other psychological tricks…&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;Picture a group of friends playing credit card roullette at the end of the night.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;or something along those lines for whatever size of bet.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;((5 * 29) - 150 )/ 30) you could of course edit the odds to set things appropriately&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;See &lt;a href=&#34;https://math.stackexchange.com/questions/1119872/on-average-how-many-times-must-i-roll-a-dice-until-i-get-a-6#:~:text=About%2014%20times%20it%20will,100%20and%20get%20%E2%89%886.&#34;&gt;thread&lt;/a&gt; for explanation.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Ignore the particularities in the examples and focus on what they are designed to illustrate…&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Casinos are master psychological manipulators. These games of course play at other psychological tricks… I imagine they’ve considered my ideas below and decided against using them for one reason or another.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;Picture a group of friends playing credit card roullette at the end of the night.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;or something along those lines for whatever size of bet.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;((5 * 29) - 150 )/ 30)&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;See &lt;a href=&#34;https://math.stackexchange.com/questions/1119872/on-average-how-many-times-must-i-roll-a-dice-until-i-get-a-6#:~:text=About%2014%20times%20it%20will,100%20and%20get%20%E2%89%886.&#34;&gt;thread&lt;/a&gt; for explanation.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;you could of course edit the odds to set things appropriately&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;Many casino games could be redesigned in this manner – where you are likely to win but always face the risk of a large loss. You might picture a room in the casino that had an ‘Upside Down’ style feel where all the slots and similar games there were reconstructed accordingly.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://www.thesun.co.uk/wp-content/uploads/2017/11/tmp_6e95hn_8581834aa802f9b6_wv_publicity_post_launch_still_10-0000011.jpg&#34; /&gt;&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
