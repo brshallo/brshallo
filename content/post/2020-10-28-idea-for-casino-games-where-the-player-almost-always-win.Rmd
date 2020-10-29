@@ -66,4 +66,4 @@ You could blend these ideas with other common gaming features. For example, you 
 
 There are a variety of forms this game could be tested in -- it doesn't have to be a roulette-like wheel in a casino (I actually think an app or more gamefied environment may work better[^3]). *The novel feature is ensuring players get repeated high-likelihood small wins while having them pay their losses in one-off large losses (rather than small incremental payments).*
 
-[^3]: As an example imagine a facsimile of a game where you search fantastical caves for treasure -- you usually find small bits, but occasionally stumble upon a pack of dwarves that rob you. If the game points are translatable into money this represents the same thing.
+[^3]: As an example imagine a facsimile of a game where you search fantastical caves for treasure -- you usually find small bits, but occasionally stumble upon a pack of dwarves that rob you. If the game points are translatable into money this represents the same thing. An app environment also helps to divorce the user from the sting of the extreme losses (that come from the design of this type of game).
