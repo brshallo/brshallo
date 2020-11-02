@@ -22,11 +22,6 @@
 
 
 
-
-<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
-
-
-
 <link rel="stylesheet" href="/css/fonts.css" media="all">
 <link rel="stylesheet" href="/css/main.css" media="all">
 
@@ -88,14 +83,14 @@
 </ul></li>
 <li><a href="#how-to-set-assumptions">How to Set Assumptions</a></li>
 <li><a href="#appendix">Appendix</a><ul>
-<li><a href="#trade-offs">Trade-offs</a></li>
 <li><a href="#simple-assumptions">Simple Assumptions</a></li>
+<li><a href="#trade-offs">Trade-offs</a></li>
 </ul></li>
 </ul>
 </div>
 
 <p>If you have a mechanism available for changing behavior, before applying it you should consider the pre-existing distribution and the potential changes you will cause. I will use incentives for sales representatives in pricing as my example in this post.</p>
-<p>For instance, if you have a lever that pushes prices from low to high, using the lever to influence the prices adjacent to the largest parts of the distribution will (likely) make the biggest impact on raising the average price attained. If the ‘natural’ distribution is normal, this means using the lever on the high to medium-high distributions (over applying these at the lowest tail of the distribution).</p>
+<p>For instance, if you have a lever that pushes prices from low to high, using the lever to influence the prices adjacent to the largest parts of the distribution will (likely) make the biggest impact on raising the average price attained. If the ‘natural’ distribution is normal, this means incentives applied near the lower prices (the tail of the distribution) may have the smallest impact.</p>
 <div id="simple-example" class="section level1">
 <h1>Simple Example</h1>
 <p>Imagine you have a product that can be sold anywhere from $100 to $150. Sales reps want to sell for as high of a price as possible and customers want to purchase for as low of a price as possible. In this tension your product ends-up selling, on average, for $125 and follows a truncated normal distribution with standard deviation of $10.</p>
@@ -104,44 +99,67 @@
 <h2>Applying Incentives</h2>
 <p>Executive leadership wants to apply additional incentives on sales reps to keep prices high<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. They task you with setting-up a tiered compensation scheme whereby deals at the top-end of the distribution get a higher compensation rate compared to deals at the bottom end of the distribution.</p>
 <p>Applying such an additional incentive on sales teams has the potential advantage of pushing some proportion of deals to a higher price<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. There are also <a href="#trade-offs">Trade-offs</a> associated with such an initiative (indicated in the <a href="#appendix">Appendix</a>), these will be ignored for the purposes of this exercise.</p>
-<p>Say you decide to set cut-points to split the distribution into quartiles such that sales reps get larger bonuses if their deals fall into a higher quartile.</p>
+<p>Say you decide to set cut-points to split the distribution into quartiles such that sales reps get larger bonuses if their deals fall into higher quartiles.</p>
 <p><img src="/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<p>Applying incentives is likely to lead to a different distribution for future deals. Consider what the relevant factors and assumptions are in influencing the existing distribution. <em>Take a moment to consider what the new distribution will look like after incentives are applied</em>.</p>
+<p>Applying incentives is likely to lead to a different distribution for future deals.</p>
+<p><em>Consider what the relevant factors and assumptions are in influencing the existing distribution. Take a moment to hypotheisze what the new distribution will look like after incentives are applied</em>.</p>
 <p>The resulting distribution is likely to depend on:</p>
 <ol style="list-style-type: decimal">
 <li>The initial (or ‘natural’) distribution of deals.</li>
-<li>What the incentives are and <em>how</em> they influence the distribution of deals.</li>
+<li>What the incentives are and <em>how</em> they influence the distribution.</li>
 <li>How this influence degrades the farther away the ‘natural’ position of a deal is from a potential incentivized cut-point.</li>
 </ol>
-<p>You could paramaterize this problem and model the expected resulting distribution. Making some <a href="#simple-assumptions">Simple Assumptions</a> (described in the <a href="#appendix">Appendix</a>), the chart below shows a potentially resulting distribution.</p>
+<p>You could paramaterize this problem and model the expected distribution. Making some <a href="#simple-assumptions">Simple Assumptions</a> (described in the <a href="#appendix">Appendix</a>), the chart below shows a potentially resulting distribution.</p>
 <p><img src="/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<p>Gray bars below indicate where movement occurred in the original distribution.
+<p>Gray bars below indicate where movement occurred from the original distribution.
 <img src="/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <div id="takeaways-of-resulting-distribution" class="section level3">
 <h3>Takeaways of Resulting Distribution</h3>
 <p>The greatest proportion of deals were moved from orange to yellow and from yellow to green. Red to orange had the lowest rate of conversion.</p>
-<pre><code>## # A tibble: 4 x 2
-##   incentive        proportion_converted
-##   &lt;fct&gt;                           &lt;dbl&gt;
-## 1 red to orange                  0.0677
-## 2 orange to yellow               0.0990
-## 3 yellow to green                0.0951
-## 4 stayed green                  NA</code></pre>
-<p><strong>Incentives Make the Biggest Difference When Nearer to the Largest Part of Your Distribution</strong></p>
-<p>Because these incentives slide deals from lower prices to higher prices, those cut-points that are <em>just above</em> the largest parts of the distribution will likely have the biggest impacts on the post-incentivized distribution. For a normal distribution, such as this one, that means incentives just to the right of the first quartile had the smallest impact.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">incentive</th>
+<th align="right">proportion_converted</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">red to orange</td>
+<td align="right">0.0676885</td>
+</tr>
+<tr class="even">
+<td align="left">orange to yellow</td>
+<td align="right">0.0990266</td>
+</tr>
+<tr class="odd">
+<td align="left">yellow to green</td>
+<td align="right">0.0950903</td>
+</tr>
+<tr class="even">
+<td align="left">stayed green</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Incentives Make the Biggest Difference When Nearer to the Largest Parts of the Distribution</strong></p>
+<p>Because these incentives slide deals from lower prices to higher prices, those cut-points that are <em>just above</em> the largest parts of the distribution have the biggest impacts on the post-incentivized distribution. For a normal distribution, such as this one, that means incentives just to the right of the first quartile have the smallest impact.</p>
 <p><strong>How Many Thresholds</strong></p>
-<p>For many reasonable assumptions<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>, having more thresholds will lead to greater movement upwards in the distribution. A continuous application of incentives (i.e. sales reps get higher compensation for every point they move up on the distribution) can be optimal under certain assumptions as well.</p>
+<p>For many reasonable assumptions<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>, having more thresholds will lead to greater movement upwards in the distribution. A continuous application of incentives (i.e. sales reps get higher compensation for every point they move up on the distribution) can be optimal under certain assumptions as well<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
 <p><strong>Quartiles change</strong></p>
-<p>After applying the incentives, the cut-points for segmenting the distribution into quartiles will change. Given your assumptions, you could forecast where the new quartiles will exist (after applying the incentive) and adjust the bonus thresholds proactively to account for this.</p>
+<p>After applying the incentives, the cut-points for segmenting the distribution into quartiles will change. Given your assumptions, you could forecast where the new quartiles will exist (after applying the incentives) and adjust the bonus thresholds proactively.</p>
+<p>Thresholds for incentives could also be adjusted dynamically. For example based on a rolling average of the quartiles of recent deals (in this approach, you apply initial incentives and then allow them to change dynamically depending on the resulting distribution of deals).</p>
 </div>
 <div id="think-carefully-about-assumptions" class="section level3">
 <h3>Think Carefully About Assumptions</h3>
-<p>They do not need to be <em>perfect</em> to be useful for thinking through the problem but they should lean towards the <em>actual</em> patterns for your example.</p>
+<p>Assumptions do not need to be <em>perfect</em> to be useful for thinking through the problem but they should lean towards the <em>actual</em> patterns in your example.</p>
 <p><strong>The Way Incentives Aggregate Matters</strong></p>
-<p>In this case, we are assuming incentives aggregate in a linear way. This means that five 1 ppt incentives have the same amount of influence as one 5 ppt incentive. It could be that the former is more influential (people prefer many small bonuses) or the latter is more influential (people prefer one large bonuses)<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
+<p>In this case, we are assuming incentives aggregate in a linear way. This means that five 1 ppt incentives have the same amount of influence as one 5 ppt incentive. It could be that the former is more influential (people prefer many small bonuses) or the latter is more influential (people prefer one large bonuses)<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.</p>
 <p>It could also be that there is a ‘correct’ size of incentive and that too small an incentive makes no difference but a large incentive has diminishing returns. If this is the case a logistic function or other ‘S’ shaped function may be more reasonable for modeling the influence of incentives.</p>
-<p><strong>The Way Incentives Degrade Over Distance Away From Incentives Matters</strong></p>
-<p>In this case, we are assuming the influence of an incentive has exponential decay (the influence is decreasing by 25% for every point we move from the cut-point). Hence being only a few points away from a cut-point has a big impact, but the degradation is less with each point we move away.</p>
+<p><strong>The Way Incentives Degrade With Distance From Incentives Matters</strong></p>
+<p>In this case, we are assuming the influence of an incentive exponential decays (the influence decreases by 25% for every point we move from the cut-point). Hence being only a few points away from a cut-point has a big impact, but the degradation is less with each point we move away.</p>
+<p><strong>How Slack is Distributed</strong></p>
+<p>I assumed slack (i.e. the possibility of deals being influenced by incentives) was equally distributed. (It could be that slack is distributed disproportionally towards the lower ends of the distribution for example.)</p>
 </div>
 </div>
 </div>
@@ -150,11 +168,21 @@
 <ol style="list-style-type: decimal">
 <li>Start with what makes sense (e.g. normal distributions are often good starting places)</li>
 <li>Review historical data</li>
-<li>Set-up formal tests (e.g. on random subsets of your sales representatives, see how behavior adjusts as you adjust incentives)</li>
+<li>Set-up formal tests (e.g. create hypotheses and see how behavior adjusts as you change incentives on random subsets of your sales representatives)</li>
 </ol>
 </div>
 <div id="appendix" class="section level1">
 <h1>Appendix</h1>
+<div id="simple-assumptions" class="section level2">
+<h2>Simple Assumptions</h2>
+<p>For this example, we will say the incentives you established are higher compensation rates depending on which quartile the deal falls in. If the deal falls in the lowest quartile they get no increase, in the 2nd quartile they get a 5 percentage point (ppt) increase in pay, the 3rd a 10 ppt increase, the 4th a 15 ppt increase<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>.</p>
+<p><em>For now I’ll pick some overly simple but sensible values for each question:</em></p>
+<ol style="list-style-type: decimal">
+<li><p>As indicated, we are assuming the ‘natural’ distribution of prices is roughly normal</p></li>
+<li><p>We will assume that for every 1 ppt change in incentive that 15% of the deals immediately to the right of the cut-off will be moved up to the cut-off value.</p></li>
+<li><p>We will assume that this influence degrades by 25% for every dollar you move from the cut-point<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>. I am ignoring the possibility of deals jumping more than on level (e.g. deals moving from the 1st quartile to the 3rd quartile)<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p></li>
+</ol>
+</div>
 <div id="trade-offs" class="section level2">
 <h2>Trade-offs</h2>
 <ul>
@@ -171,16 +199,6 @@
 </ul>
 <p><em>Ideally</em> the organization is able to take into account risks and advantages in pricing and set-up incentives that are focused on overall profitability and firm growth (not <em>just</em> in terms of a single factor).</p>
 </div>
-<div id="simple-assumptions" class="section level2">
-<h2>Simple Assumptions</h2>
-<p>For this example, we will say the incentives you established are higher compensation rates depending on which quartile the deal falls in. If the deal falls in the lowest quartile they get no increase, in the 2nd quartile they get a 5 percentage point (ppt) increase in pay, the 3rd a 10 ppt increase, the 4th a 15 ppt increase<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.</p>
-<p><em>For now I’ll pick some overly simple but sensible values for each question:</em></p>
-<ol style="list-style-type: decimal">
-<li><p>As indicated, we are assuming the ‘natural’ distribution of prices is roughly normal</p></li>
-<li><p>We will assume that for every 1 ppt change in incentive that 15% of the deals immediately to the right of the cut-off will be moved up to the cut-off value.</p></li>
-<li><p>We will assume that this influence degrades by 25% for every dollar you move from the cut-point<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. I am ignoring the possibility of deals jumping more than on level (e.g. deals moving from the 1st quartile to the 3rd quartile)<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p></li>
-</ol>
-</div>
 </div>
 <div class="footnotes">
 <hr />
@@ -188,10 +206,11 @@
 <li id="fn1"><p>E.g. to prevent brand erosion, improve margins, etc.<a href="#fnref1" class="footnote-back">↩</a></p></li>
 <li id="fn2"><p>This assumes that there is some slack in the existing deals and that representatives are in a position to correct this and will do so if provided higher incentives.<a href="#fnref2" class="footnote-back">↩</a></p></li>
 <li id="fn3"><p>Key to this assumption is how incentives degrade as you move farther from a cut-point.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>Research into psychological biases suggests the former may be true.<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>You could also construct this such that lower quartiles have negative incentives and higher quartiles have positive incentives.<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>The functions governing these behaviors are almost certainly more sophisticated.<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>Factoring this possibility in would likely lead to incentives at the higher quartiles making a slightly larger impact.<a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>These do not consider potential psychological impacts or difficulty of implementation.<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>Research into psychological biases suggests the former may be true.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>You could also construct this such that lower quartiles have negative incentives and higher quartiles have positive incentives.<a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>The functions governing these behaviors are almost certainly more sophisticated.<a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>Factoring this possibility in would likely lead to incentives at the higher quartiles making a slightly larger impact.<a href="#fnref8" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
 
@@ -239,18 +258,6 @@
 
     </div>
     
-
-
-
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-
-
-
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
-<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
-
-
 
     
 <script src="/js/math-code.js"></script>

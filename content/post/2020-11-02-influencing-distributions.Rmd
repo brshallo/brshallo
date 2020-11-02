@@ -5,6 +5,7 @@ date: '2020-11-02'
 slug: influencing-distributions
 categories: []
 tags: []
+thumbnail: /post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-4-1.png
 ---
 
 ```{r setup, include=FALSE}
@@ -13,7 +14,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 If you have a mechanism available for changing behavior, before applying it you should consider the pre-existing distribution and the potential changes you will cause. I will use incentives for sales representatives in pricing as my example in this post.
 
-For instance, if you have a lever that pushes prices from low to high, using the lever to influence the prices adjacent to the largest parts of the distribution will (likely) make the biggest impact on raising the average price attained. If the 'natural' distribution is normal, this means using the lever on the high to medium-high distributions (over applying these at the lowest tail of the distribution).
+For instance, if you have a lever that pushes prices from low to high, using the lever to influence the prices adjacent to the largest parts of the distribution will (likely) make the biggest impact on raising the average price attained. If the 'natural' distribution is normal, this means incentives applied near the lower prices (the tail of the distribution) may have the smallest impact.
 
 # Simple Example
 
@@ -37,7 +38,7 @@ Executive leadership wants to apply additional incentives on sales reps to keep 
 
 Applying such an additional incentive on sales teams has the potential advantage of pushing some proportion of deals to a higher price^[This assumes that there is some slack in the existing deals and that representatives are in a position to correct this and will do so if provided higher incentives.]. There are also [Trade-offs] associated with such an initiative (indicated in the [Appendix]), these will be ignored for the purposes of this exercise.
 
-Say you decide to set cut-points to split the distribution into quartiles such that sales reps get larger bonuses if their deals fall into a higher quartile.
+Say you decide to set cut-points to split the distribution into quartiles such that sales reps get larger bonuses if their deals fall into higher quartiles.
 
 ```{r}
 data_distribution %>% 
@@ -49,15 +50,17 @@ data_distribution %>%
   scale_fill_discrete(type = c("red", "orange", "yellow", "green"))
 ```
 
-Applying incentives is likely to lead to a different distribution for future deals. Consider what the relevant factors and assumptions are in influencing the existing distribution. *Take a moment to consider what the new distribution will look like after incentives are applied*. 
+Applying incentives is likely to lead to a different distribution for future deals. 
+
+*Consider what the relevant factors and assumptions are in influencing the existing distribution. Take a moment to hypotheisze what the new distribution will look like after incentives are applied*. 
 
 The resulting distribution is likely to depend on:
 
 1. The initial (or 'natural') distribution of deals.
-1. What the incentives are and *how* they influence the distribution of deals. 
+1. What the incentives are and *how* they influence the distribution. 
 1. How this influence degrades the farther away the 'natural' position of a deal is from a potential incentivized cut-point.
 
-You could paramaterize this problem and model the expected resulting distribution. Making some [Simple Assumptions] (described in the [Appendix]), the chart below shows a potentially resulting distribution.
+You could paramaterize this problem and model the expected distribution. Making some [Simple Assumptions] (described in the [Appendix]), the chart below shows a potentially resulting distribution.
 
 ```{r}
 data_distribution <- data_distribution %>% 
@@ -90,7 +93,6 @@ proportion_raised <- function(density, incentive_delta, distance){
 }
 ```
 
-
 ```{r}
 data_distribution %>% 
   mutate(quartile = (cum_dens) %/% 0.2500001 + 1,
@@ -116,7 +118,7 @@ data_distribution %>%
   scale_fill_discrete(type = c("red", "orange", "yellow", "green"))
 ```
 
-Gray bars below indicate where movement occurred in the original distribution.
+Gray bars below indicate where movement occurred from the original distribution.
 ```{r}
 data_distribution %>% 
   mutate(quartile = (cum_dens) %/% 0.2500001 + 1,
@@ -147,24 +149,27 @@ data_distribution %>%
                                incentive == 10 ~ "yellow to green",
                                TRUE ~ "stayed green") %>% fct_inorder()) %>% 
   group_by(incentive) %>% 
-  summarise(proportion_converted = sum(density_convert))
+  summarise(proportion_converted = sum(density_convert)) %>% 
+  knitr::kable()
 ```
 
-**Incentives Make the Biggest Difference When Nearer to the Largest Part of Your Distribution**
+**Incentives Make the Biggest Difference When Nearer to the Largest Parts of the Distribution**
 
-Because these incentives slide deals from lower prices to higher prices, those cut-points that are *just above* the largest parts of the distribution will likely have the biggest impacts on the post-incentivized distribution. For a normal distribution, such as this one, that means incentives just to the right of the first quartile had the smallest impact. 
+Because these incentives slide deals from lower prices to higher prices, those cut-points that are *just above* the largest parts of the distribution have the biggest impacts on the post-incentivized distribution. For a normal distribution, such as this one, that means incentives just to the right of the first quartile have the smallest impact. 
 
 **How Many Thresholds**
 
-For many reasonable assumptions^[Key to this assumption is how incentives degrade as you move farther from a cut-point.], having more thresholds will lead to greater movement upwards in the distribution. A continuous application of incentives (i.e. sales reps get higher compensation for every point they move up on the distribution) can be optimal under certain assumptions as well.
+For many reasonable assumptions^[Key to this assumption is how incentives degrade as you move farther from a cut-point.], having more thresholds will lead to greater movement upwards in the distribution. A continuous application of incentives (i.e. sales reps get higher compensation for every point they move up on the distribution) can be optimal under certain assumptions as well^[These do not consider potential psychological impacts or difficulty of implementation.].
 
 **Quartiles change**
 
-After applying the incentives, the cut-points for segmenting the distribution into quartiles will change. Given your assumptions, you could forecast where the new quartiles will exist (after applying the incentive) and adjust the bonus thresholds proactively to account for this.
+After applying the incentives, the cut-points for segmenting the distribution into quartiles will change. Given your assumptions, you could forecast where the new quartiles will exist (after applying the incentives) and adjust the bonus thresholds proactively. 
+
+Thresholds for incentives could also be adjusted dynamically. For example based on a rolling average of the quartiles of recent deals (in this approach, you apply initial incentives and then allow them to change dynamically depending on the resulting distribution of deals).
 
 ### Think Carefully About Assumptions
 
-They do not need to be *perfect* to be useful for thinking through the problem but they should lean towards the *actual* patterns for your example.
+Assumptions do not need to be *perfect* to be useful for thinking through the problem but they should lean towards the *actual* patterns in your example.
 
 **The Way Incentives Aggregate Matters**
 
@@ -172,28 +177,21 @@ In this case, we are assuming incentives aggregate in a linear way. This means t
 
 It could also be that there is a 'correct' size of incentive and that too small an incentive makes no difference but a large incentive has diminishing returns. If this is the case a logistic function or other 'S' shaped function may be more reasonable for modeling the influence of incentives.
 
-**The Way Incentives Degrade Over Distance Away From Incentives Matters**
+**The Way Incentives Degrade With Distance From Incentives Matters**
 
-In this case, we are assuming the influence of an incentive has exponential decay (the influence is decreasing by 25% for every point we move from the cut-point). Hence being only a few points away from a cut-point has a big impact, but the degradation is less with each point we move away.
+In this case, we are assuming the influence of an incentive exponential decays (the influence decreases by 25% for every point we move from the cut-point). Hence being only a few points away from a cut-point has a big impact, but the degradation is less with each point we move away.
+
+**How Slack is Distributed**
+
+I assumed slack (i.e. the possibility of deals being influenced by incentives) was equally distributed. (It could be that slack is distributed disproportionally towards the lower ends of the distribution for example.)
 
 # How to Set Assumptions
 
 1. Start with what makes sense (e.g. normal distributions are often good starting places)
 2. Review historical data
-3. Set-up formal tests (e.g. on random subsets of your sales representatives, see how behavior adjusts as you adjust incentives)
+3. Set-up formal tests (e.g. create hypotheses and see how behavior adjusts as you change incentives on random subsets of your sales representatives)
 
 # Appendix
-
-## Trade-offs
-
-* A sales rep may have been able to sell more product at a lower price. 
-    * The additional incentive causes some deals (those selling for lower prices) to be passed on because the incentive to close on the deal for reps has been lowered (this may be intentional in that the impact on price erosion of these deals is worth the decrease in sales...). 
-* You may have to pay your sales reps more
-* Applying such incentives may create additional bureaucratic hurdles in closing deals that increase the friction of closing deals, causing some percentage of deals to be lost
-    * It could be that deals don't have slack in them and are already optimal...
-    * Any change in pricing behavior has the risk of upsetting customers or having downstream affects.
-
-*Ideally* the organization is able to take into account risks and advantages in pricing and set-up incentives that are focused on overall profitability and firm growth (not *just* in terms of a single factor).
 
 ## Simple Assumptions
 
@@ -208,3 +206,15 @@ For this example, we will say the incentives you established are higher compensa
 3. We will assume that this influence degrades by 25% for every dollar you move from the cut-point[^1]. I am ignoring the possibility of deals jumping more than on level (e.g. deals moving from the 1st quartile to the 3rd quartile)^[Factoring this possibility in would likely lead to incentives at the higher quartiles making a slightly larger impact.]. 
 
 [^1]: The functions governing these behaviors are almost certainly more sophisticated. 
+
+## Trade-offs
+
+* A sales rep may have been able to sell more product at a lower price. 
+    * The additional incentive causes some deals (those selling for lower prices) to be passed on because the incentive to close on the deal for reps has been lowered (this may be intentional in that the impact on price erosion of these deals is worth the decrease in sales...). 
+* You may have to pay your sales reps more
+* Applying such incentives may create additional bureaucratic hurdles in closing deals that increase the friction of closing deals, causing some percentage of deals to be lost
+    * It could be that deals don't have slack in them and are already optimal...
+    * Any change in pricing behavior has the risk of upsetting customers or having downstream affects.
+
+*Ideally* the organization is able to take into account risks and advantages in pricing and set-up incentives that are focused on overall profitability and firm growth (not *just* in terms of a single factor).
+
