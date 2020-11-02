@@ -50,7 +50,8 @@ data_distribution %>%
   mutate(cum_dens = cumsum(dens_scaled),
          quartile = (cum_dens) %/% 0.2500001 + 1,
          quartile = as.factor(quartile)) %>% 
-  ggplot(aes(x = price, y = dens_scaled, fill = quartile))+
+  rename(initial_quartile = quartile) %>% 
+  ggplot(aes(x = price, y = dens_scaled, fill = initial_quartile))+
   geom_col()+
   scale_fill_discrete(type = c("deeppink", "orange", "yellow2", "royalblue"))+
   ylim(c(0, 0.15))
@@ -120,10 +121,11 @@ data_distribution %>%
   # na's to 0's
   mutate(across(c(density_convert, dens_convert_total), ~ifelse(is.na(.x), 0, .x))) %>% 
   # adjust percentages
-  mutate(dens_adj = dens_scaled - density_convert + dens_convert_total) %>% 
+  mutate(dens_adj = dens_scaled - density_convert + dens_convert_total) %>%
+  rename(initial_quartile = quartile) %>% 
   # graph
   ggplot(aes(x = price))+
-  geom_col(aes(y = dens_adj, fill = quartile))+
+  geom_col(aes(y = dens_adj, fill = initial_quartile))+
   scale_fill_discrete(type = c("deeppink", "orange", "yellow2", "royalblue"))+
   ylim(c(0, 0.15))
 ```
@@ -137,8 +139,9 @@ data_distribution %>%
          price_dist = price_next - price) %>% 
   mutate(density_convert = proportion_raised(dens_scaled, incentive_delta, price_dist)) %>% 
   select(-dens) %>% 
+  rename(initial_quartile = quartile) %>% 
   ggplot(aes(x = price))+
-  geom_col(aes(y = dens_scaled, fill = quartile))+
+  geom_col(aes(y = dens_scaled, fill = initial_quartile))+
   geom_col(aes(y = density_convert), fill = "gray")+
   scale_fill_discrete(type = c("deeppink", "orange", "yellow2", "royalblue"))+
   ylim(c(0, 0.15))
