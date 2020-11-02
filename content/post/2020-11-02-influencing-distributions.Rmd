@@ -1,0 +1,210 @@
+---
+title: Influencing Distributions
+author: Bryan Shalloway
+date: '2020-11-02'
+slug: influencing-distributions
+categories: []
+tags: []
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+If you have a mechanism available for changing behavior, before applying it you should consider the pre-existing distribution and the potential changes you will cause. I will use incentives for sales representatives in pricing as my example in this post.
+
+For instance, if you have a lever that pushes prices from low to high, using the lever to influence the prices adjacent to the largest parts of the distribution will (likely) make the biggest impact on raising the average price attained. If the 'natural' distribution is normal, this means using the lever on the high to medium-high distributions (over applying these at the lowest tail of the distribution).
+
+# Simple Example
+
+Imagine you have a product that can be sold anywhere from \$100 to \$150. Sales reps want to sell for as high of a price as possible and customers want to purchase for as low of a price as possible. In this tension your product ends-up selling, on average, for \$125 and follows a truncated normal distribution with standard deviation of \$10.
+
+```{r}
+library(tidyverse)
+
+data_distribution <- tibble(price = 100:150,
+       dens = dnorm(price, mean = 125, sd = 10)) %>% 
+  mutate(dens_scaled = dens / sum(dens))
+
+data_distribution %>% 
+  ggplot(aes(x = price, y = dens_scaled))+
+  geom_col()
+```
+
+## Applying Incentives
+
+Executive leadership wants to apply additional incentives on sales reps to keep prices high^[E.g. to prevent brand erosion, improve margins, etc.]. They task you with setting-up a tiered compensation scheme whereby deals at the top-end of the distribution get a higher compensation rate compared to deals at the bottom end of the distribution.
+
+Applying such an additional incentive on sales teams has the potential advantage of pushing some proportion of deals to a higher price^[This assumes that there is some slack in the existing deals and that representatives are in a position to correct this and will do so if provided higher incentives.]. There are also [Trade-offs] associated with such an initiative (indicated in the [Appendix]), these will be ignored for the purposes of this exercise.
+
+Say you decide to set cut-points to split the distribution into quartiles such that sales reps get larger bonuses if their deals fall into a higher quartile.
+
+```{r}
+data_distribution %>% 
+  mutate(cum_dens = cumsum(dens_scaled),
+         quartile = (cum_dens) %/% 0.2500001 + 1,
+         quartile = as.factor(quartile)) %>% 
+  ggplot(aes(x = price, y = dens_scaled, fill = quartile))+
+  geom_col()+
+  scale_fill_discrete(type = c("red", "orange", "yellow", "green"))
+```
+
+Applying incentives is likely to lead to a different distribution for future deals. Consider what the relevant factors and assumptions are in influencing the existing distribution. *Take a moment to consider what the new distribution will look like after incentives are applied*. 
+
+The resulting distribution is likely to depend on:
+
+1. The initial (or 'natural') distribution of deals.
+1. What the incentives are and *how* they influence the distribution of deals. 
+1. How this influence degrades the farther away the 'natural' position of a deal is from a potential incentivized cut-point.
+
+You could paramaterize this problem and model the expected resulting distribution. Making some [Simple Assumptions] (described in the [Appendix]), the chart below shows a potentially resulting distribution.
+
+```{r}
+data_distribution <- data_distribution %>% 
+  mutate(cum_dens = cumsum(dens_scaled),
+         incentive = ((cum_dens) %/% 0.2500001) * 5,
+         incentive_delta = ifelse(incentive == 15, 0, 5)) # hard coded
+
+# very inefficient approach computationally
+get_row_bump <- function(price_current){
+  current_incentive <- data_distribution %>% 
+    filter(price == {{price_current}}) %>% 
+    pull(incentive)
+
+  output <- data_distribution %>% 
+    filter(price > {{price_current}}, incentive > current_incentive) %>% 
+    head(1) %>% 
+    pull(price)
+  
+  if(length(output) == 0) output <- NA
+  
+  output
+}
+
+proportion_raised <- function(density, incentive_delta, distance){
+  decay <- 0.75^(distance - 1)
+  incentive <- incentive_delta * 0.15
+  # incentive <- ifelse(incentive > 1, 1, incentive)
+  
+  density * decay * incentive
+}
+```
+
+
+```{r}
+data_distribution %>% 
+  mutate(quartile = (cum_dens) %/% 0.2500001 + 1,
+         quartile = as.factor(quartile)) %>% 
+  mutate(price_next = map_int(price, get_row_bump),
+         price_dist = price_next - price) %>% 
+  mutate(density_convert = proportion_raised(dens_scaled, incentive_delta, price_dist)) %>% 
+  select(-dens) %>% 
+  # add converted density to nearest point
+  group_by(incentive) %>% 
+  mutate(dens_convert_total = sum(density_convert),
+         price_switch = price == min(price)) %>% 
+  ungroup() %>% 
+  mutate(dens_convert_total = lag(dens_convert_total),
+         dens_convert_total = ifelse(price_switch, dens_convert_total, 0)) %>%
+  # na's to 0's
+  mutate(across(c(density_convert, dens_convert_total), ~ifelse(is.na(.x), 0, .x))) %>% 
+  # adjust percentages
+  mutate(dens_adj = dens_scaled - density_convert + dens_convert_total) %>% 
+  # graph
+  ggplot(aes(x = price))+
+  geom_col(aes(y = dens_adj, fill = quartile))+
+  scale_fill_discrete(type = c("red", "orange", "yellow", "green"))
+```
+
+Gray bars below indicate where movement occurred in the original distribution.
+```{r}
+data_distribution %>% 
+  mutate(quartile = (cum_dens) %/% 0.2500001 + 1,
+         quartile = as.factor(quartile)) %>% 
+  mutate(price_next = map_int(price, get_row_bump),
+         price_dist = price_next - price) %>% 
+  mutate(density_convert = proportion_raised(dens_scaled, incentive_delta, price_dist)) %>% 
+  select(-dens) %>% 
+  ggplot(aes(x = price))+
+  geom_col(aes(y = dens_scaled, fill = quartile))+
+  geom_col(aes(y = density_convert), fill = "gray")+
+  scale_fill_discrete(type = c("red", "orange", "yellow", "green"))
+```
+
+### Takeaways of Resulting Distribution
+
+The greatest proportion of deals were moved from orange to yellow and from yellow to green. Red to orange had the lowest rate of conversion.
+```{r}
+data_distribution %>% 
+  mutate(quartile = (cum_dens) %/% 0.2500001 + 1,
+         quartile = as.factor(quartile)) %>% 
+  mutate(price_next = map_int(price, get_row_bump),
+         price_dist = price_next - price) %>% 
+  mutate(density_convert = proportion_raised(dens_scaled, incentive_delta, price_dist)) %>% 
+  select(-dens) %>% 
+  mutate(incentive = case_when(incentive == 0 ~ "red to orange",
+                               incentive == 5 ~ "orange to yellow",
+                               incentive == 10 ~ "yellow to green",
+                               TRUE ~ "stayed green") %>% fct_inorder()) %>% 
+  group_by(incentive) %>% 
+  summarise(proportion_converted = sum(density_convert))
+```
+
+**Incentives Make the Biggest Difference When Nearer to the Largest Part of Your Distribution**
+
+Because these incentives slide deals from lower prices to higher prices, those cut-points that are *just above* the largest parts of the distribution will likely have the biggest impacts on the post-incentivized distribution. For a normal distribution, such as this one, that means incentives just to the right of the first quartile had the smallest impact. 
+
+**How Many Thresholds**
+
+For many reasonable assumptions^[Key to this assumption is how incentives degrade as you move farther from a cut-point.], having more thresholds will lead to greater movement upwards in the distribution. A continuous application of incentives (i.e. sales reps get higher compensation for every point they move up on the distribution) can be optimal under certain assumptions as well.
+
+**Quartiles change**
+
+After applying the incentives, the cut-points for segmenting the distribution into quartiles will change. Given your assumptions, you could forecast where the new quartiles will exist (after applying the incentive) and adjust the bonus thresholds proactively to account for this.
+
+### Think Carefully About Assumptions
+
+They do not need to be *perfect* to be useful for thinking through the problem but they should lean towards the *actual* patterns for your example.
+
+**The Way Incentives Aggregate Matters**
+
+In this case, we are assuming incentives aggregate in a linear way. This means that five 1 ppt incentives have the same amount of influence as one 5 ppt incentive. It could be that the former is more influential (people prefer many small bonuses) or the latter is more influential (people prefer one large bonuses)^[Research into psychological biases suggests the former may be true.]. 
+
+It could also be that there is a 'correct' size of incentive and that too small an incentive makes no difference but a large incentive has diminishing returns. If this is the case a logistic function or other 'S' shaped function may be more reasonable for modeling the influence of incentives.
+
+**The Way Incentives Degrade Over Distance Away From Incentives Matters**
+
+In this case, we are assuming the influence of an incentive has exponential decay (the influence is decreasing by 25% for every point we move from the cut-point). Hence being only a few points away from a cut-point has a big impact, but the degradation is less with each point we move away.
+
+# How to Set Assumptions
+
+1. Start with what makes sense (e.g. normal distributions are often good starting places)
+2. Review historical data
+3. Set-up formal tests (e.g. on random subsets of your sales representatives, see how behavior adjusts as you adjust incentives)
+
+# Appendix
+
+## Trade-offs
+
+* A sales rep may have been able to sell more product at a lower price. 
+    * The additional incentive causes some deals (those selling for lower prices) to be passed on because the incentive to close on the deal for reps has been lowered (this may be intentional in that the impact on price erosion of these deals is worth the decrease in sales...). 
+* You may have to pay your sales reps more
+* Applying such incentives may create additional bureaucratic hurdles in closing deals that increase the friction of closing deals, causing some percentage of deals to be lost
+    * It could be that deals don't have slack in them and are already optimal...
+    * Any change in pricing behavior has the risk of upsetting customers or having downstream affects.
+
+*Ideally* the organization is able to take into account risks and advantages in pricing and set-up incentives that are focused on overall profitability and firm growth (not *just* in terms of a single factor).
+
+## Simple Assumptions
+
+For this example, we will say the incentives you established are higher compensation rates depending on which quartile the deal falls in. If the deal falls in the lowest quartile they get no increase, in the 2nd quartile they get a 5 percentage point (ppt) increase in pay, the 3rd a 10 ppt increase, the 4th a 15 ppt increase^[You could also construct this such that lower quartiles have negative incentives and higher quartiles have positive incentives.]. 
+
+*For now I'll pick some overly simple but sensible values for each question:*
+
+1. As indicated, we are assuming the 'natural' distribution of prices is roughly normal
+
+2. We will assume that for every 1 ppt change in incentive that 15% of the deals immediately to the right of the cut-off will be moved up to the cut-off value.  
+
+3. We will assume that this influence degrades by 25% for every dollar you move from the cut-point[^1]. I am ignoring the possibility of deals jumping more than on level (e.g. deals moving from the 1st quartile to the 3rd quartile)^[Factoring this possibility in would likely lead to incentives at the higher quartiles making a slightly larger impact.]. 
+
+[^1]: The functions governing these behaviors are almost certainly more sophisticated. 
