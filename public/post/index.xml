@@ -65,7 +65,7 @@
 &lt;thead&gt;
 &lt;tr class=&#34;header&#34;&gt;
 &lt;th align=&#34;left&#34;&gt;incentive&lt;/th&gt;
-&lt;th align=&#34;right&#34;&gt;proportion_converted&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;density_converted&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;

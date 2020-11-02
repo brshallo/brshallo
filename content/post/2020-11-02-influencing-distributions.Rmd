@@ -33,7 +33,8 @@ data_distribution <- tibble(price = 100:150,
 
 data_distribution %>% 
   ggplot(aes(x = price, y = dens_scaled))+
-  geom_col()
+  geom_col()+
+  ylim(c(0, 0.15))
 ```
 
 ## Applying Incentives
@@ -51,7 +52,8 @@ data_distribution %>%
          quartile = as.factor(quartile)) %>% 
   ggplot(aes(x = price, y = dens_scaled, fill = quartile))+
   geom_col()+
-  scale_fill_discrete(type = c("deeppink", "orange", "yellow2", "royalblue"))
+  scale_fill_discrete(type = c("deeppink", "orange", "yellow2", "royalblue"))+
+  ylim(c(0, 0.15))
 ```
 
 Applying incentives is likely to lead to a different distribution for future deals. 
@@ -122,7 +124,8 @@ data_distribution %>%
   # graph
   ggplot(aes(x = price))+
   geom_col(aes(y = dens_adj, fill = quartile))+
-  scale_fill_discrete(type = c("deeppink", "orange", "yellow2", "royalblue"))
+  scale_fill_discrete(type = c("deeppink", "orange", "yellow2", "royalblue"))+
+  ylim(c(0, 0.15))
 ```
 
 Gray bars in the chart below indicate where, in the original distribution, movement will occur.
@@ -137,7 +140,8 @@ data_distribution %>%
   ggplot(aes(x = price))+
   geom_col(aes(y = dens_scaled, fill = quartile))+
   geom_col(aes(y = density_convert), fill = "gray")+
-  scale_fill_discrete(type = c("deeppink", "orange", "yellow2", "royalblue"))
+  scale_fill_discrete(type = c("deeppink", "orange", "yellow2", "royalblue"))+
+  ylim(c(0, 0.15))
 ```
 
 ### Takeaways of Resulting Distribution
@@ -156,7 +160,7 @@ data_distribution %>%
                                incentive == 10 ~ "yellow to blue",
                                TRUE ~ "stayed blue") %>% fct_inorder()) %>% 
   group_by(incentive) %>% 
-  summarise(proportion_converted = sum(density_convert) %>% round(3)) %>% 
+  summarise(density_converted = sum(density_convert) %>% round(3)) %>% 
   knitr::kable()
 ```
 
