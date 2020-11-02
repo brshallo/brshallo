@@ -5,16 +5,16 @@ date: '2020-11-02'
 slug: influencing-distributions
 categories: []
 tags: []
-thumbnail: /post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-4-1.png
+thumbnail: /post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-6-1.png
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
-If you have a mechanism available for changing behavior, before applying it you should consider the pre-existing distribution and the potential changes you will cause. I will use incentives for sales representatives in pricing as my example in this post.
+If you have a mechanism available for changing behavior, before applying it you should consider the existing distribution and the potential changes you will cause. In this post, I will use incentives for sales representatives in pricing as my example.
 
-For instance, if you have a lever that pushes prices from low to high, using the lever to influence the prices adjacent to the largest parts of the distribution will (likely) make the biggest impact on raising the average price attained. If the 'natural' distribution is normal, this means incentives applied near the lower prices (the tail of the distribution) may have the smallest impact.
+For instance, if you have a lever that pushes prices from low to high, using the lever to influence the prices adjacent to the right of the largest parts of the distribution will (likely) make the biggest impact on raising the average price attained. If the starting distribution is normal, this means incentives applied near the lower prices (the tail of the distribution) may have the smallest impact.
 
 # Simple Example
 
@@ -23,6 +23,10 @@ Imagine you have a product that can be sold anywhere from \$100 to \$150. Sales 
 ```{r}
 library(tidyverse)
 
+theme_set(theme_bw())
+```
+
+```{r}
 data_distribution <- tibble(price = 100:150,
        dens = dnorm(price, mean = 125, sd = 10)) %>% 
   mutate(dens_scaled = dens / sum(dens))
@@ -36,7 +40,7 @@ data_distribution %>%
 
 Executive leadership wants to apply additional incentives on sales reps to keep prices high^[E.g. to prevent brand erosion, improve margins, etc.]. They task you with setting-up a tiered compensation scheme whereby deals at the top-end of the distribution get a higher compensation rate compared to deals at the bottom end of the distribution.
 
-Applying such an additional incentive on sales teams has the potential advantage of pushing some proportion of deals to a higher price^[This assumes that there is some slack in the existing deals and that representatives are in a position to correct this and will do so if provided higher incentives.]. There are also [Trade-offs] associated with such an initiative (indicated in the [Appendix]), these will be ignored for the purposes of this exercise.
+Applying such an additional incentive on sales teams has the potential advantage of pushing some proportion of deals to a higher price^[This assumes that there is some slack in the existing deals and that representatives are in a position to impact this and will do so if provided higher incentives.]. There are also [Trade-offs] associated with such an initiative (indicated in the [Appendix]), these will be ignored for the purposes of this exercise.
 
 Say you decide to set cut-points to split the distribution into quartiles such that sales reps get larger bonuses if their deals fall into higher quartiles.
 
@@ -47,27 +51,30 @@ data_distribution %>%
          quartile = as.factor(quartile)) %>% 
   ggplot(aes(x = price, y = dens_scaled, fill = quartile))+
   geom_col()+
-  scale_fill_discrete(type = c("red", "orange", "yellow", "green"))
+  scale_fill_discrete(type = c("deeppink", "orange", "yellow2", "royalblue"))
 ```
 
 Applying incentives is likely to lead to a different distribution for future deals. 
 
-*Consider what the relevant factors and assumptions are in influencing the existing distribution. Take a moment to hypotheisze what the new distribution will look like after incentives are applied*. 
+* *Consider what the relevant factors and assumptions are in influencing the existing distribution. *
+* *Take a moment to hypotheisze what the new distribution will look like after incentives are applied*. 
 
-The resulting distribution is likely to depend on:
+The resulting distribution after applying incentives is likely to depend on:
 
-1. The initial (or 'natural') distribution of deals.
+1. The starting distribution^[or potentially a 'natural' distribution that would exist in the absence of incentives] of deals.
 1. What the incentives are and *how* they influence the distribution. 
-1. How this influence degrades the farther away the 'natural' position of a deal is from a potential incentivized cut-point.
+1. How this influence degrades the farther away the starting position of a deal is from a newly incentivized cut-point.
 
-You could paramaterize this problem and model the expected distribution. Making some [Simple Assumptions] (described in the [Appendix]), the chart below shows a potentially resulting distribution.
+You could paramaterize this problem and model the expected distribution. Making some [Simple Assumptions] (described in the [Appendix]), the chart below shows a (potential) resulting distribution after applying the incentives.
 
 ```{r}
 data_distribution <- data_distribution %>% 
   mutate(cum_dens = cumsum(dens_scaled),
          incentive = ((cum_dens) %/% 0.2500001) * 5,
          incentive_delta = ifelse(incentive == 15, 0, 5)) # hard coded
+```
 
+```{r}
 # very inefficient approach computationally
 get_row_bump <- function(price_current){
   current_incentive <- data_distribution %>% 
@@ -115,10 +122,10 @@ data_distribution %>%
   # graph
   ggplot(aes(x = price))+
   geom_col(aes(y = dens_adj, fill = quartile))+
-  scale_fill_discrete(type = c("red", "orange", "yellow", "green"))
+  scale_fill_discrete(type = c("deeppink", "orange", "yellow2", "royalblue"))
 ```
 
-Gray bars below indicate where movement occurred from the original distribution.
+Gray bars in the chart below indicate where, in the original distribution, movement will occur.
 ```{r}
 data_distribution %>% 
   mutate(quartile = (cum_dens) %/% 0.2500001 + 1,
@@ -130,12 +137,12 @@ data_distribution %>%
   ggplot(aes(x = price))+
   geom_col(aes(y = dens_scaled, fill = quartile))+
   geom_col(aes(y = density_convert), fill = "gray")+
-  scale_fill_discrete(type = c("red", "orange", "yellow", "green"))
+  scale_fill_discrete(type = c("deeppink", "orange", "yellow2", "royalblue"))
 ```
 
 ### Takeaways of Resulting Distribution
 
-The greatest proportion of deals were moved from orange to yellow and from yellow to green. Red to orange had the lowest rate of conversion.
+The greatest proportion of deals were moved from orange to yellow and from yellow to blue. Pink to orange had the lowest rate of conversion.
 ```{r}
 data_distribution %>% 
   mutate(quartile = (cum_dens) %/% 0.2500001 + 1,
@@ -144,18 +151,18 @@ data_distribution %>%
          price_dist = price_next - price) %>% 
   mutate(density_convert = proportion_raised(dens_scaled, incentive_delta, price_dist)) %>% 
   select(-dens) %>% 
-  mutate(incentive = case_when(incentive == 0 ~ "red to orange",
+  mutate(incentive = case_when(incentive == 0 ~ "pink to orange",
                                incentive == 5 ~ "orange to yellow",
-                               incentive == 10 ~ "yellow to green",
-                               TRUE ~ "stayed green") %>% fct_inorder()) %>% 
+                               incentive == 10 ~ "yellow to blue",
+                               TRUE ~ "stayed blue") %>% fct_inorder()) %>% 
   group_by(incentive) %>% 
-  summarise(proportion_converted = sum(density_convert)) %>% 
+  summarise(proportion_converted = sum(density_convert) %>% round(3)) %>% 
   knitr::kable()
 ```
 
-**Incentives Make the Biggest Difference When Nearer to the Largest Parts of the Distribution**
+**Incentives Make the Biggest Difference When Nearer to the Largest Parts of the Distribution Suseptible to Change**
 
-Because these incentives slide deals from lower prices to higher prices, those cut-points that are *just above* the largest parts of the distribution have the biggest impacts on the post-incentivized distribution. For a normal distribution, such as this one, that means incentives just to the right of the first quartile have the smallest impact. 
+Because these incentives slide deals from lower prices to higher prices, those cut-points that are *just above* the largest parts of the distribution have the biggest impacts on the post-incentivized distribution. For a normal distribution, such as this one, that means incentives just to the right of the first quartile have the smallest impact. (Importantly, this assumes suseptibility to change is evenly distributed across the starting distribution.)
 
 **How Many Thresholds**
 
@@ -163,13 +170,13 @@ For many reasonable assumptions^[Key to this assumption is how incentives degrad
 
 **Quartiles change**
 
-After applying the incentives, the cut-points for segmenting the distribution into quartiles will change. Given your assumptions, you could forecast where the new quartiles will exist (after applying the incentives) and adjust the bonus thresholds proactively. 
+After applying the incentives, the cut-points for segmenting the distribution into quartiles on future deals will be different. Given your assumptions, you could try forecasting where the new quartiles will exist (after applying the incentives) and adjust the bonus thresholds proactively. 
 
-Thresholds for incentives could also be adjusted dynamically. For example based on a rolling average of the quartiles of recent deals (in this approach, you apply initial incentives and then allow them to change dynamically depending on the resulting distribution of deals).
+Thresholds for incentives could also be adjusted dynamically. For example based on a rolling average of the quartiles of recent deals. In this approach, you apply initial incentives and then allow them to change dynamically depending on the resulting distribution of deals -- setting guard rails where appropriate. An advantage to this dynamic approach is that the compensation rates gets set based on behavior^[Similar to in a market.] -- which is helpful in cases where you may not trust your ability to set appropriate thresholds.
 
 ### Think Carefully About Assumptions
 
-Assumptions do not need to be *perfect* to be useful for thinking through the problem but they should lean towards the *actual* patterns in your example.
+Simulating the expected outcome based on assumptions such as the ones described in this post are helpful in thoughtfully elucidating the problem for yourself or for others. Assumptions do not need to be *perfect* to be useful for thinking through the problem but they should lean towards the *actual* patterns in your example. 
 
 **The Way Incentives Aggregate Matters**
 
@@ -190,6 +197,7 @@ I assumed slack (i.e. the possibility of deals being influenced by incentives) w
 1. Start with what makes sense (e.g. normal distributions are often good starting places)
 2. Review historical data
 3. Set-up formal tests (e.g. create hypotheses and see how behavior adjusts as you change incentives on random subsets of your sales representatives)
+
 
 # Appendix
 
