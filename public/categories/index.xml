@@ -6,7 +6,34 @@
     <description>Recent content in Categories on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 28 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 02 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>business</title>
+      <link>/categories/business/</link>
+      <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/business/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>data science</title>
+      <link>/categories/data-science/</link>
+      <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/data-science/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pricing</title>
+      <link>/categories/pricing/</link>
+      <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/pricing/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>game</title>
       <link>/categories/game/</link>
@@ -35,29 +62,11 @@
     </item>
     
     <item>
-      <title>business</title>
-      <link>/categories/business/</link>
-      <pubDate>Tue, 27 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/business/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>hiring</title>
       <link>/categories/hiring/</link>
       <pubDate>Tue, 27 Oct 2020 00:00:00 +0000</pubDate>
       
       <guid>/categories/hiring/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>data science</title>
-      <link>/categories/data-science/</link>
-      <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/data-science/</guid>
       <description></description>
     </item>
     
@@ -85,15 +94,6 @@
       <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>/categories/politics/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>pricing</title>
-      <link>/categories/pricing/</link>
-      <pubDate>Mon, 17 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/pricing/</guid>
       <description></description>
     </item>
     

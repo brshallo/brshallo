@@ -8,6 +8,31 @@
   </url>
   
   <url>
+    <loc>/tags/business/</loc>
+    <lastmod>2020-11-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/business/</loc>
+    <lastmod>2020-11-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/</loc>
+    <lastmod>2020-11-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/data-science/</loc>
+    <lastmod>2020-11-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/distributions/</loc>
+    <lastmod>2020-11-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/2020/11/02/influencing-distributions/</loc>
     <lastmod>2020-11-02T00:00:00+00:00</lastmod>
   </url>
@@ -18,8 +43,13 @@
   </url>
   
   <url>
-    <loc>/categories/</loc>
-    <lastmod>2020-10-28T00:00:00+00:00</lastmod>
+    <loc>/categories/pricing/</loc>
+    <lastmod>2020-11-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2020-11-02T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -63,21 +93,6 @@
   </url>
   
   <url>
-    <loc>/tags/</loc>
-    <lastmod>2020-10-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/business/</loc>
-    <lastmod>2020-10-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/business/</loc>
-    <lastmod>2020-10-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/categories/hiring/</loc>
     <lastmod>2020-10-27T00:00:00+00:00</lastmod>
   </url>
@@ -85,11 +100,6 @@
   <url>
     <loc>/2020/10/27/should-you-use-an-assignment-or-exercise-as-part-of-your-hiring-process-for-a-data-scientist/</loc>
     <lastmod>2020-10-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/data-science/</loc>
-    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -174,11 +184,6 @@
   
   <url>
     <loc>/tags/pricing/</loc>
-    <lastmod>2020-08-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/pricing/</loc>
     <lastmod>2020-08-17T00:00:00+00:00</lastmod>
   </url>
   
