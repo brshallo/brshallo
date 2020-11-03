@@ -63,7 +63,7 @@ As an example, imagine a roulette-like wheel numbered from 1 to 10. You are inst
     
     ![](https://www.thesun.co.uk/wp-content/uploads/2017/11/tmp_6e95hn_8581834aa802f9b6_wv_publicity_post_launch_still_10-0000011.jpg)
     
-You could blend these ideas with other common gaming features. For example, you might have a mix of 'big losses' and 'big wins'. Carrying on from the previous example, the wheel (numbered 1:10) could be set-up where the player selects a number for a 'big win' (\$50 gain), and two 'big losers' (\$50 loss for either), and the rest resulting in small wins (\$5). The expected value for the casino on this set-up is now $1.50.
+You could blend these ideas with other common gaming features. For example, you might have a mix of 'big losses' and 'big wins'. Carrying on from the previous example, the wheel (numbered 1:10) could be set-up where the player selects a number for a 'big win' (\$50 gain), and two 'big losers' (\$50 loss for either), and the rest resulting in small wins (\$5). The expected value for the casino on this set-up is now $1.50^[It also could make sense to have bets be placed *across* the number -- this resemble a 'place bet' being made across multiple numbers in craps (where the player is crossing their fingers hoping against a seven being rolled).].
 
 There are a variety of forms this game could be tested in -- it doesn't have to be a roulette-like wheel in a casino (I actually think an app or more gamefied environment may work better[^3]). *The novel feature is ensuring players get repeated high-likelihood small wins while having them pay their losses in one-off large losses (rather than small incremental payments).*
 
