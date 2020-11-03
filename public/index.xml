@@ -8,7 +8,7 @@
     <language>en-us</language>
     <lastBuildDate>Mon, 02 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Influencing Distributions with Discrete Incentives</title>
+      <title>Influencing Distributions with Tiered Incentives</title>
       <link>/2020/11/02/influencing-distributions/</link>
       <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
       
@@ -47,7 +47,7 @@
 &lt;p&gt;Applying incentives is likely to lead to a different distribution for future deals.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;em&gt;Consider what the relevant factors and assumptions are in influencing the existing distribution. &lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;Take a moment to hypotheisze what the new distribution will look like after incentives are applied&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Take a moment to hypothesize what the new distribution will look like after incentives are applied&lt;/em&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;After applying incentives the resulting distribution is likely to depend on:&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
@@ -88,8 +88,8 @@
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;&lt;strong&gt;Incentives Make the Biggest Difference When Nearer to the Largest Parts of the Distribution Suseptible to Change&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Because these incentives slide deals from lower prices to higher prices, those cut-points that are &lt;em&gt;just above&lt;/em&gt; the most dense parts of the distribution have the biggest impacts on the post-incentivized distribution. For a normal distribution, such as this one, that means incentives just to the right of the first quartile have the smallest impact. (Importantly, this assumes suseptibility to rightward mobility is evenly distributed across the starting distribution.)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Incentives Make the Biggest Difference When Nearer to the Largest Parts of the Distribution Susceptible to Change&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Because these incentives slide deals from lower prices to higher prices, those cut-points that are &lt;em&gt;just above&lt;/em&gt; the most dense parts of the distribution have the biggest impacts on the post-incentivized distribution. For a normal distribution, such as this one, that means incentives just to the right of the first quartile have the smallest impact. (Importantly, this assumes susceptibility to rightward mobility is evenly distributed across the starting distribution.)&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;How Many Thresholds&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;For many reasonable assumptions&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;, having more thresholds will lead to greater movement upwards in the distribution. Similarly, a continuous application of incentives (i.e. sales reps get higher compensation for every point they move up on the distribution) can be optimal under certain assumptions as well&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Quartiles change&lt;/strong&gt;&lt;/p&gt;

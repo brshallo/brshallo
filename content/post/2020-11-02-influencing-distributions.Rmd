@@ -1,10 +1,10 @@
 ---
-title: Influencing Distributions with Discrete Incentives
+title: Influencing Distributions with Tiered Incentives
 author: Bryan Shalloway
 date: '2020-11-02'
 categories:
-  - data science
   - business
+  - data science
   - pricing
 tags:
   - business
@@ -70,7 +70,7 @@ data_distribution %>%
 Applying incentives is likely to lead to a different distribution for future deals. 
 
 * *Consider what the relevant factors and assumptions are in influencing the existing distribution. *
-* *Take a moment to hypotheisze what the new distribution will look like after incentives are applied*. 
+* *Take a moment to hypothesize what the new distribution will look like after incentives are applied*. 
 
 After applying incentives the resulting distribution is likely to depend on:
 
@@ -179,9 +179,9 @@ data_distribution %>%
   knitr::kable()
 ```
 
-**Incentives Make the Biggest Difference When Nearer to the Largest Parts of the Distribution Suseptible to Change**
+**Incentives Make the Biggest Difference When Nearer to the Largest Parts of the Distribution Susceptible to Change**
 
-Because these incentives slide deals from lower prices to higher prices, those cut-points that are *just above* the most dense parts of the distribution have the biggest impacts on the post-incentivized distribution. For a normal distribution, such as this one, that means incentives just to the right of the first quartile have the smallest impact. (Importantly, this assumes suseptibility to rightward mobility is evenly distributed across the starting distribution.)
+Because these incentives slide deals from lower prices to higher prices, those cut-points that are *just above* the most dense parts of the distribution have the biggest impacts on the post-incentivized distribution. For a normal distribution, such as this one, that means incentives just to the right of the first quartile have the smallest impact. (Importantly, this assumes susceptibility to rightward mobility is evenly distributed across the starting distribution.)
 
 **How Many Thresholds**
 
