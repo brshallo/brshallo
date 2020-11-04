@@ -107,3 +107,7 @@ There may be some philosophical appeal to this method for allocating votes howev
 *	if your vote is not in a ‘battleground district’ your vote, once again, may not matter as much (i.e. a ‘battleground state’ is simply replaced by a ‘battleground district’)
 *	opens-up presidential election to risks associated with gerrymandering
 *	if this were applied nationally, appealing to specific states could be supplanted by appealing to specific types of congressional districts, e.g. districts with more urban or rural areas (which may influence president’s against ‘looking out for all Americans’)
+
+## Related Writing
+
+After writing this post I found a similar post by Economist writer [G. Elliott Morris](https://twitter.com/gelliottmorris), [What If Each State Allocated Their Electoral College Votes Proportionally?](https://www.thecrosstab.com/2019/03/08/electoral-college-proportional/). We do a few things differently though (which I describe at the bottom of the post in a diqus [comment](http://disq.us/p/2bvit1z)).
