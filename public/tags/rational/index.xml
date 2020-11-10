@@ -15,6 +15,14 @@
       <guid>/2020/10/28/idea-for-casino-games-where-the-player-almost-always-win/</guid>
       <description>
 
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#implications-for-gambling&#34;&gt;Implications for Gambling&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#wallet-roulette&#34;&gt;Wallet Roulette&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
 
 &lt;p&gt;&lt;em&gt;In this post, I will describe an example of a game that produces many small wins for the player and occasional large wins for the house. Such a game (theoretically) takes advantage of psychological biases of individuals to prefer gains to be disaggregated and losses to be aggregated&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt; as well as a general disposition for accepting small sure-things when it comes to gains and a willingness to chance higher-risk scenarios in order to avoid paying losses. An inverse roulette wheel (where the point is not to land on a chosen number) provides a simple example of a game that captures these dynamics&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;All proposals described in this post are theoretical and would need to be reviewed in a gambling / gaming environment. The ideas described are very much in a draft form&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;. The games discussed align with some psychological biases while potentially running counter to others&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt; – reading more on &lt;a href=&#34;https://en.wikipedia.org/wiki/Prospect_theory&#34;&gt;prospect theory&lt;/a&gt; and related ideas is required to more carefully consider approaches in game design.&lt;/em&gt;&lt;/p&gt;

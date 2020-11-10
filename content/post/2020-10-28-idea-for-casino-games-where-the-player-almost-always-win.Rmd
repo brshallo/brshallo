@@ -13,9 +13,6 @@ tags:
   - expected value
 slug: idea-for-casino-games-where-the-player-almost-always-win
 thumbnail: https://www.thesun.co.uk/wp-content/uploads/2017/11/tmp_6e95hn_8581834aa802f9b6_wv_publicity_post_launch_still_10-0000011.jpg
-output:
-  blogdown::html_page:
-    toc: no
 ---
 
 *In this post, I will describe an example of a game that produces many small wins for the player and occasional large wins for the house. Such a game (theoretically) takes advantage of psychological biases of individuals to prefer gains to be disaggregated and losses to be aggregated^[Picture the pattern of gains and losses in the stock market -- where rises are typically more incremental compared to the steepness of drops.] as well as a general disposition for accepting small sure-things when it comes to gains and a willingness to chance higher-risk scenarios in order to avoid paying losses. An inverse roulette wheel (where the point is not to land on a chosen number) provides a simple example of a game that captures these dynamics^[Imagine Russian Roulette but where the gun is aimed at your wallet (and you get payed each time you dodge the bullet). Credit card roulette perhaps provides a less dramatic examples.].* 
