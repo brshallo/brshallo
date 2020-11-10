@@ -73,7 +73,7 @@ There are a variety of forms this game could be tested in -- it doesn't have to 
 
 ## Wallet Roulette
 
-*Below I will describe the rules for such a game that I will call "Wallet Roulette"^[or "Russian Wallet Roulette" or some variation on this.]. The game is set-up to look and feel somewhat similar to slots but with a payout structure that is inverted to typical slots games (i.e. the player typically has small wins followed by occasional large losses^[However in the "Game Options" I provide ways by which a player could set their own risk levels (e.g. by filling their gun with more bullets). Hence I also envision the game having a bit more customizability compared to what is typical in slots.]).*
+*Below I will describe the rules for a game that I've come-up with called "Wallet Roulette"^[or "Russian Wallet Roulette" or some variation on this.] that is designed to take advantage of the rules described in the post. The game is set-up to look and feel somewhat similar to slots but with a payout structure that is inverted to typical slot machines (i.e. the player typically has small wins followed by occasional large losses^[However in the "Game Options" I provide ways by which a player could set their own risk levels (e.g. by filling their gun with more bullets). Hence I also envision the game having a bit more customizability compared to what is typical in slots.]).*
 
 The virtual game is set in a dingy bar-like setting with shady (though cartoonish) figures holding wads of cash in their hands and crowded at the edges of the screen watching you expectantly. A sinister looking bartender / attendant stands behind a counter administers play. 
 
