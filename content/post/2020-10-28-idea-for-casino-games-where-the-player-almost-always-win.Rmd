@@ -19,33 +19,7 @@ thumbnail: https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Loss_Aversi
 
 *A negated roulette wheel (where the point is to avoid, rather than land on, a specific number) provides a simple example of a game that captures these dynamics^[Credit card roulette (whereby friends throw in their cards at the end of dinner to see who will end-up paying for it) perhaps provides an everyday example for the type of game I'm talking about.].* 
 
-All types of games described in this post would need to be empirically evaluated in a gambling / gaming environment. The ideas are very much in a draft form^[There is a decent chance I misapplied some concepts -- particularly regarding the idea of risk seeking when it comes to losses (e.g. if it's more about seeking uncertainty vs seeking riskiness...). What I describe also seems to run counter to the idea that sporadic positive events help drive repeat behaviors whereas sporadic negative shocks drive avoidance of the activity. Generally I would need to think about and read a little more...]. The games discussed align with some psychological biases while potentially running counter to others^[A potential issue with my examples is with the 'framing effect' -- I largely frame things in terms of 'losses' (particularly in the [Wallet Roulette] game which may actually push players towards more risk-averse behavior. For example people's tendency to underweight rare events and a closer consideration of the importance of reference points are just a few ideas that require closer consideration.] -- reading more on [prospect theory](https://en.wikipedia.org/wiki/Prospect_theory) and related ideas is required to more carefully consider approaches in game design[^5].
-
-# Note on Prospect Theory
-
-*Section added after publishing post and after reading a little about Prospect Theory. You may want to skip this section and come back to it at the end.*
-
-The course materials I reference in this post are themselves referencing research on when a player is facing *either* only gains (gauranteed gain vs possible gain) or only losses (gauranteed loss vs possible loss). However in gambling the problem is mixed. Players face both the possibility of gains *or* losses on any given bet. Khaneman describes the differences in the mixed case in *Chapter 26, Prospect Theory* of his book *Thinking Fast and Slow*:
-
-> "In mixed gambles, where both a gain and a loss are possible, loss aversion causes extremely risk averse choices. In bad choices, where a sure loss is compared to a larger loss that is merely probable, diminishing sensitity causes risk seeking. There is no contradiction. In the mixed case the possible loss looms twice as large as the possible gain."
-
-This suggests that my assertions throughout later parts of this post regarding risk seeking behaviors are likely incorrect. This *does not present* a problem for my references of people's preference for aggregated losses and disaggregated gains. 
-
-It remains possible that multiple gains may represent greater value than a single loss. The chart below shows a typical example of the assymetric S-shaped value function associated with gains/losses in Prospect Theory. Even with this assymetry it is clear that three gains (i.e. wins) of \$0.05 would more than offset a single loss of \$0.15 (assuming the value derived from individual gains can be aggregated linearly). Hence the types of games I describe may still be worth exploring in gambling contexts.
-
-![](https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Loss_Aversion.png/1024px-Loss_Aversion.png)
-*(Image from Wikipedia page on [Prospect Theory](https://en.wikipedia.org/wiki/Prospect_theory))*
-
-One explanation for why people gamble at all is people's tendency to overweight the likelihood of rare events^[I.e. they *think* they have a better chance of winning that they do.]. While this explains participation in lotteries it does not explain all forms of gambling. These other forms of gambling present additional challenges for Prospect Theory^[As well as other behavioral economic theories] to explain. Nick Barberis attempts to explain gambling in [A Model of Casino Gambling](http://www.econ.yale.edu/~shiller/behfin/2009_03/barberis.pdf) where he writes: 
-
->"What is the intuition for why, in spite of loss aversion, a prospect theory agent might
-still be willing to enter a casino?... We show that, if the agent enters
-the casino, his preferred plan is to gamble as long as possible if he is winning, but to stop
-gambling and leave the casino if he starts accumulating losses."
-
-The games I describe may appeal to this particular type of agent in that the games I describe are designed for the player to accumulate wins. 
-
-The paper describes gamblers with different starting profiles. Variety in motivations and behaviors of gamblers opens the possibility that the types of games discussed in this blog post may appeal to a certain set of players (particularly those that are motivated by the feeling of winning rather than an overweighting of the tails of the probability distribution^[This is also a more optimistic outlook on the value players derive from gambling.]). 
+All types of games described in this post would need to be empirically evaluated in a gambling / gaming environment. The ideas are very much in a draft form^[There is a decent chance I misapplied some concepts -- particularly regarding the idea of risk seeking when it comes to losses (e.g. if it's more about seeking uncertainty vs seeking riskiness...). What I describe also seems to run counter to the idea that sporadic positive events help drive repeat behaviors whereas sporadic negative shocks drive avoidance of the activity. Generally I would need to think about and read a little more...]. The games discussed align with some psychological biases while potentially running counter to others^[A potential issue with my examples is with the 'framing effect' -- I largely frame things in terms of 'losses' (particularly in the [Wallet Roulette] game which may actually push players towards more risk-averse behavior. For example people's tendency to underweight rare events and a closer consideration of the importance of reference points are just a few ideas that require closer consideration.] -- reading more on [prospect theory](https://en.wikipedia.org/wiki/Prospect_theory) and related ideas is required to more carefully consider approaches in game design[^5]. *See [Note on Prospect Theory]^[Added after publishing post.] in the [Appendix] for a discussion on the errors I make throughout this post in applying psychological biases to gambling.*
 
 # Biases in Value
 
@@ -58,9 +32,9 @@ I. People tend to be *risk seeking* when facing **losses** but *risk averse* whe
 An example in the course is that, faced with the scenario below, people will tend to go for the sure thing and win $50 rather than the chance at gaining \$100 (even though each option has the same expected value).
 
 ![](/post/2020-10-29-idea-for-casino-games-where-the-player-almost-always-win_files/gain-example.PNG)
-*(all images in this post are screenshotted from the [coursera materials](https://www.coursera.org/learn/uva-darden-bcg-pricing-strategy-customer-value/home/week/4) created by the University of Virginia and Boston Consulting Group)*
+*(all images in this section are screenshotted from the [coursera materials](https://www.coursera.org/learn/uva-darden-bcg-pricing-strategy-customer-value/home/week/4) created by the University of Virginia and Boston Consulting Group)*
  
-However when facing potential losses, people prefer taking their chances and will tend to select the option with the risk of a greater loss (for the possibility of avoiding the loss entirely). They will choose a 50% chance of losing $100 (to avoid a guaranteed loss of \$50).
+Though when facing potential losses, people prefer taking their chances and will tend to select the option with the risk of a greater loss (for the possibility of avoiding the loss entirely). They will choose a 50% chance of losing $100 (to avoid a guaranteed loss of \$50).
 
 ![](/post/2020-10-29-idea-for-casino-games-where-the-player-almost-always-win_files/loss-example.PNG)
 
@@ -98,13 +72,39 @@ There are a variety of forms this game could be tested in -- it doesn't have to 
 
 # Appendix
 
+## Note on Prospect Theory
+
+*Section added after publishing post and after reading a little more on Prospect Theory.*
+
+The course materials I reference in this post are themselves referencing research on when a player is facing *either* only gains (guaranteed gain vs possible gain) or only losses (guaranteed loss vs possible loss). However in gambling the problem is mixed. Players face both the possibility of gains *or* losses on any given bet. Khaneman describes the differences in the mixed case in *Chapter 26, Prospect Theory* of his book *Thinking Fast and Slow*:
+
+> "In mixed gambles, where both a gain and a loss are possible, loss aversion causes extremely risk averse choices. In bad choices, where a sure loss is compared to a larger loss that is merely probable, diminishing sensitivity causes risk seeking. There is no contradiction. In the mixed case the possible loss looms twice as large as the possible gain."
+
+This suggests that my assertions throughout later parts of this post regarding risk seeking behaviors are likely incorrect^[As the psychological biases I describe do not apply to mixed environments where a player can achieve either a gain or a loss.]. This misapplication however might not present as much of a problem for my references of people's preference for aggregated losses and disaggregated gains. Hence at least part of my justification for hypothesizing a game like "Wallet Roulette" may be valid.
+
+It remains possible that multiple gains may represent greater value than a single larger loss. The chart below shows a typical example of the asymmetric S-shaped value function associated with gains/losses in Prospect Theory. Even with its asymmetry (whereby losses are felt more intensely than gains) it is clear that three gains (i.e. wins) of \$0.05 would more than offset a single loss of \$0.15 (assuming the value derived from individual gains can be aggregated linearly). Hence the types of games I describe may still be worth exploring in gambling contexts.
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Loss_Aversion.png/1024px-Loss_Aversion.png)
+*(Image from Wikipedia page on [Prospect Theory](https://en.wikipedia.org/wiki/Prospect_theory))*
+
+One explanation for why people gamble at all is people's tendency to overweight the likelihood of rare events^[I.e. they *think* they have a better chance of winning that they do.]. While this explains participation in lotteries and sweepstakes it does not explain all forms of gambling. These other forms of gambling present additional challenges for Prospect Theory^[As well as other behavioral economic theories] to explain. Nick Barberis explains why a Prospect Theory agent may choose to gamble in [A Model of Casino Gambling](http://www.econ.yale.edu/~shiller/behfin/2009_03/barberis.pdf), where he writes: 
+
+>"What is the intuition for why, in spite of loss aversion, a prospect theory agent might
+still be willing to enter a casino?... We show that, if the agent enters
+the casino, his preferred plan is to gamble as long as possible if he is winning, but to stop
+gambling and leave the casino if he starts accumulating losses."
+
+The games I describe may appeal to this particular type of agent in that the games would be designed for the player to accumulate wins. 
+
+The paper describes gamblers with different starting profiles. Variety in motivations and behaviors of gamblers opens the possibility that the types of games discussed in this blog post may appeal to a certain set of players (particularly those that are motivated by the feeling of winning rather than an overweighting of the tails of the probability distribution that likely motivates participation in lotteries and sweepstakes^[This is also a more optimistic outlook on the value players stand to derive from gambling.]). I would also suggest that there is ample room to improve the value players derive from slot machine like games^[Which I typically find quite boring currently.] by applying ideas from Prospect Theory and other research into human behavior^[Including those principles I might have missed.].
+
 ## Wallet Roulette
 
-*Below I will describe the rules for a game that I've come-up with called "Wallet Roulette^[or "Russian Wallet Roulette" or some variation on this.]" that is designed to take advantage of the ideas described in the post above (the game though does not reflect a complete embodiment of Prospect Theory applied to gambling^[See footnotes from beginning of post for notes on this... obviously though this game is framed as a loss, which may run counter to the type of game that a Prospect Theory agent may want to play.]). The game is set-up to look and feel somewhat similar to a slot machine but with a win / loss structure that is almost the [complement](https://en.wikipedia.org/wiki/Complementary_event) of that in slots^[I.e. the player typically has small wins followed by occasional large losses whereas slots tend to have small losses with occasionally larger wins. However in the "Game Options" I provide ways by which a player could set their own risk profile (e.g. by filling their gun with more bullets, changing the cylinder size, etc.). Hence I also envision the game having a bit more customizability compared to what is typical in slots.].*
+*Below I will describe the rules for a game that I've come-up with called "Wallet Roulette^[or "Russian Wallet Roulette" or some variation on this.]" that is designed to take advantage of the ideas described in the post above (the game though does not reflect a complete embodiment of Prospect Theory applied to gambling^[See footnotes from beginning of post for notes on this as well as the section [Note on Prospect Theory]. Obviously though this game is framed as a loss, which may run counter to the type of game that a Prospect Theory agent may want to play.]). The game is set-up to look and feel somewhat similar to a slot machine but with a win / loss structure that is almost the [complement](https://en.wikipedia.org/wiki/Complementary_event) of that in slots^[I.e. the player typically has small wins followed by occasional large losses whereas slots tend to have small losses with occasionally larger wins. However in the "Game Options" I provide ways by which a player could set their own risk profile (e.g. by filling their gun with more bullets, changing the cylinder size, etc.). Hence I also envision the game having a bit more customizability compared to what is typical in slots.].*
 
 The virtual game is set in a dingy bar-like setting with shady (though cartoonish) figures holding wads of cash in their hands and crowded at the edges of the screen. They stare at you expectantly. A sinister looking attendant standing behind the bar administers play. 
 
-The game begins when you take a wallet and fill it with money (your bet) and place it in front of you. A gun, a revolver, with six chambers in it is pointed at your wallet. The round starts when you fill one of the chambers with a bullet, spin the cylinder, wait for it to come to a rest, and pull the trigger. If the gun fires, your wallet explodes and the money flies out and is scooped up by the shady figures. If it clicks (having landed on an empty chamber) the attendant grimaces and slides some money to you from across the counter^[This gets added to your account or can be added to the wallet, i.e. your bet.]. You then decide whether to play another round (first filling a new wallet with money if your previous one had exploded) or you take out your money and leave.
+The game begins when you take a wallet, fill it with money (your bet) and place it in front of you. A gun, a revolver, with six chambers in it is pointed at your wallet. The round starts when you fill one of the chambers with a bullet, spin the cylinder, wait for it to come to a rest, and pull the trigger. If the gun fires, your wallet explodes and the money flies out and is scooped up by the shady figures. If it clicks (having landed on an empty chamber) the attendant grimaces and slides some money to you from across the counter^[This gets added to your account or can be added to the wallet, i.e. your bet.]. You then decide whether to play another round (filling a new wallet with money if your previous one had exploded) or you take out your money and leave.
 
 For a six-shooter, a \$30 wallet would need to payout less than \$6 for the house to have an advantage. An expected value for the user of $\frac{5}{6}$ to $\frac{11}{12}$ on the dollar could be appropriate (~83.3 to ~91.7 cents for every dollar gambled)^[Slot machines typically hover around a 10 cent on the dollar advantage for the house.]. Hence for a wallet filled with \$30 there would be a payout of between \$5 and \$5.50 for a miss.  
 
