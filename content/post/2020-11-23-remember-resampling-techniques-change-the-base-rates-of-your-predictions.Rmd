@@ -167,7 +167,7 @@ The predicted probabilities for the model built with the down-sampled 50-50 data
 
 In their current form the predictions from the down-sampled model are not accurate predicted probabilities. For many applications they would need to be rescaled to reflect the *actual* underlying distribution of positive cases associated with the given inputs.
 
-## Re-scale Predictions to Predicted Probabilities
+## Rescale Predictions to Predicted Probabilities
 
 Isotonic Regression^[Decision tree based approach] or Platt scaling^[Logistic regression based approach] could be used. Such methods are used to calibrate outputted predictions and ensure they align with *actual* probabilities. Recalibration techniques are typically used when you have models that may not output well-calibrated probabilities^[E.g. when using Support Vector Machines]. However these methods can also be used to rescale your outputs (as in this case). (In the case of linear models, there are also simpler approaches available^[In this case we are starting with a linear model hence we could also have just changed the intercept value to get the same affect. Rescaling methods act on the *predictions* rather than the model parameters. Hence these scaling methods have the advantage of being generalizable as they are agnostic to model type.].)
 

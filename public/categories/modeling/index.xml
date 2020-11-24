@@ -21,7 +21,7 @@
 &lt;li&gt;&lt;a href=&#34;#association-of-feature-and-target&#34;&gt;Association of ‘feature’ and ‘target’&lt;/a&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#resample&#34;&gt;Resample&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#build-models&#34;&gt;Build Models&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#re-scale-predictions-to-predicted-probabilities&#34;&gt;Re-scale Predictions to Predicted Probabilities&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#rescale-predictions-to-predicted-probabilities&#34;&gt;Rescale Predictions to Predicted Probabilities&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#density-plots&#34;&gt;Density Plots&lt;/a&gt;&lt;/li&gt;
@@ -152,8 +152,8 @@ train_downsamp &amp;lt;- train %&amp;gt;%
 &lt;p&gt;The predicted probabilities for the model built with the down-sampled 50-50 dataset are much higher than those built with the original 5-95 dataset. If picking a decision threshold for the predictions, the model built from the undersampled dataset would have far more predictions of &lt;code&gt;TRUE&lt;/code&gt; compared to the rate of &lt;code&gt;TRUE&lt;/code&gt;s from the model built from the original training dataset&lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;In their current form the predictions from the down-sampled model are not accurate predicted probabilities. For many applications they would need to be rescaled to reflect the &lt;em&gt;actual&lt;/em&gt; underlying distribution of positive cases associated with the given inputs.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;re-scale-predictions-to-predicted-probabilities&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Re-scale Predictions to Predicted Probabilities&lt;/h2&gt;
+&lt;div id=&#34;rescale-predictions-to-predicted-probabilities&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Rescale Predictions to Predicted Probabilities&lt;/h2&gt;
 &lt;p&gt;Isotonic Regression&lt;a href=&#34;#fn13&#34; class=&#34;footnote-ref&#34; id=&#34;fnref13&#34;&gt;&lt;sup&gt;13&lt;/sup&gt;&lt;/a&gt; or Platt scaling&lt;a href=&#34;#fn14&#34; class=&#34;footnote-ref&#34; id=&#34;fnref14&#34;&gt;&lt;sup&gt;14&lt;/sup&gt;&lt;/a&gt; could be used. Such methods are used to calibrate outputted predictions and ensure they align with &lt;em&gt;actual&lt;/em&gt; probabilities. Recalibration techniques are typically used when you have models that may not output well-calibrated probabilities&lt;a href=&#34;#fn15&#34; class=&#34;footnote-ref&#34; id=&#34;fnref15&#34;&gt;&lt;sup&gt;15&lt;/sup&gt;&lt;/a&gt;. However these methods can also be used to rescale your outputs (as in this case). (In the case of linear models, there are also simpler approaches available&lt;a href=&#34;#fn16&#34; class=&#34;footnote-ref&#34; id=&#34;fnref16&#34;&gt;&lt;sup&gt;16&lt;/sup&gt;&lt;/a&gt;.)&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mod_50_50_rescaled_calibrated &amp;lt;- train %&amp;gt;% 
   add_predictions(mod_50_50) %&amp;gt;% 

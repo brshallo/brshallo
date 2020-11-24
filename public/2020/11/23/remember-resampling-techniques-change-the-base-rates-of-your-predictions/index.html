@@ -84,7 +84,7 @@
 <li><a href="#association-of-feature-and-target">Association of ‘feature’ and ‘target’</a><ul>
 <li><a href="#resample">Resample</a></li>
 <li><a href="#build-models">Build Models</a></li>
-<li><a href="#re-scale-predictions-to-predicted-probabilities">Re-scale Predictions to Predicted Probabilities</a></li>
+<li><a href="#rescale-predictions-to-predicted-probabilities">Rescale Predictions to Predicted Probabilities</a></li>
 </ul></li>
 <li><a href="#appendix">Appendix</a><ul>
 <li><a href="#density-plots">Density Plots</a></li>
@@ -215,8 +215,8 @@ train_downsamp &lt;- train %&gt;%
 <p>The predicted probabilities for the model built with the down-sampled 50-50 dataset are much higher than those built with the original 5-95 dataset. If picking a decision threshold for the predictions, the model built from the undersampled dataset would have far more predictions of <code>TRUE</code> compared to the rate of <code>TRUE</code>s from the model built from the original training dataset<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</p>
 <p>In their current form the predictions from the down-sampled model are not accurate predicted probabilities. For many applications they would need to be rescaled to reflect the <em>actual</em> underlying distribution of positive cases associated with the given inputs.</p>
 </div>
-<div id="re-scale-predictions-to-predicted-probabilities" class="section level2">
-<h2>Re-scale Predictions to Predicted Probabilities</h2>
+<div id="rescale-predictions-to-predicted-probabilities" class="section level2">
+<h2>Rescale Predictions to Predicted Probabilities</h2>
 <p>Isotonic Regression<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a> or Platt scaling<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a> could be used. Such methods are used to calibrate outputted predictions and ensure they align with <em>actual</em> probabilities. Recalibration techniques are typically used when you have models that may not output well-calibrated probabilities<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>. However these methods can also be used to rescale your outputs (as in this case). (In the case of linear models, there are also simpler approaches available<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.)</p>
 <pre class="r"><code>mod_50_50_rescaled_calibrated &lt;- train %&gt;% 
   add_predictions(mod_50_50) %&gt;% 
