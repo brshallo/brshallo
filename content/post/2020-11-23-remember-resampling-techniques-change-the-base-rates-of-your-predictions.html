@@ -1,5 +1,5 @@
 ---
-title: Just Making Sure You Know, Downsampling Changes the Base Rates of Your Predictions
+title: Undersampling Changes the Base Rates of Your Predictions
 author: Bryan Shalloway
 date: '2020-11-23'
 categories:
@@ -40,12 +40,12 @@ slug: remember-resampling-techniques-change-the-base-rates-of-your-predictions
 <!--       }); -->
 <!--     }); -->
 <!-- </script> -->
-<p><strong>TLDR:</strong> In classification problems, over and under sampling techniques shift the distribution of predicted probabilities towards the minority class. If your problem requires accurate probabilities you will need to adjust your predictions in some way during post-processing (or at another step) to account for this<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
-<p>People new to predictive modeling may rush into using sampling procedures without understanding what these procedures are doing. They then sometimes get confused when their predictions appear way off (from those that would be expected according to the base rates in their data). I decided to write this vignette to briefly walk through (explicitly) an example of the implications of under or over sampling procedures on the base rates of predictions<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
-<p>My examples will appear obvious to individuals with experience in predictive modeling with imbalanced classes. The code is pulled largely from a few emails I sent in early to mid 2018<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> to individuals new to data science. Like my other posts, you can see the source code on <a href="https://github.com/brshallo/brshallo">github</a>.</p>
-<p>Note that this post is not about <em>why</em> you might want to use resampling procedures<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>, it is meant <em>only</em> to demonstrate that such procedures change the base rates of your predictions (unless adjusted for).</p>
+<p><strong>TLDR:</strong> In classification problems, under and over sampling<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> techniques shift the distribution of predicted probabilities towards the minority class. If your problem requires accurate probabilities you will need to adjust your predictions in some way during post-processing (or at another step) to account for this<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
+<p>People new to predictive modeling may rush into using sampling procedures without understanding what these procedures are doing. They then sometimes get confused when their predictions appear way off (from those that would be expected according to the base rates in their data). I decided to write this vignette to briefly walk through an example of the implications of under or over sampling procedures on the base rates of predictions<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
+<p>My examples will appear obvious to individuals with experience in predictive modeling with imbalanced classes. The code is pulled largely from a few emails I sent in early to mid 2018<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> to individuals new to data science. Like my other posts, you can view the source code on <a href="https://github.com/brshallo/brshallo">github</a>.</p>
+<p>Note that this post is not about <em>why</em> you might want to use resampling procedures<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>, it is meant <em>only</em> to demonstrate that such procedures change the base rates of your predictions (unless adjusted for).</p>
 <hr />
-<p><em>The proportion of TRUE:FALSE cases of the target in classification problems largely determines the base rate of the predictions produced by the model Therefore if you use sampling techniques that change this proportion (e.g. you use sampling techniques to go from 5-95 to 50-50 TRUE-FALSE ratios) there is a good chance you will want to rescale / calibrate<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> your predictions before using them in the wild (if you care about things other than simply ranking your observations<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>).</em></p>
+<p><em>The proportion of TRUE:FALSE cases of the target in classification problems largely determines the base rate of the predictions produced by the model Therefore if you use sampling techniques that change this proportion (e.g. you use sampling techniques to go from 5-95 to 50-50 TRUE-FALSE ratios) there is a good chance you will want to rescale / calibrate<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> your predictions before using them in the wild (if you care about things other than simply ranking your observations<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>).</em></p>
 <pre class="r"><code>library(tidyverse)
 library(modelr)
 library(ggplot2)
@@ -55,7 +55,7 @@ library(purrr)
 theme_set(theme_bw())</code></pre>
 <div id="create-data" class="section level1">
 <h1>Create Data</h1>
-<p>Generate classification data with substantial class imbalance<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
+<p>Generate classification data with substantial class imbalance<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
 <pre class="r"><code># convert log odds to probability
 convert_lodds &lt;- function(log_odds) exp(log_odds) / (1 + exp(log_odds))
 
@@ -97,7 +97,7 @@ example &lt;- minority_data %&gt;%
 </tr>
 </tbody>
 </table>
-<p>Make 80-20 train - test split<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
+<p>Make 80-20 train - test split<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>.</p>
 <pre class="r"><code>set.seed(123)
 train &lt;- example %&gt;% 
   sample_frac(0.80)
@@ -107,7 +107,7 @@ test &lt;- example %&gt;%
 </div>
 <div id="association-of-feature-and-target" class="section level1">
 <h1>Association of ‘feature’ and ‘target’</h1>
-<p>We have one important input to our model named <code>feature</code><a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>.</p>
+<p>We have one important input to our model named <code>feature</code><a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
 <pre class="r"><code>train %&gt;% 
   ggplot(aes(feature, fill = target))+
   geom_histogram()+
@@ -139,7 +139,7 @@ train_downsamp &lt;- train %&gt;%
 <pre class="r"><code>mod_5_95 &lt;- glm(target ~ feature, family = binomial(&quot;logit&quot;), data = train)</code></pre>
 <p>Train a model with the down-sampled (i.e. 50-50) dataset.</p>
 <pre class="r"><code>mod_50_50 &lt;- glm(target ~ feature, family = binomial(&quot;logit&quot;), data = train_downsamp)</code></pre>
-<p>Add the predictions from each of these models<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> onto our test set (and convert log-odd predictions to probabilities).</p>
+<p>Add the predictions from each of these models<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> onto our test set (and convert log-odd predictions to probabilities).</p>
 <pre class="r"><code>test_with_preds &lt;- test %&gt;% 
   gather_predictions(mod_5_95, mod_50_50) %&gt;% 
   mutate(pred_prob = convert_lodds(pred))</code></pre>
@@ -149,11 +149,12 @@ train_downsamp &lt;- train %&gt;%
   geom_histogram()+
   facet_wrap(~model, ncol = 1)</code></pre>
 <p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p>The predicted probabilities for the model built with the down-sampled 50-50 dataset are much higher than those built with the original 5-95 dataset. The predictions from the down-sampled model are not accurate predicted probabilities in their current form and would need to be rescaled to reflect the <em>actual</em> underlying distribution of positive cases associated with the given inputs.</p>
+<p>The predicted probabilities for the model built with the down-sampled 50-50 dataset are much higher than those built with the original 5-95 dataset. If picking a decision threshold for the predictions, the model built from the undersampled dataset would have far more predictions of <code>TRUE</code> compared to the rate of <code>TRUE</code>s from the model built from the original training dataset<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</p>
+<p>In their current form the predictions from the down-sampled model are not accurate predicted probabilities. For many applications they would need to be rescaled to reflect the <em>actual</em> underlying distribution of positive cases associated with the given inputs.</p>
 </div>
 <div id="re-scale-predictions-to-predicted-probabilities" class="section level2">
 <h2>Re-scale Predictions to Predicted Probabilities</h2>
-<p>Isotonic Regression<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> or Platt scaling<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a> could be used. Such methods are used to calibrate outputted predictions and ensure they align with <em>actual</em> probabilities. Recalibration techniques are typically used when you have models that may not output well-calibrated probabilities<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>. However these methods can also be used to rescale your outputs (as in this case). (In the case of linear models, there are also simpler approaches available<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>.)</p>
+<p>Isotonic Regression<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a> or Platt scaling<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a> could be used. Such methods are used to calibrate outputted predictions and ensure they align with <em>actual</em> probabilities. Recalibration techniques are typically used when you have models that may not output well-calibrated probabilities<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>. However these methods can also be used to rescale your outputs (as in this case). (In the case of linear models, there are also simpler approaches available<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.)</p>
 <pre class="r"><code>mod_50_50_rescaled_calibrated &lt;- train %&gt;% 
   add_predictions(mod_50_50) %&gt;% 
   glm(target ~ pred, family = binomial(&quot;logit&quot;), data = .)</code></pre>
@@ -202,19 +203,21 @@ test_with_preds_adjusted %&gt;%
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>I expect the audience for this post may be rather limited.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>I wrote this example After having conversations related to this a few times (and participants not grasping points that would become clear with demonstration).<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>before I started using <a href="https://www.tidymodels.org/">tidymodels</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>or any of a myriad of topics related to this.<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>There are often pretty easy built-in ways to accommodate this.<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>There are also other reasons you may not want to rescale your predictions… but in many cases you will want to.<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>Could have been more precise here…<a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>no need for validation for this example<a href="#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p>The higher incidence of TRUE values in the target at higher scores demonstrates the features predictive value.<a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p>One built with 5-95 split the other with a downsampled 50-50 split.<a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p>Decision tree based approach<a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>Logistic regression based approach<a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p>E.g. when using Support Vector Machines<a href="#fnref13" class="footnote-back">↩</a></p></li>
-<li id="fn14"><p>In this case we are starting with a linear model hence we could also have just changed the intercept value to get the same affect. Rescaling methods act on the <em>predictions</em> rather than the model parameters. Hence these scaling methods have the advantage of being generalizable as they are agnostic to model type.<a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>In the title I just mention Undersamping for brevities sake. Upsampling and downsampling are synonyms you may hear as well<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>I expect the audience for this post may be rather limited.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>I wrote this example After having conversations related to this a few times (and participants not grasping points that would become clear with demonstration).<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>before I started using <a href="https://www.tidymodels.org/">tidymodels</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>or any of a myriad of topics related to this.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>There are often pretty easy built-in ways to accommodate this.<a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>There are also other reasons you may not want to rescale your predictions… but in many cases you will want to.<a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>Could have been more precise here…<a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>no need for validation for this example<a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p>The higher incidence of TRUE values in the target at higher scores demonstrates the features predictive value.<a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p>One built with 5-95 split the other with a downsampled 50-50 split.<a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p>Of course you could just use different decision thresholds for the predictions as well.<a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>Decision tree based approach<a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p>Logistic regression based approach<a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p>E.g. when using Support Vector Machines<a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p>In this case we are starting with a linear model hence we could also have just changed the intercept value to get the same affect. Rescaling methods act on the <em>predictions</em> rather than the model parameters. Hence these scaling methods have the advantage of being generalizable as they are agnostic to model type.<a href="#fnref16" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
