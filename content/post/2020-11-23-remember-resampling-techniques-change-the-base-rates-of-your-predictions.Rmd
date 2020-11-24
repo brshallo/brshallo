@@ -1,17 +1,17 @@
 ---
-title: Remember, Resampling Techniques Change the Base Rates of Your Predictions
+title: Just Making Sure You Know, Oversampling Changes the Base Rates of Your Predictions
 author: Bryan Shalloway
 date: '2020-11-23'
-slug: remember-resampling-techniques-change-the-base-rates-of-your-predictions
 categories:
+  - modeling
   - programming
   - statistics
-  - modeling
 tags:
-  - ml
-  - misclassification
   - imbalanced data
+  - misclassification
+  - ml
   - rstats
+slug: remember-resampling-techniques-change-the-base-rates-of-your-predictions
 ---
 
 
@@ -27,19 +27,19 @@ tags:
 <!--     }); -->
 <!-- </script> -->
 
-**TLDR:** In classification problems, over and under sampling techniques shift the distribution of predicted probabilities towards the minority class. If your problem requires accurate probabilities you will need to adjust your predictions in some way during post-processing (or at another step) to account for this^[I expect the audience for this post to be rather limited.].
+**TLDR:** In classification problems, over and under sampling techniques shift the distribution of predicted probabilities towards the minority class. If your problem requires accurate probabilities you will need to adjust your predictions in some way during post-processing (or at another step) to account for this^[I expect the audience for this post may be rather limited.].
 
-People new to predictive modeling may rush into using sampling procedures without understanding what these procedures are doing. They then sometimes get confused when their predictions appear way off (from those that would be expected according to the base rates in their data). I decided to write this vignette to briefly walk through (a little more explicitly) an example of the implications of under or over sampling procedures on the base rates of predictions[^1]. 
+People new to predictive modeling may rush into using sampling procedures without understanding what these procedures are doing. They then sometimes get confused when their predictions appear way off (from those that would be expected according to the base rates in their data). I decided to write this vignette to briefly walk through (explicitly) an example of the implications of under or over sampling procedures on the base rates of predictions[^1]. 
 
-My examples will appear obvious to individuals with experience in predictive modeling with imbalanced classes. The code and examples are pulled largely from a few emails I sent in early to mid 2018^[before I started using [tidymodels](https://www.tidymodels.org/)] to individuals new to data science.
+My examples will appear obvious to individuals with experience in predictive modeling with imbalanced classes. The code is pulled largely from a few emails I sent in early to mid 2018^[before I started using [tidymodels](https://www.tidymodels.org/)] to individuals new to data science. Like my other posts, you can see the source code on [github](https://github.com/brshallo/brshallo).
 
-Note that this post is not about *why* you might want to use resampling procedures^[or any of a myriad of topics related to this.], it is meant *only* to demonstrate that such procedures change the base rates of your predictions (unless adjusted).
+Note that this post is not about *why* you might want to use resampling procedures^[or any of a myriad of topics related to this.], it is meant *only* to demonstrate that such procedures change the base rates of your predictions (unless adjusted for).
 
 [^1]: I wrote this example After having conversations related to this a few times (and participants not grasping points that would become clear with demonstration).
 
 ---
 
-*The proportion of TRUE:FALSE cases of the target in classification problems largely determines the base rate of the predictions produced by the model Therefore if you use sampling techniques that change this proportion (e.g. you use sampling techniques to go from 5-95 to 50-50 TRUE-FALSE rates) there is a good chance you will want to rescale / calibrate^[There are often pretty easy built-in ways to accommodate this.] your predictions before using them in the wild (if you care about things other than simply ranking your observations^[There are also other reasons you may not want to rescale your predictions but in many cases you will want to.]).*
+*The proportion of TRUE:FALSE cases of the target in classification problems largely determines the base rate of the predictions produced by the model Therefore if you use sampling techniques that change this proportion (e.g. you use sampling techniques to go from 5-95 to 50-50 TRUE-FALSE ratios) there is a good chance you will want to rescale / calibrate^[There are often pretty easy built-in ways to accommodate this.] your predictions before using them in the wild (if you care about things other than simply ranking your observations^[There are also other reasons you may not want to rescale your predictions... but in many cases you will want to.]).*
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
@@ -55,7 +55,7 @@ library(purrr)
 theme_set(theme_bw())
 ```
 
-# Generate Data
+# Create Data
 
 Generate classification data with substantial class imbalance^[Could have been more precise here...].
 
@@ -164,7 +164,7 @@ test_with_preds %>%
 
 The predicted probabilities for the model built with the down-sampled 50-50 dataset are much higher than those built with the original 5-95 dataset. The predictions from the down-sampled model are not accurate predicted probabilities in their current form and would need to be rescaled to reflect the *actual* underlying distribution of positive cases associated with the given inputs.
 
-# Re-scale Predictions to Predicted Probabilities
+## Re-scale Predictions to Predicted Probabilities
 
 Isotonic Regression^[Decision tree based approach] or Platt scaling^[Logistic regression based approach] could be used. Such methods are used to calibrate outputted predictions and ensure they align with *actual* probabilities. Recalibration techniques are typically used when you have models that may not output well-calibrated probabilities^[E.g. when using Support Vector Machines]. However these methods can also be used to rescale your outputs (as in this case). (In the case of linear models, there are also simpler approaches available^[In this case we are starting with a linear model hence we could also have just changed the intercept value to get the same affect. Rescaling methods act on the *predictions* rather than the model parameters. Hence these scaling methods have the advantage of being generalizable as they are agnostic to model type.].)
 
@@ -193,6 +193,8 @@ Now that the predictions have been calibrated according to their underlying base
 
 # Appendix
 
+## Density Plots
+
 Rebuilding plots but using density distributions by class (rather than histograms based on counts).
 
 ```{r}
@@ -207,9 +209,8 @@ test_with_preds_adjusted %>%
   facet_wrap(~model, ncol = 1)
 ```
 
-## Lift plots
+## Lift Plot
 
-Predictions from model:
 ```{r}
 test_with_preds_adjusted %>% 
   mutate(target = factor(target, c("TRUE", "FALSE"))) %>% 
