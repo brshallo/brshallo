@@ -1,5 +1,5 @@
 ---
-title: Undersampling Changes the Base Rates of Your Predictions
+title: Undersampling Will Change the Base Rates of Your Model's Predictions
 author: Bryan Shalloway
 date: '2020-11-23'
 categories:

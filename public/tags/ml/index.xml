@@ -8,7 +8,7 @@
     <language>en-us</language>
     <lastBuildDate>Mon, 23 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/ml/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Undersampling Changes the Base Rates of Your Predictions</title>
+      <title>Undersampling Will Change the Base Rates of Your Model&#39;s Predictions</title>
       <link>/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/</link>
       <pubDate>Mon, 23 Nov 2020 00:00:00 +0000</pubDate>
       
