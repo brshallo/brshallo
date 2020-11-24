@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.75.0" />
+
+
+<title>Remember, Resampling Techniques Change the Base Rates of Your Predictions - Bryan Shalloway&#39;s Blog</title>
+<meta property="og:title" content="Remember, Resampling Techniques Change the Base Rates of Your Predictions - Bryan Shalloway&#39;s Blog">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/bryan_edit.jpg"
+         width="60"
+         height="60"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://twitter.com/brshallo">Twitter</a></li>
+    
+    <li><a href="https://github.com/brshallo">GitHub</a></li>
+    
+    <li><a href="https://www.linkedin.com/in/bryanshalloway/">LinkedIn</a></li>
+    
+    <li><a href="https://www.youtube.com/channel/UCDVMC4-VRU-tR2Z4nYc1mDA">YouTube</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">6 min read</span>
+    
+
+    <h1 class="article-title">Remember, Resampling Techniques Change the Base Rates of Your Predictions</h1>
+
+    
+    <span class="article-date">2020-11-23</span>
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#generate-data">Generate Data</a></li>
+<li><a href="#association-of-feature-and-target">Association of ‘feature’ and ‘target’</a><ul>
+<li><a href="#resample">Resample</a></li>
+<li><a href="#build-models">Build Models</a></li>
+</ul></li>
+<li><a href="#re-scale-predictions-to-predicted-probabilities">Re-scale Predictions to Predicted Probabilities</a></li>
+<li><a href="#appendix">Appendix</a><ul>
+<li><a href="#lift-plots">Lift plots</a></li>
+</ul></li>
+</ul>
+</div>
+
+<!-- This chunk allows more than three levels for the Table of Contents -->
+<!-- <script> -->
+<!--     $(document).ready(function() { -->
+<!--       $items = $('div#TOC li'); -->
+<!--       $items.each(function(idx) { -->
+<!--         num_ul = $(this).parentsUntil('#TOC').length; -->
+<!--         $(this).css({'text-indent': num_ul * 10, 'padding-left': 0}); -->
+<!--       }); -->
+<!--     }); -->
+<!-- </script> -->
+<p><strong>TLDR:</strong> In classification problems, over and under sampling techniques shift the distribution of predicted probabilities towards the minority class. If your problem requires accurate probabilities you will need to adjust your predictions in some way during post-processing (or at another step) to account for this<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+<p>People new to predictive modeling may rush into using sampling procedures without understanding what these procedures are doing. They then sometimes get confused when their predictions appear way off (from those that would be expected according to the base rates in their data). I decided to write this vignette to briefly walk through (a little more explicitly) an example of the implications of under or over sampling procedures on the base rates of predictions<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
+<p>My examples will appear obvious to individuals with experience in predictive modeling with imbalanced classes. The code and examples are pulled largely from a few emails I sent in early to mid 2018<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> to individuals new to data science.</p>
+<p>Note that this post is not about <em>why</em> you might want to use resampling procedures<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>, it is meant <em>only</em> to demonstrate that such procedures change the base rates of your predictions (unless adjusted).</p>
+<hr />
+<p><em>The proportion of TRUE:FALSE cases of the target in classification problems largely determines the base rate of the predictions produced by the model Therefore if you use sampling techniques that change this proportion (e.g. you use sampling techniques to go from 5-95 to 50-50 TRUE-FALSE rates) there is a good chance you will want to rescale / calibrate<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> your predictions before using them in the wild (if you care about things other than simply ranking your observations<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>).</em></p>
+<pre class="r"><code>library(tidyverse)
+library(modelr)
+library(ggplot2)
+library(gridExtra)
+library(purrr)
+
+theme_set(theme_bw())</code></pre>
+<div id="generate-data" class="section level1">
+<h1>Generate Data</h1>
+<p>Generate classification data with substantial class imbalance<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
+<pre class="r"><code># convert log odds to probability
+convert_lodds &lt;- function(log_odds) exp(log_odds) / (1 + exp(log_odds))
+
+set.seed(123)
+
+minority_data &lt;- tibble(rand_lodds = rnorm(1000, log(.03 / (1 - .03)), sd = 1),
+       rand_probs = convert_lodds(rand_lodds)) %&gt;% 
+  mutate(target = map(.x = rand_probs, ~rbernoulli(100, p = .x))) %&gt;% 
+  unnest() %&gt;% 
+  mutate(id = row_number())
+
+# Change the name of the same of the variables to make the dataset more
+# intuitive to follow.
+example &lt;- minority_data %&gt;% 
+  select(id, target, feature = rand_lodds)</code></pre>
+<p><em>In this dataset we have a class imbalance where our <code>target</code> is composed of ~5% positive (<code>TRUE</code>) cases and ~95% negative (<code>FALSE</code>) cases.</em></p>
+<pre class="r"><code>example %&gt;% 
+  count(target) %&gt;% 
+  mutate(proportion = round(n / sum(n), 3)) %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">target</th>
+<th align="right">n</th>
+<th align="right">proportion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">FALSE</td>
+<td align="right">95409</td>
+<td align="right">0.954</td>
+</tr>
+<tr class="even">
+<td align="left">TRUE</td>
+<td align="right">4591</td>
+<td align="right">0.046</td>
+</tr>
+</tbody>
+</table>
+<p>Make 80-20 train - test split<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
+<pre class="r"><code>set.seed(123)
+train &lt;- example %&gt;% 
+  sample_frac(0.80)
+
+test &lt;- example %&gt;% 
+  anti_join(train, by = &quot;id&quot;)</code></pre>
+</div>
+<div id="association-of-feature-and-target" class="section level1">
+<h1>Association of ‘feature’ and ‘target’</h1>
+<p>We have one important input to our model named <code>feature</code><a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>.</p>
+<pre class="r"><code>train %&gt;% 
+  ggplot(aes(feature, fill = target))+
+  geom_histogram()+
+  labs(title = &quot;Distribution of values of &#39;feature&#39;&quot;,
+       subtitle = &quot;Greater values of &#39;feature&#39; associate with higher likelihood &#39;target&#39; = TRUE&quot;)</code></pre>
+<p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<div id="resample" class="section level2">
+<h2>Resample</h2>
+<p>Make a new sample <code>train_downsamp</code> that keeps all positive cases in the training set and an equal number of randomly sampled negative cases so that the split is no longer 5-95 but becomes 50-50.</p>
+<pre class="r"><code>minority_class_size &lt;- sum(train$target)
+
+set.seed(1234)
+
+train_downsamp &lt;- train %&gt;% 
+  group_by(target) %&gt;% 
+  sample_n(minority_class_size) %&gt;% 
+  ungroup()</code></pre>
+<p>See below for what the distribution of <code>feature</code> looks like in the down-sampled dataset.</p>
+<pre class="r"><code>train_downsamp %&gt;% 
+  ggplot(aes(feature, fill = target))+
+  geom_histogram()+
+  labs(title = &quot;Distribution of values of &#39;feature&#39; (down-sampled)&quot;,
+       subtitle = &quot;Greater values of &#39;feature&#39; associate with higher likelihood &#39;target&#39; = TRUE&quot;)</code></pre>
+<p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="build-models" class="section level2">
+<h2>Build Models</h2>
+<p>Train a logistic regression model to predict positive cases for <code>target</code> based on <code>feature</code> using the training dataset without any changes in the sample (i.e. with the roughly 5-95 class imbalance).</p>
+<pre class="r"><code>mod_5_95 &lt;- glm(target ~ feature, family = binomial(&quot;logit&quot;), data = train)</code></pre>
+<p>Train a model with the down-sampled (i.e. 50-50) dataset.</p>
+<pre class="r"><code>mod_50_50 &lt;- glm(target ~ feature, family = binomial(&quot;logit&quot;), data = train_downsamp)</code></pre>
+<p>Add the predictions from each of these models<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> onto our test set (and convert log-odd predictions to probabilities).</p>
+<pre class="r"><code>test_with_preds &lt;- test %&gt;% 
+  gather_predictions(mod_5_95, mod_50_50) %&gt;% 
+  mutate(pred_prob = convert_lodds(pred))</code></pre>
+<p>Visualize distributions of predicted probability of a positive and negative case for each model.</p>
+<pre class="r"><code>test_with_preds %&gt;% 
+  ggplot(aes(x = pred_prob, fill = target))+
+  geom_histogram()+
+  facet_wrap(~model, ncol = 1)</code></pre>
+<p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>The predicted probabilities for the model built with the down-sampled 50-50 dataset are much higher than those built with the original 5-95 dataset. The predictions from the down-sampled model are not accurate predicted probabilities in their current form and would need to be rescaled to reflect the <em>actual</em> underlying distribution of positive cases associated with the given inputs.</p>
+</div>
+</div>
+<div id="re-scale-predictions-to-predicted-probabilities" class="section level1">
+<h1>Re-scale Predictions to Predicted Probabilities</h1>
+<p>Isotonic Regression<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> or Platt scaling<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a> could be used. Such methods are used to calibrate outputted predictions and ensure they align with <em>actual</em> probabilities. Recalibration techniques are typically used when you have models that may not output well-calibrated probabilities<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>. However these methods can also be used to rescale your outputs (as in this case). (In the case of linear models, there are also simpler approaches available<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>.)</p>
+<pre class="r"><code>mod_50_50_rescaled_calibrated &lt;- train %&gt;% 
+  add_predictions(mod_50_50) %&gt;% 
+  glm(target ~ pred, family = binomial(&quot;logit&quot;), data = .)</code></pre>
+<pre class="r"><code>test_with_preds_adjusted &lt;- test %&gt;% 
+  spread_predictions(mod_5_95, mod_50_50) %&gt;% 
+  rename(pred = mod_50_50) %&gt;% 
+  spread_predictions(mod_50_50_rescaled_calibrated) %&gt;% 
+  select(-pred) %&gt;% 
+  gather(mod_5_95, mod_50_50_rescaled_calibrated, key = &quot;model&quot;, value = &quot;pred&quot;) %&gt;% 
+  mutate(pred_prob = convert_lodds(pred)) 
+
+test_with_preds_adjusted %&gt;% 
+  ggplot(aes(x = pred_prob, fill = target))+
+  geom_histogram()+
+  facet_wrap(~model, ncol = 1)</code></pre>
+<p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>Now that the predictions have been calibrated according to their underlying base rate, you can see the distributions of the predictions between the models are essentially the same.</p>
+</div>
+<div id="appendix" class="section level1">
+<h1>Appendix</h1>
+<p>Rebuilding plots but using density distributions by class (rather than histograms based on counts).</p>
+<pre class="r"><code>test_with_preds %&gt;% 
+  ggplot(aes(x = pred_prob, fill = target))+
+  geom_density(alpha = 0.3)+
+  facet_wrap(~model, ncol = 1)</code></pre>
+<p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>test_with_preds_adjusted %&gt;% 
+  ggplot(aes(x = pred_prob, fill = target))+
+  geom_density(alpha = 0.3)+
+  facet_wrap(~model, ncol = 1)</code></pre>
+<p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-14-2.png" width="672" /></p>
+<div id="lift-plots" class="section level2">
+<h2>Lift plots</h2>
+<p>Predictions from model:</p>
+<pre class="r"><code>test_with_preds_adjusted %&gt;% 
+  mutate(target = factor(target, c(&quot;TRUE&quot;, &quot;FALSE&quot;))) %&gt;% 
+  filter(model == &quot;mod_5_95&quot;) %&gt;%
+  yardstick::lift_curve(target, pred) %&gt;% 
+  autoplot()</code></pre>
+<p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>I expect the audience for this post to be rather limited.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>I wrote this example After having conversations related to this a few times (and participants not grasping points that would become clear with demonstration).<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>before I started using <a href="https://www.tidymodels.org/">tidymodels</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>or any of a myriad of topics related to this.<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>There are often pretty easy built-in ways to accommodate this.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>There are also other reasons you may not want to rescale your predictions but in many cases you will want to.<a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>Could have been more precise here…<a href="#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>no need for validation for this example<a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>The higher incidence of TRUE values in the target at higher scores demonstrates the features predictive value.<a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p>One built with 5-95 split the other with a downsampled 50-50 split.<a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p>Decision tree based approach<a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p>Logistic regression based approach<a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>E.g. when using Support Vector Machines<a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p>In this case we are starting with a linear model hence we could also have just changed the intercept value to get the same affect. Rescaling methods act on the <em>predictions</em> rather than the model parameters. Hence these scaling methods have the advantage of being generalizable as they are agnostic to model type.<a href="#fnref14" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+
+    </div>
+  </article>
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//bryanshalloway.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+</main>
+
+  
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a>Blogroll:</a><a href="https://www.r-bloggers.com/" class="footer-links-kudos">R-Bloggers</a><a href="https://rweekly.org/" class="footer-links-kudos">R-Weekly</a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+
+    
+  </body>
+</html>
+
