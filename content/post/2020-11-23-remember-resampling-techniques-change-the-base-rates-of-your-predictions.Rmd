@@ -33,13 +33,13 @@ People new to predictive modeling may rush into using sampling procedures withou
 
 My examples will appear obvious to individuals with experience in predictive modeling with imbalanced classes. The code is pulled largely from a few emails I sent in early to mid 2018^[before I started using [tidymodels](https://www.tidymodels.org/)] to individuals new to data science. Like my other posts, you can view the source code on [github](https://github.com/brshallo/brshallo).
 
-Note that this post is not about *why* you might want to use resampling procedures^[or any of a myriad of topics related to this.], it is meant *only* to demonstrate that such procedures change the base rates of your predictions (unless adjusted for).
+Note that this post is not about *what* resampling procedures are or *why* you might want to them^[or any of a myriad of topics related to this.], it is meant *only* to demonstrate that such procedures change the base rates of your predictions (unless adjusted for).
 
 [^1]: I wrote this example After having conversations related to this a few times (and participants not grasping points that would become clear with demonstration).
 
 ---
 
-*The proportion of TRUE:FALSE cases of the target in classification problems largely determines the base rate of the predictions produced by the model Therefore if you use sampling techniques that change this proportion (e.g. you use sampling techniques to go from 5-95 to 50-50 TRUE-FALSE ratios) there is a good chance you will want to rescale / calibrate^[There are often pretty easy built-in ways to accommodate this.] your predictions before using them in the wild (if you care about things other than simply ranking your observations^[There are also other reasons you may not want to rescale your predictions... but in many cases you will want to.]).*
+*The proportion of TRUE to FALSE cases of the target in binary classification problems largely determines the base rate of the predictions produced by the model. Therefore if you use sampling techniques that change this proportion (e.g. to go from 5-95 to 50-50 TRUE-FALSE ratios) there is a good chance you will want to rescale / calibrate^[There are often pretty easy built-in ways to accommodate this.] your predictions before using them in the wild (if you care about things other than simply ranking your observations^[There are also other reasons you may not want to rescale your predictions... but in many cases you will want to.]).*
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
