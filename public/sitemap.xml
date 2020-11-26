@@ -48,6 +48,11 @@
   </url>
   
   <url>
+    <loc>/categories/rstats/</loc>
+    <lastmod>2020-11-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/categories/statistics/</loc>
     <lastmod>2020-11-23T00:00:00+00:00</lastmod>
   </url>
@@ -154,11 +159,6 @@
   
   <url>
     <loc>/tags/jsonlite/</loc>
-    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/rstats/</loc>
     <lastmod>2020-10-12T00:00:00+00:00</lastmod>
   </url>
   
