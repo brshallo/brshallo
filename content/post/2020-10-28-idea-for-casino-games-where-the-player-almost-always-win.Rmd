@@ -15,7 +15,7 @@ slug: idea-for-casino-games-where-the-player-almost-always-win
 thumbnail: https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Loss_Aversion.png/330px-Loss_Aversion.png
 ---
 
-*In this post, I will describe an example of a game that produces many small wins for the player and occasional large wins for the house. Such a game could take advantage of psychological biases of individuals to prefer gains to be disaggregated and losses to be aggregated^[Picture the pattern of gains and losses in the stock market -- where rises are typically more incremental compared to the steepness of drops.] as well as a general disposition for accepting small sure-things when it comes to gains and a willingness to chance higher-risk scenarios in order to avoid paying losses (see [Note on Prospect Theory] for why this second assertion may be inappropriate for the games I describe).*
+*In this post, I will describe an example of a game that produces many small wins for the player and occasional large wins for the house. Such a game could take advantage of psychological biases of individuals to prefer gains to be disaggregated and losses to be aggregated^[Picture the pattern of gains and losses in the stock market -- where rises are typically more incremental compared to the steepness of drops.] as well as a general disposition for accepting small sure-things when it comes to gains and a willingness to chance higher-risk scenarios in order to avoid paying losses (see [Note on Prospect Theory] for why these assertions may be inappropriate for the games I describe).*
 
 *A negated roulette wheel (where the point is to avoid, rather than land on, a specific number) provides a simple example of a game that captures these dynamics^[Credit card roulette (whereby friends throw in their cards at the end of dinner to see who will end-up paying for it) perhaps provides an everyday example for the type of game I'm talking about.].* 
 
@@ -74,13 +74,13 @@ There are a variety of forms this game could be tested in -- it doesn't have to 
 
 ## Note on Prospect Theory
 
-*Section added after publishing post and after reading a little more on Prospect Theory.*
+*Section added after writing post and after reading a little more on Prospect Theory.*
 
 The course materials I reference in this post are themselves referencing research on when a player is facing *either* only gains (guaranteed gain vs possible gain) or only losses (guaranteed loss vs possible loss). However in gambling the problem is mixed. Players face both the possibility of gains *or* losses on any given bet. Khaneman describes the differences in the mixed case in *Chapter 26, Prospect Theory* of his book *Thinking Fast and Slow*:
 
 > "In mixed gambles, where both a gain and a loss are possible, loss aversion causes extremely risk averse choices. In bad choices, where a sure loss is compared to a larger loss that is merely probable, diminishing sensitivity causes risk seeking. There is no contradiction. In the mixed case the possible loss looms twice as large as the possible gain."
 
-This suggests that my assertions throughout later parts of this post regarding risk seeking behaviors are likely incorrect^[As the psychological biases I describe do not apply to mixed environments where a player can achieve either a gain or a loss.]. This misapplication however might not present as much of a problem for my references of people's preference for aggregated losses and disaggregated gains. Hence at least part of my justification for hypothesizing a game like "Wallet Roulette" may be valid.
+This suggests that my assertions throughout later parts of this post regarding risk seeking behaviors are likely incorrect^[As the psychological biases I describe do not apply to mixed environments where a player can achieve either a gain or a loss.]. This misapplication however might not present as much of a problem for my references of people's preference for aggregated losses and disaggregated gains. Hence at least part of my justification for hypothesizing a game like "Wallet Roulette" may be applicable^[Though it may also be that the fear or a 'ruining' loss would discourage play.].
 
 It remains possible that multiple gains may represent greater value than a single larger loss. The chart below shows a typical example of the asymmetric S-shaped value function associated with gains/losses in Prospect Theory. Even with its asymmetry (whereby losses are felt more intensely than gains) it is clear that three gains (i.e. wins) of \$0.05 would more than offset a single loss of \$0.15 (assuming the value derived from individual gains can be aggregated linearly). Hence the types of games I describe may still be worth exploring in gambling contexts.
 
