@@ -239,5 +239,5 @@ test_with_preds_adjusted %>%
 
 Thanks to [Andrew Wheeler](https://andrewpwheeler.com/) for his helpful disqus comment referencing another method for rescaling which prompted me to create a quick [gist](https://gist.github.com/brshallo/24338a87b33e5d2ac98d200b1ccecfc5) comparing platt scaling against using an offset/adjustment approach for rescaling.
 
-![](https://camo.githubusercontent.com/f546418bb1bd4db571328c5c1905b7ebebcbe43430955cccecba3a9d8a7e0690/68747470733a2f2f692e696d6775722e636f6d2f617266455178412e706e67)
+![](https://camo.githubusercontent.com/4f6e2dee86039f3cbd23980414cac318cabd364459714b3520ffe00b870d13a4/68747470733a2f2f692e696d6775722e636f6d2f613245496e69392e706e67)
 
