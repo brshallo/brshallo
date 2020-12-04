@@ -66,7 +66,7 @@
 
   <article class="article">
     
-    <span class="article-duration">6 min read</span>
+    <span class="article-duration">7 min read</span>
     
 
     <h1 class="article-title">Undersampling Will Change the Base Rates of Your Model&#39;s Predictions</h1>
@@ -89,6 +89,7 @@
 <li><a href="#appendix">Appendix</a><ul>
 <li><a href="#density-plots">Density Plots</a></li>
 <li><a href="#lift-plot">Lift Plot</a></li>
+<li><a href="#comparing-scaling-methods">Comparing Scaling Methods</a></li>
 </ul></li>
 </ul>
 </div>
@@ -206,14 +207,47 @@ train_downsamp &lt;- train %&gt;%
 <pre class="r"><code>test_with_preds &lt;- test %&gt;% 
   gather_predictions(mod_5_95, mod_50_50) %&gt;% 
   mutate(pred_prob = convert_lodds(pred))</code></pre>
-<p>Visualize distributions of predicted probability of a positive and negative case for each model.</p>
+<p>Visualize distributions of predicted probability of the positive and negative cases for each model.</p>
 <pre class="r"><code>test_with_preds %&gt;% 
   ggplot(aes(x = pred_prob, fill = target))+
   geom_histogram()+
   facet_wrap(~model, ncol = 1)</code></pre>
 <p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p>The predicted probabilities for the model built with the down-sampled 50-50 dataset are much higher than those built with the original 5-95 dataset. If picking a decision threshold for the predictions, the model built from the undersampled dataset would have far more predictions of <code>TRUE</code> compared to the rate of <code>TRUE</code>s from the model built from the original training dataset<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</p>
-<p>In their current form the predictions from the down-sampled model are not accurate predicted probabilities. For many applications they would need to be rescaled to reflect the <em>actual</em> underlying distribution of positive cases associated with the given inputs.</p>
+<p>The predicted probabilities for the model built with the down-sampled 50-50 dataset are much higher than those built with the original 5-95 dataset. For example, let’s look at the predictions between these models for a particular observation:</p>
+<pre class="r"><code>test_with_preds %&gt;% 
+  filter(id == 1828) %&gt;%
+  arrange(id) %&gt;% 
+  select(-pred) %&gt;% 
+  knitr::kable(digits = 2)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">model</th>
+<th align="right">id</th>
+<th align="left">target</th>
+<th align="right">feature</th>
+<th align="right">pred_prob</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">mod_5_95</td>
+<td align="right">1828</td>
+<td align="left">FALSE</td>
+<td align="right">-2.77</td>
+<td align="right">0.06</td>
+</tr>
+<tr class="even">
+<td align="left">mod_50_50</td>
+<td align="right">1828</td>
+<td align="left">FALSE</td>
+<td align="right">-2.77</td>
+<td align="right">0.56</td>
+</tr>
+</tbody>
+</table>
+<p>This shows that when <code>feature</code> is equal to -2.77, the model built without undersampling produces a prediction of 6% whereas the model built from the undersampled data would predict 56%. The former can be thought of as the predicted probability of the event whereas the latter would first need to be rescaled.</p>
+<p>If picking a decision threshold for the predictions, the model built from the undersampled dataset would have far more predictions of <code>TRUE</code> compared to the rate of <code>TRUE</code>s from the model built from the original training dataset<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</p>
 </div>
 <div id="rescale-predictions-to-predicted-probabilities" class="section level2">
 <h2>Rescale Predictions to Predicted Probabilities</h2>
@@ -233,7 +267,7 @@ test_with_preds_adjusted %&gt;%
   ggplot(aes(x = pred_prob, fill = target))+
   geom_histogram()+
   facet_wrap(~model, ncol = 1)</code></pre>
-<p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <p>Now that the predictions have been calibrated according to their underlying base rate, you can see the distributions of the predictions between the models are essentially the same.</p>
 </div>
 </div>
@@ -246,12 +280,12 @@ test_with_preds_adjusted %&gt;%
   ggplot(aes(x = pred_prob, fill = target))+
   geom_density(alpha = 0.3)+
   facet_wrap(~model, ncol = 1)</code></pre>
-<p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <pre class="r"><code>test_with_preds_adjusted %&gt;% 
   ggplot(aes(x = pred_prob, fill = target))+
   geom_density(alpha = 0.3)+
   facet_wrap(~model, ncol = 1)</code></pre>
-<p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-14-2.png" width="672" /></p>
+<p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-15-2.png" width="672" /></p>
 </div>
 <div id="lift-plot" class="section level2">
 <h2>Lift Plot</h2>
@@ -260,7 +294,13 @@ test_with_preds_adjusted %&gt;%
   filter(model == &quot;mod_5_95&quot;) %&gt;%
   yardstick::lift_curve(target, pred) %&gt;% 
   autoplot()</code></pre>
-<p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+</div>
+<div id="comparing-scaling-methods" class="section level2">
+<h2>Comparing Scaling Methods</h2>
+<p><em>Added after publishing</em></p>
+<p>Thanks to <a href="https://andrewpwheeler.com/">Andrew Wheeler</a> for his helpful disqus comment referencing another method for rescaling which prompted me to create a quick <a href="https://gist.github.com/brshallo/24338a87b33e5d2ac98d200b1ccecfc5">gist</a> comparing platt scaling against using an offset/adjustment approach for rescaling.</p>
+<p><img src="https://camo.githubusercontent.com/f546418bb1bd4db571328c5c1905b7ebebcbe43430955cccecba3a9d8a7e0690/68747470733a2f2f692e696d6775722e636f6d2f617266455178412e706e67" /></p>
 </div>
 </div>
 <div class="footnotes">

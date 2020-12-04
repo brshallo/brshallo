@@ -156,7 +156,7 @@ test_with_preds <- test %>%
   mutate(pred_prob = convert_lodds(pred))
 ```
 
-Visualize distributions of predicted probability of a positive and negative case for each model.
+Visualize distributions of predicted probability of the positive and negative cases for each model.
 ```{r}
 test_with_preds %>% 
   ggplot(aes(x = pred_prob, fill = target))+
@@ -164,9 +164,19 @@ test_with_preds %>%
   facet_wrap(~model, ncol = 1)
 ```
 
-The predicted probabilities for the model built with the down-sampled 50-50 dataset are much higher than those built with the original 5-95 dataset. If picking a decision threshold for the predictions, the model built from the undersampled dataset would have far more predictions of `TRUE` compared to the rate of `TRUE`s from the model built from the original training dataset^[Of course you could just use different decision thresholds for the predictions as well.]. 
+The predicted probabilities for the model built with the down-sampled 50-50 dataset are much higher than those built with the original 5-95 dataset. For example, let's look at the predictions between these models for a particular observation:
 
-In their current form the predictions from the down-sampled model are not accurate predicted probabilities. For many applications they would need to be rescaled to reflect the *actual* underlying distribution of positive cases associated with the given inputs.
+```{r}
+test_with_preds %>% 
+  filter(id == 1828) %>%
+  arrange(id) %>% 
+  select(-pred) %>% 
+  knitr::kable(digits = 2)
+```
+
+This shows that when `feature` is equal to -2.77, the model built without undersampling produces a prediction of 6% whereas the model built from the undersampled data would predict 56%. The former can be thought of as the predicted probability of the event whereas the latter would first need to be rescaled. 
+
+If picking a decision threshold for the predictions, the model built from the undersampled dataset would have far more predictions of `TRUE` compared to the rate of `TRUE`s from the model built from the original training dataset^[Of course you could just use different decision thresholds for the predictions as well.]. 
 
 ## Rescale Predictions to Predicted Probabilities
 
@@ -222,4 +232,12 @@ test_with_preds_adjusted %>%
   yardstick::lift_curve(target, pred) %>% 
   autoplot()
 ```
+
+## Comparing Scaling Methods
+
+*Added after publishing*
+
+Thanks to [Andrew Wheeler](https://andrewpwheeler.com/) for his helpful disqus comment referencing another method for rescaling which prompted me to create a quick [gist](https://gist.github.com/brshallo/24338a87b33e5d2ac98d200b1ccecfc5) comparing platt scaling against using an offset/adjustment approach for rescaling.
+
+![](https://camo.githubusercontent.com/f546418bb1bd4db571328c5c1905b7ebebcbe43430955cccecba3a9d8a7e0690/68747470733a2f2f692e696d6775722e636f6d2f617266455178412e706e67)
 

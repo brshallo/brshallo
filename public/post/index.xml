@@ -26,6 +26,7 @@
 &lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#density-plots&#34;&gt;Density Plots&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#lift-plot&#34;&gt;Lift Plot&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#comparing-scaling-methods&#34;&gt;Comparing Scaling Methods&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
@@ -143,14 +144,47 @@ train_downsamp &amp;lt;- train %&amp;gt;%
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;test_with_preds &amp;lt;- test %&amp;gt;% 
   gather_predictions(mod_5_95, mod_50_50) %&amp;gt;% 
   mutate(pred_prob = convert_lodds(pred))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Visualize distributions of predicted probability of a positive and negative case for each model.&lt;/p&gt;
+&lt;p&gt;Visualize distributions of predicted probability of the positive and negative cases for each model.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;test_with_preds %&amp;gt;% 
   ggplot(aes(x = pred_prob, fill = target))+
   geom_histogram()+
   facet_wrap(~model, ncol = 1)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;The predicted probabilities for the model built with the down-sampled 50-50 dataset are much higher than those built with the original 5-95 dataset. If picking a decision threshold for the predictions, the model built from the undersampled dataset would have far more predictions of &lt;code&gt;TRUE&lt;/code&gt; compared to the rate of &lt;code&gt;TRUE&lt;/code&gt;s from the model built from the original training dataset&lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;In their current form the predictions from the down-sampled model are not accurate predicted probabilities. For many applications they would need to be rescaled to reflect the &lt;em&gt;actual&lt;/em&gt; underlying distribution of positive cases associated with the given inputs.&lt;/p&gt;
+&lt;p&gt;The predicted probabilities for the model built with the down-sampled 50-50 dataset are much higher than those built with the original 5-95 dataset. For example, let’s look at the predictions between these models for a particular observation:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;test_with_preds %&amp;gt;% 
+  filter(id == 1828) %&amp;gt;%
+  arrange(id) %&amp;gt;% 
+  select(-pred) %&amp;gt;% 
+  knitr::kable(digits = 2)&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;model&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;id&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;target&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;feature&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;pred_prob&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;mod_5_95&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1828&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-2.77&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.06&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;mod_50_50&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1828&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-2.77&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.56&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;This shows that when &lt;code&gt;feature&lt;/code&gt; is equal to -2.77, the model built without undersampling produces a prediction of 6% whereas the model built from the undersampled data would predict 56%. The former can be thought of as the predicted probability of the event whereas the latter would first need to be rescaled.&lt;/p&gt;
+&lt;p&gt;If picking a decision threshold for the predictions, the model built from the undersampled dataset would have far more predictions of &lt;code&gt;TRUE&lt;/code&gt; compared to the rate of &lt;code&gt;TRUE&lt;/code&gt;s from the model built from the original training dataset&lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;rescale-predictions-to-predicted-probabilities&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Rescale Predictions to Predicted Probabilities&lt;/h2&gt;
@@ -170,7 +204,7 @@ test_with_preds_adjusted %&amp;gt;%
   ggplot(aes(x = pred_prob, fill = target))+
   geom_histogram()+
   facet_wrap(~model, ncol = 1)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Now that the predictions have been calibrated according to their underlying base rate, you can see the distributions of the predictions between the models are essentially the same.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -183,12 +217,12 @@ test_with_preds_adjusted %&amp;gt;%
   ggplot(aes(x = pred_prob, fill = target))+
   geom_density(alpha = 0.3)+
   facet_wrap(~model, ncol = 1)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;test_with_preds_adjusted %&amp;gt;% 
   ggplot(aes(x = pred_prob, fill = target))+
   geom_density(alpha = 0.3)+
   facet_wrap(~model, ncol = 1)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-14-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-15-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;lift-plot&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Lift Plot&lt;/h2&gt;
@@ -197,7 +231,13 @@ test_with_preds_adjusted %&amp;gt;%
   filter(model == &amp;quot;mod_5_95&amp;quot;) %&amp;gt;%
   yardstick::lift_curve(target, pred) %&amp;gt;% 
   autoplot()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-16-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;comparing-scaling-methods&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Comparing Scaling Methods&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;Added after publishing&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Thanks to &lt;a href=&#34;https://andrewpwheeler.com/&#34;&gt;Andrew Wheeler&lt;/a&gt; for his helpful disqus comment referencing another method for rescaling which prompted me to create a quick &lt;a href=&#34;https://gist.github.com/brshallo/24338a87b33e5d2ac98d200b1ccecfc5&#34;&gt;gist&lt;/a&gt; comparing platt scaling against using an offset/adjustment approach for rescaling.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://camo.githubusercontent.com/f546418bb1bd4db571328c5c1905b7ebebcbe43430955cccecba3a9d8a7e0690/68747470733a2f2f692e696d6775722e636f6d2f617266455178412e706e67&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&#34;footnotes&#34;&gt;
