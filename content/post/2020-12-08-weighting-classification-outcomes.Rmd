@@ -3,7 +3,7 @@ title: Weighting Confusion Matrices by Classification Outcomes and Observation W
 author: Bryan Shalloway
 date: '2020-12-08'
 slug: weighting-classification-outcomes
-thumnail: /post/2020-12-08-weighting-classification-outcomes_files/figure-html/classification-metrics-charts.png
+thumnail: /post/2020-12-08-weighting-classification-outcomes_files/figure-html/classification-metrics-charts-1.png
 ---
 
 ```{r setup, include=FALSE}
