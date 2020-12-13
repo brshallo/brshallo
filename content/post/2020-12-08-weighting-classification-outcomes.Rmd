@@ -3,7 +3,7 @@ title: Weighting Confusion Matrices by Outcomes and Observations
 author: Bryan Shalloway
 date: '2020-12-08'
 slug: weighting-classification-outcomes
-thumbnail: /post/2020-12-08-weighting-classification-outcomes_files/figure-html/classification-metrics-charts-1.png
+thumbnail: /post/2020-12-08-weighting-classification-outcomes_files/figure-html/value-chart-1.png
 ---
 
 ```{r setup, include=FALSE}
@@ -16,16 +16,28 @@ Weighting in predictive modeling may take multiple forms and occur at different 
 1. During model training
 1. After model training, during model evaluation
 
-The focus of this post is on the last stage[^1] (see [Weights of Observations During and Prior to Modeling] in the [Appendix] for a brief discussion on other types of weighting in predictive modeling)^[This may be helpful for model evaluation as well as identifying ideal decision thresholds for classification problems that involve different costs and gains depending on prediction outcomes.]. I will describe two types of weighting:
+The focus of this post is on the last stage[^1]. I will describe two types of weighting that can be applied in late stage model evaluation:
 
 1. [Weighting by Classification Outcomes]
 1. [Weighting by Observations]
 
+Specifically with the aim of identifying ideal cut-points for making class predictions.
+
 [^1]: I am including *decision point threshold selection* as falling into the bucket of approaches under the umbrella of 'After model training during evaluation.' You could argue it deserves a separate sub-step 'Figuring out how to use your selected model,' that could be distinguished from model evaluation intended for 'Selecting your model.' The approaches I describe could be used in either/both of these hypothetical sub-sections, I will focus in this post on threshold selection. 
+
+(See [Weights of Observations During and Prior to Modeling] in the [Appendix] for a brief discussion on forms of weighting applied at other steps in predictive modeling.)
 
 # Model Performance Metrics
 
-Most common metrics used in classification problems (e.g. accuracy, precision, recall/sensitivity, specificity, AUC[^2]) come down to the relationship between the true positives (TP), true negatives (TN), false positives (FP), and false negatives (FN) at a particular decision threshold^[I.e. if probability of event is greater than 0.50, predict TRUE, else FALSE.] (or across all possible thresholds)^[Some metrics are often helpful for focusing on particular aspects of your predictions (e.g. precision, recall, F-score all focus more on the model's capacity to identify TRUE events).]. The frequency of these classification outcomes is often represented at an individual decision threshold by a confusion matrix. 
+Most common metrics used in classification problems -- e.g. accuracy, precision, recall/sensitivity, specificity, Area Under under ROC curve[^2] (AUC) or Precision-Recall curve -- come down to the relationship between the true positives (TP), true negatives (TN), false positives (FP), and false negatives (FN) at a particular decision threshold^[I.e. if probability of event is greater than 0.50, predict TRUE, else FALSE.] or across all possible thresholds^[Some metrics are often helpful for focusing on particular aspects of your predictions (e.g. precision, recall, F-score all focus more on the model's capacity to identify TRUE events).]. 
+
+Initial model evaluation and selection should generally start by reviewing metrics that capture performance across decision thresholds. Max Kuhn and Kjell Johnson explain this in their book [Feature Engineering and Selection...](http://www.feat.engineering/measuring-performance.html):
+
+>"During the initial phase of model building, a good strategy for data sets with two classes is to focus on the AUC statistics from these curves instead of metrics based on hard class predictions. Once a reasonable model is found, the ROC or precision-recall curves can be carefully examined to find a reasonable cutoff for the data and then qualitative prediction metrics can be used." - 3.2.2 *Classification Metrics*
+
+Once a performant model has been selected, the analyst will want to identify the ideal probability decision threshold/cut-point (in this post I will be looking at which point maximizes expected value^[Other approaches are by investigating the ROC or precision-recall curves or maximizing the J-index.]). 
+
+The frequency of classification outcomes at a specific decision threshold is often represented by a confusion matrix. 
 
 [^2]: While the AUC score can be thought of in terms of area under the curve when x-axis: 1 - specificity and y-axis: sensitivity at all possible decision thresholds, I actually prefer conceptualizing AUC as being more about whether your observations are properly ordered and therefore prefer this way of thinking about the metric: 
     
@@ -33,9 +45,9 @@ Most common metrics used in classification problems (e.g. accuracy, precision, r
 
 ![[Confusion Matrix for Classification](https://towardsdatascience.com/confusion-matrix-for-your-multi-class-machine-learning-model-ff9aa3bf7826)](https://miro.medium.com/max/2102/1*fxiTNIgOyvAombPJx5KGeA.png)
 
-Each of these classification outcomes may be more or less valuable depending on the particular problem. In the case of giving out loans, a *false positive* may be more costly than a *false negative*^[(A default on a loan may cost more than profits lost from interest payments).] while in problems concerning security threats the reverse may be true^[A terrorist attack is more costly than the an unnecessary deployment of resources.]. 
+Each cell of a confusion matrix may represent a more or less valuable outcome depending on the particular problem. In the case of giving out loans, a *false positive* may be more costly than a *false negative*^[(A default on a loan may cost more than profits lost from interest payments).] while in problems concerning security threats the reverse may be true^[A terrorist attack is more costly than the an unnecessary deployment of resources.]. When you have a sense of the value associated with the classification outcomes, you can use this information to weight the confusion matrices and identify which one maximizes value (selecting the associated decision threshold as your ideal 'cut-point'). 
 
-When you have a sense of the value associated with each possible classification outcome, you can use this information to add weights to your confusion matrix^[see [Notes on Cost Sensitive Classification] and [Questions on Cost Sensitive Classification] for further discussion on potential approaches.]. Note that weighting applied in the evaluation stage (as discussed throughout this post) often relies on the predicted probabilities being accurate^[And not just ordered correctly.].
+*Note that weighting applied in the evaluation stage (as discussed throughout this post) often relies on the predicted probabilities of your model being accurate (and not just ordered correctly)^[I've [written previously](https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/) on this topic (though somewhat tangentially).]. *
 
 ```{r}
 library(parsnip)
@@ -50,7 +62,9 @@ theme_set(theme_minimal())
 
 # Lending Data Example
 
-I will copy code from the [probably](https://probably.tidymodels.org/index.html)[^4] package [vignette](https://probably.tidymodels.org/articles/where-to-use.html) to use as starter code for my example^[Including using the [Lending Club](https://www.lendingclub.com/auth/login?login_url=%2Fstatistics%2Fadditional-statistics%3F) data.]. I provide brief descriptions for the code chunks but recommend reading the source for explanations on the steps.
+[Lending Club](https://www.lendingclub.com/auth/login?login_url=%2Fstatistics%2Fadditional-statistics%3F) data is used for examples throughout this post. I will be predicting the binary target `Class`, which defines whether loans are in good or bad standing, i.e. whether the recipient is or is not in default on their loan.
+
+Most of the code in this section is copied from a [vignette](https://probably.tidymodels.org/articles/where-to-use.html) for the [probably](https://probably.tidymodels.org/index.html)[^4] package and serves as the starter code for my examples. I provide brief descriptions of the code chunks but recommend reading the source for explanations on the steps.
 
 [^4]: [probably](https://probably.tidymodels.org/index.html) is a new package in the [tidymodels](https://www.tidymodels.org/) suite in R that is helpful for evaluation steps that occur after model building. [Davis Vaughan](https://twitter.com/dvaughan32?lang=en) describes its purpose:
 
@@ -60,7 +74,7 @@ I will copy code from the [probably](https://probably.tidymodels.org/index.html)
 
 ## Starter Code
 
-This section provides a short example of model building and generating a confusion matrix at a particular decision threshold. (If you are familiar with modeling in classification problems you might skip to [Weighting by Classification Outcomes]^[This code is included for completeness's sake.]). 
+This section provides a short example of model building and generating a confusion matrix at a particular decision threshold. (If you are familiar with modeling in classification problems you might skip to [Weighting by Classification Outcomes]^[This code is included for completeness's sake.].) 
 
 *Load data:*
 ```{r}
@@ -77,10 +91,10 @@ lending_club <- lending_club %>%
 *Training / Testing split:*
 ```{r}
 set.seed(123)
-split <- initial_split(lending_club, prop = 0.75)
+split <- rsample::initial_split(lending_club, prop = 0.75)
 
-lending_train <- training(split)
-lending_test  <- testing(split)
+lending_train <- rsample::training(split)
+lending_test  <- rsample::testing(split)
 ```
 
 *Specify and build model:*
@@ -94,7 +108,6 @@ logi_reg_fit <- fit(
   formula = Class ~ annual_inc + verification_status + sub_grade,
   data = lending_train
 )
-
 ```
 
 *Add predictions to test set:*
@@ -108,30 +121,30 @@ lending_test_pred <- bind_cols(predictions, lending_test)
 *Use `probably::make_two_class_pred()` to make hard predictions at a threshold of 0.50:*
 ```{r}
 hard_pred_0.5 <- lending_test_pred %>%
-  mutate(.pred = make_two_class_pred(.pred_good, 
-                                     levels(Class), 
-                                     threshold = 0.5) %>% 
+  mutate(.pred = probably::make_two_class_pred(.pred_good,
+                                               levels(Class),
+                                               threshold = 0.5) %>% 
            as.factor(c("good", "bad"))
          ) %>%
   select(Class, contains(".pred"))
 ```
 
-**From this point on, code is no longer being copied directly from the `probably` vignette^[Again, I would recommend exploring the `probably` package which goes on to discuss performance metrics on classification problems more generally.].**
-
-After class predictions have been made we can evaluate the confusion matrix. *Use `yardstick::conf_mat()` to get a confusion matrix for the class predictions:*
+After class predictions have been made we can evaluate the confusion matrix^[From this point on, code is no longer being copied directly from the `probably` vignette. Again, I would recommend exploring the `probably` package which goes on to discuss performance metrics on classification problems more generally.]. *Use `yardstick::conf_mat()` to get a confusion matrix for the class predictions:*
 ```{r}
 conf_mat_0.5 <- yardstick::conf_mat(hard_pred_0.5, Class, .pred)
 
 conf_mat_0.5 %>% autoplot(type = "heatmap")
 ```
 
-*Metrics associated with class predictions at decision threshold of 0.5:*
+*Some common metrics associated with class predictions at decision threshold of 0.5:*
 ```{r}
 summary(conf_mat_0.5) %>% 
   knitr::kable(digits = 3)
 ```
 
-I will load in a custom function `conf_mat_weighted()` that works similarly to `yardsitck::conf_mat()` but can handle observation weights (which will come into play in [Weighting by Observations])^[The remainder of the post is about weighting classification outcomes or observations during model evaluation, and primarily uses methods that review performance across all decision thresholds (not just at 0.5).].
+**Custom function:**
+
+I will load in a function I wrote `conf_mat_weighted()` that works similarly to `yardsitck::conf_mat()` but can handle observation weights (which will come into play in [Weighting by Observations])^[The remainder of the post is about weighting classification outcomes or observations during model evaluation, and primarily uses methods that review performance across all decision thresholds (not just at 0.5).].
 ```{r}
 # source conf_mat_weighted() which is similar to yardstick::conf_mat() but also
 # has the possibility of handling a weights column
@@ -139,6 +152,8 @@ devtools::source_gist("https://gist.github.com/brshallo/37d524b82541c2f8540eab39
 ```
 
 ## Weighting by Classification Outcomes
+
+*For the purposes of this post I will skip common steps of model evaluation and selection and go straight to using weighting techniques to identify an ideal deicision threshold for a selected model.*
 
 For our loan problem we will use the following weighting scheme for our potential classification outcomes:
 
@@ -149,7 +164,7 @@ For our loan problem we will use the following weighting scheme for our potentia
 
 $$ Weights = \left(\begin{array}{cc} 0.14 & 1.89\\1.86  & 0.11 \end{array}\right)$$
 
-There may be asymmetries in business processes associated with the 'actual' as well as the 'predicted' state that might explain differences in the value associated with each cell in the confusion matrix. I am unsure about the appropriateness of this type of weighting scheme so posted a question on [Cross Validated](https://stats.stackexchange.com/questions/499841/weighting-confusion-matrix) and devoted several sections in the [Appendix] to the topic^[See [How I Arrived at Weights] for a discussion of how these specific weights were chosen. See [Notes on Cost Sensitive Classification] and [Questions on Cost Sensitive Classification] for musings on the appropriateness of this type of weighting scheme.].
+There may be asymmetries in business processes associated with the 'actual' as well as the 'predicted' state that might explain differences in the value associated with each cell in the confusion matrix (for the purposes of this post I am unconcerned how realistic these weights are).
 
 I put the classification outcome weights into a matrix[^1].
 
@@ -164,7 +179,7 @@ outcome_weights <- matrix(
 )
 ```
 
-Next I apply these weights to each cell in the confusion matrix.
+Next I apply these weights to the cells of the confusion matrix.
 ```{r}
 weight_cells <- function(confusion_matrix, weights = matrix(rep(1, 4), nrow = 2)){
   
@@ -178,22 +193,22 @@ conf_mat_0.5_weighted <- weight_cells(conf_mat_0.5, outcome_weights)
 conf_mat_0.5_weighted %>% autoplot(type = "heatmap")
 ```
 
-I then calculate weighted performance metrics on the resulting confusion matrix.
+Notice how different this is from the values shown when calculated prior to weighting (shown in [Starter Code]).
+
+*An earlier version of this post included a variety of performance metrics calculated after weighting by classification outcomes. See [Weighted Classification Metrics] in the [Appendix] for a discussion on why these were removed from the body of the post.* 
+
+Assuming diagonal (correctly predicted) elements represent a gain^[For example in the case of True Positives, corresponding to interest payments.] and off-diagonal elements a loss^[For example in the case of a False Negative this represents the loan being lost due to default of the recipient.], I will calculate the total value at the 0.50 decision threshold (by taking the difference of the aggregated gains and losses).
 ```{r}
-summary(conf_mat_0.5_weighted) %>% 
-  knitr::kable(digits = 3)
+sum( (conf_mat_0.5$table * outcome_weights) * matrix(c(1,-1,-1, 1), byrow = TRUE, ncol = 2) )
 ```
 
-Notice how different these are from the metrics shown when calculated before weighting (see [Starter Code]).
-
-Assuming diagonal (correctly predicted) elements are positive and off-diagonal elements are negative, I calculate the average value per observation^[see [Questions on Cost Sensitive Classification] for some question marks I had related to calculating cost metrics when not setting the diagonal to zero.].
-```{r}
-sum((conf_mat_0.5$table * outcome_weights) * matrix(c(1,-1,-1, 1), byrow = TRUE, ncol = 2)) / sum(conf_mat_0.5$table)
-```
+I could convert this to the *average value* by dividing by the number of observations.
 
 ### Metrics Across Decision Thresholds
 
-`conf_mat_threshold()` first creates a hard prediction based on a threshold and then calculates a confusion matrix.
+We do not want to see performance at just the individual cut-point of 0.50 but across a range of decision thresholds^[The function `probably::threshold_perf()` is designed for this type of task. However this function only supports a few types of metrics currently. [#25](https://github.com/tidymodels/probably/issues/25) suggests that in the future these may be more customizable. Neither `probably` nor `yardstick` can yet handle observation or classification outcome weights. Hence why I don't just use functions from those packages directly. [#30](https://github.com/tidymodels/yardstick/issues/30) suggests that `yardstick` will get support for weights in the future however this issue is referring to observation weights, not classification outcome weights. [#3](https://github.com/tidymodels/yardstick/issues/3) however suggests `yardstick` will also get options for handling different weights in classification outcomes.]. 
+
+`conf_mat_threshold()` first creates a hard prediction based on a threshold and then creates the associated confusion matrix for that threshold.
 
 ```{r}
 #' Confusion Matrix at Threshold
@@ -207,9 +222,9 @@ conf_mat_threshold <- function(df = lending_test_pred,
                                threshold = 0.5, 
                                ...){
   hard_pred <- df %>%
-    mutate(.pred = make_two_class_pred(.pred_good, 
-                                       levels(Class), 
-                                       threshold = threshold) %>% 
+    mutate(.pred = probably::make_two_class_pred(.pred_good,
+                                                 levels(Class),
+                                                 threshold = threshold) %>%
              as.factor(c("good", "bad"))
            )
   
@@ -217,9 +232,7 @@ conf_mat_threshold <- function(df = lending_test_pred,
 }
 ```
 
-We do not want to see performance at just the individual cut-point of 0.50 but across a range of decision thresholds^[The function `probably::threshold_perf()` is designed for this type of task. However this function only supports a few types of metrics currently. [#25](https://github.com/tidymodels/probably/issues/25) suggests that in the future these may be more customizable. Neither `probably` nor `yardstick` can yet handle observation or classification outcome weights. Hence why I don't just use functions from those packages directly. [#30](https://github.com/tidymodels/yardstick/issues/30) suggests that `yardstick` will get support for weights in the future however this issue is referring to observation weights, not classification outcome weights. [#3](https://github.com/tidymodels/yardstick/issues/3) however suggests `yardstick` will also get options for handling different weights in classification outcomes.]. 
-
-Hence I will map `conf_mat_threshold()`^[I made this function such that it can also take in observation weights which will be used in [Weighting by Observations].] function across all thresholds in the dataset (creating confusion matrices at each). Next I will weight the resulting confusion matrices by the outcome weights and then calculate the summary statistics at each threshold value.
+I will map the `conf_mat_threshold()`^[I made this function such that it can also take in observation weights which will be used in [Weighting by Observations].] function across all meaningful thresholds in the dataset (creating confusion matrices at each). Next I will use `weight_cells()` to weight the resulting confusion matrices by the outcome weights. 
 ```{r}
 # get all unique predictions that differ by at least 0.001
 thresholds_unique_df <- tibble(threshold = c(0, unique(lending_test_pred$.pred_good), 1)) %>% 
@@ -235,23 +248,10 @@ thresholds_unique_df <- tibble(threshold = c(0, unique(lending_test_pred$.pred_g
 # get confusion matrices and weighted confusion matrices
 conf_mats_df <- thresholds_unique_df %>% 
   mutate(conf_mat = map(threshold, conf_mat_threshold, df = lending_test_pred)) %>% 
-  mutate(conf_mat_weighted = map(conf_mat, weight_cells, weights = outcome_weights)) %>% 
-  mutate(across(contains("conf"), list(metrics = ~map(.x, summary))))
+  mutate(conf_mat_weighted = map(conf_mat, weight_cells, weights = outcome_weights))
 ```
 
-Weighted performance metrics across decision thresholds:
-```{r classification-metrics-charts}
-conf_mats_df %>% 
-  unnest(conf_mat_weighted_metrics) %>%
-  select(-contains("conf"), -.estimator) %>% 
-  filter(.metric != "sens") %>% 
-  ggplot(aes(x = threshold, y = .estimate))+
-  geom_line()+
-  facet_wrap(~.metric, scales = "free_y")+
-  labs(title = "Weighted Performance Metrics")
-```
-
-Plot of 'value' (based on sum of cells in a confusion matrix where diagonal elements are positive and off-diagonal elements are negated):
+I then use `total_value()` to calculate the expected value at each threshold (based on sum of cells in a confusion matrix where diagonal elements are positive and off-diagonal elements are negated) and plot this across `threshold`s:
 ```{r value-chart}
 total_value <- function(weighted_conf_matrix){
   sum(weighted_conf_matrix * matrix(c(1, -1, -1, 1), byrow = TRUE, ncol = 2))
@@ -265,13 +265,13 @@ conf_mats_df %>%
   geom_line()
 ```
 
-Many performance metrics as well as the 'value' metric suggest that the greatest value occurs when using a threshold between 0.92 and 0.95^[AUC and precision-recall curves may also be worth looking at.]. These then suffer a steep drop-off beyond this point. For comparison, an unweighted metric would have the greatest value when predicting "Bad" loans for everything.
+This suggests the greatest value occurs when using a threshold between 0.92 and 0.95^[AUC and precision-recall curves may also be worth looking at.]. Value suffers a steep drop-off beyond this point. For comparison, an unweighted metric would have suggested predicting "Bad" loans for everything.
 
 ## Weighting by Observations
 
-In the section above there were no *observation specific* weights. In this section I will apply the same steps as above but first weight individual observations^[It should be noted though that if you are using observation weights there is a decent chance you will want to apply them *during* the model building process (rather than after).] by the `funded_amnt` column^[This is likely a case where the costs and gains would likely be case dependent (i.e. depending on how big of a loan the client is asking for). There is a tutorial on [Example-dependent misclassification costs](https://mlr.mlr-org.com/articles/tutorial/cost_sensitive_classif.html#example-dependent-misclassification-costs) from the `mlr` package that provides descriptions of this more complicated case. One may also be interested in weighting the observations in the steps prior to evaluation but in those steps described in [Weights of Observations During and Prior to Modeling].].
+In the prior section, we used weights to represent/account for the value of classification outcomes. What if we want to account for the value of a specific loan (since higher loan amounts might amplify possible risks)? In this section I will apply the same steps as above but will first weight individual observations^[It should be noted though that if you are using observation weights there is a decent chance you will want to apply them *during* the model building process (rather than after).] by the `funded_amnt` column^[This is likely a case where the costs and gains would likely be case dependent (i.e. depending on how big of a loan the client is asking for). There is a tutorial on [Example-dependent misclassification costs](https://mlr.mlr-org.com/articles/tutorial/cost_sensitive_classif.html#example-dependent-misclassification-costs) from the `mlr` package that provides descriptions of this more complicated case. One may also be interested in weighting the observations in the steps prior to evaluation but in those steps described in [Weights of Observations During and Prior to Modeling].].
 
-The function `conf_mat_weighted()` (sourced previously) can handle a value for observation weights. Hence, we will follow the same steps as in [Weighting by Classification Outcomes] except also supplying `wt = funded_amnt`.
+My function `conf_mat_weighted()` (sourced previously) can handle a value for observation weights. Hence, we will follow the same steps as in [Weighting by Classification Outcomes] except also supplying `wt = funded_amnt`.
 ```{r}
 # get confusion matrices and weighted confusion matrices
 conf_mats_df_obs_weights <- thresholds_unique_df %>% 
@@ -297,6 +297,8 @@ conf_mats_df_obs_weights %>%
 
 # Appendix
 
+[Weights of Observations During and Prior to Modeling] and maybe [Notes on Cost Sensitive Classification] are the only sections people other than the author are likely to find interesting. Other sections are primarily bookmarks on thinking related to earlier versions of this post. Specifically, I am unsure about the appropriateness of the weighting scheme I used in this post. I posted a question on [Cross Validated](https://stats.stackexchange.com/questions/499841/weighting-confusion-matrix) and devoted several sections here to the topic^[[How I Arrived at Weights] for a discussion of how these specific weights were chosen. See [Notes on Cost Sensitive Classification] and [Questions on Cost Sensitive Classification] for musings on the appropriateness of this type of weighting scheme.].
+
 ## Weights of Observations During and Prior to Modeling
 
 The body of the blog post is focused exclusively on the weighting during model evaluation *after model training*. This section provides a brief overview of other types of weighting that can be used in modeling (as well as references for these topics).
@@ -315,7 +317,32 @@ Depending on your problem you might also use different approaches for weighting 
 * In python the [costcla](http://albahnsen.github.io/CostSensitiveClassification/index.html) module provides documentation on how to approach many of these types of problems in python. 
 * Unfortunately, the `tidymodels` suite of packages does not yet have broad support for weights. There are some relevant open issues, e.g. [#3](https://github.com/tidymodels/yardstick/issues/3) in `yardstick` describes approaches for cost sensitive metrics.
 
+## Weighted Classification Metrics
+
+I posted a question to Cross Validated on [Weighting common performance metrics by classification outcomes?](https://stats.stackexchange.com/questions/499841/weighting-common-performance-metrics-by-classification-outcomes?noredirect=1#comment925035_499841) relating my concerns about these metrics and ultimately decided that most performance metrics (not including expected value) weighted by classification outcomes are mostly inappropriate (or at least not useful) so kept the focus of this post on using weighted classification outcomes strictly for using expected value to identify ideal cut-points on an already selected model. I did not change my weighting scheme however -- though believe weighting schemes like those used in [similar posts](https://medium.com/@romanm111987)^[See sections in [Appendix] and footnotes for other refeences.] are likely more appropriate^[The reason I did not change the weighting scheme is that some classification metrics cannot be calculated if you weight the cells to zero -- although I do not believe them to be appropriate I wanted to preserve the examples in [Weighted Classification Metrics] as a mental bookmark. (Laziness also contributed.)].
+
+Weighted performance metrics on a confusion matrix at threshold of 0.5.
+```{r}
+summary(conf_mat_0.5_weighted) %>% 
+  knitr::kable(digits = 3)
+```
+
+Weighted performance metrics across decision thresholds:
+```{r classification-metrics-charts}
+conf_mats_df %>%
+  mutate(across(contains("conf"), list(metrics = ~map(.x, summary)))) %>% 
+  unnest(conf_mat_weighted_metrics) %>%
+  select(-contains("conf"), -.estimator) %>% 
+  filter(.metric != "sens") %>% 
+  ggplot(aes(x = threshold, y = .estimate))+
+  geom_line()+
+  facet_wrap(~.metric, scales = "free_y")+
+  labs(title = "Weighted Performance Metrics")
+```
+
 ## Questions on Cost Sensitive Classification
+
+*I was unsure on which type of weighting scheme I wanted to use for this post. This section walks through some of the questions I asked myself related to this.*
 
 Resources on cost based approaches to model evaluation of classification problems seemed to take a variety of different approaches. This left me with a few questions about what is appropriate and what is inappropriate.
 
@@ -336,11 +363,11 @@ I did notice that Moser only used positive weighting whereas Vivek's post had th
 
 When weighting a confusion matrix, does it also make sense to calculate other weighted metrics, e.g. weighted precision, recall, etc.? Does it make sense to look at these across decision thresholds^[e.g looking at the AUC or the precision recall curve.]? The problem with the weighted versions of these metrics is that the possible number of observations could essentially change between decision cut-points because of observations slipping between higher or lower weighted classification outcomes. Does this present a mathematical challenge of some sort? Clearly if some cells are weighted to 0, some performance metrics may not make sense to calculate^[E.g. accuracy is pointless to calculate if weighting the diagonals to zero. Sensitivity pointless when weighting TP to 0... etc.].
 
-*I ended-up posting this [question](https://stats.stackexchange.com/questions/499841/weighting-confusion-matrix) on cross validated.*
+*I ended-up posting this question on cross validated: [Weighting common performance metrics by classification outcomes?](https://stats.stackexchange.com/questions/499841/weighting-common-performance-metrics-by-classification-outcomes?noredirect=1#comment925035_499841).*
 
 ## How I Arrived at Weights
 
-*I think this section may be an example of thinking too hard and that the fancy approach I take here is unnecessary^[You could also come to the opposite conclusion and decide to do something *more* complicated.].*
+*I think this section may be an example of thinking too hard and that the fancy approach I take here is incorrect or at least unnecessary...*
 
 Say there are three things that determine how value should be weighted across a confusion matrix:
 

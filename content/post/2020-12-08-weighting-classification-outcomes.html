@@ -3,7 +3,7 @@ title: Weighting Confusion Matrices by Outcomes and Observations
 author: Bryan Shalloway
 date: '2020-12-08'
 slug: weighting-classification-outcomes
-thumbnail: /post/2020-12-08-weighting-classification-outcomes_files/figure-html/classification-metrics-charts-1.png
+thumbnail: /post/2020-12-08-weighting-classification-outcomes_files/figure-html/value-chart-1.png
 ---
 
 
@@ -20,6 +20,7 @@ thumbnail: /post/2020-12-08-weighting-classification-outcomes_files/figure-html/
 <li><a href="#appendix">Appendix</a><ul>
 <li><a href="#weights-of-observations-during-and-prior-to-modeling">Weights of Observations During and Prior to Modeling</a></li>
 <li><a href="#notes-on-cost-sensitive-classification">Notes on Cost Sensitive Classification</a></li>
+<li><a href="#weighted-classification-metrics">Weighted Classification Metrics</a></li>
 <li><a href="#questions-on-cost-sensitive-classification">Questions on Cost Sensitive Classification</a></li>
 <li><a href="#how-i-arrived-at-weights">How I Arrived at Weights</a></li>
 </ul></li>
@@ -32,20 +33,28 @@ thumbnail: /post/2020-12-08-weighting-classification-outcomes_files/figure-html/
 <li>During model training</li>
 <li>After model training, during model evaluation</li>
 </ol>
-<p>The focus of this post is on the last stage<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> (see <a href="#weights-of-observations-during-and-prior-to-modeling">Weights of Observations During and Prior to Modeling</a> in the <a href="#appendix">Appendix</a> for a brief discussion on other types of weighting in predictive modeling)<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. I will describe two types of weighting:</p>
+<p>The focus of this post is on the last stage<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. I will describe two types of weighting that can be applied in late stage model evaluation:</p>
 <ol style="list-style-type: decimal">
 <li><a href="#weighting-by-classification-outcomes">Weighting by Classification Outcomes</a></li>
 <li><a href="#weighting-by-observations">Weighting by Observations</a></li>
 </ol>
+<p>Specifically with the aim of identifying ideal cut-points for making class predictions.</p>
+<p>(See <a href="#weights-of-observations-during-and-prior-to-modeling">Weights of Observations During and Prior to Modeling</a> in the <a href="#appendix">Appendix</a> for a brief discussion on forms of weighting applied at other steps in predictive modeling.)</p>
 <div id="model-performance-metrics" class="section level1">
 <h1>Model Performance Metrics</h1>
-<p>Most common metrics used in classification problems (e.g. accuracy, precision, recall/sensitivity, specificity, AUC<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>) come down to the relationship between the true positives (TP), true negatives (TN), false positives (FP), and false negatives (FN) at a particular decision threshold<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> (or across all possible thresholds)<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. The frequency of these classification outcomes is often represented at an individual decision threshold by a confusion matrix.</p>
+<p>Most common metrics used in classification problems – e.g. accuracy, precision, recall/sensitivity, specificity, Area Under under ROC curve<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> (AUC) or Precision-Recall curve – come down to the relationship between the true positives (TP), true negatives (TN), false positives (FP), and false negatives (FN) at a particular decision threshold<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> or across all possible thresholds<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
+<p>Initial model evaluation and selection should generally start by reviewing metrics that capture performance across decision thresholds. Max Kuhn and Kjell Johnson explain this in their book <a href="http://www.feat.engineering/measuring-performance.html">Feature Engineering and Selection…</a>:</p>
+<blockquote>
+<p>“During the initial phase of model building, a good strategy for data sets with two classes is to focus on the AUC statistics from these curves instead of metrics based on hard class predictions. Once a reasonable model is found, the ROC or precision-recall curves can be carefully examined to find a reasonable cutoff for the data and then qualitative prediction metrics can be used.” - 3.2.2 <em>Classification Metrics</em></p>
+</blockquote>
+<p>Once a performant model has been selected, the analyst will want to identify the ideal probability decision threshold/cut-point (in this post I will be looking at which point maximizes expected value<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>).</p>
+<p>The frequency of classification outcomes at a specific decision threshold is often represented by a confusion matrix.</p>
 <div class="figure">
 <img src="https://miro.medium.com/max/2102/1*fxiTNIgOyvAombPJx5KGeA.png" alt="Confusion Matrix for Classification" />
 <p class="caption"><a href="https://towardsdatascience.com/confusion-matrix-for-your-multi-class-machine-learning-model-ff9aa3bf7826">Confusion Matrix for Classification</a></p>
 </div>
-<p>Each of these classification outcomes may be more or less valuable depending on the particular problem. In the case of giving out loans, a <em>false positive</em> may be more costly than a <em>false negative</em><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> while in problems concerning security threats the reverse may be true<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
-<p>When you have a sense of the value associated with each possible classification outcome, you can use this information to add weights to your confusion matrix<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>. Note that weighting applied in the evaluation stage (as discussed throughout this post) often relies on the predicted probabilities being accurate<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>.</p>
+<p>Each cell of a confusion matrix may represent a more or less valuable outcome depending on the particular problem. In the case of giving out loans, a <em>false positive</em> may be more costly than a <em>false negative</em><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> while in problems concerning security threats the reverse may be true<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>. When you have a sense of the value associated with the classification outcomes, you can use this information to weight the confusion matrices and identify which one maximizes value (selecting the associated decision threshold as your ideal ‘cut-point’).</p>
+<p><em>Note that weighting applied in the evaluation stage (as discussed throughout this post) often relies on the predicted probabilities of your model being accurate (and not just ordered correctly)<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>. </em></p>
 <pre class="r"><code>library(parsnip)
 library(probably)
 library(rsample)
@@ -57,10 +66,11 @@ theme_set(theme_minimal())</code></pre>
 </div>
 <div id="lending-data-example" class="section level1">
 <h1>Lending Data Example</h1>
-<p>I will copy code from the <a href="https://probably.tidymodels.org/index.html">probably</a><a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> package <a href="https://probably.tidymodels.org/articles/where-to-use.html">vignette</a> to use as starter code for my example<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>. I provide brief descriptions for the code chunks but recommend reading the source for explanations on the steps.</p>
+<p><a href="https://www.lendingclub.com/auth/login?login_url=%2Fstatistics%2Fadditional-statistics%3F">Lending Club</a> data is used for examples throughout this post. I will be predicting the binary target <code>Class</code>, which defines whether loans are in good or bad standing, i.e. whether the recipient is or is not in default on their loan.</p>
+<p>Most of the code in this section is copied from a <a href="https://probably.tidymodels.org/articles/where-to-use.html">vignette</a> for the <a href="https://probably.tidymodels.org/index.html">probably</a><a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> package and serves as the starter code for my examples. I provide brief descriptions of the code chunks but recommend reading the source for explanations on the steps.</p>
 <div id="starter-code" class="section level2">
 <h2>Starter Code</h2>
-<p>This section provides a short example of model building and generating a confusion matrix at a particular decision threshold. (If you are familiar with modeling in classification problems you might skip to <a href="#weighting-by-classification-outcomes">Weighting by Classification Outcomes</a><a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>).</p>
+<p>This section provides a short example of model building and generating a confusion matrix at a particular decision threshold. (If you are familiar with modeling in classification problems you might skip to <a href="#weighting-by-classification-outcomes">Weighting by Classification Outcomes</a><a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.)</p>
 <p><em>Load data:</em></p>
 <pre class="r"><code>data(&quot;lending_club&quot;)</code></pre>
 <p><em>Minor transformations and select relevant columns:</em></p>
@@ -69,10 +79,10 @@ theme_set(theme_minimal())</code></pre>
   select(Class, annual_inc, verification_status, sub_grade, funded_amnt)</code></pre>
 <p><em>Training / Testing split:</em></p>
 <pre class="r"><code>set.seed(123)
-split &lt;- initial_split(lending_club, prop = 0.75)
+split &lt;- rsample::initial_split(lending_club, prop = 0.75)
 
-lending_train &lt;- training(split)
-lending_test  &lt;- testing(split)</code></pre>
+lending_train &lt;- rsample::training(split)
+lending_test  &lt;- rsample::testing(split)</code></pre>
 <p><em>Specify and build model:</em></p>
 <pre class="r"><code>logi_reg &lt;- logistic_reg()
 logi_reg_glm &lt;- logi_reg %&gt;% 
@@ -90,19 +100,18 @@ logi_reg_fit &lt;- fit(
 lending_test_pred &lt;- bind_cols(predictions, lending_test)</code></pre>
 <p><em>Use <code>probably::make_two_class_pred()</code> to make hard predictions at a threshold of 0.50:</em></p>
 <pre class="r"><code>hard_pred_0.5 &lt;- lending_test_pred %&gt;%
-  mutate(.pred = make_two_class_pred(.pred_good, 
-                                     levels(Class), 
-                                     threshold = 0.5) %&gt;% 
+  mutate(.pred = probably::make_two_class_pred(.pred_good,
+                                               levels(Class),
+                                               threshold = 0.5) %&gt;% 
            as.factor(c(&quot;good&quot;, &quot;bad&quot;))
          ) %&gt;%
   select(Class, contains(&quot;.pred&quot;))</code></pre>
-<p><strong>From this point on, code is no longer being copied directly from the <code>probably</code> vignette<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>.</strong></p>
-<p>After class predictions have been made we can evaluate the confusion matrix. <em>Use <code>yardstick::conf_mat()</code> to get a confusion matrix for the class predictions:</em></p>
+<p>After class predictions have been made we can evaluate the confusion matrix<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>. <em>Use <code>yardstick::conf_mat()</code> to get a confusion matrix for the class predictions:</em></p>
 <pre class="r"><code>conf_mat_0.5 &lt;- yardstick::conf_mat(hard_pred_0.5, Class, .pred)
 
 conf_mat_0.5 %&gt;% autoplot(type = &quot;heatmap&quot;)</code></pre>
 <p><img src="/post/2020-12-08-weighting-classification-outcomes_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<p><em>Metrics associated with class predictions at decision threshold of 0.5:</em></p>
+<p><em>Some common metrics associated with class predictions at decision threshold of 0.5:</em></p>
 <pre class="r"><code>summary(conf_mat_0.5) %&gt;% 
   knitr::kable(digits = 3)</code></pre>
 <table>
@@ -181,13 +190,15 @@ conf_mat_0.5 %&gt;% autoplot(type = &quot;heatmap&quot;)</code></pre>
 </tr>
 </tbody>
 </table>
-<p>I will load in a custom function <code>conf_mat_weighted()</code> that works similarly to <code>yardsitck::conf_mat()</code> but can handle observation weights (which will come into play in <a href="#weighting-by-observations">Weighting by Observations</a>)<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>.</p>
+<p><strong>Custom function:</strong></p>
+<p>I will load in a function I wrote <code>conf_mat_weighted()</code> that works similarly to <code>yardsitck::conf_mat()</code> but can handle observation weights (which will come into play in <a href="#weighting-by-observations">Weighting by Observations</a>)<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</p>
 <pre class="r"><code># source conf_mat_weighted() which is similar to yardstick::conf_mat() but also
 # has the possibility of handling a weights column
 devtools::source_gist(&quot;https://gist.github.com/brshallo/37d524b82541c2f8540eab39f991830a&quot;)</code></pre>
 </div>
 <div id="weighting-by-classification-outcomes" class="section level2">
 <h2>Weighting by Classification Outcomes</h2>
+<p><em>For the purposes of this post I will skip common steps of model evaluation and selection and go straight to using weighting techniques to identify an ideal deicision threshold for a selected model.</em></p>
 <p>For our loan problem we will use the following weighting scheme for our potential classification outcomes:</p>
 <ul>
 <li>TP: 0.14 (predict a loan is good when it is indeed good)</li>
@@ -196,15 +207,15 @@ devtools::source_gist(&quot;https://gist.github.com/brshallo/37d524b82541c2f8540
 <li>FN: 0.11 (predict a loan is bad when it is actually good)</li>
 </ul>
 <p><span class="math display">\[ Weights = \left(\begin{array}{cc} 0.14 &amp; 1.89\\1.86  &amp; 0.11 \end{array}\right)\]</span></p>
-<p>There may be asymmetries in business processes associated with the ‘actual’ as well as the ‘predicted’ state that might explain differences in the value associated with each cell in the confusion matrix. I am unsure about the appropriateness of this type of weighting scheme so posted a question on <a href="https://stats.stackexchange.com/questions/499841/weighting-confusion-matrix">Cross Validated</a> and devoted several sections in the <a href="#appendix">Appendix</a> to the topic<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>.</p>
-<p>I put the classification outcome weights into a matrix<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
+<p>There may be asymmetries in business processes associated with the ‘actual’ as well as the ‘predicted’ state that might explain differences in the value associated with each cell in the confusion matrix (for the purposes of this post I am unconcerned how realistic these weights are).</p>
+<p>I put the classification outcome weights into a matrix<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>.</p>
 <pre class="r"><code>outcome_weights &lt;- matrix(
           c(0.14, 1.89,
           0.11, 1.86),
           nrow = 2,
           byrow = TRUE
 )</code></pre>
-<p>Next I apply these weights to each cell in the confusion matrix.</p>
+<p>Next I apply these weights to the cells of the confusion matrix.</p>
 <pre class="r"><code>weight_cells &lt;- function(confusion_matrix, weights = matrix(rep(1, 4), nrow = 2)){
   
   confusion_matrix_output &lt;- confusion_matrix
@@ -216,7 +227,109 @@ conf_mat_0.5_weighted &lt;- weight_cells(conf_mat_0.5, outcome_weights)
 
 conf_mat_0.5_weighted %&gt;% autoplot(type = &quot;heatmap&quot;)</code></pre>
 <p><img src="/post/2020-12-08-weighting-classification-outcomes_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<p>I then calculate weighted performance metrics on the resulting confusion matrix.</p>
+<p>Notice how different this is from the values shown when calculated prior to weighting (shown in <a href="#starter-code">Starter Code</a>).</p>
+<p><em>An earlier version of this post included a variety of performance metrics calculated after weighting by classification outcomes. See <a href="#weighted-classification-metrics">Weighted Classification Metrics</a> in the <a href="#appendix">Appendix</a> for a discussion on why these were removed from the body of the post.</em></p>
+<p>Assuming diagonal (correctly predicted) elements represent a gain<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a> and off-diagonal elements a loss<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>, I will calculate the total value at the 0.50 decision threshold (by taking the difference of the aggregated gains and losses).</p>
+<pre class="r"><code>sum( (conf_mat_0.5$table * outcome_weights) * matrix(c(1,-1,-1, 1), byrow = TRUE, ncol = 2) )</code></pre>
+<pre><code>## [1] 94.77</code></pre>
+<p>I could convert this to the <em>average value</em> by dividing by the number of observations.</p>
+<div id="metrics-across-decision-thresholds" class="section level3">
+<h3>Metrics Across Decision Thresholds</h3>
+<p>We do not want to see performance at just the individual cut-point of 0.50 but across a range of decision thresholds<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
+<p><code>conf_mat_threshold()</code> first creates a hard prediction based on a threshold and then creates the associated confusion matrix for that threshold.</p>
+<pre class="r"><code>#&#39; Confusion Matrix at Threshold
+#&#39;
+#&#39; @param df dataframe containing a column `.pred_good`.
+#&#39; @param threshold A value between 0 and 1.
+#&#39; @param wt A column that gets passed into `conf_mat_weighted()` if also wanting to give observation weights (default is NULL).
+#&#39;
+#&#39; @return a confusion matrix
+conf_mat_threshold &lt;- function(df = lending_test_pred, 
+                               threshold = 0.5, 
+                               ...){
+  hard_pred &lt;- df %&gt;%
+    mutate(.pred = probably::make_two_class_pred(.pred_good,
+                                                 levels(Class),
+                                                 threshold = threshold) %&gt;%
+             as.factor(c(&quot;good&quot;, &quot;bad&quot;))
+           )
+  
+  conf_mat_weighted(hard_pred, Class, .pred, ...)
+}</code></pre>
+<p>I will map the <code>conf_mat_threshold()</code><a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a> function across all meaningful thresholds in the dataset (creating confusion matrices at each). Next I will use <code>weight_cells()</code> to weight the resulting confusion matrices by the outcome weights.</p>
+<pre class="r"><code># get all unique predictions that differ by at least 0.001
+thresholds_unique_df &lt;- tibble(threshold = c(0, unique(lending_test_pred$.pred_good), 1)) %&gt;% 
+  arrange(threshold) %&gt;%
+  mutate(diff_prev = abs(lag(threshold) - threshold),
+         diff_prev_small = ifelse((diff_prev) &lt;= 0.001, TRUE,FALSE),
+         diff_prev_small = ifelse(is.na(diff_prev_small), FALSE, diff_prev_small)) %&gt;%
+  filter(!diff_prev_small) %&gt;% 
+  select(threshold)</code></pre>
+<pre class="r"><code># get confusion matrices and weighted confusion matrices
+conf_mats_df &lt;- thresholds_unique_df %&gt;% 
+  mutate(conf_mat = map(threshold, conf_mat_threshold, df = lending_test_pred)) %&gt;% 
+  mutate(conf_mat_weighted = map(conf_mat, weight_cells, weights = outcome_weights))</code></pre>
+<p>I then use <code>total_value()</code> to calculate the expected value at each threshold (based on sum of cells in a confusion matrix where diagonal elements are positive and off-diagonal elements are negated) and plot this across <code>threshold</code>s:</p>
+<pre class="r"><code>total_value &lt;- function(weighted_conf_matrix){
+  sum(weighted_conf_matrix * matrix(c(1, -1, -1, 1), byrow = TRUE, ncol = 2))
+}
+
+conf_mats_df %&gt;% 
+  arrange(desc(threshold)) %&gt;% 
+  mutate(value = map_dbl(conf_mat_weighted, ~total_value(.x$table))) %&gt;% 
+  # discard(is.list) %&gt;% 
+  ggplot(aes(x = threshold, y = value))+
+  geom_line()</code></pre>
+<p><img src="/post/2020-12-08-weighting-classification-outcomes_files/figure-html/value-chart-1.png" width="672" /></p>
+<p>This suggests the greatest value occurs when using a threshold between 0.92 and 0.95<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>. Value suffers a steep drop-off beyond this point. For comparison, an unweighted metric would have suggested predicting “Bad” loans for everything.</p>
+</div>
+</div>
+<div id="weighting-by-observations" class="section level2">
+<h2>Weighting by Observations</h2>
+<p>In the prior section, we used weights to represent/account for the value of classification outcomes. What if we want to account for the value of a specific loan (since higher loan amounts might amplify possible risks)? In this section I will apply the same steps as above but will first weight individual observations<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a> by the <code>funded_amnt</code> column<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>.</p>
+<p>My function <code>conf_mat_weighted()</code> (sourced previously) can handle a value for observation weights. Hence, we will follow the same steps as in <a href="#weighting-by-classification-outcomes">Weighting by Classification Outcomes</a> except also supplying <code>wt = funded_amnt</code>.</p>
+<pre class="r"><code># get confusion matrices and weighted confusion matrices
+conf_mats_df_obs_weights &lt;- thresholds_unique_df %&gt;% 
+  mutate(conf_mat = map(threshold, 
+                        conf_mat_threshold, 
+                        df = lending_test_pred,
+                        # funded_amnt provides observation weights
+                        wt = funded_amnt)) %&gt;%
+  mutate(conf_mat_weighted = map(conf_mat, weight_cells, weights = outcome_weights)) %&gt;%
+  mutate(across(contains(&quot;conf&quot;), list(metrics = ~map(.x, summary))))</code></pre>
+<p>The results for ‘value’ look similar:</p>
+<pre class="r"><code>conf_mats_df_obs_weights %&gt;% 
+  arrange(desc(threshold)) %&gt;% 
+  mutate(value = map_dbl(conf_mat_weighted, ~total_value(.x$table))) %&gt;% 
+  discard(is.list) %&gt;% 
+  ggplot(aes(x = threshold, y = value))+
+  geom_line()</code></pre>
+<p><img src="/post/2020-12-08-weighting-classification-outcomes_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+</div>
+</div>
+<div id="appendix" class="section level1">
+<h1>Appendix</h1>
+<p><a href="#weights-of-observations-during-and-prior-to-modeling">Weights of Observations During and Prior to Modeling</a> and maybe <a href="#notes-on-cost-sensitive-classification">Notes on Cost Sensitive Classification</a> are the only sections people other than the author are likely to find interesting. Other sections are primarily bookmarks on thinking related to earlier versions of this post. Specifically, I am unsure about the appropriateness of the weighting scheme I used in this post. I posted a question on <a href="https://stats.stackexchange.com/questions/499841/weighting-confusion-matrix">Cross Validated</a> and devoted several sections here to the topic<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a>.</p>
+<div id="weights-of-observations-during-and-prior-to-modeling" class="section level2">
+<h2>Weights of Observations During and Prior to Modeling</h2>
+<p>The body of the blog post is focused exclusively on the weighting during model evaluation <em>after model training</em>. This section provides a brief overview of other types of weighting that can be used in modeling (as well as references for these topics).</p>
+<p>Robert Moser has a helpful blog post, <a href="https://towardsdatascience.com/fraud-detection-with-cost-sensitive-machine-learning-24b8760d35d9">Fraud detection with cost sensitive machine learning</a>, where he differentiates cost dependent classification (weighting after model building) from cost sensitive training (the practice of baking in the costs of classification outcomes<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a> into the objective function used during model training<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a>).</p>
+<p>In other cases, weights are applied not in the model building step but immediately prior when setting the likelihood of an observation to be selected for training the model. For example, undersampling, oversampling or other sampling techniques are typically used in attempts to improve the performance of a model in predicting a minority class<a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a> but can also be used as a means of changing the base rate associated with each class<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a>. Some algorithms use biased resampling techniques directly in their model building procedures<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a>. Similar in effect to over and under sampling the data, models may also handle weights according to the outcome class of the observation<a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a>.</p>
+</div>
+<div id="notes-on-cost-sensitive-classification" class="section level2">
+<h2>Notes on Cost Sensitive Classification</h2>
+<p>Depending on your problem you might also use different approaches for weighting confusion matrices after model building. To account for differences in the value of classification outcomes you might weight items in the confusion matrix more heavily depending on what their actual condition is (e.g. TRUE outcomes are weighted higher than FALSE outcomes). You might also use a cost based approach to evaluate performance, whereby the diagonal elements on the confusion matrix (the correctly predicted items) have a cost of zero and all other cells are weighted according to their associated costs (see <a href="#questions-on-cost-sensitive-classification">Questions on Cost Sensitive Classification</a> for further discussion on these).</p>
+<p><em>Some notes on implementations:</em></p>
+<ul>
+<li>The <a href="https://mlr-org.com/">mlr</a> package provides a helpful vignette (<a href="https://mlr.mlr-org.com/articles/tutorial/cost_sensitive_classif.html">Cost-Sensitive Classification</a>) that covers a variety of these and other approaches<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a>.</li>
+<li>In python the <a href="http://albahnsen.github.io/CostSensitiveClassification/index.html">costcla</a> module provides documentation on how to approach many of these types of problems in python.</li>
+<li>Unfortunately, the <code>tidymodels</code> suite of packages does not yet have broad support for weights. There are some relevant open issues, e.g. <a href="https://github.com/tidymodels/yardstick/issues/3">#3</a> in <code>yardstick</code> describes approaches for cost sensitive metrics.</li>
+</ul>
+</div>
+<div id="weighted-classification-metrics" class="section level2">
+<h2>Weighted Classification Metrics</h2>
+<p>I posted a question to Cross Validated on <a href="https://stats.stackexchange.com/questions/499841/weighting-common-performance-metrics-by-classification-outcomes?noredirect=1#comment925035_499841">Weighting common performance metrics by classification outcomes?</a> relating my concerns about these metrics and ultimately decided that most performance metrics (not including expected value) weighted by classification outcomes are mostly inappropriate (or at least not useful) so kept the focus of this post on using weighted classification outcomes strictly for using expected value to identify ideal cut-points on an already selected model. I did not change my weighting scheme however – though believe weighting schemes like those used in <a href="https://medium.com/@romanm111987">similar posts</a><a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a> are likely more appropriate<a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a>.</p>
+<p>Weighted performance metrics on a confusion matrix at threshold of 0.5.</p>
 <pre class="r"><code>summary(conf_mat_0.5_weighted) %&gt;% 
   knitr::kable(digits = 3)</code></pre>
 <table>
@@ -295,49 +408,9 @@ conf_mat_0.5_weighted %&gt;% autoplot(type = &quot;heatmap&quot;)</code></pre>
 </tr>
 </tbody>
 </table>
-<p>Notice how different these are from the metrics shown when calculated before weighting (see <a href="#starter-code">Starter Code</a>).</p>
-<p>Assuming diagonal (correctly predicted) elements are positive and off-diagonal elements are negative, I calculate the average value per observation<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>.</p>
-<pre class="r"><code>sum((conf_mat_0.5$table * outcome_weights) * matrix(c(1,-1,-1, 1), byrow = TRUE, ncol = 2)) / sum(conf_mat_0.5$table)</code></pre>
-<pre><code>## [1] 0.03846185</code></pre>
-<div id="metrics-across-decision-thresholds" class="section level3">
-<h3>Metrics Across Decision Thresholds</h3>
-<p><code>conf_mat_threshold()</code> first creates a hard prediction based on a threshold and then calculates a confusion matrix.</p>
-<pre class="r"><code>#&#39; Confusion Matrix at Threshold
-#&#39;
-#&#39; @param df dataframe containing a column `.pred_good`.
-#&#39; @param threshold A value between 0 and 1.
-#&#39; @param wt A column that gets passed into `conf_mat_weighted()` if also wanting to give observation weights (default is NULL).
-#&#39;
-#&#39; @return a confusion matrix
-conf_mat_threshold &lt;- function(df = lending_test_pred, 
-                               threshold = 0.5, 
-                               ...){
-  hard_pred &lt;- df %&gt;%
-    mutate(.pred = make_two_class_pred(.pred_good, 
-                                       levels(Class), 
-                                       threshold = threshold) %&gt;% 
-             as.factor(c(&quot;good&quot;, &quot;bad&quot;))
-           )
-  
-  conf_mat_weighted(hard_pred, Class, .pred, ...)
-}</code></pre>
-<p>We do not want to see performance at just the individual cut-point of 0.50 but across a range of decision thresholds<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>.</p>
-<p>Hence I will map <code>conf_mat_threshold()</code><a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a> function across all thresholds in the dataset (creating confusion matrices at each). Next I will weight the resulting confusion matrices by the outcome weights and then calculate the summary statistics at each threshold value.</p>
-<pre class="r"><code># get all unique predictions that differ by at least 0.001
-thresholds_unique_df &lt;- tibble(threshold = c(0, unique(lending_test_pred$.pred_good), 1)) %&gt;% 
-  arrange(threshold) %&gt;%
-  mutate(diff_prev = abs(lag(threshold) - threshold),
-         diff_prev_small = ifelse((diff_prev) &lt;= 0.001, TRUE,FALSE),
-         diff_prev_small = ifelse(is.na(diff_prev_small), FALSE, diff_prev_small)) %&gt;%
-  filter(!diff_prev_small) %&gt;% 
-  select(threshold)</code></pre>
-<pre class="r"><code># get confusion matrices and weighted confusion matrices
-conf_mats_df &lt;- thresholds_unique_df %&gt;% 
-  mutate(conf_mat = map(threshold, conf_mat_threshold, df = lending_test_pred)) %&gt;% 
-  mutate(conf_mat_weighted = map(conf_mat, weight_cells, weights = outcome_weights)) %&gt;% 
-  mutate(across(contains(&quot;conf&quot;), list(metrics = ~map(.x, summary))))</code></pre>
 <p>Weighted performance metrics across decision thresholds:</p>
-<pre class="r"><code>conf_mats_df %&gt;% 
+<pre class="r"><code>conf_mats_df %&gt;%
+  mutate(across(contains(&quot;conf&quot;), list(metrics = ~map(.x, summary)))) %&gt;% 
   unnest(conf_mat_weighted_metrics) %&gt;%
   select(-contains(&quot;conf&quot;), -.estimator) %&gt;% 
   filter(.metric != &quot;sens&quot;) %&gt;% 
@@ -346,81 +419,27 @@ conf_mats_df &lt;- thresholds_unique_df %&gt;%
   facet_wrap(~.metric, scales = &quot;free_y&quot;)+
   labs(title = &quot;Weighted Performance Metrics&quot;)</code></pre>
 <p><img src="/post/2020-12-08-weighting-classification-outcomes_files/figure-html/classification-metrics-charts-1.png" width="672" /></p>
-<p>Plot of ‘value’ (based on sum of cells in a confusion matrix where diagonal elements are positive and off-diagonal elements are negated):</p>
-<pre class="r"><code>total_value &lt;- function(weighted_conf_matrix){
-  sum(weighted_conf_matrix * matrix(c(1, -1, -1, 1), byrow = TRUE, ncol = 2))
-}
-
-conf_mats_df %&gt;% 
-  arrange(desc(threshold)) %&gt;% 
-  mutate(value = map_dbl(conf_mat_weighted, ~total_value(.x$table))) %&gt;% 
-  # discard(is.list) %&gt;% 
-  ggplot(aes(x = threshold, y = value))+
-  geom_line()</code></pre>
-<p><img src="/post/2020-12-08-weighting-classification-outcomes_files/figure-html/value-chart-1.png" width="672" /></p>
-<p>Many performance metrics as well as the ‘value’ metric suggest that the greatest value occurs when using a threshold between 0.92 and 0.95<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>. These then suffer a steep drop-off beyond this point. For comparison, an unweighted metric would have the greatest value when predicting “Bad” loans for everything.</p>
-</div>
-</div>
-<div id="weighting-by-observations" class="section level2">
-<h2>Weighting by Observations</h2>
-<p>In the section above there were no <em>observation specific</em> weights. In this section I will apply the same steps as above but first weight individual observations<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a> by the <code>funded_amnt</code> column<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a>.</p>
-<p>The function <code>conf_mat_weighted()</code> (sourced previously) can handle a value for observation weights. Hence, we will follow the same steps as in <a href="#weighting-by-classification-outcomes">Weighting by Classification Outcomes</a> except also supplying <code>wt = funded_amnt</code>.</p>
-<pre class="r"><code># get confusion matrices and weighted confusion matrices
-conf_mats_df_obs_weights &lt;- thresholds_unique_df %&gt;% 
-  mutate(conf_mat = map(threshold, 
-                        conf_mat_threshold, 
-                        df = lending_test_pred,
-                        # funded_amnt provides observation weights
-                        wt = funded_amnt)) %&gt;%
-  mutate(conf_mat_weighted = map(conf_mat, weight_cells, weights = outcome_weights)) %&gt;%
-  mutate(across(contains(&quot;conf&quot;), list(metrics = ~map(.x, summary))))</code></pre>
-<p>The results for ‘value’ look similar:</p>
-<pre class="r"><code>conf_mats_df_obs_weights %&gt;% 
-  arrange(desc(threshold)) %&gt;% 
-  mutate(value = map_dbl(conf_mat_weighted, ~total_value(.x$table))) %&gt;% 
-  discard(is.list) %&gt;% 
-  ggplot(aes(x = threshold, y = value))+
-  geom_line()</code></pre>
-<p><img src="/post/2020-12-08-weighting-classification-outcomes_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
-</div>
-</div>
-<div id="appendix" class="section level1">
-<h1>Appendix</h1>
-<div id="weights-of-observations-during-and-prior-to-modeling" class="section level2">
-<h2>Weights of Observations During and Prior to Modeling</h2>
-<p>The body of the blog post is focused exclusively on the weighting during model evaluation <em>after model training</em>. This section provides a brief overview of other types of weighting that can be used in modeling (as well as references for these topics).</p>
-<p>Robert Moser has a helpful blog post, <a href="https://towardsdatascience.com/fraud-detection-with-cost-sensitive-machine-learning-24b8760d35d9">Fraud detection with cost sensitive machine learning</a>, where he differentiates cost dependent classification (weighting after model building) from cost sensitive training (the practice of baking in the costs of classification outcomes<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a> into the objective function used during model training<a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a>).</p>
-<p>In other cases, weights are applied not in the model building step but immediately prior when setting the likelihood of an observation to be selected for training the model. For example, undersampling, oversampling or other sampling techniques are typically used in attempts to improve the performance of a model in predicting a minority class<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a> but can also be used as a means of changing the base rate associated with each class<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a>. Some algorithms use biased resampling techniques directly in their model building procedures<a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a>. Similar in effect to over and under sampling the data, models may also handle weights according to the outcome class of the observation<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a>.</p>
-</div>
-<div id="notes-on-cost-sensitive-classification" class="section level2">
-<h2>Notes on Cost Sensitive Classification</h2>
-<p>Depending on your problem you might also use different approaches for weighting confusion matrices after model building. To account for differences in the value of classification outcomes you might weight items in the confusion matrix more heavily depending on what their actual condition is (e.g. TRUE outcomes are weighted higher than FALSE outcomes). You might also use a cost based approach to evaluate performance, whereby the diagonal elements on the confusion matrix (the correctly predicted items) have a cost of zero and all other cells are weighted according to their associated costs (see <a href="#questions-on-cost-sensitive-classification">Questions on Cost Sensitive Classification</a> for further discussion on these).</p>
-<p><em>Some notes on implementations:</em></p>
-<ul>
-<li>The <a href="https://mlr-org.com/">mlr</a> package provides a helpful vignette (<a href="https://mlr.mlr-org.com/articles/tutorial/cost_sensitive_classif.html">Cost-Sensitive Classification</a>) that covers a variety of these and other approaches<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a>.</li>
-<li>In python the <a href="http://albahnsen.github.io/CostSensitiveClassification/index.html">costcla</a> module provides documentation on how to approach many of these types of problems in python.</li>
-<li>Unfortunately, the <code>tidymodels</code> suite of packages does not yet have broad support for weights. There are some relevant open issues, e.g. <a href="https://github.com/tidymodels/yardstick/issues/3">#3</a> in <code>yardstick</code> describes approaches for cost sensitive metrics.</li>
-</ul>
 </div>
 <div id="questions-on-cost-sensitive-classification" class="section level2">
 <h2>Questions on Cost Sensitive Classification</h2>
+<p><em>I was unsure on which type of weighting scheme I wanted to use for this post. This section walks through some of the questions I asked myself related to this.</em></p>
 <p>Resources on cost based approaches to model evaluation of classification problems seemed to take a variety of different approaches. This left me with a few questions about what is appropriate and what is inappropriate.</p>
 <p><em>Should the diagonal elements be zero?</em></p>
-<p>Most of the examples I saw on cost-sensitive classification had their correctly predicted items (the diagonal of the confusion matrix) set to zero (assuming no or small costs associated with correctly predicted outcomes)<a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a>. There are some exceptions to this:</p>
+<p>Most of the examples I saw on cost-sensitive classification had their correctly predicted items (the diagonal of the confusion matrix) set to zero (assuming no or small costs associated with correctly predicted outcomes)<a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a>. There are some exceptions to this:</p>
 <ul>
 <li><a href="https://twitter.com/sowmya_vivek">Somya Vivek</a> provides an example of this in her article <a href="https://towardsdatascience.com/model-performance-cost-functions-for-classification-models-a7b1b00ba60">Model performance &amp; cost functions for classification models</a>.</li>
 <li>Robert Moser’s post on <a href="https://towardsdatascience.com/fraud-detection-with-cost-sensitive-machine-learning-24b8760d35d9">Fraud detection with cost sensitive machine learning</a></li>
 </ul>
 <p>These gave me some confidence that there isn’t a problem with having non-zero items on the diagonals.</p>
 <p><em>Should off-diagonal elements be negated?</em></p>
-<p>I did notice that Moser only used positive weighting whereas Vivek’s post had the weights sign negated depending on if it was on the diagonal or off-diagonal. I prefer Moser’s approach as I figure the signs could be negated when evaluating ‘value’ (which is the approach that I took<a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a>).</p>
+<p>I did notice that Moser only used positive weighting whereas Vivek’s post had the weights sign negated depending on if it was on the diagonal or off-diagonal. I prefer Moser’s approach as I figure the signs could be negated when evaluating ‘value’ (which is the approach that I took<a href="#fn32" class="footnote-ref" id="fnref32"><sup>32</sup></a>).</p>
 <p><em>Do weighted classification metrics make sense?</em></p>
-<p>When weighting a confusion matrix, does it also make sense to calculate other weighted metrics, e.g. weighted precision, recall, etc.? Does it make sense to look at these across decision thresholds<a href="#fn32" class="footnote-ref" id="fnref32"><sup>32</sup></a>? The problem with the weighted versions of these metrics is that the possible number of observations could essentially change between decision cut-points because of observations slipping between higher or lower weighted classification outcomes. Does this present a mathematical challenge of some sort? Clearly if some cells are weighted to 0, some performance metrics may not make sense to calculate<a href="#fn33" class="footnote-ref" id="fnref33"><sup>33</sup></a>.</p>
-<p><em>I ended-up posting this <a href="https://stats.stackexchange.com/questions/499841/weighting-confusion-matrix">question</a> on cross validated.</em></p>
+<p>When weighting a confusion matrix, does it also make sense to calculate other weighted metrics, e.g. weighted precision, recall, etc.? Does it make sense to look at these across decision thresholds<a href="#fn33" class="footnote-ref" id="fnref33"><sup>33</sup></a>? The problem with the weighted versions of these metrics is that the possible number of observations could essentially change between decision cut-points because of observations slipping between higher or lower weighted classification outcomes. Does this present a mathematical challenge of some sort? Clearly if some cells are weighted to 0, some performance metrics may not make sense to calculate<a href="#fn34" class="footnote-ref" id="fnref34"><sup>34</sup></a>.</p>
+<p><em>I ended-up posting this question on cross validated: <a href="https://stats.stackexchange.com/questions/499841/weighting-common-performance-metrics-by-classification-outcomes?noredirect=1#comment925035_499841">Weighting common performance metrics by classification outcomes?</a>.</em></p>
 </div>
 <div id="how-i-arrived-at-weights" class="section level2">
 <h2>How I Arrived at Weights</h2>
-<p><em>I think this section may be an example of thinking too hard and that the fancy approach I take here is unnecessary<a href="#fn34" class="footnote-ref" id="fnref34"><sup>34</sup></a>.</em></p>
+<p><em>I think this section may be an example of thinking too hard and that the fancy approach I take here is incorrect or at least unnecessary…</em></p>
 <p>Say there are three things that determine how value should be weighted across a confusion matrix:</p>
 <ul>
 <li>How value is spread across the <em>actual</em> dimension</li>
@@ -443,8 +462,7 @@ conf_mats_df_obs_weights &lt;- thresholds_unique_df %&gt;%
 <hr />
 <ol>
 <li id="fn1"><p>I am choosing the position based on the defaults in the output from a “conf_mat” object that gets created by <code>yardstick::conf_mat()</code>.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>This may be helpful for model evaluation as well as identifying ideal decision thresholds for classification problems that involve different costs and gains depending on prediction outcomes.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>While the AUC score can be thought of in terms of area under the curve when x-axis: 1 - specificity and y-axis: sensitivity at all possible decision thresholds, I actually prefer conceptualizing AUC as being more about whether your observations are properly ordered and therefore prefer this way of thinking about the metric:</p>
+<li id="fn2"><p>While the AUC score can be thought of in terms of area under the curve when x-axis: 1 - specificity and y-axis: sensitivity at all possible decision thresholds, I actually prefer conceptualizing AUC as being more about whether your observations are properly ordered and therefore prefer this way of thinking about the metric:</p>
 <blockquote class="twitter-tweet">
 <p lang="en" dir="ltr">
 Intuitive way to think of AUC:<br><br>-Imagine taking a random point from both the distribution of TRUE events and of FALSE events<br>-Compare the predictions for the 2 points<br><br>AUC is the probability your model gave the TRUE event a higher score than it gave the FALSE one.<br><br>Viz <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> : <a href="https://t.co/hmF3cjZo6I">pic.twitter.com/hmF3cjZo6I</a>
@@ -452,41 +470,42 @@ Intuitive way to think of AUC:<br><br>-Imagine taking a random point from both t
 — Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1293979319308558336?ref_src=twsrc%5Etfw">August 13, 2020</a>
 </blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<a href="#fnref3" class="footnote-back">↩</a></li>
-<li id="fn4"><p>I.e. if probability of event is greater than 0.50, predict TRUE, else FALSE.<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>Some metrics are often helpful for focusing on particular aspects of your predictions (e.g. precision, recall, F-score all focus more on the model’s capacity to identify TRUE events).<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<a href="#fnref2" class="footnote-back">↩</a></li>
+<li id="fn3"><p>I.e. if probability of event is greater than 0.50, predict TRUE, else FALSE.<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>Some metrics are often helpful for focusing on particular aspects of your predictions (e.g. precision, recall, F-score all focus more on the model’s capacity to identify TRUE events).<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>Other approaches are by investigating the ROC or precision-recall curves or maximizing the J-index.<a href="#fnref5" class="footnote-back">↩</a></p></li>
 <li id="fn6"><p>(A default on a loan may cost more than profits lost from interest payments).<a href="#fnref6" class="footnote-back">↩</a></p></li>
 <li id="fn7"><p>A terrorist attack is more costly than the an unnecessary deployment of resources.<a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>see <a href="#notes-on-cost-sensitive-classification">Notes on Cost Sensitive Classification</a> and <a href="#questions-on-cost-sensitive-classification">Questions on Cost Sensitive Classification</a> for further discussion on potential approaches.<a href="#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p>And not just ordered correctly.<a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p><a href="https://probably.tidymodels.org/index.html">probably</a> is a new package in the <a href="https://www.tidymodels.org/">tidymodels</a> suite in R that is helpful for evaluation steps that occur after model building. <a href="https://twitter.com/dvaughan32?lang=en">Davis Vaughan</a> describes its purpose:</p>
+<li id="fn8"><p>I’ve <a href="https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/">written previously</a> on this topic (though somewhat tangentially).<a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p><a href="https://probably.tidymodels.org/index.html">probably</a> is a new package in the <a href="https://www.tidymodels.org/">tidymodels</a> suite in R that is helpful for evaluation steps that occur after model building. <a href="https://twitter.com/dvaughan32?lang=en">Davis Vaughan</a> describes its purpose:</p>
 <blockquote>
 <p>“Regarding placement in the modeling workflow, <code>probably</code> best fits in as a post processing step after the model has been fit, but before the model performance has been calculated” -<a href="https://probably.tidymodels.org/articles/where-to-use.html">Where does probably fit in?</a></p>
 </blockquote>
-<p>As <a href="https://probably.tidymodels.org/index.html">probably</a> and <a href="https://yardstick.tidymodels.org/">yardstick</a> continue to develop I imagine that functionality from those packages will replace much of the code I write in this post.<a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p>Including using the <a href="https://www.lendingclub.com/auth/login?login_url=%2Fstatistics%2Fadditional-statistics%3F">Lending Club</a> data.<a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>This code is included for completeness’s sake.<a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p>Again, I would recommend exploring the <code>probably</code> package which goes on to discuss performance metrics on classification problems more generally.<a href="#fnref13" class="footnote-back">↩</a></p></li>
-<li id="fn14"><p>The remainder of the post is about weighting classification outcomes or observations during model evaluation, and primarily uses methods that review performance across all decision thresholds (not just at 0.5).<a href="#fnref14" class="footnote-back">↩</a></p></li>
-<li id="fn15"><p>See <a href="#how-i-arrived-at-weights">How I Arrived at Weights</a> for a discussion of how these specific weights were chosen. See <a href="#notes-on-cost-sensitive-classification">Notes on Cost Sensitive Classification</a> and <a href="#questions-on-cost-sensitive-classification">Questions on Cost Sensitive Classification</a> for musings on the appropriateness of this type of weighting scheme.<a href="#fnref15" class="footnote-back">↩</a></p></li>
-<li id="fn16"><p>I am choosing the position based on the defaults in the output from a “conf_mat” object that gets created by <code>yardstick::conf_mat()</code>.<a href="#fnref16" class="footnote-back">↩</a></p></li>
-<li id="fn17"><p>see <a href="#questions-on-cost-sensitive-classification">Questions on Cost Sensitive Classification</a> for some question marks I had related to calculating cost metrics when not setting the diagonal to zero.<a href="#fnref17" class="footnote-back">↩</a></p></li>
-<li id="fn18"><p>The function <code>probably::threshold_perf()</code> is designed for this type of task. However this function only supports a few types of metrics currently. <a href="https://github.com/tidymodels/probably/issues/25">#25</a> suggests that in the future these may be more customizable. Neither <code>probably</code> nor <code>yardstick</code> can yet handle observation or classification outcome weights. Hence why I don’t just use functions from those packages directly. <a href="https://github.com/tidymodels/yardstick/issues/30">#30</a> suggests that <code>yardstick</code> will get support for weights in the future however this issue is referring to observation weights, not classification outcome weights. <a href="https://github.com/tidymodels/yardstick/issues/3">#3</a> however suggests <code>yardstick</code> will also get options for handling different weights in classification outcomes.<a href="#fnref18" class="footnote-back">↩</a></p></li>
-<li id="fn19"><p>I made this function such that it can also take in observation weights which will be used in <a href="#weighting-by-observations">Weighting by Observations</a>.<a href="#fnref19" class="footnote-back">↩</a></p></li>
-<li id="fn20"><p>AUC and precision-recall curves may also be worth looking at.<a href="#fnref20" class="footnote-back">↩</a></p></li>
-<li id="fn21"><p>It should be noted though that if you are using observation weights there is a decent chance you will want to apply them <em>during</em> the model building process (rather than after).<a href="#fnref21" class="footnote-back">↩</a></p></li>
-<li id="fn22"><p>This is likely a case where the costs and gains would likely be case dependent (i.e. depending on how big of a loan the client is asking for). There is a tutorial on <a href="https://mlr.mlr-org.com/articles/tutorial/cost_sensitive_classif.html#example-dependent-misclassification-costs">Example-dependent misclassification costs</a> from the <code>mlr</code> package that provides descriptions of this more complicated case. One may also be interested in weighting the observations in the steps prior to evaluation but in those steps described in <a href="#weights-of-observations-during-and-prior-to-modeling">Weights of Observations During and Prior to Modeling</a>.<a href="#fnref22" class="footnote-back">↩</a></p></li>
-<li id="fn23"><p>It is important to note that when using these procedures, your model no longer returns predicted probabilities but measures of whether or not you <em>should</em> predict a particular outcome given your weights and costs.<a href="#fnref23" class="footnote-back">↩</a></p></li>
-<li id="fn24"><p>He includes a simple example of doing this with keras in python.<a href="#fnref24" class="footnote-back">↩</a></p></li>
-<li id="fn25"><p>Or set of observations that are difficult to classify for other reason<a href="#fnref25" class="footnote-back">↩</a></p></li>
-<li id="fn26"><p>The implications of this are sometimes not recognized by beginners as I write about in <a href="https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/">Undersampling Will Change the Base Rates of Your Model’s Predictions</a>.<a href="#fnref26" class="footnote-back">↩</a></p></li>
-<li id="fn27"><p>For example gradient boosting techniques bias successive resamples such that observations where the model performs poorly are more likely to be selected in subsequent rounds of model training.<a href="#fnref27" class="footnote-back">↩</a></p></li>
-<li id="fn28"><p>This is described in <a href="https://mlr.mlr-org.com/articles/tutorial/cost_sensitive_classif.html#i--weighting">Rebalancing, i. Weighting</a> in the <a href="https://mlr.mlr-org.com/">mlr</a> vignette.<a href="#fnref28" class="footnote-back">↩</a></p></li>
-<li id="fn29"><p>As well as documentation for how to approach these scenarios using <code>mlr</code><a href="#fnref29" class="footnote-back">↩</a></p></li>
-<li id="fn30"><p>My concern was that there may be mathematical or contextual reasons why this should generally be the case. For example that not doing so in some ways ‘double counts’ things somehow.<a href="#fnref30" class="footnote-back">↩</a></p></li>
-<li id="fn31"><p>Allowing them as weights on the existing confusion matrix means that other metrics (other than cost) may also be calculated… many of these are in ratio form and either can’t be calculated or don’t make sense if some of the cells are negative (or zero).<a href="#fnref31" class="footnote-back">↩</a></p></li>
-<li id="fn32"><p>e.g looking at the AUC or the precision recall curve.<a href="#fnref32" class="footnote-back">↩</a></p></li>
-<li id="fn33"><p>E.g. accuracy is pointless to calculate if weighting the diagonals to zero. Sensitivity pointless when weighting TP to 0… etc.<a href="#fnref33" class="footnote-back">↩</a></p></li>
-<li id="fn34"><p>You could also come to the opposite conclusion and decide to do something <em>more</em> complicated.<a href="#fnref34" class="footnote-back">↩</a></p></li>
+<p>As <a href="https://probably.tidymodels.org/index.html">probably</a> and <a href="https://yardstick.tidymodels.org/">yardstick</a> continue to develop I imagine that functionality from those packages will replace much of the code I write in this post.<a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p>This code is included for completeness’s sake.<a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p>From this point on, code is no longer being copied directly from the <code>probably</code> vignette. Again, I would recommend exploring the <code>probably</code> package which goes on to discuss performance metrics on classification problems more generally.<a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p>The remainder of the post is about weighting classification outcomes or observations during model evaluation, and primarily uses methods that review performance across all decision thresholds (not just at 0.5).<a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>I am choosing the position based on the defaults in the output from a “conf_mat” object that gets created by <code>yardstick::conf_mat()</code>.<a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p>For example in the case of True Positives, corresponding to interest payments.<a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p>For example in the case of a False Negative this represents the loan being lost due to default of the recipient.<a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p>The function <code>probably::threshold_perf()</code> is designed for this type of task. However this function only supports a few types of metrics currently. <a href="https://github.com/tidymodels/probably/issues/25">#25</a> suggests that in the future these may be more customizable. Neither <code>probably</code> nor <code>yardstick</code> can yet handle observation or classification outcome weights. Hence why I don’t just use functions from those packages directly. <a href="https://github.com/tidymodels/yardstick/issues/30">#30</a> suggests that <code>yardstick</code> will get support for weights in the future however this issue is referring to observation weights, not classification outcome weights. <a href="https://github.com/tidymodels/yardstick/issues/3">#3</a> however suggests <code>yardstick</code> will also get options for handling different weights in classification outcomes.<a href="#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn17"><p>I made this function such that it can also take in observation weights which will be used in <a href="#weighting-by-observations">Weighting by Observations</a>.<a href="#fnref17" class="footnote-back">↩</a></p></li>
+<li id="fn18"><p>AUC and precision-recall curves may also be worth looking at.<a href="#fnref18" class="footnote-back">↩</a></p></li>
+<li id="fn19"><p>It should be noted though that if you are using observation weights there is a decent chance you will want to apply them <em>during</em> the model building process (rather than after).<a href="#fnref19" class="footnote-back">↩</a></p></li>
+<li id="fn20"><p>This is likely a case where the costs and gains would likely be case dependent (i.e. depending on how big of a loan the client is asking for). There is a tutorial on <a href="https://mlr.mlr-org.com/articles/tutorial/cost_sensitive_classif.html#example-dependent-misclassification-costs">Example-dependent misclassification costs</a> from the <code>mlr</code> package that provides descriptions of this more complicated case. One may also be interested in weighting the observations in the steps prior to evaluation but in those steps described in <a href="#weights-of-observations-during-and-prior-to-modeling">Weights of Observations During and Prior to Modeling</a>.<a href="#fnref20" class="footnote-back">↩</a></p></li>
+<li id="fn21"><p><a href="#how-i-arrived-at-weights">How I Arrived at Weights</a> for a discussion of how these specific weights were chosen. See <a href="#notes-on-cost-sensitive-classification">Notes on Cost Sensitive Classification</a> and <a href="#questions-on-cost-sensitive-classification">Questions on Cost Sensitive Classification</a> for musings on the appropriateness of this type of weighting scheme.<a href="#fnref21" class="footnote-back">↩</a></p></li>
+<li id="fn22"><p>It is important to note that when using these procedures, your model no longer returns predicted probabilities but measures of whether or not you <em>should</em> predict a particular outcome given your weights and costs.<a href="#fnref22" class="footnote-back">↩</a></p></li>
+<li id="fn23"><p>He includes a simple example of doing this with keras in python.<a href="#fnref23" class="footnote-back">↩</a></p></li>
+<li id="fn24"><p>Or set of observations that are difficult to classify for other reason<a href="#fnref24" class="footnote-back">↩</a></p></li>
+<li id="fn25"><p>The implications of this are sometimes not recognized by beginners as I write about in <a href="https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/">Undersampling Will Change the Base Rates of Your Model’s Predictions</a>.<a href="#fnref25" class="footnote-back">↩</a></p></li>
+<li id="fn26"><p>For example gradient boosting techniques bias successive resamples such that observations where the model performs poorly are more likely to be selected in subsequent rounds of model training.<a href="#fnref26" class="footnote-back">↩</a></p></li>
+<li id="fn27"><p>This is described in <a href="https://mlr.mlr-org.com/articles/tutorial/cost_sensitive_classif.html#i--weighting">Rebalancing, i. Weighting</a> in the <a href="https://mlr.mlr-org.com/">mlr</a> vignette.<a href="#fnref27" class="footnote-back">↩</a></p></li>
+<li id="fn28"><p>As well as documentation for how to approach these scenarios using <code>mlr</code><a href="#fnref28" class="footnote-back">↩</a></p></li>
+<li id="fn29"><p>See sections in <a href="#appendix">Appendix</a> and footnotes for other refeences.<a href="#fnref29" class="footnote-back">↩</a></p></li>
+<li id="fn30"><p>The reason I did not change the weighting scheme is that some classification metrics cannot be calculated if you weight the cells to zero – although I do not believe them to be appropriate I wanted to preserve the examples in <a href="#weighted-classification-metrics">Weighted Classification Metrics</a> as a mental bookmark. (Laziness also contributed.)<a href="#fnref30" class="footnote-back">↩</a></p></li>
+<li id="fn31"><p>My concern was that there may be mathematical or contextual reasons why this should generally be the case. For example that not doing so in some ways ‘double counts’ things somehow.<a href="#fnref31" class="footnote-back">↩</a></p></li>
+<li id="fn32"><p>Allowing them as weights on the existing confusion matrix means that other metrics (other than cost) may also be calculated… many of these are in ratio form and either can’t be calculated or don’t make sense if some of the cells are negative (or zero).<a href="#fnref32" class="footnote-back">↩</a></p></li>
+<li id="fn33"><p>e.g looking at the AUC or the precision recall curve.<a href="#fnref33" class="footnote-back">↩</a></p></li>
+<li id="fn34"><p>E.g. accuracy is pointless to calculate if weighting the diagonals to zero. Sensitivity pointless when weighting TP to 0… etc.<a href="#fnref34" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
