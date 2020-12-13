@@ -319,15 +319,17 @@ Depending on your problem you might also use different approaches for weighting 
 
 ## Weighted Classification Metrics
 
-I posted a question to Cross Validated on [Weighting common performance metrics by classification outcomes?](https://stats.stackexchange.com/questions/499841/weighting-common-performance-metrics-by-classification-outcomes?noredirect=1#comment925035_499841) relating my concerns about these metrics and ultimately decided that most performance metrics (not including expected value) weighted by classification outcomes are mostly inappropriate (or at least not useful) so kept the focus of this post on using weighted classification outcomes strictly for using expected value to identify ideal cut-points on an already selected model. I did not change my weighting scheme however -- though believe weighting schemes like those used in [similar posts](https://medium.com/@romanm111987)^[See sections in [Appendix] and footnotes for other refeences.] are likely more appropriate^[The reason I did not change the weighting scheme is that some classification metrics cannot be calculated if you weight the cells to zero -- although I do not believe them to be appropriate I wanted to preserve the examples in [Weighted Classification Metrics] as a mental bookmark. (Laziness also contributed.)].
+I posted a question to Cross Validated on [Weighting common performance metrics by classification outcomes?](https://stats.stackexchange.com/questions/499841/weighting-common-performance-metrics-by-classification-outcomes?noredirect=1#comment925035_499841) relating my concerns about these metrics and ultimately decided that most performance metrics (not including expected value) weighted by classification outcomes are mostly inappropriate (or at least not useful) so kept the focus of this post on using weighted classification outcomes strictly for using expected value to identify ideal cut-points on an already selected model. 
 
-Weighted performance metrics on a confusion matrix at threshold of 0.5.
+I did not change my weighting scheme however -- though believe weighting schemes like those used in [similar posts](https://medium.com/@romanm111987)^[See sections in [Appendix] and footnotes for other references.] are likely more appropriate. The reason I did not change the weighting scheme is that some classification metrics cannot be calculated if you weight the cells to zero -- although I do not believe them to be appropriate I wanted to preserve the examples below a mental bookmark.
+
+*Weighted performance metrics on a confusion matrix at threshold of 0.5:*
 ```{r}
 summary(conf_mat_0.5_weighted) %>% 
   knitr::kable(digits = 3)
 ```
 
-Weighted performance metrics across decision thresholds:
+*Weighted performance metrics across decision thresholds:*
 ```{r classification-metrics-charts}
 conf_mats_df %>%
   mutate(across(contains("conf"), list(metrics = ~map(.x, summary)))) %>% 
