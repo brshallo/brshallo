@@ -191,7 +191,7 @@ devtools::source_gist(&quot;https://gist.github.com/brshallo/37d524b82541c2f8540
 </div>
 <div id="weighting-by-classification-outcomes" class="section level2">
 <h2>Weighting by Classification Outcomes</h2>
-<p><em>For the purposes of this post I will skip common steps of model evaluation and selection and go straight to using weighting techniques to identify an ideal deicision threshold for a selected model<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</em></p>
+<p><em>For the purposes of this post I will skip common steps of model evaluation and selection and go straight to using weighting techniques to identify an ideal decision threshold for a selected model<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</em></p>
 <p>For our loan problem we will use the following weighting scheme for our potential classification outcomes:</p>
 <ul>
 <li>TP: 0.14 (predict a loan is good when it is indeed good)</li>
@@ -302,7 +302,8 @@ conf_mats_df_obs_weights &lt;- thresholds_unique_df %&gt;%
 </div>
 <div id="appendix" class="section level1">
 <h1>Appendix</h1>
-<p><a href="#weights-of-observations-during-and-prior-to-modeling">Weights of Observations During and Prior to Modeling</a> and maybe <a href="#notes-on-cost-sensitive-classification">Notes on Cost Sensitive Classification</a> are the only sections people other than the author are likely to find interesting. Other sections are primarily bookmarks on thought-process related to earlier versions of this post. Specifically, I was unsure about calculating weighted classification metricsa and the weighting scheme to use in this post. I posted a question on <a href="https://stats.stackexchange.com/questions/499841/weighting-confusion-matrix">Cross Validated</a> and devoted several sections here to the topic<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a>.</p>
+<p><a href="#weights-of-observations-during-and-prior-to-modeling">Weights of Observations During and Prior to Modeling</a> and maybe <a href="#notes-on-cost-sensitive-classification">Notes on Cost Sensitive Classification</a> are the only sections people other than the author are likely to find interesting.</p>
+<p>Other sections are primarily bookmarks on thought-process related to earlier versions of this post. Specifically, I was unsure about calculating weighted classification metrics as well as which weighting scheme to use. I posted a question on <a href="https://stats.stackexchange.com/questions/499841/weighting-confusion-matrix">Cross Validated</a> and devoted several sections here to the topic<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a>.</p>
 <div id="weights-of-observations-during-and-prior-to-modeling" class="section level2">
 <h2>Weights of Observations During and Prior to Modeling</h2>
 <p>The body of the blog post is focused exclusively on the weighting during model evaluation <em>after model training</em>. This section provides a brief overview of other types of weighting that can be used in modeling (as well as references for these topics).</p>
@@ -321,8 +322,8 @@ conf_mats_df_obs_weights &lt;- thresholds_unique_df %&gt;%
 </div>
 <div id="weighted-classification-metrics" class="section level2">
 <h2>Weighted Classification Metrics</h2>
-<p>I posted a question to Cross Validated on <a href="https://stats.stackexchange.com/questions/499841/weighting-common-performance-metrics-by-classification-outcomes?noredirect=1#comment925035_499841">Weighting common performance metrics by classification outcomes?</a> relating my concerns about these metrics and ultimately decided that most performance metrics weighted by classification outcomes are mostly inappropriate (other than expected value) or not useful so kept the focus of this post on using weighted classification outcomes strictly for using expected value to identify ideal cut-points on an already selected model.</p>
-<p>I did not change my weighting scheme however – though believe weighting schemes like those used in <a href="https://medium.com/@romanm111987">similar posts</a><a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a> are likely more appropriate. The reason I did not change the weighting scheme is that some classification metrics cannot be calculated if you weight the cells to zero – although I do not believe them to be appropriate I wanted to preserve the examples below a mental bookmark.</p>
+<p>I posted a question to Cross Validated on <a href="https://stats.stackexchange.com/questions/499841/weighting-common-performance-metrics-by-classification-outcomes?noredirect=1#comment925035_499841">Weighting common performance metrics by classification outcomes?</a> and reached out to other analytics professionals relating my concerns about these metrics and ultimately came to the conclusion that many performance metrics weighted by classification outcomes are inappropriate (other than expected value) or not useful so kept the focus of this post on using weighted classification outcomes strictly maximizing expected value and identifying ideal cut-points on an already selected model.</p>
+<p>I also changed my weighting scheme though did not zero out any cells in the confusion matrix<a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a>.</p>
 <p><em>Weighted performance metrics on a confusion matrix at threshold of 0.5:</em></p>
 <pre class="r"><code>summary(conf_mat_0.5_weighted) %&gt;% 
   knitr::kable(digits = 3)</code></pre>
@@ -499,7 +500,7 @@ Intuitive way to think of AUC:<br><br>-Imagine taking a random point from both t
 <li id="fn28"><p>For example gradient boosting techniques bias successive resamples such that observations where the model performs poorly are more likely to be selected in subsequent rounds of model training.<a href="#fnref28" class="footnote-back">↩</a></p></li>
 <li id="fn29"><p>This is described in <a href="https://mlr.mlr-org.com/articles/tutorial/cost_sensitive_classif.html#i--weighting">Rebalancing, i. Weighting</a> in the <a href="https://mlr.mlr-org.com/">mlr</a> vignette.<a href="#fnref29" class="footnote-back">↩</a></p></li>
 <li id="fn30"><p>As well as documentation for how to approach these scenarios using <code>mlr</code><a href="#fnref30" class="footnote-back">↩</a></p></li>
-<li id="fn31"><p>See sections in <a href="#appendix">Appendix</a> and footnotes for other references.<a href="#fnref31" class="footnote-back">↩</a></p></li>
+<li id="fn31"><p>Some classification metrics cannot be calculated if you weight the cells to zero – although I do not believe them to be appropriate I wanted to preserve the examples below as mental bookmarks.<a href="#fnref31" class="footnote-back">↩</a></p></li>
 <li id="fn32"><p>My concern was that there may be mathematical or contextual reasons why this should generally be the case. For example that not doing so in some ways ‘double counts’ things somehow.<a href="#fnref32" class="footnote-back">↩</a></p></li>
 <li id="fn33"><p>Allowing them as weights on the existing confusion matrix means that other metrics (other than cost) may also be calculated… many of these are in ratio form and either can’t be calculated or don’t make sense if some of the cells are negative (or zero).<a href="#fnref33" class="footnote-back">↩</a></p></li>
 <li id="fn34"><p>e.g looking at the AUC or the precision recall curve.<a href="#fnref34" class="footnote-back">↩</a></p></li>
