@@ -199,7 +199,7 @@ devtools::source_gist(&quot;https://gist.github.com/brshallo/37d524b82541c2f8540
 <li>TN: 0.02 (predict a loan is bad when it is indeed bad)</li>
 <li>FN: 0.06 (predict a loan is bad when it is actually good)</li>
 </ul>
-<p><span class="math display">\[ Weights = \left(\begin{array}{cc} 0.14 &amp; 1.89\\1.86  &amp; 0.11 \end{array}\right)\]</span></p>
+<p><span class="math display">\[ Weights = \left(\begin{array}{cc} 0.14 &amp; 3.10\\0.06  &amp; 0.02 \end{array}\right)\]</span></p>
 <p>There may be asymmetries in business processes associated with the ‘actual’ as well as the ‘predicted’ state that might explain differences in the value associated with each cell in the confusion matrix (for the purposes of this post I am unconcerned how realistic these weights are).</p>
 <p>I put the classification outcome weights into a matrix<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>.</p>
 <pre class="r"><code>outcome_weights &lt;- matrix(

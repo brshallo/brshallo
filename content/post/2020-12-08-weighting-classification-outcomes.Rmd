@@ -158,7 +158,7 @@ For our loan problem we will use the following weighting scheme for our potentia
 * TN: 0.02 (predict a loan is bad when it is indeed bad)
 * FN: 0.06 (predict a loan is bad when it is actually good)
 
-$$ Weights = \left(\begin{array}{cc} 0.14 & 1.89\\1.86  & 0.11 \end{array}\right)$$
+$$ Weights = \left(\begin{array}{cc} 0.14 & 3.10\\0.06  & 0.02 \end{array}\right)$$
 
 There may be asymmetries in business processes associated with the 'actual' as well as the 'predicted' state that might explain differences in the value associated with each cell in the confusion matrix (for the purposes of this post I am unconcerned how realistic these weights are).
 
