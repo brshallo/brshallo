@@ -93,7 +93,7 @@
 <li><a href="#notes-on-cost-sensitive-classification">Notes on Cost Sensitive Classification</a></li>
 <li><a href="#weighted-classification-metrics">Weighted Classification Metrics</a></li>
 <li><a href="#questions-on-cost-sensitive-classification">Questions on Cost Sensitive Classification</a></li>
-<li><a href="#how-i-arrived-at-weights">How I Arrived at Weights</a></li>
+<li><a href="#arriving-at-weights">Arriving at Weights</a></li>
 </ul></li>
 </ul>
 </div>
@@ -184,14 +184,14 @@ conf_mat_0.5 %&gt;% autoplot(type = &quot;heatmap&quot;)</code></pre>
 <p><img src="/post/2020-12-08-weighting-classification-outcomes_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>We could call <code>summary(conf_mat_0.5)</code> to calculate common metrics at this decision threshold.</p>
 <p><strong>Custom function:</strong></p>
-<p>I will load in a function <code>conf_mat_weighted()</code> that works similarly to <code>yardsitck::conf_mat()</code> but can handle observation weights (which will come into play in <a href="#weighting-by-observations">Weighting by Observations</a>)<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</p>
+<p>I will load in a function <code>conf_mat_weighted()</code> that works similarly to <code>yardsitck::conf_mat()</code> but can handle observation weights (which will come into play in <a href="#weighting-by-observations">Weighting by Observations</a>).</p>
 <pre class="r"><code># source conf_mat_weighted() which is similar to yardstick::conf_mat() but also
 # has the possibility of handling a weights column
 devtools::source_gist(&quot;https://gist.github.com/brshallo/37d524b82541c2f8540eab39f991830a&quot;)</code></pre>
 </div>
 <div id="weighting-by-classification-outcomes" class="section level2">
 <h2>Weighting by Classification Outcomes</h2>
-<p><em>For the purposes of this post I will skip common steps of model evaluation and selection and go straight to using weighting techniques to identify an ideal deicision threshold for a selected model.</em></p>
+<p><em>For the purposes of this post I will skip common steps of model evaluation and selection and go straight to using weighting techniques to identify an ideal deicision threshold for a selected model<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</em></p>
 <p>For our loan problem we will use the following weighting scheme for our potential classification outcomes:</p>
 <ul>
 <li>TP: 0.14 (predict a loan is good when it is indeed good)</li>
@@ -225,10 +225,10 @@ conf_mat_0.5_weighted %&gt;% autoplot(type = &quot;heatmap&quot;)</code></pre>
 <p>Assuming diagonal (correctly predicted) elements represent a gain<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a> and off-diagonal elements a loss<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>, I will calculate the total value at the 0.50 decision threshold (by taking the difference of the aggregated gains and losses)<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
 <pre class="r"><code>sum( (conf_mat_0.5$table * outcome_weights) * matrix(c(1,-1,-1, 1), byrow = TRUE, ncol = 2) )</code></pre>
 <pre><code>## [1] -53.96</code></pre>
-<p>At a threshold of 0.50 our expected value on accepting loans would be negative.</p>
+<p>At a prediction threshold of 0.50 for accepting loans, our expected value would be negative.</p>
 <div id="metrics-across-decision-thresholds" class="section level3">
 <h3>Metrics Across Decision Thresholds</h3>
-<p>We do not want to see performance at just the individual cut-point of 0.50 but across a range of decision thresholds<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>.</p>
+<p>We do not want to see performance at just the individual cut-point of 0.50 but across the range of decision thresholds<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>.</p>
 <p><code>conf_mat_threshold()</code> first creates a hard prediction based on a threshold and then creates the associated confusion matrix for that threshold.</p>
 <pre class="r"><code>#&#39; Confusion Matrix at Threshold
 #&#39;
@@ -274,7 +274,7 @@ conf_mats_df %&gt;%
   ggplot(aes(x = threshold, y = value))+
   geom_line()</code></pre>
 <p><img src="/post/2020-12-08-weighting-classification-outcomes_files/figure-html/value-chart-1.png" width="672" /></p>
-<p>This suggests the greatest value occurs when using a threshold between 0.93 and 0.96<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>. Value suffers a steep drop-off between this point (quickly turning negative). For comparison, an unweighted metric would have suggested predicting “Bad” loans for everything<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>.</p>
+<p>This suggests the greatest value occurs when using a threshold between 0.93 and 0.96<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>. Value suffers a steep drop-off at either end of this range (quickly turning negative). For comparison, an unweighted metric would have suggested predicting “Bad” loans for everything<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>.</p>
 </div>
 </div>
 <div id="weighting-by-observations" class="section level2">
@@ -302,7 +302,7 @@ conf_mats_df_obs_weights &lt;- thresholds_unique_df %&gt;%
 </div>
 <div id="appendix" class="section level1">
 <h1>Appendix</h1>
-<p><a href="#weights-of-observations-during-and-prior-to-modeling">Weights of Observations During and Prior to Modeling</a> and maybe <a href="#notes-on-cost-sensitive-classification">Notes on Cost Sensitive Classification</a> are the only sections people other than the author are likely to find interesting. Other sections are primarily bookmarks on thinking related to earlier versions of this post. Specifically, I am unsure about the appropriateness of the weighting scheme I used in this post. I posted a question on <a href="https://stats.stackexchange.com/questions/499841/weighting-confusion-matrix">Cross Validated</a> and devoted several sections here to the topic<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a>.</p>
+<p><a href="#weights-of-observations-during-and-prior-to-modeling">Weights of Observations During and Prior to Modeling</a> and maybe <a href="#notes-on-cost-sensitive-classification">Notes on Cost Sensitive Classification</a> are the only sections people other than the author are likely to find interesting. Other sections are primarily bookmarks on thought-process related to earlier versions of this post. Specifically, I was unsure about calculating weighted classification metricsa and the weighting scheme to use in this post. I posted a question on <a href="https://stats.stackexchange.com/questions/499841/weighting-confusion-matrix">Cross Validated</a> and devoted several sections here to the topic<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a>.</p>
 <div id="weights-of-observations-during-and-prior-to-modeling" class="section level2">
 <h2>Weights of Observations During and Prior to Modeling</h2>
 <p>The body of the blog post is focused exclusively on the weighting during model evaluation <em>after model training</em>. This section provides a brief overview of other types of weighting that can be used in modeling (as well as references for these topics).</p>
@@ -431,8 +431,8 @@ conf_mats_df_obs_weights &lt;- thresholds_unique_df %&gt;%
 <p>When weighting a confusion matrix, does it also make sense to calculate other weighted metrics, e.g. weighted precision, recall, etc.? Does it make sense to look at these across decision thresholds<a href="#fn34" class="footnote-ref" id="fnref34"><sup>34</sup></a>? The problem with the weighted versions of these metrics is that the possible number of observations could essentially change between decision cut-points because of observations slipping between higher or lower weighted classification outcomes. Does this present a mathematical challenge of some sort? Clearly if some cells are weighted to 0, some performance metrics may not make sense to calculate<a href="#fn35" class="footnote-ref" id="fnref35"><sup>35</sup></a>.</p>
 <p><em>I ended-up posting this question on cross validated: <a href="https://stats.stackexchange.com/questions/499841/weighting-common-performance-metrics-by-classification-outcomes?noredirect=1#comment925035_499841">Weighting common performance metrics by classification outcomes?</a>.</em></p>
 </div>
-<div id="how-i-arrived-at-weights" class="section level2">
-<h2>How I Arrived at Weights</h2>
+<div id="arriving-at-weights" class="section level2">
+<h2>Arriving at Weights</h2>
 <p>I initially used a different set of weights:</p>
 <p><span class="math display">\[ Weights = \left(\begin{array}{cc} 0.14 &amp; 1.89\\1.86  &amp; 0.11 \end{array}\right)\]</span></p>
 <p><em>I think this approach was an example of thinking too hard and that the approach here is incorrect or at least unnecessary…</em> I also ended-up using a different set of weights (that were just made-up).</p>
@@ -491,7 +491,7 @@ Intuitive way to think of AUC:<br><br>-Imagine taking a random point from both t
 <li id="fn20"><p>I.e. not having a lending business.<a href="#fnref20" class="footnote-back">↩</a></p></li>
 <li id="fn21"><p>It should be noted though that if you are using observation weights there is a decent chance you will want to apply them <em>during</em> the model building process (rather than after).<a href="#fnref21" class="footnote-back">↩</a></p></li>
 <li id="fn22"><p>This is likely a case where the costs and gains would likely be case dependent (i.e. depending on how big of a loan the client is asking for). There is a tutorial on <a href="https://mlr.mlr-org.com/articles/tutorial/cost_sensitive_classif.html#example-dependent-misclassification-costs">Example-dependent misclassification costs</a> from the <code>mlr</code> package that provides descriptions of this more complicated case. One may also be interested in weighting the observations in the steps prior to evaluation but in those steps described in <a href="#weights-of-observations-during-and-prior-to-modeling">Weights of Observations During and Prior to Modeling</a>.<a href="#fnref22" class="footnote-back">↩</a></p></li>
-<li id="fn23"><p><a href="#how-i-arrived-at-weights">How I Arrived at Weights</a> for a discussion of one approach for determining weights. See <a href="#notes-on-cost-sensitive-classification">Notes on Cost Sensitive Classification</a> and <a href="#questions-on-cost-sensitive-classification">Questions on Cost Sensitive Classification</a> for musings on the appropriateness of this type of weighting scheme.<a href="#fnref23" class="footnote-back">↩</a></p></li>
+<li id="fn23"><p><a href="#arriving-at-weights">Arriving at Weights</a> for a discussion of one approach for determining weights. See <a href="#notes-on-cost-sensitive-classification">Notes on Cost Sensitive Classification</a> and <a href="#questions-on-cost-sensitive-classification">Questions on Cost Sensitive Classification</a> for musings on the appropriateness of this type of weighting scheme and <a href="#weighted-classification-metrics">Weighted Classification Metrics</a> for examples of calculation.<a href="#fnref23" class="footnote-back">↩</a></p></li>
 <li id="fn24"><p>It is important to note that when using these procedures, your model no longer returns predicted probabilities but measures of whether or not you <em>should</em> predict a particular outcome given your weights and costs.<a href="#fnref24" class="footnote-back">↩</a></p></li>
 <li id="fn25"><p>He includes a simple example of doing this with keras in python.<a href="#fnref25" class="footnote-back">↩</a></p></li>
 <li id="fn26"><p>Or set of observations that are difficult to classify for other reason<a href="#fnref26" class="footnote-back">↩</a></p></li>
