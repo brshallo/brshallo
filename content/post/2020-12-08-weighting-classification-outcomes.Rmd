@@ -64,7 +64,9 @@ theme_set(theme_minimal())
 
 [Lending Club](https://www.lendingclub.com/auth/login?login_url=%2Fstatistics%2Fadditional-statistics%3F) data is used for examples throughout this post. I will be predicting the binary target `Class`, which defines whether loans are in good or bad standing (i.e. whether the recipient is or is not in default on their loan).
 
-Most of the code in this section is copied from a [vignette](https://probably.tidymodels.org/articles/where-to-use.html) for the [probably](https://probably.tidymodels.org/index.html)[^4] package and serves as the starter code for my examples. I provide brief descriptions of the code chunks but recommend reading the source for explanations on the steps.
+## Starter Code
+
+This section provides a short example of building a model and calculating a confusion matrix at a particular decision threshold using some tools from the suite of [tidymodels](https://www.tidymodels.org/) packages. Most of the code in this section is copied from a [vignette](https://probably.tidymodels.org/articles/where-to-use.html) for the [probably](https://probably.tidymodels.org/index.html)[^4] package and serves as starter code for my examples. I provide brief descriptions of the code chunks but recommend reading the source for explanations on the steps.
 
 [^4]: [probably](https://probably.tidymodels.org/index.html) is a new package in the [tidymodels](https://www.tidymodels.org/) suite in R that is helpful for evaluation steps that occur after model building. [Davis Vaughan](https://twitter.com/dvaughan32?lang=en) describes its purpose:
 
@@ -72,9 +74,7 @@ Most of the code in this section is copied from a [vignette](https://probably.ti
 
     As [probably](https://probably.tidymodels.org/index.html) and [yardstick](https://yardstick.tidymodels.org/) continue to develop I imagine that functionality from those packages will replace much of the code I write in this post.
 
-## Starter Code
-
-This section provides a short example of building a model and calculating a confusion matrix at a particular decision threshold using some tools from the suite of [tidymodels](https://www.tidymodels.org/) packages. (If you are familiar with the [tidyverse](https://www.tidyverse.org/) and modeling in classification problems you might skip to [Weighting by Classification Outcomes].) 
+(If you are familiar with the [tidyverse](https://www.tidyverse.org/) and modeling in classification problems you might skip to [Weighting by Classification Outcomes].) 
 
 *Load data:*
 ```{r}
@@ -149,7 +149,7 @@ devtools::source_gist("https://gist.github.com/brshallo/37d524b82541c2f8540eab39
 
 ## Weighting by Classification Outcomes
 
-*For the purposes of this post I will skip common steps of model evaluation and selection and go straight to using weighting techniques to identify an ideal decision threshold for a selected model^[The remainder of the post is about weighting classification outcomes or observations during model evaluation, and primarily uses methods that review performance across all decision thresholds (not just at 0.5).].*
+*For the purposes of this post I will skip common steps in model evaluation and selection and go straight to using weighting techniques to identify an ideal decision threshold for a selected model^[The remainder of the post is about weighting classification outcomes or observations during model evaluation, and primarily uses methods that review performance across all decision thresholds (not just at 0.5).].*
 
 For our loan problem we will use the following weighting scheme for our potential classification outcomes:
 
@@ -160,7 +160,7 @@ For our loan problem we will use the following weighting scheme for our potentia
 
 $$ Weights = \left(\begin{array}{cc} 0.14 & 3.10\\0.06  & 0.02 \end{array}\right)$$
 
-There may be asymmetries in business processes associated with the 'actual' as well as the 'predicted' state that might explain differences in the value associated with each cell in the confusion matrix (for the purposes of this post I am unconcerned how realistic these weights are).
+There may be asymmetries in business processes associated with the 'actual' and the 'predicted' states that might explain differences in the value associated with each cell in the confusion matrix^[For the purposes of this post I am unconcerned how realistic these weights are.].
 
 I put the classification outcome weights into a matrix[^3].
 
@@ -202,7 +202,7 @@ At a prediction threshold of 0.50 for accepting loans, our expected value would 
 
 ### Metrics Across Decision Thresholds
 
-We do not want to see performance at just the individual cut-point of 0.50 but across the range of decision thresholds^[The function `probably::threshold_perf()` is designed for this type of task. However this function only supports a few types of metrics currently. [#25](https://github.com/tidymodels/probably/issues/25) suggests that in the future these may be more customizable. Neither `probably` nor `yardstick` can yet handle observation or classification outcome weights. Hence why I don't just use functions from those packages directly. [#30](https://github.com/tidymodels/yardstick/issues/30) suggests that `yardstick` will get support for weights in the future however this issue is referring to observation weights, not classification outcome weights. [#3](https://github.com/tidymodels/yardstick/issues/3) however suggests `yardstick` will also get options for handling different weights in classification outcomes.]. 
+We do not want to see performance at just the individual cut-point of 0.50 but across the range of possible decision thresholds^[The function `probably::threshold_perf()` is designed for this type of task. However this function only supports a few types of metrics currently. [#25](https://github.com/tidymodels/probably/issues/25) suggests that in the future these may be more customizable. Neither `probably` nor `yardstick` can yet handle observation or classification outcome weights. Hence why I don't just use functions from those packages directly. [#30](https://github.com/tidymodels/yardstick/issues/30) suggests that `yardstick` will get support for weights in the future however this issue is referring to observation weights, not classification outcome weights. [#3](https://github.com/tidymodels/yardstick/issues/3) however suggests `yardstick` will also get options for handling different weights in classification outcomes.]. 
 
 `conf_mat_threshold()` first creates a hard prediction based on a threshold and then creates the associated confusion matrix for that threshold.
 
@@ -267,7 +267,7 @@ This suggests the greatest value occurs when using a threshold between 0.93 and 
 
 In the prior section, we used weights to represent the value of classification outcomes. What if we want to account for the value of a specific loan (since higher loan amounts might amplify possible risks)? In this section I will apply the same steps as above but will first weight individual observations^[It should be noted though that if you are using observation weights there is a decent chance you will want to apply them *during* the model building process (rather than after).] by the `funded_amnt` column^[This is likely a case where the costs and gains would likely be case dependent (i.e. depending on how big of a loan the client is asking for). There is a tutorial on [Example-dependent misclassification costs](https://mlr.mlr-org.com/articles/tutorial/cost_sensitive_classif.html#example-dependent-misclassification-costs) from the `mlr` package that provides descriptions of this more complicated case. One may also be interested in weighting the observations in the steps prior to evaluation but in those steps described in [Weights of Observations During and Prior to Modeling].].
 
-My function `conf_mat_weighted()` (sourced previously) can handle a value for observation weights. Hence, we will follow the same steps as in [Weighting by Classification Outcomes] except also supplying `wt = funded_amnt`.
+My function `conf_mat_weighted()` (sourced from [gist](https://gist.github.com/brshallo/37d524b82541c2f8540eab39f991830a) previously) can handle a value for observation weights. Hence, we will follow the same steps as in [Weighting by Classification Outcomes] except also supplying `wt = funded_amnt`.
 ```{r}
 # get confusion matrices and weighted confusion matrices
 conf_mats_df_obs_weights <- thresholds_unique_df %>% 
@@ -280,7 +280,7 @@ conf_mats_df_obs_weights <- thresholds_unique_df %>%
   mutate(across(contains("conf"), list(metrics = ~map(.x, summary))))
 ```
 
-The results for 'value' appear largely similar (as in the previous section without weighting by `funded_amnt`):
+The ideal cut-points to maximize 'value' appear similar (as in the previous section when not weighting by `funded_amnt`):
 
 ```{r}
 conf_mats_df_obs_weights %>% 
@@ -290,6 +290,10 @@ conf_mats_df_obs_weights %>%
   ggplot(aes(x = threshold, y = value))+
   geom_line()
 ```
+
+# Closing note
+
+Once you've developed a well-calibrated model, weighting by classification outcomes and observation weights can be helpful for identifying an optimal decision threshold that will maximize expected value.
 
 # Appendix
 
