@@ -290,7 +290,7 @@ conf_mats_df_obs_weights &lt;- thresholds_unique_df %&gt;%
                         wt = funded_amnt)) %&gt;%
   mutate(conf_mat_weighted = map(conf_mat, weight_cells, weights = outcome_weights)) %&gt;%
   mutate(across(contains(&quot;conf&quot;), list(metrics = ~map(.x, summary))))</code></pre>
-<p>The results for ‘value’ appear somewhat similar but with a slightly higher and broader range for profitability:</p>
+<p>The results for ‘value’ appear largely similar (as in the previous section without weighting by <code>funded_amnt</code>):</p>
 <pre class="r"><code>conf_mats_df_obs_weights %&gt;% 
   arrange(desc(threshold)) %&gt;% 
   mutate(value = map_dbl(conf_mat_weighted, ~total_value(.x$table))) %&gt;% 
