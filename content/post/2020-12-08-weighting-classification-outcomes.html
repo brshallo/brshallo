@@ -380,7 +380,7 @@ conf_mats_df_obs_weights &lt;- thresholds_unique_df %&gt;%
 <p><em>Should the diagonal elements be zero?</em></p>
 <p>Most of the examples I saw on cost-sensitive classification had their correctly predicted items (the diagonal of the confusion matrix) set to zero (assuming no or small costs associated with correctly predicted outcomes)<a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a>. There are some exceptions to this:</p>
 <ul>
-<li><a href="https://twitter.com/sowmya_vivek">Somya Vivek</a> provides an example of this in her article <a href="https://towardsdatascience.com/model-performance-cost-functions-for-classification-models-a7b1b00ba60">Model performance &amp; cost functions for classification models</a>.</li>
+<li><a href="https://twitter.com/sowmya_vivek">Sowmya Vivek</a> provides an example of this in her article <a href="https://towardsdatascience.com/model-performance-cost-functions-for-classification-models-a7b1b00ba60">Model performance &amp; cost functions for classification models</a>.</li>
 <li>Robert Moser’s post on <a href="https://towardsdatascience.com/fraud-detection-with-cost-sensitive-machine-learning-24b8760d35d9">Fraud detection with cost sensitive machine learning</a></li>
 </ul>
 <p>These gave me some confidence that there isn’t a problem with having non-zero items on the diagonals.</p>

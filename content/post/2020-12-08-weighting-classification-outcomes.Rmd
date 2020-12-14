@@ -380,7 +380,7 @@ Resources on cost based approaches to model evaluation of classification problem
 
 Most of the examples I saw on cost-sensitive classification had their correctly predicted items (the diagonal of the confusion matrix) set to zero (assuming no or small costs associated with correctly predicted outcomes)^[My concern was that there may be mathematical or contextual reasons why this should generally be the case. For example that not doing so in some ways 'double counts' things somehow.]. There are some exceptions to this:
 
-* [Somya Vivek](https://twitter.com/sowmya_vivek) provides an example of this in her article [Model performance & cost functions for classification models](https://towardsdatascience.com/model-performance-cost-functions-for-classification-models-a7b1b00ba60). 
+* [Sowmya Vivek](https://twitter.com/sowmya_vivek) provides an example of this in her article [Model performance & cost functions for classification models](https://towardsdatascience.com/model-performance-cost-functions-for-classification-models-a7b1b00ba60). 
 * Robert Moser's post on [Fraud detection with cost sensitive machine learning](https://towardsdatascience.com/fraud-detection-with-cost-sensitive-machine-learning-24b8760d35d9)
 
 These gave me some confidence that there isn't a problem with having non-zero items on the diagonals. 
