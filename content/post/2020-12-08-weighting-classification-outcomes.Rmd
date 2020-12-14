@@ -3,7 +3,7 @@ title: Weighting Confusion Matrices by Outcomes and Observations
 author: Bryan Shalloway
 date: '2020-12-08'
 slug: weighting-classification-outcomes
-thumbnail: /post/2020-12-08-weighting-classification-outcomes_files/figure-html/value-chart-1.png
+thumbnail: /post/2020-12-08-weighting-classification-outcomes_files/figure-html/confusion-matrix-unweighted-weighted-1.png
 ---
 
 ```{r setup, include=FALSE}
@@ -35,9 +35,9 @@ Initial model evaluation and selection should generally start by reviewing metri
 
 >"During the initial phase of model building, a good strategy for data sets with two classes is to focus on the AUC statistics from these curves instead of metrics based on hard class predictions. Once a reasonable model is found, the ROC or precision-recall curves can be carefully examined to find a reasonable cutoff for the data and then qualitative prediction metrics can be used." - 3.2.2 *Classification Metrics*
 
-Once a performant model has been selected, the analyst can then identify the ideal decision threshold/cut-point for making class predictions. In this post I will be weighting predictions and then identifying which point maximizes expected value^[Other approaches could be to investigate the ROC or precision-recall curves or to maximize the J-index.]. 
+Once a performant model has been selected, the analyst can then identify the ideal decision threshold/cut-point for making class predictions. In this post I will be weighting predictions and then identifying which cut-point maximizes expected value^[Other approaches could be to investigate the ROC or precision-recall curves or to maximize the J-index.]. 
 
-The frequency of classification outcomes at a specific decision threshold is often represented by a confusion matrix. 
+The frequency of classification outcomes at a specific decision threshold are often represented by a confusion matrix. 
 
 [^2]: While the AUC score can be thought of in terms of area under the curve when x-axis: 1 - specificity and y-axis: sensitivity at all possible decision thresholds, I actually prefer conceptualizing AUC as being more about whether your observations are properly ordered and therefore prefer this way of thinking about the metric: 
     
@@ -66,7 +66,7 @@ theme_set(theme_minimal())
 
 ## Starter Code
 
-This section provides a short example of building a model and calculating a confusion matrix at a particular decision threshold using some tools from the suite of [tidymodels](https://www.tidymodels.org/) packages. Most of the code in this section is copied from a [vignette](https://probably.tidymodels.org/articles/where-to-use.html) for the [probably](https://probably.tidymodels.org/index.html)[^4] package and serves as starter code for my examples. I provide brief descriptions of the code chunks but recommend reading the source for explanations on the steps.
+This section provides a short example of building a model and calculating a confusion matrix at a particular decision threshold. Most of the code in this section is copied from a [vignette](https://probably.tidymodels.org/articles/where-to-use.html) for the [probably](https://probably.tidymodels.org/index.html)[^4] package and serves as starter code for my examples. I provide brief descriptions of the code chunks but recommend reading the source for explanations on the steps.
 
 [^4]: [probably](https://probably.tidymodels.org/index.html) is a new package in the [tidymodels](https://www.tidymodels.org/) suite in R that is helpful for evaluation steps that occur after model building. [Davis Vaughan](https://twitter.com/dvaughan32?lang=en) describes its purpose:
 
@@ -74,7 +74,7 @@ This section provides a short example of building a model and calculating a conf
 
     As [probably](https://probably.tidymodels.org/index.html) and [yardstick](https://yardstick.tidymodels.org/) continue to develop I imagine that functionality from those packages will replace much of the code I write in this post.
 
-(If you are familiar with the [tidyverse](https://www.tidyverse.org/) and modeling in classification problems you might skip to [Weighting by Classification Outcomes].) 
+(If you are familiar with [tidymodels](https://www.tidymodels.org/) and modeling in classification problems you might skip to [Weighting by Classification Outcomes].) 
 
 *Load data:*
 ```{r}
@@ -136,7 +136,7 @@ conf_mat_0.5 <- yardstick::conf_mat(hard_pred_0.5, Class, .pred)
 conf_mat_0.5 %>% autoplot(type = "heatmap")
 ```
 
-We could call `summary(conf_mat_0.5)` to calculate common metrics at this decision threshold.
+We could also call `summary(conf_mat_0.5)` to calculate common metrics at this decision threshold.
 
 **Custom function:**
 
@@ -154,7 +154,7 @@ devtools::source_gist("https://gist.github.com/brshallo/37d524b82541c2f8540eab39
 For our loan problem we will use the following weighting scheme for our potential classification outcomes:
 
 * TP: 0.14 (predict a loan is good when it is indeed good)
-* FP: 3.1 (predict a loan is good when it is actually bad)
+* FP: 3.10 (predict a loan is good when it is actually bad)
 * TN: 0.02 (predict a loan is bad when it is indeed bad)
 * FN: 0.06 (predict a loan is bad when it is actually good)
 
@@ -164,7 +164,7 @@ There may be asymmetries in business processes associated with the 'actual' and 
 
 I put the classification outcome weights into a matrix[^3].
 
-[^3]: I am choosing the position based on the defaults in the output from a "conf_mat" object that gets created by `yardstick::conf_mat()`.
+[^3]: I am choosing the element positions based on the defaults in the output from a "conf_mat" object that gets created by `yardstick::conf_mat()`.
 
 ```{r}
 outcome_weights <- matrix(
@@ -204,7 +204,7 @@ At a prediction threshold of 0.50 for accepting loans, our expected value would 
 
 We do not want to see performance at just the individual cut-point of 0.50 but across the range of possible decision thresholds^[The function `probably::threshold_perf()` is designed for this type of task. However this function only supports a few types of metrics currently. [#25](https://github.com/tidymodels/probably/issues/25) suggests that in the future these may be more customizable. Neither `probably` nor `yardstick` can yet handle observation or classification outcome weights. Hence why I don't just use functions from those packages directly. [#30](https://github.com/tidymodels/yardstick/issues/30) suggests that `yardstick` will get support for weights in the future however this issue is referring to observation weights, not classification outcome weights. [#3](https://github.com/tidymodels/yardstick/issues/3) however suggests `yardstick` will also get options for handling different weights in classification outcomes.]. 
 
-`conf_mat_threshold()` first creates a hard prediction based on a threshold and then creates the associated confusion matrix for that threshold.
+I wrote a function `conf_mat_threshold()` that first creates hard predictions based on a threshold and then creates the associated confusion matrix for that threshold.
 
 ```{r}
 #' Confusion Matrix at Threshold
@@ -241,7 +241,7 @@ thresholds_unique_df <- tibble(threshold = c(0, unique(lending_test_pred$.pred_g
 ```
 
 ```{r}
-# get confusion matrices and weighted confusion matrices
+# compute confusion matrices and weighted confusion matrices
 conf_mats_df <- thresholds_unique_df %>% 
   mutate(conf_mat = map(threshold, conf_mat_threshold, df = lending_test_pred)) %>% 
   mutate(conf_mat_weighted = map(conf_mat, weight_cells, weights = outcome_weights))
@@ -253,15 +253,41 @@ total_value <- function(weighted_conf_matrix){
   sum(weighted_conf_matrix * matrix(c(1, -1, -1, 1), byrow = TRUE, ncol = 2))
 }
 
-conf_mats_df %>% 
+conf_mats_value <- conf_mats_df %>% 
   arrange(desc(threshold)) %>% 
-  mutate(value = map_dbl(conf_mat_weighted, ~total_value(.x$table))) %>% 
-  # discard(is.list) %>% 
+  mutate(value = map_dbl(conf_mat_weighted, ~total_value(.x$table)))
+
+conf_mats_value %>% 
   ggplot(aes(x = threshold, y = value))+
   geom_line()
 ```
 
 This suggests the greatest value occurs when using a threshold between 0.93 and 0.96^[AUC and precision-recall curves may also be worth looking at.]. Value suffers a steep drop-off at either end of this range (quickly turning negative). For comparison, an unweighted metric would have suggested predicting "Bad" loans for everything^[I.e. not having a lending business.].
+
+Below is the confusion matrix (of the observation counts) and the weighted confusion matrix (of the value) at the ideal cut-point of ~0.94:
+
+```{r confusion-matrix-unweighted-weighted}
+cfm1 <- conf_mats_value %>% 
+  arrange(desc(value)) %>% 
+  pluck("conf_mat", 1) %>% 
+  autoplot(type = "heatmap")+
+  coord_fixed()+
+  labs(title = "Confusion Matrix",
+       subtitle = "Threshold: 0.94")
+
+cfm2 <- conf_mats_value %>% 
+  arrange(desc(value)) %>% 
+  pluck("conf_mat_weighted", 1) %>% 
+  autoplot(type = "heatmap")+
+  coord_fixed()+
+  labs(title = "Value Weighted Confusion Matrix",
+       subtitle = "Threshold: 0.94")
+
+library(patchwork)
+
+cfm1 + cfm2
+```
+
 
 ## Weighting by Observations
 
@@ -323,7 +349,7 @@ Depending on your problem you might also use different approaches for weighting 
 
 I posted a question to Cross Validated (CV) on [Weighting common performance metrics by classification outcomes?](https://stats.stackexchange.com/questions/499841/weighting-common-performance-metrics-by-classification-outcomes?noredirect=1#comment925035_499841). I also reached out to other analytics professionals relating my questions about these metrics. I ultimately came to the conclusion that many performance metrics weighted by classification outcomes are inappropriate (other than expected value) or not useful so kept the focus of this post on using weighted classification outcomes strictly for maximizing expected value and identifying ideal cut-points on an already selected model. 
 
-I also changed my weighting scheme though not such that anyany cells in the confusion matrix would be zeroed out^[Some classification metrics cannot be calculated if you weight the cells to zero -- although I do not believe them to be appropriate I wanted to preserve the examples below as mental bookmarks.].
+I also changed my weighting scheme though not such that any cells in the confusion matrix would be zeroed out^[Some classification metrics cannot be calculated if you weight the cells to zero -- although I do not believe them to be appropriate I wanted to preserve the examples below as mental bookmarks.].
 
 *Weighted performance metrics on a confusion matrix at threshold of 0.5:*
 ```{r}
@@ -344,7 +370,7 @@ conf_mats_df %>%
   labs(title = "Weighted Performance Metrics")
 ```
 
-Interpretation of these metrics is unclear (as descriped on the CV issue mentioned above).
+Interpretation of these metrics is unclear (as described on the CV issue mentioned above).
 
 ## Questions on Cost Sensitive Classification
 

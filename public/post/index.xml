@@ -56,8 +56,8 @@
 &lt;blockquote&gt;
 &lt;p&gt;“During the initial phase of model building, a good strategy for data sets with two classes is to focus on the AUC statistics from these curves instead of metrics based on hard class predictions. Once a reasonable model is found, the ROC or precision-recall curves can be carefully examined to find a reasonable cutoff for the data and then qualitative prediction metrics can be used.” - 3.2.2 &lt;em&gt;Classification Metrics&lt;/em&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;Once a performant model has been selected, the analyst can then identify the ideal decision threshold/cut-point for making class predictions. In this post I will be weighting predictions and then identifying which point maximizes expected value&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The frequency of classification outcomes at a specific decision threshold is often represented by a confusion matrix.&lt;/p&gt;
+&lt;p&gt;Once a performant model has been selected, the analyst can then identify the ideal decision threshold/cut-point for making class predictions. In this post I will be weighting predictions and then identifying which cut-point maximizes expected value&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The frequency of classification outcomes at a specific decision threshold are often represented by a confusion matrix.&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
 &lt;img src=&#34;https://miro.medium.com/max/2102/1*fxiTNIgOyvAombPJx5KGeA.png&#34; alt=&#34;Confusion Matrix for Classification&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;&lt;a href=&#34;https://towardsdatascience.com/confusion-matrix-for-your-multi-class-machine-learning-model-ff9aa3bf7826&#34;&gt;Confusion Matrix for Classification&lt;/a&gt;&lt;/p&gt;
@@ -78,8 +78,8 @@ theme_set(theme_minimal())&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;a href=&#34;https://www.lendingclub.com/auth/login?login_url=%2Fstatistics%2Fadditional-statistics%3F&#34;&gt;Lending Club&lt;/a&gt; data is used for examples throughout this post. I will be predicting the binary target &lt;code&gt;Class&lt;/code&gt;, which defines whether loans are in good or bad standing (i.e. whether the recipient is or is not in default on their loan).&lt;/p&gt;
 &lt;div id=&#34;starter-code&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Starter Code&lt;/h2&gt;
-&lt;p&gt;This section provides a short example of building a model and calculating a confusion matrix at a particular decision threshold using some tools from the suite of &lt;a href=&#34;https://www.tidymodels.org/&#34;&gt;tidymodels&lt;/a&gt; packages. Most of the code in this section is copied from a &lt;a href=&#34;https://probably.tidymodels.org/articles/where-to-use.html&#34;&gt;vignette&lt;/a&gt; for the &lt;a href=&#34;https://probably.tidymodels.org/index.html&#34;&gt;probably&lt;/a&gt;&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt; package and serves as starter code for my examples. I provide brief descriptions of the code chunks but recommend reading the source for explanations on the steps.&lt;/p&gt;
-&lt;p&gt;(If you are familiar with the &lt;a href=&#34;https://www.tidyverse.org/&#34;&gt;tidyverse&lt;/a&gt; and modeling in classification problems you might skip to &lt;a href=&#34;#weighting-by-classification-outcomes&#34;&gt;Weighting by Classification Outcomes&lt;/a&gt;.)&lt;/p&gt;
+&lt;p&gt;This section provides a short example of building a model and calculating a confusion matrix at a particular decision threshold. Most of the code in this section is copied from a &lt;a href=&#34;https://probably.tidymodels.org/articles/where-to-use.html&#34;&gt;vignette&lt;/a&gt; for the &lt;a href=&#34;https://probably.tidymodels.org/index.html&#34;&gt;probably&lt;/a&gt;&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt; package and serves as starter code for my examples. I provide brief descriptions of the code chunks but recommend reading the source for explanations on the steps.&lt;/p&gt;
+&lt;p&gt;(If you are familiar with &lt;a href=&#34;https://www.tidymodels.org/&#34;&gt;tidymodels&lt;/a&gt; and modeling in classification problems you might skip to &lt;a href=&#34;#weighting-by-classification-outcomes&#34;&gt;Weighting by Classification Outcomes&lt;/a&gt;.)&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Load data:&lt;/em&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data(&amp;quot;lending_club&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;em&gt;Minor transformations and select relevant columns:&lt;/em&gt;&lt;/p&gt;
@@ -120,7 +120,7 @@ lending_test_pred &amp;lt;- bind_cols(predictions, lending_test)&lt;/code&gt;&lt
 
 conf_mat_0.5 %&amp;gt;% autoplot(type = &amp;quot;heatmap&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-12-08-weighting-classification-outcomes_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;We could call &lt;code&gt;summary(conf_mat_0.5)&lt;/code&gt; to calculate common metrics at this decision threshold.&lt;/p&gt;
+&lt;p&gt;We could also call &lt;code&gt;summary(conf_mat_0.5)&lt;/code&gt; to calculate common metrics at this decision threshold.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Custom function:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;I will load in a function &lt;code&gt;conf_mat_weighted()&lt;/code&gt; that works similarly to &lt;code&gt;yardsitck::conf_mat()&lt;/code&gt; but can handle observation weights (which will come into play in &lt;a href=&#34;#weighting-by-observations&#34;&gt;Weighting by Observations&lt;/a&gt;).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# source conf_mat_weighted() which is similar to yardstick::conf_mat() but also
@@ -133,7 +133,7 @@ devtools::source_gist(&amp;quot;https://gist.github.com/brshallo/37d524b82541c2f
 &lt;p&gt;For our loan problem we will use the following weighting scheme for our potential classification outcomes:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;TP: 0.14 (predict a loan is good when it is indeed good)&lt;/li&gt;
-&lt;li&gt;FP: 3.1 (predict a loan is good when it is actually bad)&lt;/li&gt;
+&lt;li&gt;FP: 3.10 (predict a loan is good when it is actually bad)&lt;/li&gt;
 &lt;li&gt;TN: 0.02 (predict a loan is bad when it is indeed bad)&lt;/li&gt;
 &lt;li&gt;FN: 0.06 (predict a loan is bad when it is actually good)&lt;/li&gt;
 &lt;/ul&gt;
@@ -167,7 +167,7 @@ conf_mat_0.5_weighted %&amp;gt;% autoplot(type = &amp;quot;heatmap&amp;quot;)&lt
 &lt;div id=&#34;metrics-across-decision-thresholds&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Metrics Across Decision Thresholds&lt;/h3&gt;
 &lt;p&gt;We do not want to see performance at just the individual cut-point of 0.50 but across the range of possible decision thresholds&lt;a href=&#34;#fn17&#34; class=&#34;footnote-ref&#34; id=&#34;fnref17&#34;&gt;&lt;sup&gt;17&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;conf_mat_threshold()&lt;/code&gt; first creates a hard prediction based on a threshold and then creates the associated confusion matrix for that threshold.&lt;/p&gt;
+&lt;p&gt;I wrote a function &lt;code&gt;conf_mat_threshold()&lt;/code&gt; that first creates hard predictions based on a threshold and then creates the associated confusion matrix for that threshold.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#&amp;#39; Confusion Matrix at Threshold
 #&amp;#39;
 #&amp;#39; @param df dataframe containing a column `.pred_good`.
@@ -196,7 +196,7 @@ thresholds_unique_df &amp;lt;- tibble(threshold = c(0, unique(lending_test_pred$
          diff_prev_small = ifelse(is.na(diff_prev_small), FALSE, diff_prev_small)) %&amp;gt;%
   filter(!diff_prev_small) %&amp;gt;% 
   select(threshold)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# get confusion matrices and weighted confusion matrices
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# compute confusion matrices and weighted confusion matrices
 conf_mats_df &amp;lt;- thresholds_unique_df %&amp;gt;% 
   mutate(conf_mat = map(threshold, conf_mat_threshold, df = lending_test_pred)) %&amp;gt;% 
   mutate(conf_mat_weighted = map(conf_mat, weight_cells, weights = outcome_weights))&lt;/code&gt;&lt;/pre&gt;
@@ -205,14 +205,36 @@ conf_mats_df &amp;lt;- thresholds_unique_df %&amp;gt;%
   sum(weighted_conf_matrix * matrix(c(1, -1, -1, 1), byrow = TRUE, ncol = 2))
 }
 
-conf_mats_df %&amp;gt;% 
+conf_mats_value &amp;lt;- conf_mats_df %&amp;gt;% 
   arrange(desc(threshold)) %&amp;gt;% 
-  mutate(value = map_dbl(conf_mat_weighted, ~total_value(.x$table))) %&amp;gt;% 
-  # discard(is.list) %&amp;gt;% 
+  mutate(value = map_dbl(conf_mat_weighted, ~total_value(.x$table)))
+
+conf_mats_value %&amp;gt;% 
   ggplot(aes(x = threshold, y = value))+
   geom_line()&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-12-08-weighting-classification-outcomes_files/figure-html/value-chart-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;This suggests the greatest value occurs when using a threshold between 0.93 and 0.96&lt;a href=&#34;#fn19&#34; class=&#34;footnote-ref&#34; id=&#34;fnref19&#34;&gt;&lt;sup&gt;19&lt;/sup&gt;&lt;/a&gt;. Value suffers a steep drop-off at either end of this range (quickly turning negative). For comparison, an unweighted metric would have suggested predicting “Bad” loans for everything&lt;a href=&#34;#fn20&#34; class=&#34;footnote-ref&#34; id=&#34;fnref20&#34;&gt;&lt;sup&gt;20&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Below is the confusion matrix (of the observation counts) and the weighted confusion matrix (of the value) at the ideal cut-point of ~0.94:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cfm1 &amp;lt;- conf_mats_value %&amp;gt;% 
+  arrange(desc(value)) %&amp;gt;% 
+  pluck(&amp;quot;conf_mat&amp;quot;, 1) %&amp;gt;% 
+  autoplot(type = &amp;quot;heatmap&amp;quot;)+
+  coord_fixed()+
+  labs(title = &amp;quot;Confusion Matrix&amp;quot;,
+       subtitle = &amp;quot;Threshold: 0.94&amp;quot;)
+
+cfm2 &amp;lt;- conf_mats_value %&amp;gt;% 
+  arrange(desc(value)) %&amp;gt;% 
+  pluck(&amp;quot;conf_mat_weighted&amp;quot;, 1) %&amp;gt;% 
+  autoplot(type = &amp;quot;heatmap&amp;quot;)+
+  coord_fixed()+
+  labs(title = &amp;quot;Value Weighted Confusion Matrix&amp;quot;,
+       subtitle = &amp;quot;Threshold: 0.94&amp;quot;)
+
+library(patchwork)
+
+cfm1 + cfm2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-12-08-weighting-classification-outcomes_files/figure-html/confusion-matrix-unweighted-weighted-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;weighting-by-observations&#34; class=&#34;section level2&#34;&gt;
@@ -265,7 +287,7 @@ conf_mats_df_obs_weights &amp;lt;- thresholds_unique_df %&amp;gt;%
 &lt;div id=&#34;weighted-classification-metrics&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Weighted Classification Metrics&lt;/h2&gt;
 &lt;p&gt;I posted a question to Cross Validated (CV) on &lt;a href=&#34;https://stats.stackexchange.com/questions/499841/weighting-common-performance-metrics-by-classification-outcomes?noredirect=1#comment925035_499841&#34;&gt;Weighting common performance metrics by classification outcomes?&lt;/a&gt;. I also reached out to other analytics professionals relating my questions about these metrics. I ultimately came to the conclusion that many performance metrics weighted by classification outcomes are inappropriate (other than expected value) or not useful so kept the focus of this post on using weighted classification outcomes strictly for maximizing expected value and identifying ideal cut-points on an already selected model.&lt;/p&gt;
-&lt;p&gt;I also changed my weighting scheme though not such that anyany cells in the confusion matrix would be zeroed out&lt;a href=&#34;#fn30&#34; class=&#34;footnote-ref&#34; id=&#34;fnref30&#34;&gt;&lt;sup&gt;30&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I also changed my weighting scheme though not such that any cells in the confusion matrix would be zeroed out&lt;a href=&#34;#fn30&#34; class=&#34;footnote-ref&#34; id=&#34;fnref30&#34;&gt;&lt;sup&gt;30&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Weighted performance metrics on a confusion matrix at threshold of 0.5:&lt;/em&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;summary(conf_mat_0.5_weighted) %&amp;gt;% 
   knitr::kable(digits = 3)&lt;/code&gt;&lt;/pre&gt;
@@ -356,7 +378,7 @@ conf_mats_df_obs_weights &amp;lt;- thresholds_unique_df %&amp;gt;%
   facet_wrap(~.metric, scales = &amp;quot;free_y&amp;quot;)+
   labs(title = &amp;quot;Weighted Performance Metrics&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-12-08-weighting-classification-outcomes_files/figure-html/classification-metrics-charts-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Interpretation of these metrics is unclear (as descriped on the CV issue mentioned above).&lt;/p&gt;
+&lt;p&gt;Interpretation of these metrics is unclear (as described on the CV issue mentioned above).&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;questions-on-cost-sensitive-classification&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Questions on Cost Sensitive Classification&lt;/h2&gt;
@@ -425,7 +447,7 @@ Intuitive way to think of AUC:&lt;br&gt;&lt;br&gt;-Imagine taking a random point
 &lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;From this point on, code is no longer being copied directly from the &lt;code&gt;probably&lt;/code&gt; vignette. Again, I would recommend exploring the &lt;code&gt;probably&lt;/code&gt; package which goes on to discuss performance metrics on classification problems more generally.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;The remainder of the post is about weighting classification outcomes or observations during model evaluation, and primarily uses methods that review performance across all decision thresholds (not just at 0.5).&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;For the purposes of this post I am unconcerned how realistic these weights are.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;I am choosing the position based on the defaults in the output from a “conf_mat” object that gets created by &lt;code&gt;yardstick::conf_mat()&lt;/code&gt;.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;I am choosing the element positions based on the defaults in the output from a “conf_mat” object that gets created by &lt;code&gt;yardstick::conf_mat()&lt;/code&gt;.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;For example in the case of True Positives, corresponding to interest payments.&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;For example in the case of a False Negative this represents the loan being lost due to default of the recipient.&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;I could convert this to the &lt;em&gt;average value&lt;/em&gt; by dividing by the number of observations.&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
