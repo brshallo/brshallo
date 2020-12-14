@@ -29,13 +29,13 @@ Specifically with the aim of identifying ideal cut-points for making class predi
 
 # Model Performance Metrics
 
-Most common metrics used in classification problems -- e.g. accuracy, precision, recall/sensitivity, specificity, Area Under under ROC curve[^2] (AUC) or Precision-Recall curve -- come down to the relationship between the true positives (TP), true negatives (TN), false positives (FP), and false negatives (FN) at a particular decision threshold^[I.e. if probability of event is greater than 0.50, predict TRUE, else FALSE.] or across all thresholds^[Some metrics are often helpful for focusing on particular aspects of your predictions (e.g. precision, recall, F-score all focus more on the model's capacity to identify TRUE events).]. 
+Most common metrics used in classification problems -- e.g. accuracy, precision, recall/sensitivity, specificity, Area Under ROC curve[^2] (AUC) or Precision-Recall curve -- come down to the relationship between the true positives (TP), true negatives (TN), false positives (FP), and false negatives (FN) at a particular decision threshold^[I.e. if probability of event is greater than 0.50, predict TRUE, else FALSE.] or across all thresholds^[Some metrics are often helpful for focusing on particular aspects of your predictions (e.g. precision, recall, F-score all focus more on the model's capacity to identify TRUE events).]. 
 
-Initial model evaluation and selection should generally start by reviewing metrics that capture general performance *across* thresholds. Max Kuhn and Kjell Johnson explain this in their book [Feature Engineering and Selection...](http://www.feat.engineering/measuring-performance.html):
+Initial model evaluation and selection should generally start by reviewing metrics that capture general performance *across all* thresholds. Max Kuhn and Kjell Johnson explain this in their book [Feature Engineering and Selection...](http://www.feat.engineering/measuring-performance.html):
 
 >"During the initial phase of model building, a good strategy for data sets with two classes is to focus on the AUC statistics from these curves instead of metrics based on hard class predictions. Once a reasonable model is found, the ROC or precision-recall curves can be carefully examined to find a reasonable cutoff for the data and then qualitative prediction metrics can be used." - 3.2.2 *Classification Metrics*
 
-Once a performant model has been selected, the analyst may want to identify the ideal decision threshold/cut-point for making class predictions. In this post I will be weighting predictions and then identifying which point maximizes expected value^[Other approaches are by investigating the ROC or precision-recall curves or maximizing the J-index.]. 
+Once a performant model has been selected, the analyst can then identify the ideal decision threshold/cut-point for making class predictions. In this post I will be weighting predictions and then identifying which point maximizes expected value^[Other approaches could be to investigate the ROC or precision-recall curves or to maximize the J-index.]. 
 
 The frequency of classification outcomes at a specific decision threshold is often represented by a confusion matrix. 
 
@@ -45,7 +45,7 @@ The frequency of classification outcomes at a specific decision threshold is oft
 
 ![[Confusion Matrix for Classification](https://towardsdatascience.com/confusion-matrix-for-your-multi-class-machine-learning-model-ff9aa3bf7826)](https://miro.medium.com/max/2102/1*fxiTNIgOyvAombPJx5KGeA.png)
 
-Each cell of a confusion matrix may represent a more or less valuable outcome depending on the particular problem. In the case of giving out loans, a *false positive* may be more costly than a *false negative*^[(A default on a loan may cost more than profits lost from interest payments).] while in problems concerning security threats the reverse may be true^[A terrorist attack is more costly than the an unnecessary deployment of resources.]. When you have a sense of the value associated with the classification outcomes, you can use this information to weight the confusion matrices, calculate the expected value of each, and select which maximizes expected value and therefore the associated ideal decision threshold for your model. 
+Each cell of a confusion matrix may represent a more or less valuable outcome depending on the particular problem. In the case of giving out loans, a *false positive* may be more costly than a *false negative*^[(A default on a loan may cost more than profits lost from interest payments).] while in problems concerning security threats the reverse may be true^[A terrorist attack is more costly than the an unnecessary deployment of resources.]. When you have a sense of the value associated with the classification outcomes, you can use this information to weight the confusion matrices, calculate the expected value of each, identify which maximizes expected value and select the associated decision threshold for use when deploying your model. 
 
 *Note that weighting applied in the evaluation stage (as discussed throughout this post) often relies on the predicted probabilities of your model being accurate (and not just ordered correctly)^[I've [written previously](https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/) on this topic (though somewhat tangentially).]. *
 
@@ -74,7 +74,7 @@ Most of the code in this section is copied from a [vignette](https://probably.ti
 
 ## Starter Code
 
-This section provides a short example of building a model and calculating a confusion matrix at a particular decision threshold using some tools from the suite of [tidymodels](https://www.tidymodels.org/) packages. (If you are familiar with modeling in classification problems you might skip to [Weighting by Classification Outcomes]^[This code is included for completeness's sake.].) 
+This section provides a short example of building a model and calculating a confusion matrix at a particular decision threshold using some tools from the suite of [tidymodels](https://www.tidymodels.org/) packages. (If you are familiar with the [tidyverse](https://www.tidyverse.org/) and modeling in classification problems you might skip to [Weighting by Classification Outcomes].) 
 
 *Load data:*
 ```{r}
@@ -162,9 +162,9 @@ $$ Weights = \left(\begin{array}{cc} 0.14 & 3.10\\0.06  & 0.02 \end{array}\right
 
 There may be asymmetries in business processes associated with the 'actual' as well as the 'predicted' state that might explain differences in the value associated with each cell in the confusion matrix (for the purposes of this post I am unconcerned how realistic these weights are).
 
-I put the classification outcome weights into a matrix[^1].
+I put the classification outcome weights into a matrix[^3].
 
-[^1]: I am choosing the position based on the defaults in the output from a "conf_mat" object that gets created by `yardstick::conf_mat()`.
+[^3]: I am choosing the position based on the defaults in the output from a "conf_mat" object that gets created by `yardstick::conf_mat()`.
 
 ```{r}
 outcome_weights <- matrix(
@@ -293,9 +293,9 @@ conf_mats_df_obs_weights %>%
 
 # Appendix
 
-[Weights of Observations During and Prior to Modeling] and maybe [Notes on Cost Sensitive Classification] are the only sections people other than the author are likely to find interesting. 
+[Weights of Observations During and Prior to Modeling] and (maybe) [Notes on Cost Sensitive Classification] are the only sections people other than the author are likely to find interesting. 
 
-Other sections are primarily bookmarks on thought-process related to earlier versions of this post. Specifically, I was unsure about calculating weighted classification metrics as well as which weighting scheme to use. I posted a question on [Cross Validated](https://stats.stackexchange.com/questions/499841/weighting-confusion-matrix) and devoted several sections here to the topic^[[Arriving at Weights] for a discussion of one approach for determining weights. See [Notes on Cost Sensitive Classification] and [Questions on Cost Sensitive Classification] for musings on the appropriateness of this type of weighting scheme and [Weighted Classification Metrics] for examples of calculation.].
+Other sections are primarily bookmarks on thought-processes related to earlier versions of this post. Specifically, I was unsure about calculating weighted classification metrics as well as which weighting scheme to use. See question on [Cross Validated](https://stats.stackexchange.com/questions/499841/weighting-confusion-matrix) and sections [Arriving at Weights], [Questions on Cost Sensitive Classification], and [Weighted Classification Metrics] for questions I wrestled with while writing this post.
 
 ## Weights of Observations During and Prior to Modeling
 
@@ -317,9 +317,9 @@ Depending on your problem you might also use different approaches for weighting 
 
 ## Weighted Classification Metrics
 
-I posted a question to Cross Validated on [Weighting common performance metrics by classification outcomes?](https://stats.stackexchange.com/questions/499841/weighting-common-performance-metrics-by-classification-outcomes?noredirect=1#comment925035_499841) and reached out to other analytics professionals relating my concerns about these metrics and ultimately came to the conclusion that many performance metrics weighted by classification outcomes are inappropriate (other than expected value) or not useful so kept the focus of this post on using weighted classification outcomes strictly maximizing expected value and identifying ideal cut-points on an already selected model. 
+I posted a question to Cross Validated (CV) on [Weighting common performance metrics by classification outcomes?](https://stats.stackexchange.com/questions/499841/weighting-common-performance-metrics-by-classification-outcomes?noredirect=1#comment925035_499841). I also reached out to other analytics professionals relating my questions about these metrics. I ultimately came to the conclusion that many performance metrics weighted by classification outcomes are inappropriate (other than expected value) or not useful so kept the focus of this post on using weighted classification outcomes strictly for maximizing expected value and identifying ideal cut-points on an already selected model. 
 
-I also changed my weighting scheme though did not zero out any cells in the confusion matrix^[Some classification metrics cannot be calculated if you weight the cells to zero -- although I do not believe them to be appropriate I wanted to preserve the examples below as mental bookmarks.].
+I also changed my weighting scheme though not such that anyany cells in the confusion matrix would be zeroed out^[Some classification metrics cannot be calculated if you weight the cells to zero -- although I do not believe them to be appropriate I wanted to preserve the examples below as mental bookmarks.].
 
 *Weighted performance metrics on a confusion matrix at threshold of 0.5:*
 ```{r}
@@ -339,6 +339,8 @@ conf_mats_df %>%
   facet_wrap(~.metric, scales = "free_y")+
   labs(title = "Weighted Performance Metrics")
 ```
+
+Interpretation of these metrics is unclear (as descriped on the CV issue mentioned above).
 
 ## Questions on Cost Sensitive Classification
 
