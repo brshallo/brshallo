@@ -6,7 +6,178 @@
     <description>Recent content on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 08 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 11 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Basics of Data on People Experiencing Homelessness</title>
+      <link>/2021/01/11/basics-of-data-sources-on-homelessness/</link>
+      <pubDate>Mon, 11 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/2021/01/11/basics-of-data-sources-on-homelessness/</guid>
+      <description>
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#annual-counts&#34;&gt;Annual Counts&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#raw-data&#34;&gt;Raw data&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#reports&#34;&gt;Reports&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#hud-supported-research&#34;&gt;HUD Supported Research&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#hmis-data&#34;&gt;HMIS Data&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#business-intelligence&#34;&gt;Business Intelligence&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#other-resources&#34;&gt;Other Resources&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#data-sources&#34;&gt;Data Sources&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;This write-up provides a broad overview of data sources and reports relevant for an independent researcher or analyst new to exploring data on people experiencing homelessness. The section on &lt;a href=&#34;#hmis-data&#34;&gt;HMIS Data&lt;/a&gt; focuses specifically on those CoC’s in California supported by &lt;a href=&#34;https://epath.org/&#34;&gt;PATH&lt;/a&gt; (People Assisting the Homeless) – for which a version of this report was initially written under the supervision of Sigrid Struben.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Homelessness data comes in two major forms:&lt;/em&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;&lt;a href=&#34;#annual-counts&#34;&gt;Annual Counts&lt;/a&gt;&lt;/strong&gt;: Collected locally, at the &lt;a href=&#34;https://www.hudexchange.info/programs/coc/&#34;&gt;Continuum of Care&lt;/a&gt; (CoC)&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt; level, and then shared by the United States Department of Housing and Urban Development (HUD). These include the annually reported metrics:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Point-in-Time (PIT) count&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Housing Inventory Count (HIC)&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;System Performance Measures&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;&lt;a href=&#34;#hmis-data&#34;&gt;HMIS Data&lt;/a&gt;&lt;/strong&gt;: More granular data managed and reported by individual CoC’s via Homeless Management Information Systems (HMIS). CoC administration of an HMIS is both a &lt;em&gt;requirement&lt;/em&gt;&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt; and a &lt;em&gt;resource&lt;/em&gt;&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CoC’s are responsible for following &lt;a href=&#34;https://hudhdx.info/Resources/Vendors/HMIS%20CSV%20Specifications%20FY2020%20v1.6.pdf&#34;&gt;HUD standards&lt;/a&gt; when entering data into an HMIS. This data is used to generate the HUD reported counts.&lt;/li&gt;
+&lt;li&gt;HMIS data may be more granular and contain sensitive information. For example:
+&lt;ul&gt;
+&lt;li&gt;Count data that is updated more frequently than the annual metrics released by HUD&lt;/li&gt;
+&lt;li&gt;Personal information on specific individuals experiencing homelessness or receiving support services&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Accessing this information often requires completing an intake form, creating an account, and understanding the usage agreements for accessing the information in the system&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div id=&#34;annual-counts&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Annual Counts&lt;/h1&gt;
+&lt;p&gt;A quick Google search of “Point-in-Time” counts will likely take you to HUD’s page on &lt;a href=&#34;https://www.hudexchange.info/programs/hdx/pit-hic/&#34;&gt;Point-in-Time Count &amp;amp; Housing-Inventory-Count&lt;/a&gt;. This page contains links to relevant definitions and links to resources and guidance on how HMIS administrators need to manage this data&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;raw-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Raw data&lt;/h2&gt;
+&lt;p&gt;Useful to researchers, &lt;a href=&#34;https://www.hudexchange.info/homelessness-assistance/ahar/#reports&#34;&gt;this HUD page&lt;/a&gt; provides links to excel files that contain multiple years of data:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.hudexchange.info/resource/3031/pit-and-hic-data-since-2007/&#34;&gt;PIT and HIC Data Since 2007&lt;/a&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.hudexchange.info/resource/5691/system-performance-measures-data-since-fy-2015/&#34;&gt;CoC System Performance Measures Data Since FY 2015&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reports&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Reports&lt;/h2&gt;
+&lt;p&gt;Across the Hud Exchange website are various reports related to PIT, HIC, System Performance, and related population/sub-population metrics. Together the data in these reports are used to produce the &lt;a href=&#34;https://www.hudexchange.info/homelessness-assistance/ahar/#2019-reports&#34;&gt;Annual Homeless Assessment Reports&lt;/a&gt;&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt; (AHAR)&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt;. An &lt;a href=&#34;https://www.huduser.gov/portal/sites/default/files/pdf/2019-AHAR-Part-1.pdf&#34;&gt;annual report&lt;/a&gt; is sent to congress each year summarizing the state and trends of homelessness in the nation. Of particular note to PATH in the &lt;a href=&#34;https://www.huduser.gov/portal/sites/default/files/pdf/2019-AHAR-Part-1.pdf&#34;&gt;2020 report&lt;/a&gt; is the recent increase in homelessness in California (16.4% increase between 2018 and 2019)&lt;a href=&#34;#fn11&#34; class=&#34;footnote-ref&#34; id=&#34;fnref11&#34;&gt;&lt;sup&gt;11&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;hud-supported-research&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;HUD Supported Research&lt;/h2&gt;
+&lt;p&gt;HUD and other government agencies release and support research on people experiencing homelessness. &lt;a href=&#34;https://www.huduser.gov/portal/publications/Market-Predictors-of-Homelessness.html&#34;&gt;Market Predictors of Homelessness: How Housing and Community Factors Shape Homelessness Rates Within Continuums of Care&lt;/a&gt; is a helpful resource that reviews the association of a variety of types of factors (housing, economic, safety net, demographic, climate) on rates of &lt;em&gt;total&lt;/em&gt;, &lt;em&gt;sheltered&lt;/em&gt; and &lt;em&gt;unsheltered&lt;/em&gt; homelessness. The paper’s findings are most confident regarding the impact of housing on homelessness:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“Across the country, housing market factors more consistently predicted rates of total homelessness than other economic factors.”&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;And specifically that:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“High median rents, overcrowding,and evictions were particularly strong predictors of total homelessness rates in urban areas and tight, high-cost housing markets. Holding these factors constant, the study finds that increased housing density is protective against homelessness.”&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;The study finds a variety of other factors that explain variance in homelessness rates. However these relationships are more complicated and vary between regions, sub-populations, and the category of homelessness being reviewed.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Outside of its findings, the paper may be useful to a researcher for a number of reasons:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Contains references to major research papers investigating associations and causes of homelessness.&lt;/li&gt;
+&lt;li&gt;“DATA” section describes relevant information on data collected. See &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; for a table of &lt;a href=&#34;#data-sources&#34;&gt;Data Sources&lt;/a&gt; copied from the report.
+&lt;ul&gt;
+&lt;li&gt;Which factors came from which public data sources (e.g. HUD, census, ACS, FHFA, SAIPE, etc.).&lt;/li&gt;
+&lt;li&gt;Whether that data was available at either the CoC, County, or another level (and how the cross-walk between these different levels for analysis was done).&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;The &lt;a href=&#34;https://www.huduser.gov/portal/datasets/hpmd.html&#34;&gt;huduser page&lt;/a&gt; also provides the actual data that was used for modeling and analysis.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Considering the administration under which a HUD research report is released may be important. The above paper is produced by independent researchers in collaboration with HUD and, at its face, appears to be a good-faith investigation&lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;div id=&#34;hmis-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;HMIS Data&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;This section identifies relevant websites for accessing HMIS data for each CoC served by PATH.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Accessing HMIS data&lt;a href=&#34;#fn13&#34; class=&#34;footnote-ref&#34; id=&#34;fnref13&#34;&gt;&lt;sup&gt;13&lt;/sup&gt;&lt;/a&gt; varies by CoC depending on the associated policies and technology vendor(s) the CoC uses for administering their HMIS. For researchers interested in using HMIS data for reviewing &lt;a href=&#34;https://epath.org/&#34;&gt;PATH&lt;/a&gt; (which operates across multiple CoC’s in California) this likely requires gaining access to the HMIS data for several CoC’s. Note also that policies on data access use may vary by CoC&lt;a href=&#34;#fn14&#34; class=&#34;footnote-ref&#34; id=&#34;fnref14&#34;&gt;&lt;sup&gt;14&lt;/sup&gt;&lt;/a&gt;. Below are links and notes concerning the HMIS for each CoC where PATH operates.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href=&#34;https://www.lahsa.org/hmis/&#34;&gt;Greater Los Angeles&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;General data and Power BI dashboards are available &lt;a href=&#34;https://www.lahsa.org/data-refresh&#34;&gt;here&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Access to data requires &lt;a href=&#34;https://www.lahsa.org/portal/user/create-account&#34;&gt;creating an LAHSA Account&lt;/a&gt; and indicates that the data portal is intended for homeless service providers&lt;a href=&#34;#fn15&#34; class=&#34;footnote-ref&#34; id=&#34;fnref15&#34;&gt;&lt;sup&gt;15&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href=&#34;https://www.countyofsb.org/housing/hmis.sbc&#34;&gt;Santa Barbara / Central Coast&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Requires intake for access, see &lt;a href=&#34;https://ctagroup.org/santa-barbara-hmis/santa-barbara-user-central/&#34;&gt;User Central&lt;/a&gt; for key forms and documents.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href=&#34;https://www.rtfhsd.org/reports-data/&#34;&gt;Greater San Diego&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;There are several dashboards available, this short &lt;a href=&#34;https://www.youtube.com/watch?v=-oAiq9FuFcg&amp;amp;feature=youtu.be&#34;&gt;YouTube video&lt;/a&gt; provides a helpful overview for the “Community Performance Dashboards”, “Project Performance Dashboards”, and “System Performance Measures.” There are also dashboards on &lt;a href=&#34;https://homelessdata.com/research-tools/racial-disparity-analysis/&#34;&gt;Racial Disparity Analysis&lt;/a&gt; and &lt;a href=&#34;https://pointintime.info/dashboard/&#34;&gt;Point in Time&lt;/a&gt; data&lt;a href=&#34;#fn16&#34; class=&#34;footnote-ref&#34; id=&#34;fnref16&#34;&gt;&lt;sup&gt;16&lt;/sup&gt;&lt;/a&gt; (not mentioned in the video).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href=&#34;http://scc.hmis.cc/&#34;&gt;San Jose / Bay Area&lt;/a&gt;:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://scc.hmis.cc/reports-data/&#34;&gt;Link&lt;/a&gt; to data. Looks as though there is pretty &lt;a href=&#34;http://scc.hmis.cc/santa-clara-export-tools/&#34;&gt;good documentation&lt;/a&gt; on how to do a data export and generally a good amount of documentation generally on how to use the tool&lt;a href=&#34;#fn17&#34; class=&#34;footnote-ref&#34; id=&#34;fnref17&#34;&gt;&lt;sup&gt;17&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href=&#34;https://ochmis.org/&#34;&gt;Orange County&lt;/a&gt;:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://ochmis.org/reports2/&#34;&gt;Link&lt;/a&gt; to details on the kinds of reports that are available. It appears as though Orange County likely charges providers based on the number of users accessing the account&lt;a href=&#34;#fn18&#34; class=&#34;footnote-ref&#34; id=&#34;fnref18&#34;&gt;&lt;sup&gt;18&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;business-intelligence&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Business Intelligence&lt;/h2&gt;
+&lt;p&gt;I did not see business intelligence dashboards directly on HUD’s site related to most annual measures (excluding for &lt;a href=&#34;https://public.tableau.com/profile/system.performance.measures.hud.public.data#!/&#34;&gt;CoC System Performance Measures&lt;/a&gt;). However I did find other sources with data related to these national counts:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Simtech Solutions&lt;a href=&#34;#fn19&#34; class=&#34;footnote-ref&#34; id=&#34;fnref19&#34;&gt;&lt;sup&gt;19&lt;/sup&gt;&lt;/a&gt; provides a &lt;a href=&#34;https://pointintime.info/dashboard/&#34;&gt;Point in Time&lt;/a&gt; Tableau dashboard with views on:
+&lt;ul&gt;
+&lt;li&gt;State and CoC Selection&lt;/li&gt;
+&lt;li&gt;State Summary&lt;/li&gt;
+&lt;li&gt;CoC Summary&lt;/li&gt;
+&lt;li&gt;Homeless Totals for State&lt;/li&gt;
+&lt;li&gt;Individuals &amp;amp; Families for State&lt;/li&gt;
+&lt;li&gt;Individuals &amp;amp; Families for CoC&lt;/li&gt;
+&lt;li&gt;Capacity Utilization for State&lt;/li&gt;
+&lt;li&gt;Capacity Utilization for CoC&lt;/li&gt;
+&lt;li&gt;Homeless Totals by User&lt;/li&gt;
+&lt;li&gt;Sheltered &amp;amp; Unsheleted by User&lt;/li&gt;
+&lt;li&gt;Individuals &amp;amp; Families by User&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;other-resources&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Other Resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.postalley.org/2019/06/03/the-point-in-time-homeless-count-is-mostly-crap/&#34;&gt;Post Alley Article&lt;/a&gt; explaining the limitations and potential biases that can arise in PIT data.&lt;/li&gt;
+&lt;li&gt;Planet Money’s podcast on &lt;a href=&#34;https://www.npr.org/2019/05/17/724462179/episode-913-counting-the-homeless&#34;&gt;Counting the Homeless&lt;/a&gt; is a helpful starting place in terms of the origins of the PIT and efforts to provide permanent housing to the chronically homeless. The host mentions &lt;a href=&#34;https://www.urban.org/author/mary-k-cunningham&#34;&gt;Mary Cunningham&lt;/a&gt; with the &lt;a href=&#34;https://www.urban.org/&#34;&gt;Urban Institute&lt;/a&gt; where a variety of relevant research on homelessness is also available&lt;a href=&#34;#fn20&#34; class=&#34;footnote-ref&#34; id=&#34;fnref20&#34;&gt;&lt;sup&gt;20&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Genelle Denzin’s blog &lt;a href=&#34;https://reportingnotes.com/&#34;&gt;Reporting Notes&lt;/a&gt; is perhaps more useful for HMIS administrators and analysts more than researchers but is a good example of “open source” based approaches to analyzing and managing homelessness data.&lt;/li&gt;
+&lt;li&gt;Another resource from the R community, this &lt;a href=&#34;https://www.r-bloggers.com/2016/04/52-vis-week-2-wrap-up/&#34;&gt;blog post&lt;/a&gt; (and a &lt;a href=&#34;https://www.r-bloggers.com/2016/04/52vis-week-2-2016-week-14-honing-in-on-the-homeless/&#34;&gt;related one&lt;/a&gt;&lt;a href=&#34;#fn21&#34; class=&#34;footnote-ref&#34; id=&#34;fnref21&#34;&gt;&lt;sup&gt;21&lt;/sup&gt;&lt;/a&gt;) show examples of open source analysis and visualization of homelessness data.&lt;/li&gt;
+&lt;li&gt;The &lt;a href=&#34;http://org-beehivegroupcadev.nationbuilder.com/spdat&#34;&gt;Service Prioritization Decision Assistance Tool&lt;/a&gt; is a tool used by service providers to determine when and what kind of assistance to provide to homeless and at risk individuals. Some have &lt;a href=&#34;https://www.orgcode.com/lbteotvispdat&#34;&gt;called for changes or alternatives&lt;/a&gt; to the tool.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;data-sources&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Data Sources&lt;/h2&gt;
+&lt;p&gt;Table copied from pages 21 and 22 of &lt;a href=&#34;https://www.huduser.gov/portal/publications/Market-Predictors-of-Homelessness.html&#34;&gt;Market Predictors of Homelessness: How Housing and Community Factors Shape Homelessness Rates Within Continuums of Care&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2021-01-11-basics-of-data-sources-on-homelessness_files/hud-image-1.PNG&#34; style=&#34;width:75.0%&#34; /&gt;
+&lt;img src=&#34;/post/2021-01-11-basics-of-data-sources-on-homelessness_files/hud-image-2.PNG&#34; style=&#34;width:75.0%&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;A CoC typically encompasses a major city or county or collection of counties that manage grants and funding for homelessness programs in their area and manages data and metrics in this area. For example Los Angeles, or San Diego and greater region. Several low population counties will often be grouped together to form an individual CoC.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Defined as: “A count of sheltered and unsheltered people experiencing homelessness on a single night in January.”&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Defined as &#34; a point-in-time inventory of provider programs within a Continuum of Care that provide beds and units dedicated to serve people experiencing homelessness (and, for permanent housing projects, where homeless at entry, per the HUD homeless definition), categorized by five Program Types: Emergency Shelter; Transitional Housing; Rapid Re-housing; Safe Haven; and Permanent Supportive Housing.&#34;&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;Since 2015, CoC’s have had to meausre performance as a coordinated system (&lt;a href=&#34;https://www.hudexchange.info/programs/coc/system-performance-measures/#data&#34;&gt;source&lt;/a&gt;).&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;As part of federal funding statutes.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;For management and analysis of information on people experiencing homelessness.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;As an example, here is a &lt;a href=&#34;http://ctagroup.org/wp-content/uploads/2020/10/ROI-version-8-Final.pdf&#34;&gt;link to Santa Barabara’s&lt;/a&gt; consent form that walks through what data will be collected and the policies therein. This follows federal guidelines but may vary some between CoC’s.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;Many of the resources across HUD seem designed more for administrators than researchers. Also the various .pdf reports of state level data will likely be viewed as unwieldy for a researcher.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;Also can see Power BI dashboard link &lt;a href=&#34;https://www.hudexchange.info/resource/5793/national-summary-system-performance-measures-2015-2017/&#34;&gt;here&lt;/a&gt; but is out of date.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;See &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; for notes on data presented through &lt;a href=&#34;#business-intelligence&#34;&gt;Business Intelligence&lt;/a&gt; tools.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Which goes against trends in prior years and in other parts of the nation. However see &lt;a href=&#34;https://www.postalley.org/2019/06/03/the-point-in-time-homeless-count-is-mostly-crap/&#34;&gt;Post Alley Article&lt;/a&gt; describing how PIT data and year over year changes may or may not be reliable.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Some findings in the report could be construed as being highlighted due to partisan motivations (e.g. those regarding the relationship between migrant inflows and unsheltered homelessness or those highlighting homelessness in west-coast urban areas), however this could also just as well not be the case. My view that this paper was ‘written in good faith’ is a subjective assessment. In comparison, &lt;a href=&#34;https://www.whitehouse.gov/wp-content/uploads/2019/09/The-State-of-Homelessness-in-America.pd&#34;&gt;The State of Homelessness in America&lt;/a&gt; from the &lt;a href=&#34;https://www.whitehouse.gov/cea/&#34;&gt;Council of Economic Advisers&lt;/a&gt; appears to be more influenced by partisan attitudes. Someone with more experience in the relevant literature may be in a better position to make these judgments.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Which has the potential advantage of being more granular and not &lt;em&gt;just&lt;/em&gt; collected annually.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;For example LA’s HMIS defaults to only grant data for services providers while Greater San Diego’s HMIS allows access to data but requests that the office be notified if the data be used in press or research reports.&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;I did not have a PATH email so was unable to create an account as was the case for gaining access to most HMIS data in other CoC’s reviewed.&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;This was linked to previously in [Reports and Dashboards].&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;E.g. &lt;a href=&#34;http://scc.hmis.cc/training/data-literacy-institute-2/&#34;&gt;link&lt;/a&gt; to page with workshops on how to extract data.&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn18&#34;&gt;&lt;p&gt;I noticed that as of November, 2020 they were flirting with the idea of charging a fee to participate in the Orange County HMIS that looked as though, based on &lt;a href=&#34;https://www.ochealthinfo.com/civicax/filebank/blobdload.aspx?BlobID=118718&#34;&gt;the minutes&lt;/a&gt;, it likely passed.&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;Simtech Solutions seems to be a for-profit business intelligence vendor specializing in helping CoC’s build dashboards and business intelligence tools off of the data in their HMIS systems. This particular dashboard seems to primarily represent a way for them to market themselves to HMIS’s by showcasing the kinds of visualizations they are able to make on national data sources.&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn20&#34;&gt;&lt;p&gt;While not &lt;em&gt;directly&lt;/em&gt; related to people experiencing homelessness, the Urban Institute’s analysis on &lt;a href=&#34;https://www.urban.org/features/where-prioritize-emergency-rental-assistance-keep-renters-their-homes&#34;&gt;Where to Prioritize Emergency Rental Assistance to Keep Renters in Their Homes&lt;/a&gt; is an interesting and relevant example of their work. However I did not find the &lt;a href=&#34;https://datacatalog.urban.org/search/type/dataset?sort_by=changed&#34;&gt;datasets&lt;/a&gt; on the Urban Institute’s website particularly useful for homelessness &lt;em&gt;specific&lt;/em&gt; data.&lt;a href=&#34;#fnref20&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn21&#34;&gt;&lt;p&gt;Second post shows how he loaded in and cleaned the data – note though that the data source has changed from where it was at the time of this post.&lt;a href=&#34;#fnref21&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
     <item>
       <title>Weighting Confusion Matrices by Outcomes and Observations</title>
       <link>/2020/12/08/weighting-classification-outcomes/</link>
@@ -4516,7 +4687,7 @@ Fill in the values for &lt;em&gt;(Magna-Tile length)&lt;/em&gt; and &lt;em&gt;(a
 &lt;p&gt;The first black sand beach we stopped at was Reynisfjara. Reynisfjara has a pedestaled cliff face that you can easily climb-up and overlook the crashing waves from the North Atlantic ocean.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://i.imgur.com/MjtnDIn.jpg&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://i.imgur.com/hXXBdMu.jpg&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;At the edge of the ocean are the remains of ancient basalt rock columns. Icelandic legend has it they were formed by trolls dragging a ship towards land who were stopped in their tracks and turned to stone by the dawning sun.&lt;/p&gt;
+&lt;p&gt;At the edge of the ocean are the remains of ancient basalt rock columns. Icelandic legend has it they were formed by trolls stopped in their tracks and turned to stone by the dawning sun.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://i.imgur.com/2JQKvoK.jpg&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;At the far side of the beach is a shallow cavern of glistening jagged rocks. A light drip of water was falling from overhead.&lt;/p&gt;
 &lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/x7ZVW3g3snE&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;
