@@ -47,7 +47,7 @@ Useful to researchers, [this HUD page](https://www.hudexchange.info/homelessness
 
 ## Reports
 
-Across the Hud Exchange website are various reports related to PIT, HIC, System Performance, and related population/sub-population metrics. Together the data in these reports are used to produce the [Annual Homeless Assessment Reports](https://www.hudexchange.info/homelessness-assistance/ahar/#2019-reports)^[Also can see Power BI dashboard link [here](https://www.hudexchange.info/resource/5793/national-summary-system-performance-measures-2015-2017/) but is out of date.] (AHAR)^[See [Appendix] for notes on data presented through [Business Intelligence] tools.]. An [annual report](https://www.huduser.gov/portal/sites/default/files/pdf/2019-AHAR-Part-1.pdf) is sent to congress each year summarizing the state and trends of homelessness in the nation. Of particular note to PATH in the [2020 report](https://www.huduser.gov/portal/sites/default/files/pdf/2019-AHAR-Part-1.pdf) is the recent increase in homelessness in California (16.4% increase between 2018 and 2019)^[Which goes against trends in prior years and in other parts of the nation. However see [Post Alley Article](https://www.postalley.org/2019/06/03/the-point-in-time-homeless-count-is-mostly-crap/) describing how PIT data and year over year changes may or may not be reliable.].
+Across the Hud Exchange website are various reports related to PIT, HIC, System Performance, and related population/sub-population metrics. Together the data in these reports are used to produce the [Annual Homeless Assessment Reports](https://www.hudexchange.info/homelessness-assistance/ahar/#2019-reports)^[Also can see Power BI dashboard link [here](https://www.hudexchange.info/resource/5793/national-summary-system-performance-measures-2015-2017/) but is out of date.] (AHAR)^[See [Appendix] for notes on data presented through [Business Intelligence] tools.]. An [annual report](https://www.huduser.gov/portal/sites/default/files/pdf/2019-AHAR-Part-1.pdf) is sent to congress each year summarizing the state and trends of homelessness in the nation^[Of particular note to PATH in the [2020 report](https://www.huduser.gov/portal/sites/default/files/pdf/2019-AHAR-Part-1.pdf) is the recent increase in homelessness in California (16.4% increase between 2018 and 2019). This goes against trends in prior years and in other parts of the nation. However see [Post Alley Article](https://www.postalley.org/2019/06/03/the-point-in-time-homeless-count-is-mostly-crap/) describing how PIT data and year over year changes may or may not be reliable.].
 
 ## HUD Supported Research
 
@@ -57,11 +57,11 @@ HUD and other government agencies release and support research on people experie
 
 And specifically that:
 
->"High median rents, overcrowding,and evictions were particularly strong predictors of total homelessness rates in urban areas and tight, high-cost housing markets. Holding these factors constant, the study finds that increased housing density is protective against homelessness." 
+>"High median rents, overcrowding, and evictions were particularly strong predictors of total homelessness rates in urban areas and tight, high-cost housing markets. Holding these factors constant, the study finds that increased housing density is protective against homelessness." 
 
 The study finds a variety of other factors that explain variance in homelessness rates. However these relationships are more complicated and vary between regions, sub-populations, and the category of homelessness being reviewed.
 
-*Outside of its findings, the paper may be useful to a researcher for a number of reasons:*
+*Outside of its findings, the paper may be useful to researchers for a number of reasons:*
 
 * Contains references to major research papers investigating associations and causes of homelessness.
 * "DATA" section describes relevant information on data collected. See [Appendix] for a table of [Data Sources] copied from the report.
@@ -90,7 +90,7 @@ Requires intake for access, see [User Central](https://ctagroup.org/santa-barbar
 
 **[Greater San Diego](https://www.rtfhsd.org/reports-data/)**
 
-There are several dashboards available, this short [YouTube video](https://www.youtube.com/watch?v=-oAiq9FuFcg&feature=youtu.be) provides a helpful overview for the "Community Performance Dashboards", "Project Performance Dashboards", and "System Performance Measures." There are also dashboards on [Racial Disparity Analysis](https://homelessdata.com/research-tools/racial-disparity-analysis/) and [Point in Time](https://pointintime.info/dashboard/) data^[This was linked to previously in [Reports and Dashboards].] (not mentioned in the video).
+There are several dashboards available that do not require creating an account^[However they request that their office be contacted if information therein is republished.]. This short [YouTube video](https://www.youtube.com/watch?v=-oAiq9FuFcg&feature=youtu.be) provides a helpful overview for the "Community Performance Dashboards", "Project Performance Dashboards", and "System Performance Measures." There are also dashboards on [Racial Disparity Analysis](https://homelessdata.com/research-tools/racial-disparity-analysis/) and [Point in Time](https://pointintime.info/dashboard/) data^[This was linked to previously in [Reports and Dashboards].] (not mentioned in the video).
 
 **[San Jose / Bay Area](http://scc.hmis.cc/):**
 
