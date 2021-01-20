@@ -234,6 +234,8 @@ rec_general <- recipes::recipe(SCORE ~ ., data = train) %>%
   step_other(INSPECTOR, TYPE, threshold = 50) %>% 
   step_string2factor(one_of("TYPE", "INSPECTOR")) %>%
   step_novel(one_of("TYPE", "INSPECTOR")) %>%
+  # note that log transformations are completely superfluous for the random
+  # forest model fit (is only valuable for the linear mod)
   step_log(days_since_open, days_since_last) %>% 
   step_date(date, features = c("dow", "month")) %>% 
   update_role(date, new_role = "ID") %>% 

@@ -827,6 +827,8 @@ resamples  %&amp;gt;%
   step_other(INSPECTOR, TYPE, threshold = 50) %&amp;gt;% 
   step_string2factor(one_of(&amp;quot;TYPE&amp;quot;, &amp;quot;INSPECTOR&amp;quot;)) %&amp;gt;%
   step_novel(one_of(&amp;quot;TYPE&amp;quot;, &amp;quot;INSPECTOR&amp;quot;)) %&amp;gt;%
+  # note that log transformations are completely superfluous for the random
+  # forest model fit (is only valuable for the linear mod)
   step_log(days_since_open, days_since_last) %&amp;gt;% 
   step_date(date, features = c(&amp;quot;dow&amp;quot;, &amp;quot;month&amp;quot;)) %&amp;gt;% 
   update_role(date, new_role = &amp;quot;ID&amp;quot;) %&amp;gt;% 

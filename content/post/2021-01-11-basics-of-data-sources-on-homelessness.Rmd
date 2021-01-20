@@ -55,7 +55,7 @@ HUD and other government agencies release and support research on people experie
 
 >"Across the country, housing market factors more consistently predicted rates of total homelessness than other economic factors."
 
-And specifically that:
+Specifically that:
 
 >"High median rents, overcrowding, and evictions were particularly strong predictors of total homelessness rates in urban areas and tight, high-cost housing markets. Holding these factors constant, the study finds that increased housing density is protective against homelessness." 
 
@@ -64,9 +64,9 @@ The study finds a variety of other factors that explain variance in homelessness
 *Outside of its findings, the paper may be useful to researchers for a number of reasons:*
 
 * Contains references to major research papers investigating associations and causes of homelessness.
-* "DATA" section describes relevant information on data collected. See [Appendix] for a table of [Data Sources] copied from the report.
+* "DATA" section describes relevant information on data collection and processing. See [Appendix] for a table of [Data Sources] copied from the report.
     * Which factors came from which public data sources (e.g. HUD, census, ACS, FHFA, SAIPE, etc.). 
-    * Whether that data was available at either the CoC, County, or another level (and how the cross-walk between these different levels for analysis was done).
+    * Whether that data was available at either the CoC, County, or another level (and how the cross-walk between these different levels of analysis was done).
 * The [huduser page](https://www.huduser.gov/portal/datasets/hpmd.html) also provides the actual data that was used for modeling and analysis.
 
 Considering the administration under which a HUD research report is released may be important. The above paper is produced by independent researchers in collaboration with HUD and, at its face, appears to be a good-faith investigation^[Some findings in the report could be construed as being highlighted due to partisan motivations (e.g. those regarding the relationship between migrant inflows and unsheltered homelessness or those highlighting homelessness in west-coast urban areas), however this could also just as well not be the case. My view that this paper was 'written in good faith' is a subjective assessment. In comparison, [The State of Homelessness in America](https://www.whitehouse.gov/wp-content/uploads/2019/09/The-State-of-Homelessness-in-America.pd) from the [Council of Economic Advisers](https://www.whitehouse.gov/cea/) appears to be more influenced by partisan attitudes. Someone with more experience in the relevant literature may be in a better position to make these judgments.]. 
