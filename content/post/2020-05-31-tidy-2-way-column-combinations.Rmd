@@ -82,7 +82,7 @@ ames_cols <- ames %>%
   corrr::focus(Sale_Price) %>% 
   arrange(-abs(Sale_Price)) %>% 
   head(10) %>% 
-  pull(rowname)
+  pull(term)
 
 ames_subset <- select(ames, ames_cols) %>% 
   # Could normalize data or do other prep 
@@ -417,7 +417,7 @@ Actual gif was created by embedding above code into a presentation and exporting
 
 ## Tweets
 
-A few tweets as documentation of thinking.
+A few tweets as documentation of thinking. *Many of these were added after publishing this post.*
 
 *Original tweet + R bloggers tweet:*
 
@@ -433,12 +433,10 @@ A few tweets as documentation of thinking.
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Will add `widyr` to my set of tools for tidy pairwise operations: <a href="https://t.co/NSxNC3nehK">https://t.co/NSxNC3nehK</a> !<br><br>Seems to overlap some w/ tidymodels, eg `corrr`📦 (<a href="https://twitter.com/thisisdaryn?ref_src=twsrc%5Etfw">@thisisdaryn</a> ) or could imagine widely_kmeans() as a `recipe`/`embed` step...<a href="https://twitter.com/drob?ref_src=twsrc%5Etfw">@drob</a> any tips on when/how you use these in combination? <a href="https://t.co/dAsJtNW7Vo">https://t.co/dAsJtNW7Vo</a></p>&mdash; Bryan Shalloway (@brshallo) <a href="https://twitter.com/brshallo/status/1313966803488583686?ref_src=twsrc%5Etfw">October 7, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-*Tweet with more efficient approach (for case when just combining multiple columns and returning output of equal number of rows):*
+*Tweet with more efficient approach (for case when just combining multiple columns and returning output of equal number of rows, i.e. mutating rather than summarising):*
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">How you can use `dplyr::mutate()` to return a dataframe consisting of all combinations of arbitrary pairwise operations across a selection of columns: <a href="https://t.co/RxwtbmWqap">https://t.co/RxwtbmWqap</a> <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> <a href="https://twitter.com/hashtag/tidyverse?src=hash&amp;ref_src=twsrc%5Etfw">#tidyverse</a> ... <a href="https://t.co/UpJw0pGPUd">pic.twitter.com/UpJw0pGPUd</a></p>&mdash; Bryan Shalloway (@brshallo) <a href="https://twitter.com/brshallo/status/1316851879658356736?ref_src=twsrc%5Etfw">October 15, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-## Session info
+*Tweet with approach using `corrr`*
 
-```{r}
-sessionInfo()
-```
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr"><a href="https://twitter.com/mattwrkntn?ref_src=twsrc%5Etfw">@mattwrkntn</a> solution for grouped, pairwise operations in <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> is excellent: <a href="https://t.co/wjbO4fRqxP">https://t.co/wjbO4fRqxP</a> . Just substitute in the new corrr::colpair_map for corrr::correlate and could use for any pairwise summarizing operation. <a href="https://t.co/0Wf5KpQ4th">pic.twitter.com/0Wf5KpQ4th</a></p>&mdash; Bryan Shalloway (@brshallo) <a href="https://twitter.com/brshallo/status/1355622893200289793?ref_src=twsrc%5Etfw">January 30, 2021</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>

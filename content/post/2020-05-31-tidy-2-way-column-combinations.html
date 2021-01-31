@@ -35,7 +35,6 @@ output:
 <li><a href="#pivot-and-then-summarise">Pivot and then summarise</a></li>
 <li><a href="#gif-for-social-media">Gif for social media</a></li>
 <li><a href="#tweets">Tweets</a></li>
-<li><a href="#session-info">Session info</a></li>
 </ul></li>
 </ul>
 </div>
@@ -70,7 +69,7 @@ ames_cols &lt;- ames %&gt;%
   corrr::focus(Sale_Price) %&gt;% 
   arrange(-abs(Sale_Price)) %&gt;% 
   head(10) %&gt;% 
-  pull(rowname)
+  pull(term)
 
 ames_subset &lt;- select(ames, ames_cols) %&gt;% 
   # Could normalize data or do other prep 
@@ -111,7 +110,7 @@ ames_subset &lt;- select(ames, ames_cols) %&gt;%
   summarise(Sale_Price = list(Sale_Price)) </code></pre>
 <pre><code>## # A tibble: 12 x 2
 ##    Mo_Sold Sale_Price 
-##      &lt;int&gt; &lt;list&gt;     
+##  *   &lt;int&gt; &lt;list&gt;     
 ##  1       1 &lt;int [123]&gt;
 ##  2       2 &lt;int [133]&gt;
 ##  3       3 &lt;int [232]&gt;
@@ -273,6 +272,7 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
 <h1>Functionalize</h1>
 <p>I put these steps into a few (unpolished) functions found at <a href="https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1">this gist</a><a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>.</p>
 <pre class="r"><code>devtools::source_gist(&quot;https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1&quot;)</code></pre>
+<pre><code>## Error in get(genname, envir = envir) : object &#39;testthat_print&#39; not found</code></pre>
 <p><code>mutate_pairwise()</code> takes in your dataframe, the set of numeric columns to create pairwise combinations from, and a list of functions<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a> to apply.</p>
 </div>
 <div id="example-creating-evaluating-features" class="section level1">
@@ -395,7 +395,7 @@ ames_data_features_example %&gt;%
 </div>
 <div id="tweets" class="section level2">
 <h2>Tweets</h2>
-<p>A few tweets as documentation of thinking.</p>
+<p>A few tweets as documentation of thinking. <em>Many of these were added after publishing this post.</em></p>
 <p><em>Original tweet + R bloggers tweet:</em></p>
 <blockquote class="twitter-tweet">
 <p lang="en" dir="ltr">
@@ -427,7 +427,7 @@ Will add <code>widyr</code> to my set of tools for tidy pairwise operations: <a 
 — Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1313966803488583686?ref_src=twsrc%5Etfw">October 7, 2020</a>
 </blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<p><em>Tweet with more efficient approach (for case when just combining multiple columns and returning output of equal number of rows):</em></p>
+<p><em>Tweet with more efficient approach (for case when just combining multiple columns and returning output of equal number of rows, i.e. mutating rather than summarising):</em></p>
 <blockquote class="twitter-tweet">
 <p lang="en" dir="ltr">
 How you can use <code>dplyr::mutate()</code> to return a dataframe consisting of all combinations of arbitrary pairwise operations across a selection of columns: <a href="https://t.co/RxwtbmWqap">https://t.co/RxwtbmWqap</a> <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> <a href="https://twitter.com/hashtag/tidyverse?src=hash&amp;ref_src=twsrc%5Etfw">#tidyverse</a> … <a href="https://t.co/UpJw0pGPUd">pic.twitter.com/UpJw0pGPUd</a>
@@ -435,63 +435,14 @@ How you can use <code>dplyr::mutate()</code> to return a dataframe consisting of
 — Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1316851879658356736?ref_src=twsrc%5Etfw">October 15, 2020</a>
 </blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-</div>
-<div id="session-info" class="section level2">
-<h2>Session info</h2>
-<pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>## R version 3.5.1 (2018-07-02)
-## Platform: x86_64-w64-mingw32/x64 (64-bit)
-## Running under: Windows 10 x64 (build 18363)
-## 
-## Matrix products: default
-## 
-## locale:
-## [1] LC_COLLATE=English_United States.1252 
-## [2] LC_CTYPE=English_United States.1252   
-## [3] LC_MONETARY=English_United States.1252
-## [4] LC_NUMERIC=C                          
-## [5] LC_TIME=English_United States.1252    
-## 
-## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
-## 
-## other attached packages:
-## [1] forcats_0.4.0   stringr_1.4.0   dplyr_1.0.1     purrr_0.3.4    
-## [5] readr_1.3.1     tidyr_1.1.1     tibble_3.0.3    ggplot2_3.3.2  
-## [9] tidyverse_1.2.1
-## 
-## loaded via a namespace (and not attached):
-##  [1] fs_1.3.2            usethis_1.4.0       lubridate_1.7.9    
-##  [4] devtools_2.0.0      RColorBrewer_1.1-2  httr_1.4.0         
-##  [7] rprojroot_1.3-2     tools_3.5.1         backports_1.1.8    
-## [10] utf8_1.1.4          R6_2.4.1            rpart_4.1-13       
-## [13] Hmisc_4.1-1         colorspace_1.4-1    nnet_7.3-12        
-## [16] withr_2.2.0         gridExtra_2.3       tidyselect_1.1.0   
-## [19] prettyunits_1.1.1   processx_3.4.2      curl_3.3           
-## [22] compiler_3.5.1      cli_2.0.2           rvest_0.3.4        
-## [25] htmlTable_1.12      mice_3.8.0          xml2_1.2.0         
-## [28] desc_1.2.0          labeling_0.3        bookdown_0.11      
-## [31] checkmate_2.0.0     scales_1.1.1        corrr_0.4.2.9000   
-## [34] callr_3.4.3         digest_0.6.25       foreign_0.8-70     
-## [37] rmarkdown_1.13      base64enc_0.1-3     pkgconfig_2.0.3    
-## [40] htmltools_0.5.0     sessioninfo_1.1.1   htmlwidgets_1.3    
-## [43] rlang_0.4.7         readxl_1.3.1        rstudioapi_0.11    
-## [46] farver_2.0.3        generics_0.0.2      jsonlite_1.6.1     
-## [49] gtools_3.8.2        acepack_1.4.1       magrittr_1.5       
-## [52] Formula_1.2-3       Matrix_1.2-14       Rcpp_1.0.4.6       
-## [55] munsell_0.5.0       fansi_0.4.1         lifecycle_0.2.0    
-## [58] weights_1.0.1       stringi_1.4.6       yaml_2.2.1         
-## [61] pkgbuild_1.1.0      grid_3.5.1          gdata_2.18.0       
-## [64] crayon_1.3.4        lattice_0.20-35     haven_2.1.0        
-## [67] splines_3.5.1       hms_0.5.2           knitr_1.29         
-## [70] ps_1.3.2            pillar_1.4.6        pkgload_1.0.2      
-## [73] glue_1.4.1          evaluate_0.14       blogdown_0.15      
-## [76] latticeExtra_0.6-28 data.table_1.12.8   remotes_2.1.0      
-## [79] modelr_0.1.4        vctrs_0.3.2         testthat_2.3.2     
-## [82] cellranger_1.1.0    gtable_0.3.0        assertthat_0.2.1   
-## [85] xfun_0.16           broom_0.7.0         AmesHousing_0.0.3  
-## [88] survival_2.42-3     memoise_1.1.0       cluster_2.0.7-1    
-## [91] ellipsis_0.3.1</code></pre>
+<p><em>Tweet with approach using <code>corrr</code></em></p>
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+<a href="https://twitter.com/mattwrkntn?ref_src=twsrc%5Etfw"><span class="citation">@mattwrkntn</span></a> solution for grouped, pairwise operations in <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> is excellent: <a href="https://t.co/wjbO4fRqxP">https://t.co/wjbO4fRqxP</a> . Just substitute in the new corrr::colpair_map for corrr::correlate and could use for any pairwise summarizing operation. <a href="https://t.co/0Wf5KpQ4th">pic.twitter.com/0Wf5KpQ4th</a>
+</p>
+— Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1355622893200289793?ref_src=twsrc%5Etfw">January 30, 2021</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </div>
 </div>
 <div class="footnotes">
