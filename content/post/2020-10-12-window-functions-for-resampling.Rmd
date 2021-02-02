@@ -78,7 +78,8 @@ restauraunts <- content(r_rest, "text") %>%
   select(-OBJECTID)
 
 restauraunts <- restauraunts %>% 
-  mutate(RESTAURANTOPENDATE = ymd_hms(RESTAURANTOPENDATE) %>% as.Date())
+  mutate(RESTAURANTOPENDATE = ymd_hms(RESTAURANTOPENDATE) %>% as.Date()) %>% 
+  select(-PERMITID)
 ```
 
 *Further prep:*
@@ -91,7 +92,7 @@ restauraunts <- restauraunts %>%
 
 ```{r join-data-restaurants-inspections}
 inspections_restaurants <- inspections_clean %>% 
-  left_join(restauraunts, by = c("HSISID", "PERMITID")) %>% 
+  left_join(restauraunts, by = c("HSISID")) %>% 
   filter(SCORE > 50, FACILITYTYPE == "Restaurant") %>% 
   distinct(HSISID, date, .keep_all = TRUE) %>% 
   select(-c(FACILITYTYPE, PERMITID)) %>% 
@@ -161,7 +162,9 @@ We will presume that the model is only intended for restaurants that have previo
 
 ```{r filter-data}
 data_time_feats <- data_time_feats %>% 
-  filter(date >= (max(date) - years(7)), !is.na(SCORE_lag))
+  filter(date >= (max(date) - years(7)), !is.na(SCORE_lag)) %>% 
+  # keep just records at date of initial publishing
+  filter(date <= ymd(20201012))
 ```
 
 **Initial Split:**
@@ -317,9 +320,12 @@ extract_splits_metrics <- function(rs_obj, name){
     mutate(source = name)
 }
 
-splits_perf <- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs), 
-     mod_types, 
-     extract_splits_metrics) %>% 
+splits_perf <-
+  map2(
+    list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs),
+    mod_types,
+    extract_splits_metrics
+  ) %>%
   bind_rows()
 ```
 

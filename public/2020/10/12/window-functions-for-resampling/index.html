@@ -134,7 +134,8 @@ restauraunts &lt;- content(r_rest, &quot;text&quot;) %&gt;%
   select(-OBJECTID)
 
 restauraunts &lt;- restauraunts %&gt;% 
-  mutate(RESTAURANTOPENDATE = ymd_hms(RESTAURANTOPENDATE) %&gt;% as.Date())</code></pre>
+  mutate(RESTAURANTOPENDATE = ymd_hms(RESTAURANTOPENDATE) %&gt;% as.Date()) %&gt;% 
+  select(-PERMITID)</code></pre>
 <p><em>Further prep:</em></p>
 <ul>
 <li>Join the <code>inspections</code> and <code>restaurants</code> datasets<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></li>
@@ -144,7 +145,7 @@ restauraunts &lt;- restauraunts %&gt;%
 <li>It’s important to consider which fields should be excluded for ethical reasons. For our problem, we will say that any restaurant name or location information must be excluded<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</li>
 </ul>
 <pre class="r"><code>inspections_restaurants &lt;- inspections_clean %&gt;% 
-  left_join(restauraunts, by = c(&quot;HSISID&quot;, &quot;PERMITID&quot;)) %&gt;% 
+  left_join(restauraunts, by = c(&quot;HSISID&quot;)) %&gt;% 
   filter(SCORE &gt; 50, FACILITYTYPE == &quot;Restaurant&quot;) %&gt;% 
   distinct(HSISID, date, .keep_all = TRUE) %&gt;% 
   select(-c(FACILITYTYPE, PERMITID)) %&gt;% 
@@ -207,7 +208,9 @@ restauraunts &lt;- restauraunts %&gt;%
 <p><strong>Additional Filtering:</strong></p>
 <p>We will presume that the model is only intended for restaurants that have previous inspections on record<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a> and will use only the most recent seven years of data.</p>
 <pre class="r"><code>data_time_feats &lt;- data_time_feats %&gt;% 
-  filter(date &gt;= (max(date) - years(7)), !is.na(SCORE_lag))</code></pre>
+  filter(date &gt;= (max(date) - years(7)), !is.na(SCORE_lag)) %&gt;% 
+  # keep just records at date of initial publishing
+  filter(date &lt;= ymd(20201012))</code></pre>
 <p><strong>Initial Split:</strong></p>
 <p>After creating our lag based features, we can split our data into training and testing splits.</p>
 <pre class="r"><code>initial_split &lt;- rsample::initial_time_split(data_time_feats, prop = .8)
@@ -342,9 +345,12 @@ avg_perf &lt;- map(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs),
     mutate(source = name)
 }
 
-splits_perf &lt;- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs), 
-     mod_types, 
-     extract_splits_metrics) %&gt;% 
+splits_perf &lt;-
+  map2(
+    list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs),
+    mod_types,
+    extract_splits_metrics
+  ) %&gt;%
   bind_rows()</code></pre>
 <p>The overall performance as well as the performance across splits suggests that both models were better than the baseline (the mean within the analysis set)<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a> and that the linear model outperformed the random forest model.</p>
 <pre class="r"><code>splits_perf %&gt;% 

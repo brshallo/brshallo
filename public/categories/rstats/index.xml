@@ -796,7 +796,8 @@ restauraunts &amp;lt;- content(r_rest, &amp;quot;text&amp;quot;) %&amp;gt;%
   select(-OBJECTID)
 
 restauraunts &amp;lt;- restauraunts %&amp;gt;% 
-  mutate(RESTAURANTOPENDATE = ymd_hms(RESTAURANTOPENDATE) %&amp;gt;% as.Date())&lt;/code&gt;&lt;/pre&gt;
+  mutate(RESTAURANTOPENDATE = ymd_hms(RESTAURANTOPENDATE) %&amp;gt;% as.Date()) %&amp;gt;% 
+  select(-PERMITID)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;em&gt;Further prep:&lt;/em&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Join the &lt;code&gt;inspections&lt;/code&gt; and &lt;code&gt;restaurants&lt;/code&gt; datasets&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
@@ -806,7 +807,7 @@ restauraunts &amp;lt;- restauraunts %&amp;gt;%
 &lt;li&gt;It’s important to consider which fields should be excluded for ethical reasons. For our problem, we will say that any restaurant name or location information must be excluded&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;inspections_restaurants &amp;lt;- inspections_clean %&amp;gt;% 
-  left_join(restauraunts, by = c(&amp;quot;HSISID&amp;quot;, &amp;quot;PERMITID&amp;quot;)) %&amp;gt;% 
+  left_join(restauraunts, by = c(&amp;quot;HSISID&amp;quot;)) %&amp;gt;% 
   filter(SCORE &amp;gt; 50, FACILITYTYPE == &amp;quot;Restaurant&amp;quot;) %&amp;gt;% 
   distinct(HSISID, date, .keep_all = TRUE) %&amp;gt;% 
   select(-c(FACILITYTYPE, PERMITID)) %&amp;gt;% 
@@ -869,7 +870,9 @@ restauraunts &amp;lt;- restauraunts %&amp;gt;%
 &lt;p&gt;&lt;strong&gt;Additional Filtering:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;We will presume that the model is only intended for restaurants that have previous inspections on record&lt;a href=&#34;#fn15&#34; class=&#34;footnote-ref&#34; id=&#34;fnref15&#34;&gt;&lt;sup&gt;15&lt;/sup&gt;&lt;/a&gt; and will use only the most recent seven years of data.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data_time_feats &amp;lt;- data_time_feats %&amp;gt;% 
-  filter(date &amp;gt;= (max(date) - years(7)), !is.na(SCORE_lag))&lt;/code&gt;&lt;/pre&gt;
+  filter(date &amp;gt;= (max(date) - years(7)), !is.na(SCORE_lag)) %&amp;gt;% 
+  # keep just records at date of initial publishing
+  filter(date &amp;lt;= ymd(20201012))&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;strong&gt;Initial Split:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;After creating our lag based features, we can split our data into training and testing splits.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;initial_split &amp;lt;- rsample::initial_time_split(data_time_feats, prop = .8)
@@ -1004,9 +1007,12 @@ avg_perf &amp;lt;- map(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs),
     mutate(source = name)
 }
 
-splits_perf &amp;lt;- map2(list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs), 
-     mod_types, 
-     extract_splits_metrics) %&amp;gt;% 
+splits_perf &amp;lt;-
+  map2(
+    list(lm_workflow_rs, rf_workflow_rs, null_workflow_rs),
+    mod_types,
+    extract_splits_metrics
+  ) %&amp;gt;%
   bind_rows()&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The overall performance as well as the performance across splits suggests that both models were better than the baseline (the mean within the analysis set)&lt;a href=&#34;#fn25&#34; class=&#34;footnote-ref&#34; id=&#34;fnref25&#34;&gt;&lt;sup&gt;25&lt;/sup&gt;&lt;/a&gt; and that the linear model outperformed the random forest model.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;splits_perf %&amp;gt;% 
