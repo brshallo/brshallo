@@ -237,9 +237,9 @@ The chart below shows the key parts of a generic linear model that concern predi
 
 Confidence intervals are more narrow (as they concern only uncertainty in the model's estimation of the expected value). Prediction intervals are wider as they concern both model uncertainty and the sampling uncertainty of any observation (the latter of which contributes far greater variance). Both confidence and prediction intervals are wider the further the prediction is from the centroid of the data -- however the effect is far greater for the confidence interval (as the uncertainty in the prediction interval is dominated by the variance in observations, which is assumed to be constant across observations). This explains why the curve in the confidence intervals is far more pronounced.
 
-## Are Prediction Intervals an Example of Inference or Prediction?
+## Inference or Prediction?
 
-Predictive modeling is typically used either for making predictions or inferences. The assumptions associated with your model usually matter more when doing inference compared to prediction^[This is because your assumptions will influence the nature of the uncertainty in your model. When focused on prediction, you generally just care about minimizing error (in one form or another), assumptions regarding distributions of parameters, errors, etc. can often be ignored or at least relaxed.]. To get a sense of how careful you should be regarding model assumptions therefore you might ask: "Are prediction intervals an example of prediction or inference?"
+Predictive modeling is typically used either for making predictions or inferences. The assumptions associated with your model usually matter more when doing inference compared to prediction^[This is because your assumptions will influence the nature of the uncertainty in your model. When focused on prediction, you generally just care about minimizing error (in one form or another), assumptions regarding distributions of parameters, errors, etc. can often be ignored or at least relaxed.]. Therefore to get a sense of how careful you should be regarding model assumptions in our example you might ask: *"Are prediction intervals an example of prediction or inference?"*
 
 The answer is, while it (kind of) depends...
 
@@ -253,18 +253,18 @@ For example, an important assumption is heterskedasticity of errors -- which mea
 
 In follow up posts the methods I introduce do not depend *as* strongly on assumptions to produce reliable prediction intervals^[However there are limitations on assumption free predictive inference, ([Barber, et al](https://www.stat.cmu.edu/~ryantibs/papers/limits.pdf)).].
 
-## Cautions with overfitting
+## Cautions with Overfitting
 
-Note that if your model is [overfitting](https://en.wikipedia.org/wiki/Overfitting)^[Avoiding overfitting is a big topic I am going to just barely touch on it here.] the data, that the prediction interval will often underestimate the expected variability in price and your prediction intervals may be too narrow. Two strategies you might use to correct this:
+You want the findings and predictions of your model to be *generalizable*, i.e. usable outside of the context of your training dataset. This is why we holdout data to review performance -- we want to review the performance on data the model has never seen before. If your model [overfits](https://en.wikipedia.org/wiki/Overfitting)^[Model generalizability is a big topic I am going to just barely touch on it here.] the training data, the prediction interval will often underestimate the expected variability in price and your prediction intervals may be too narrow. Two strategies you might use to correct for this:
 
-1. Consider a more simple model (that still fits the data well)
-1. Tune your prediction bands based on coverage on holdout data (coverage represents the proportion of observations that actually fall within their prediction intervals)^[I show an example of measuring coverage in [Checking Coverage].].
+1. Consider a more simple model^[That still fits the data well but is likely to overfit on the training data.]
+1. Tune your prediction bands based on coverage on holdout data (coverage represents the proportion of observations that actually fall within their prediction intervals).
 
 A quick heuristic to check if your model is overfitting is to compare the model's performance on a holdout dataset compared against performance on the data that was used to train the model. If performance is substantially better on the training dataset, it may suggest your model is overfitting.
 
 **Simpler model**
 
-If your model seems to be overfittng, you may want to try fitting a more simple model^[Lower [variance](https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff).]. If your model shows a small difference in performance between training and holdout datasets, you likely will have more faith in the ranges given in the prediction intervals.
+If your model seems to be overfittng, you may want to try fitting a more simple model^[Lower [variance](https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff).]. If your model has a small difference in performance metrics between training and holdout datasets, you likely will have more faith in the ranges given by the prediction intervals.
 
 **Problem with comparing difference in performance between training & holdout data**
 
@@ -370,7 +370,7 @@ p +
     ```
 
 
-# Checking Coverage
+## Coverage
 
 Let's now check what proportion of our holdout observations are actually "covered" by their prediction intervals^[I.e. the rate at which the *actual* value fall within the range of the prediction interval (coverage is essentially checking whether the range you expect from your prediction intervals is actually what is achieved).]. 
 
@@ -435,7 +435,7 @@ The results provide evidence that whether an observation is covered or not-cover
 
 I will show in a follow-up post covering __Simulation Methods for Building Prediction Intervals__ intervals that seem to have more consistent coverage rates across predicted `Sale_Price`.
 
-# Checking Interval Width
+## Interval Width
 
 Another helpful metric for evaluating your prediction intervals is to review their width. More narrow bands suggest a more precise model. Remember from the notes in [Consider Variability] that the size of the errors will change with the size of the prediction. To adjust for this an appropriate metric can be to review 'interval width' around `Sale_Price` as a percentage of the prediction^[Alternatively could just have evaluated the interval widths in the `log(Sale_Price, 10)` terms outputted by the model.]. I will review these across the quintiles of our model.
 

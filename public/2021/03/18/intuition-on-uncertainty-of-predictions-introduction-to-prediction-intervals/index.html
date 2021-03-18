@@ -87,13 +87,14 @@
 <li><a href="#prediction-intervals-and-confidence-intervals">Prediction Intervals and Confidence Intervals</a></li>
 <li><a href="#analytic-method-of-calculating-prediction-intervals">Analytic Method of Calculating Prediction Intervals</a></li>
 <li><a href="#visual-comparison-of-prediction-intervals-and-confidence-intervals">Visual Comparison of Prediction Intervals and Confidence Intervals</a></li>
-<li><a href="#are-prediction-intervals-an-example-of-inference-or-prediction">Are Prediction Intervals an Example of Inference or Prediction?</a></li>
-<li><a href="#cautions-with-overfitting">Cautions with overfitting</a></li>
+<li><a href="#inference-or-prediction">Inference or Prediction?</a></li>
+<li><a href="#cautions-with-overfitting">Cautions with Overfitting</a></li>
 </ul></li>
 <li><a href="#generalizability">Generalizability</a></li>
-<li><a href="#extract-prediction-intervals">Extract Prediction Intervals</a></li>
-<li><a href="#checking-coverage">Checking Coverage</a></li>
-<li><a href="#checking-interval-width">Checking Interval Width</a></li>
+<li><a href="#extract-prediction-intervals">Extract Prediction Intervals</a><ul>
+<li><a href="#coverage">Coverage</a></li>
+<li><a href="#interval-width">Interval Width</a></li>
+</ul></li>
 <li><a href="#closing-notes">Closing Notes</a></li>
 </ul>
 </div>
@@ -340,9 +341,9 @@ x {<span class="math inline">\(\dfrac{(x_h-\bar{x})^2}{\sum(x_i-\bar{x})^2}\)</s
 </div>
 <p>Confidence intervals are more narrow (as they concern only uncertainty in the model’s estimation of the expected value). Prediction intervals are wider as they concern both model uncertainty and the sampling uncertainty of any observation (the latter of which contributes far greater variance). Both confidence and prediction intervals are wider the further the prediction is from the centroid of the data – however the effect is far greater for the confidence interval (as the uncertainty in the prediction interval is dominated by the variance in observations, which is assumed to be constant across observations). This explains why the curve in the confidence intervals is far more pronounced.</p>
 </div>
-<div id="are-prediction-intervals-an-example-of-inference-or-prediction" class="section level2">
-<h2>Are Prediction Intervals an Example of Inference or Prediction?</h2>
-<p>Predictive modeling is typically used either for making predictions or inferences. The assumptions associated with your model usually matter more when doing inference compared to prediction<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a>. To get a sense of how careful you should be regarding model assumptions therefore you might ask: “Are prediction intervals an example of prediction or inference?”</p>
+<div id="inference-or-prediction" class="section level2">
+<h2>Inference or Prediction?</h2>
+<p>Predictive modeling is typically used either for making predictions or inferences. The assumptions associated with your model usually matter more when doing inference compared to prediction<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a>. Therefore to get a sense of how careful you should be regarding model assumptions in our example you might ask: <em>“Are prediction intervals an example of prediction or inference?”</em></p>
 <p>The answer is, while it (kind of) depends…</p>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/QRLEXAFOvkM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
 </iframe>
@@ -352,15 +353,15 @@ x {<span class="math inline">\(\dfrac{(x_h-\bar{x})^2}{\sum(x_i-\bar{x})^2}\)</s
 <p>In follow up posts the methods I introduce do not depend <em>as</em> strongly on assumptions to produce reliable prediction intervals<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a>.</p>
 </div>
 <div id="cautions-with-overfitting" class="section level2">
-<h2>Cautions with overfitting</h2>
-<p>Note that if your model is <a href="https://en.wikipedia.org/wiki/Overfitting">overfitting</a><a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a> the data, that the prediction interval will often underestimate the expected variability in price and your prediction intervals may be too narrow. Two strategies you might use to correct this:</p>
+<h2>Cautions with Overfitting</h2>
+<p>You want the findings and predictions of your model to be <em>generalizable</em>, i.e. usable outside of the context of your training dataset. This is why we holdout data to review performance – we want to review the performance on data the model has never seen before. If your model <a href="https://en.wikipedia.org/wiki/Overfitting">overfits</a><a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a> the training data, the prediction interval will often underestimate the expected variability in price and your prediction intervals may be too narrow. Two strategies you might use to correct for this:</p>
 <ol style="list-style-type: decimal">
-<li>Consider a more simple model (that still fits the data well)</li>
-<li>Tune your prediction bands based on coverage on holdout data (coverage represents the proportion of observations that actually fall within their prediction intervals)<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a>.</li>
+<li>Consider a more simple model<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a></li>
+<li>Tune your prediction bands based on coverage on holdout data (coverage represents the proportion of observations that actually fall within their prediction intervals).</li>
 </ol>
 <p>A quick heuristic to check if your model is overfitting is to compare the model’s performance on a holdout dataset compared against performance on the data that was used to train the model. If performance is substantially better on the training dataset, it may suggest your model is overfitting.</p>
 <p><strong>Simpler model</strong></p>
-<p>If your model seems to be overfittng, you may want to try fitting a more simple model<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a>. If your model shows a small difference in performance between training and holdout datasets, you likely will have more faith in the ranges given in the prediction intervals.</p>
+<p>If your model seems to be overfittng, you may want to try fitting a more simple model<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a>. If your model has a small difference in performance metrics between training and holdout datasets, you likely will have more faith in the ranges given by the prediction intervals.</p>
 <p><strong>Problem with comparing difference in performance between training &amp; holdout data</strong></p>
 <p>However, for the most part, your performance is going to <em>always be better</em> on the training data than on the holdout data<a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a>. With regard to overfitting, you really care about whether performance is becoming <em>worse</em> on the holdout set compared to an alternative simpler model’s performance on the holdout set. You don’t really care if performance on training and holdout data is similar, just that performance on a holdout dataset is as good as possible.</p>
 <p>Let’s take an example when building random forest models and tuning on the <code>min_n</code> attribute (smaller values for <code>min_n</code><a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a> represent more complicated models.):</p>
@@ -506,9 +507,8 @@ p +
   scale_x_log10(labels = scales::dollar)+
   scale_y_log10(labels = scales::dollar)</code></pre>
 <p><img src="/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/prediction-intervals-sample-1.png" width="672" /></p>
-</div>
-<div id="checking-coverage" class="section level1">
-<h1>Checking Coverage</h1>
+<div id="coverage" class="section level2">
+<h2>Coverage</h2>
 <p>Let’s now check what proportion of our holdout observations are actually “covered” by their prediction intervals<a href="#fn37" class="footnote-ref" id="fnref37"><sup>37</sup></a>.</p>
 <p>Hence for our 90% prediction intervals, we will expect coverage on a holdout set to be 90%.</p>
 <pre class="r"><code>preds_intervals %&gt;%
@@ -580,8 +580,8 @@ p +
 <p>The results provide evidence that whether an observation is covered or not-covered may depend (to some extent) on which quintile for predicted <code>Sale_Price</code> the observation falls within<a href="#fn44" class="footnote-ref" id="fnref44"><sup>44</sup></a>.</p>
 <p>I will show in a follow-up post covering <strong>Simulation Methods for Building Prediction Intervals</strong> intervals that seem to have more consistent coverage rates across predicted <code>Sale_Price</code>.</p>
 </div>
-<div id="checking-interval-width" class="section level1">
-<h1>Checking Interval Width</h1>
+<div id="interval-width" class="section level2">
+<h2>Interval Width</h2>
 <p>Another helpful metric for evaluating your prediction intervals is to review their width. More narrow bands suggest a more precise model. Remember from the notes in [Consider Variability] that the size of the errors will change with the size of the prediction. To adjust for this an appropriate metric can be to review ‘interval width’ around <code>Sale_Price</code> as a percentage of the prediction<a href="#fn45" class="footnote-ref" id="fnref45"><sup>45</sup></a>. I will review these across the quintiles of our model.</p>
 <pre class="r"><code>lm_interval_widths &lt;- preds_intervals %&gt;% 
   mutate(interval_width = .pred_upper - .pred_lower,
@@ -655,6 +655,7 @@ lm_interval_widths %&gt;%
 </table>
 <p>The relative interval width is highly consistent across predicted <code>Sale_Price</code> and between observations<a href="#fn46" class="footnote-ref" id="fnref46"><sup>46</sup></a>. The 90% interval represents on average about ~54% of the predicted <code>Sale_Price</code><a href="#fn47" class="footnote-ref" id="fnref47"><sup>47</sup></a>. For the analytic approach the only factor that contributes to differences in interval width across predictions is the distance of an observations from the centroid of the data (this has a relatively small impact compared to the sampling variance which is treated as constant)<a href="#fn48" class="footnote-ref" id="fnref48"><sup>48</sup></a>.</p>
 </div>
+</div>
 <div id="closing-notes" class="section level1">
 <h1>Closing Notes</h1>
 <p><em>Upsides of prediction intervals using parametric method with linear regression:</em></p>
@@ -710,8 +711,8 @@ lm_interval_widths %&gt;%
 <li id="fn24"><p>Prediction intervals concern uncertainty, and whenever you are making estimates around uncertainty you are generally doing a kind of statistical inference.<a href="#fnref24" class="footnote-back">↩</a></p></li>
 <li id="fn25"><p>Even when using simulation based techniques that, for other estimates, may allow you to be a little more cavalier regarding model assumptions… when it comes to predictive inference you will essentially always have <em>some</em> assumptions you need to hold onto.<a href="#fnref25" class="footnote-back">↩</a></p></li>
 <li id="fn26"><p>However there are limitations on assumption free predictive inference, (<a href="https://www.stat.cmu.edu/~ryantibs/papers/limits.pdf">Barber, et al</a>).<a href="#fnref26" class="footnote-back">↩</a></p></li>
-<li id="fn27"><p>Avoiding overfitting is a big topic I am going to just barely touch on it here.<a href="#fnref27" class="footnote-back">↩</a></p></li>
-<li id="fn28"><p>I show an example of measuring coverage in <a href="#checking-coverage">Checking Coverage</a>.<a href="#fnref28" class="footnote-back">↩</a></p></li>
+<li id="fn27"><p>Model generalizability is a big topic I am going to just barely touch on it here.<a href="#fnref27" class="footnote-back">↩</a></p></li>
+<li id="fn28"><p>That still fits the data well but is likely to overfit on the training data.<a href="#fnref28" class="footnote-back">↩</a></p></li>
 <li id="fn29"><p>Lower <a href="https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff">variance</a>.<a href="#fnref29" class="footnote-back">↩</a></p></li>
 <li id="fn30"><p>This is true of some models to a greater extent than others.<a href="#fnref30" class="footnote-back">↩</a></p></li>
 <li id="fn31"><p>Representing the minimum number of observations in a node for it to be split.<a href="#fnref31" class="footnote-back">↩</a></p></li>

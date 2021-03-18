@@ -24,13 +24,14 @@
 &lt;li&gt;&lt;a href=&#34;#prediction-intervals-and-confidence-intervals&#34;&gt;Prediction Intervals and Confidence Intervals&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#analytic-method-of-calculating-prediction-intervals&#34;&gt;Analytic Method of Calculating Prediction Intervals&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#visual-comparison-of-prediction-intervals-and-confidence-intervals&#34;&gt;Visual Comparison of Prediction Intervals and Confidence Intervals&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#are-prediction-intervals-an-example-of-inference-or-prediction&#34;&gt;Are Prediction Intervals an Example of Inference or Prediction?&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#cautions-with-overfitting&#34;&gt;Cautions with overfitting&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#inference-or-prediction&#34;&gt;Inference or Prediction?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#cautions-with-overfitting&#34;&gt;Cautions with Overfitting&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#generalizability&#34;&gt;Generalizability&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#extract-prediction-intervals&#34;&gt;Extract Prediction Intervals&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#checking-coverage&#34;&gt;Checking Coverage&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#checking-interval-width&#34;&gt;Checking Interval Width&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#extract-prediction-intervals&#34;&gt;Extract Prediction Intervals&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#coverage&#34;&gt;Coverage&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#interval-width&#34;&gt;Interval Width&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#closing-notes&#34;&gt;Closing Notes&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
@@ -277,9 +278,9 @@ x {&lt;span class=&#34;math inline&#34;&gt;\(\dfrac{(x_h-\bar{x})^2}{\sum(x_i-\b
 &lt;/div&gt;
 &lt;p&gt;Confidence intervals are more narrow (as they concern only uncertainty in the model’s estimation of the expected value). Prediction intervals are wider as they concern both model uncertainty and the sampling uncertainty of any observation (the latter of which contributes far greater variance). Both confidence and prediction intervals are wider the further the prediction is from the centroid of the data – however the effect is far greater for the confidence interval (as the uncertainty in the prediction interval is dominated by the variance in observations, which is assumed to be constant across observations). This explains why the curve in the confidence intervals is far more pronounced.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;are-prediction-intervals-an-example-of-inference-or-prediction&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Are Prediction Intervals an Example of Inference or Prediction?&lt;/h2&gt;
-&lt;p&gt;Predictive modeling is typically used either for making predictions or inferences. The assumptions associated with your model usually matter more when doing inference compared to prediction&lt;a href=&#34;#fn23&#34; class=&#34;footnote-ref&#34; id=&#34;fnref23&#34;&gt;&lt;sup&gt;23&lt;/sup&gt;&lt;/a&gt;. To get a sense of how careful you should be regarding model assumptions therefore you might ask: “Are prediction intervals an example of prediction or inference?”&lt;/p&gt;
+&lt;div id=&#34;inference-or-prediction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Inference or Prediction?&lt;/h2&gt;
+&lt;p&gt;Predictive modeling is typically used either for making predictions or inferences. The assumptions associated with your model usually matter more when doing inference compared to prediction&lt;a href=&#34;#fn23&#34; class=&#34;footnote-ref&#34; id=&#34;fnref23&#34;&gt;&lt;sup&gt;23&lt;/sup&gt;&lt;/a&gt;. Therefore to get a sense of how careful you should be regarding model assumptions in our example you might ask: &lt;em&gt;“Are prediction intervals an example of prediction or inference?”&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;The answer is, while it (kind of) depends…&lt;/p&gt;
 &lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/QRLEXAFOvkM&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;
 &lt;/iframe&gt;
@@ -289,15 +290,15 @@ x {&lt;span class=&#34;math inline&#34;&gt;\(\dfrac{(x_h-\bar{x})^2}{\sum(x_i-\b
 &lt;p&gt;In follow up posts the methods I introduce do not depend &lt;em&gt;as&lt;/em&gt; strongly on assumptions to produce reliable prediction intervals&lt;a href=&#34;#fn26&#34; class=&#34;footnote-ref&#34; id=&#34;fnref26&#34;&gt;&lt;sup&gt;26&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;cautions-with-overfitting&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Cautions with overfitting&lt;/h2&gt;
-&lt;p&gt;Note that if your model is &lt;a href=&#34;https://en.wikipedia.org/wiki/Overfitting&#34;&gt;overfitting&lt;/a&gt;&lt;a href=&#34;#fn27&#34; class=&#34;footnote-ref&#34; id=&#34;fnref27&#34;&gt;&lt;sup&gt;27&lt;/sup&gt;&lt;/a&gt; the data, that the prediction interval will often underestimate the expected variability in price and your prediction intervals may be too narrow. Two strategies you might use to correct this:&lt;/p&gt;
+&lt;h2&gt;Cautions with Overfitting&lt;/h2&gt;
+&lt;p&gt;You want the findings and predictions of your model to be &lt;em&gt;generalizable&lt;/em&gt;, i.e. usable outside of the context of your training dataset. This is why we holdout data to review performance – we want to review the performance on data the model has never seen before. If your model &lt;a href=&#34;https://en.wikipedia.org/wiki/Overfitting&#34;&gt;overfits&lt;/a&gt;&lt;a href=&#34;#fn27&#34; class=&#34;footnote-ref&#34; id=&#34;fnref27&#34;&gt;&lt;sup&gt;27&lt;/sup&gt;&lt;/a&gt; the training data, the prediction interval will often underestimate the expected variability in price and your prediction intervals may be too narrow. Two strategies you might use to correct for this:&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;Consider a more simple model (that still fits the data well)&lt;/li&gt;
-&lt;li&gt;Tune your prediction bands based on coverage on holdout data (coverage represents the proportion of observations that actually fall within their prediction intervals)&lt;a href=&#34;#fn28&#34; class=&#34;footnote-ref&#34; id=&#34;fnref28&#34;&gt;&lt;sup&gt;28&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Consider a more simple model&lt;a href=&#34;#fn28&#34; class=&#34;footnote-ref&#34; id=&#34;fnref28&#34;&gt;&lt;sup&gt;28&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Tune your prediction bands based on coverage on holdout data (coverage represents the proportion of observations that actually fall within their prediction intervals).&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;A quick heuristic to check if your model is overfitting is to compare the model’s performance on a holdout dataset compared against performance on the data that was used to train the model. If performance is substantially better on the training dataset, it may suggest your model is overfitting.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Simpler model&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If your model seems to be overfittng, you may want to try fitting a more simple model&lt;a href=&#34;#fn29&#34; class=&#34;footnote-ref&#34; id=&#34;fnref29&#34;&gt;&lt;sup&gt;29&lt;/sup&gt;&lt;/a&gt;. If your model shows a small difference in performance between training and holdout datasets, you likely will have more faith in the ranges given in the prediction intervals.&lt;/p&gt;
+&lt;p&gt;If your model seems to be overfittng, you may want to try fitting a more simple model&lt;a href=&#34;#fn29&#34; class=&#34;footnote-ref&#34; id=&#34;fnref29&#34;&gt;&lt;sup&gt;29&lt;/sup&gt;&lt;/a&gt;. If your model has a small difference in performance metrics between training and holdout datasets, you likely will have more faith in the ranges given by the prediction intervals.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Problem with comparing difference in performance between training &amp;amp; holdout data&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;However, for the most part, your performance is going to &lt;em&gt;always be better&lt;/em&gt; on the training data than on the holdout data&lt;a href=&#34;#fn30&#34; class=&#34;footnote-ref&#34; id=&#34;fnref30&#34;&gt;&lt;sup&gt;30&lt;/sup&gt;&lt;/a&gt;. With regard to overfitting, you really care about whether performance is becoming &lt;em&gt;worse&lt;/em&gt; on the holdout set compared to an alternative simpler model’s performance on the holdout set. You don’t really care if performance on training and holdout data is similar, just that performance on a holdout dataset is as good as possible.&lt;/p&gt;
 &lt;p&gt;Let’s take an example when building random forest models and tuning on the &lt;code&gt;min_n&lt;/code&gt; attribute (smaller values for &lt;code&gt;min_n&lt;/code&gt;&lt;a href=&#34;#fn31&#34; class=&#34;footnote-ref&#34; id=&#34;fnref31&#34;&gt;&lt;sup&gt;31&lt;/sup&gt;&lt;/a&gt; represent more complicated models.):&lt;/p&gt;
@@ -443,9 +444,8 @@ p +
   scale_x_log10(labels = scales::dollar)+
   scale_y_log10(labels = scales::dollar)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/prediction-intervals-sample-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;checking-coverage&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Checking Coverage&lt;/h1&gt;
+&lt;div id=&#34;coverage&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Coverage&lt;/h2&gt;
 &lt;p&gt;Let’s now check what proportion of our holdout observations are actually “covered” by their prediction intervals&lt;a href=&#34;#fn37&#34; class=&#34;footnote-ref&#34; id=&#34;fnref37&#34;&gt;&lt;sup&gt;37&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Hence for our 90% prediction intervals, we will expect coverage on a holdout set to be 90%.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;preds_intervals %&amp;gt;%
@@ -517,8 +517,8 @@ p +
 &lt;p&gt;The results provide evidence that whether an observation is covered or not-covered may depend (to some extent) on which quintile for predicted &lt;code&gt;Sale_Price&lt;/code&gt; the observation falls within&lt;a href=&#34;#fn44&#34; class=&#34;footnote-ref&#34; id=&#34;fnref44&#34;&gt;&lt;sup&gt;44&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;I will show in a follow-up post covering &lt;strong&gt;Simulation Methods for Building Prediction Intervals&lt;/strong&gt; intervals that seem to have more consistent coverage rates across predicted &lt;code&gt;Sale_Price&lt;/code&gt;.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;checking-interval-width&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Checking Interval Width&lt;/h1&gt;
+&lt;div id=&#34;interval-width&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Interval Width&lt;/h2&gt;
 &lt;p&gt;Another helpful metric for evaluating your prediction intervals is to review their width. More narrow bands suggest a more precise model. Remember from the notes in [Consider Variability] that the size of the errors will change with the size of the prediction. To adjust for this an appropriate metric can be to review ‘interval width’ around &lt;code&gt;Sale_Price&lt;/code&gt; as a percentage of the prediction&lt;a href=&#34;#fn45&#34; class=&#34;footnote-ref&#34; id=&#34;fnref45&#34;&gt;&lt;sup&gt;45&lt;/sup&gt;&lt;/a&gt;. I will review these across the quintiles of our model.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lm_interval_widths &amp;lt;- preds_intervals %&amp;gt;% 
   mutate(interval_width = .pred_upper - .pred_lower,
@@ -592,6 +592,7 @@ lm_interval_widths %&amp;gt;%
 &lt;/table&gt;
 &lt;p&gt;The relative interval width is highly consistent across predicted &lt;code&gt;Sale_Price&lt;/code&gt; and between observations&lt;a href=&#34;#fn46&#34; class=&#34;footnote-ref&#34; id=&#34;fnref46&#34;&gt;&lt;sup&gt;46&lt;/sup&gt;&lt;/a&gt;. The 90% interval represents on average about ~54% of the predicted &lt;code&gt;Sale_Price&lt;/code&gt;&lt;a href=&#34;#fn47&#34; class=&#34;footnote-ref&#34; id=&#34;fnref47&#34;&gt;&lt;sup&gt;47&lt;/sup&gt;&lt;/a&gt;. For the analytic approach the only factor that contributes to differences in interval width across predictions is the distance of an observations from the centroid of the data (this has a relatively small impact compared to the sampling variance which is treated as constant)&lt;a href=&#34;#fn48&#34; class=&#34;footnote-ref&#34; id=&#34;fnref48&#34;&gt;&lt;sup&gt;48&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
+&lt;/div&gt;
 &lt;div id=&#34;closing-notes&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Closing Notes&lt;/h1&gt;
 &lt;p&gt;&lt;em&gt;Upsides of prediction intervals using parametric method with linear regression:&lt;/em&gt;&lt;/p&gt;
@@ -647,8 +648,8 @@ lm_interval_widths %&amp;gt;%
 &lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;Prediction intervals concern uncertainty, and whenever you are making estimates around uncertainty you are generally doing a kind of statistical inference.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;Even when using simulation based techniques that, for other estimates, may allow you to be a little more cavalier regarding model assumptions… when it comes to predictive inference you will essentially always have &lt;em&gt;some&lt;/em&gt; assumptions you need to hold onto.&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn26&#34;&gt;&lt;p&gt;However there are limitations on assumption free predictive inference, (&lt;a href=&#34;https://www.stat.cmu.edu/~ryantibs/papers/limits.pdf&#34;&gt;Barber, et al&lt;/a&gt;).&lt;a href=&#34;#fnref26&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn27&#34;&gt;&lt;p&gt;Avoiding overfitting is a big topic I am going to just barely touch on it here.&lt;a href=&#34;#fnref27&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn28&#34;&gt;&lt;p&gt;I show an example of measuring coverage in &lt;a href=&#34;#checking-coverage&#34;&gt;Checking Coverage&lt;/a&gt;.&lt;a href=&#34;#fnref28&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn27&#34;&gt;&lt;p&gt;Model generalizability is a big topic I am going to just barely touch on it here.&lt;a href=&#34;#fnref27&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn28&#34;&gt;&lt;p&gt;That still fits the data well but is likely to overfit on the training data.&lt;a href=&#34;#fnref28&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn29&#34;&gt;&lt;p&gt;Lower &lt;a href=&#34;https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff&#34;&gt;variance&lt;/a&gt;.&lt;a href=&#34;#fnref29&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn30&#34;&gt;&lt;p&gt;This is true of some models to a greater extent than others.&lt;a href=&#34;#fnref30&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn31&#34;&gt;&lt;p&gt;Representing the minimum number of observations in a node for it to be split.&lt;a href=&#34;#fnref31&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
