@@ -188,9 +188,9 @@ Because of this variability in the uncertainty of the expected value of the mode
 
 ## Prediction Intervals and Confidence Intervals 
 
-Prediction intervals and confidence intervals^[Or when using bayesian methods, credible intervals.] are often confused. Confidence intervals generally refer to making inferences on aggregates or *average* relationships -- this is most useful for evaluating parameter estimates, performance metrics, relationships with covariates, etc. However if you are interested in price ranges on *individual* observations (as in our case), prediction intervals are what you want^[Confidence intervals are more directly related to the *standard error* of your sample, while prediction intervals are associated with the *standard deviation* of the errors. The width of your confidence intervals follow the central limit theorem and are thus sensitive to the sample size of your data and become more narrow as you collect more observations (and you gain 'confidence' in where the 'true' expected value resides). For prediction intervals, more observations may improve your estimate of the model or give you more faith in your prediction intervals, however the width of the intervals will not necessarily shrink in any substantial way.]. Rob Hyndman has a helpful post where he describes the differences in more detail: [The difference between prediction intervals and confidence intervals](https://robjhyndman.com/hyndsight/intervals/)^[Confidence intervals are typically the default output of many packages and functions that output "intervals" -- [forecast](https://github.com/robjhyndman/forecast) and other forecasting packages though typically default to prediction intervals.].
+Prediction intervals and confidence intervals^[Or when using bayesian methods, credible intervals.] are often confused. Confidence intervals generally refer to making inferences on *averages* -- this is most useful for evaluating parameter estimates, performance metrics, relationships with covariates, etc. However if you are interested in price ranges on *individual* observations (as in our case), prediction intervals are what you want^[Confidence intervals are more directly related to the *standard error* of your sample, while prediction intervals are associated with the *standard deviation* of the errors. The width of your confidence intervals follow the central limit theorem and are thus sensitive to the sample size of your data and become more narrow as you collect more observations (and you gain 'confidence' in where the 'true' expected value resides). For prediction intervals, more observations may improve your estimate of the model or give you more faith in your prediction intervals, however the width of the intervals will not necessarily shrink in any substantial way.]. Rob Hyndman has a helpful post where he describes the differences in more detail: [The difference between prediction intervals and confidence intervals](https://robjhyndman.com/hyndsight/intervals/)^[Confidence intervals are typically the default output of many packages and functions that output "intervals" -- [forecast](https://github.com/robjhyndman/forecast) and other forecasting packages though typically default to prediction intervals.].
 
-In linear regression, "prediction intervals" refers to a type of [confidence interval](https://en.wikipedia.org/wiki/Confidence_interval)^[Again, speaking through a frequentist lens.], namely the confidence interval for a single observation (a "predictive confidence interval"). "Confidence intervals" have a specific statistical interpretation... in later posts on this topic, the intervals I create do not quite mirror the interpretations that go with a predictive confidence interval. I will use the term "prediction interval" somewhat loosely to refer to a plausible range of values for an observation based on its attributes^["Predictive band" may be a more appropriate term.].
+In linear regression, "prediction intervals" refer to a type of [confidence interval](https://en.wikipedia.org/wiki/Confidence_interval)^[Again, speaking through a frequentist lens.], namely the confidence interval for a single observation (a "predictive confidence interval"). Confidence intervals have a specific statistical interpretation... in later posts on this topic, the intervals I create do not quite mirror the interpretations that go with a predictive confidence interval. I will use the term "prediction interval" somewhat loosely to refer to a plausible range of values for an observation^["Predictive band" may be a more appropriate term.].
 
 ## Analytic Method of Calculating Prediction Intervals
 
@@ -200,10 +200,10 @@ Linear regression models can produce prediction intervals analytically. The equa
 
 Pseudo-translation of key parts of equation that influence interval:
 
- > {$\hat{y}_h$ : prediction}  
- > +/- {$t_{(1-\alpha/2, n-2)}$ : multiplier for desired level of confidence, e.g. 95%}   
- > x   {MSE: multiplier for average error}   
- > x   {$\dfrac{(x_h-\bar{x})^2}{\sum(x_i-\bar{x})^2}$ : multiplier for distance from centroid of data}
+* {$\hat{y}_h$ : prediction}  
+* {$t_{(1-\alpha/2, n-2)}$ : multiplier for desired level of confidence, e.g. 95%}   
+* {MSE: multiplier for average error}   
+* {$\dfrac{(x_h-\bar{x})^2}{\sum(x_i-\bar{x})^2}$ : multiplier for distance from centroid of data}
 
 You will notice the equation for the prediction interval is very similar to that of the equation for a confidence interval^[I.e. the band around the *average* value, rather than the band around the value for an *individual* observation -- as discussed in [A Few Things to Understand About Prediction Intervals].]:
 
@@ -214,29 +214,31 @@ The variance for the prediction interval just has an extra Mean Squared Error (M
 Paraphrasing, the uncertainty in predictions can be thought of as coming from two sources:
 
 1. uncertainty in fitting the model, i.e. determining the *expected* value
-2. uncertainty in the sample 
+2. uncertainty in the sample, i.e. the typical variability of individual observations 
 
-The first may vary depending on position relative to the centroid (think back to the see-saw analogyin [Observation Specific Intervals] and the importance of position in determining magnitude of change i.e. uncertainty). The latter part is assumed to be constant across observations^[This assumption of constant variability of the sample is common in many techniques for producing prediction intervals -- even some techniques that use simulation based approaches.]. 
+The first source may vary depending on position relative to the centroid (think back to the see-saw analogy in [Observation Specific Intervals] and the influence of position on amount of movement i.e. uncertainty). The latter part is assumed to be constant across observations^[This assumption of constant variability of the sample is common in many techniques for producing prediction intervals -- even some techniques that use simulation based approaches.]. 
 
-Do not think of these sources of uncertainty as being compounded on one another to produce the prediction interval. They are added together^[To get the variance.] and then the square root is taken. In most cases the variability due to the sample will be greater than the variability in estimating the expected value. Hence, the interval's width due to uncertainty in estimating the model is somewhat 'watered down' by the variability in the sample. Therefore (for prediction intervals produced analytically at least) we will generally not see huge differences in the widths of prediction intervals across observations (even at points that are relatively far from the centroid of the data). Therefore our prediction intervals in later sections in this will actually not be that much different from those that might been produced using aggregate metrics similar to those discussed in [Considering Uncertainty].
+Do not think of these sources of uncertainty as being compounded on one another to produce the prediction interval. They are added together^[To get the variance.] and then the square root is taken. In most cases the variability due to the sample will be greater than the variability in estimating the expected value. Hence, the interval's width due to uncertainty in estimating the model is somewhat 'watered down' by the variability in the sample. Therefore (for prediction intervals produced analytically at least) we will generally not see large differences in the widths of prediction intervals across observations (even at points that are relatively far from the centroid of the data). Therefore our prediction intervals in later sections in this will actually not be that much different from those that might have been produced using aggregated error metrics similar to those discussed in [Considering Uncertainty].
 
-However understanding the intuition on these sources of uncertainty in prediction intervals is helpful. We will see in follow-up posts that use more sophisticated methods for producing prediction intervals that we can get substantive levels of variability in prediction intervals between observations.
+However understanding the intuition on these sources of uncertainty in prediction intervals is helpful. In follow-up posts I use more flexible methods for building prediction intervals. These methods are able to capture uncertainty in model estimation using more than simply distance of an observation from the centroid of the data. We will see that these other methods can produce substantive differences in the width of prediction intervals between observations.
 
 ## Visual Comparison of Prediction Intervals and Confidence Intervals
 
-The chart below shows the key parts of a generic linear model that concern prediction: 
+The chart below shows the key outputs concerning prediction that can be produced by a generic linear model: 
 
 * expected value, i.e. predictions (black line) 
-* the confidence intervals, i.e. range for the expected values (red dashed line) 
+* confidence intervals, i.e. range for the expected values (red dashed line) 
 * prediction intervals (our interest in this post), i.e. range for the observations (green dotted line) 
 
 ![Image [source](https://i1.wp.com/statistical-research.com/wp-content/uploads/2013/10/prediction_confidence.png?)](https://i1.wp.com/statistical-research.com/wp-content/uploads/2013/10/prediction_confidence.png?)
 
-Confidence intervals are more narrow (as they concern only uncertainty in the model's estimation of the expected value). Prediction intervals are wider as they concern both model uncertainty and the sampling uncertainty of any observation (the latter of which contributes far greater variance). Both confidence and prediction intervals are wider the further the prediction is from the centroid of the data -- however the effect is far greater for the confidence interval (as the uncertainty in the prediction interval is dominated by the variance in observations, which is assumed to be constant across observations). This explains why the curve in the confidence intervals is far more pronounced.
+Confidence intervals are more narrow (as they concern only uncertainty in the model's estimation of the expected value). Prediction intervals are wider as they concern both model uncertainty and the sampling uncertainty of any observation (the latter of which contributes far greater variance). Both confidence and prediction intervals are wider the further the prediction is from the centroid of the data -- however the effect is far greater for the confidence interval (as the uncertainty in the prediction interval is dominated by the random variance of the sample, which is assumed to be constant across observations). This explains why the curve of the confidence intervals is far more pronounced.
 
 ## Inference or Prediction?
 
-Predictive modeling is typically used either for making predictions or inferences. The assumptions associated with your model usually matter more when doing inference compared to prediction^[This is because your assumptions will influence the nature of the uncertainty in your model. When focused on prediction, you generally just care about minimizing error (in one form or another), assumptions regarding distributions of parameters, errors, etc. can often be ignored or at least relaxed.]. Therefore to get a sense of how careful you should be regarding model assumptions in our example you might ask: *"Are prediction intervals an example of prediction or inference?"*
+Predictive modeling is typically used either for making predictions or inferences. The assumptions associated with your model usually matter more when doing inference compared to prediction^[This is because your assumptions will influence the nature of the uncertainty in your model. When focused on prediction, you generally just care about minimizing error (in one form or another), assumptions regarding distributions of parameters, errors, etc. can often be ignored or at least relaxed.]. Therefore, to get a sense of how careful you should be regarding model assumptions for our example you might ask: 
+
+>"Are prediction intervals an example of prediction or inference?"
 
 The answer is, while it (kind of) depends...
 
@@ -244,20 +246,20 @@ The answer is, while it (kind of) depends...
 
 *really*, prediction intervals should be thought of as a kind of inference. 
 
-In this post the prediction interval is explicitly an inference on the predictions. In a later post on quantile regression I will actually just be making predictions of upper and lower bounds. However, generally, intervals should be thought of as a kind of inference^[Prediction intervals concern uncertainty, and whenever you are making estimates around uncertainty you are generally doing a kind of statistical inference.]. Therefore you should be thoughtful regarding the assumptions you are making about the nature of your data and model specification^[Even when using simulation based techniques that, for other estimates, may allow you to be a little more cavalier regarding model assumptions... when it comes to predictive inference you will essentially always have *some* assumptions you need to hold onto.]. 
+For this post the prediction interval is explicitly an inference on the predictions. In a later post I will actually just be making *predictions* for quantiles at upper and lower bounds of interest. However, generally, intervals should be thought of as a kind of inference^[Prediction intervals concern uncertainty, and whenever you are making estimates around uncertainty you are generally doing a kind of statistical inference.]. Therefore you should be thoughtful regarding the assumptions you are making about the nature of the data and your model specification^[Even when using simulation based techniques that, for other estimates, may allow you to be a little more cavalier regarding model assumptions... when it comes to predictive inference you will essentially always have *some* assumptions you need to hold onto.]. 
 
-For example, an important assumption is heterskedasticity of errors -- which means that the variability *in our observations* should be constant across our predictions. As mentioned previously, when building a model for *Sale Price* we would find that errors tend to increase with our predictions. Hence instead of building a model to predict *Sale Price* we build models to predict $\log_{10}Sale\:Price$ -- this helps ensure that our model's outputted prediction intervals will be more appropriate across observations.
+For example, an important assumption when doing predictive inference is heterskedasticity of errors -- which means that the variability of our errors should be constant across our predictions. As mentioned previously, when building a model for *Sale Price* we would find that errors tend to increase with our predictions. Hence instead of building a model to predict *Sale Price* we build a model to predict $\log_{10}(Sale\:Price)$ -- this helps ensure that our model's outputted prediction intervals will be more appropriate across observations^[If we did not do this our prediction intervals would be far too large for smaller values of `Sale_Price` and far too small for larger values of `Sale_Price`.].
 
-In follow up posts the methods I introduce do not depend *as* strongly on assumptions to produce reliable prediction intervals^[However there are limitations on assumption free predictive inference, ([Barber, et al](https://www.stat.cmu.edu/~ryantibs/papers/limits.pdf)).].
+In follow up posts the methods I describe do not depend *as* strongly on assumptions to produce reliable prediction intervals^[However there are limitations on assumption free predictive inference, ([Barber, et al](https://www.stat.cmu.edu/~ryantibs/papers/limits.pdf)).].
 
 ## Cautions with Overfitting
 
-You want the findings and predictions of your model to be *generalizable*, i.e. usable outside of the context of your training dataset. This is why we holdout data to review performance -- we want to review the performance on data the model has never seen before. If your model [overfits](https://en.wikipedia.org/wiki/Overfitting)^[Model generalizability is a big topic I am going to just barely touch on it here.] the training data, the prediction interval will often underestimate the expected variability in price and your prediction intervals may be too narrow. Two strategies you might use to correct for this:
+You want the findings and predictions of your model to be *generalizable*, i.e. usable outside of the context of your training dataset. This is why we holdout data to review performance -- we want to review the model's performance on data it has never seen. If your model [overfits](https://en.wikipedia.org/wiki/Overfitting)^[Model generalizability is a big topic I am going to just barely touch on it here.] the training data, the prediction interval will often underestimate the expected variability in price and your prediction intervals may be too narrow. Two strategies you might use to correct for this:
 
 1. Consider a more simple model^[That still fits the data well but is likely to overfit on the training data.]
-1. Tune your prediction bands based on coverage on holdout data (coverage represents the proportion of observations that actually fall within their prediction intervals).
+1. Tune your prediction bands based on coverage on holdout data (coverage represents the proportion of observations that *actually* fall within their prediction interval).
 
-A quick heuristic to check if your model is overfitting is to compare the model's performance on a holdout dataset compared against performance on the data that was used to train the model. If performance is substantially better on the training dataset, it may suggest your model is overfitting.
+A quick heuristic to check if your model is overfitting is to compare the model's performance on a holdout dataset compared against performance on the data that was used to train the model. If performance is substantially better on the training dataset, it may suggest the model has overfit.
 
 **Simpler model**
 
@@ -265,31 +267,31 @@ If your model seems to be overfittng, you may want to try fitting a more simple 
 
 **Problem with comparing difference in performance between training & holdout data**
 
-However, for the most part, your performance is going to *always be better* on the training data than on the holdout data^[This is true of some models to a greater extent than others.]. With regard to overfitting, you really care about whether performance is becoming *worse* on the holdout set compared to an alternative simpler model's performance on the holdout set. You don't really care if performance on training and holdout data is similar, just that performance on a holdout dataset is as good as possible.  
+However, for the most part, your performance is going to *always be better* on the training data than on the holdout data^[This is true of some models to a greater extent than others.]. With regard to overfitting, you really care about whether performance is worse on the holdout dataset compared to an alternative simpler model's performance on the holdout set. You don't really care if a model's performance on training and holdout data is similar, just that performance on a holdout dataset is as good as possible.  
 
 Let's take an example when building random forest models and tuning on the `min_n` attribute (smaller values for `min_n`^[Representing the minimum number of observations in a node for it to be split.] represent more complicated models.):
 
 ![See my [gist](https://gist.github.com/brshallo/516e8e52fb911a96efafbf01d606a113) for code](https://camo.githubusercontent.com/c498111162b8f8d4fced8fe07f7b532fe2de3c4a66f68e29b9f29832148ab674/68747470733a2f2f692e696d6775722e636f6d2f316e53687836792e706e67)
 
-The gap in train-holdout performance is greater for more complicated models^[When `min_n` is smaller.] (which, as mentioned above, may signal overfitting) -- however performance on the holdout data is also better. Hence, in this instance, we would likely want to select the most complicated model among these^[Again, when `min_n` is smallest.] *even though* the performance estimates on the training data are the most unrealistic.
+The gap in train-holdout (AKA, analysis-assessment^[[Feature Engineering and Selection, 3.4 Resampling](http://www.feat.engineering/resampling.html) is a helpful resource for understanding the subtle distinction between these.]) performance is greater for more complicated models^[When `min_n` is smaller.] (which, as mentioned above, may signal overfitting). However more complicated models also perform better on the holdout data. Hence, we would likely select the complicated model^[Again, when `min_n` is smallest.] *even though* the performance estimates on the training data are the most unrealistic.
 
 While a difference in performance on training and holdout datasets may provide a helpful indicator for overfitting, it is not really what you care about during model selection^[This is likely the case even when you are planning on using the model to generate prediction intervals and not just point estimates.].
 
 **Tune your bands based on the holdout set**
 
-Let's say your selected model has a substantial difference in performance between the training & holdout data and you are worried that the *expected* width of your prediction intervals may be optimistically narrow, however you still want to keep this model because it has the best performance when evaluated on holdout data. An alternative to trying to fit a more simple model is to adjust your prediction bands, tuning them based on the coverage level on a holdout dataset. To describe this idea I will define three ways of thinking about coverage:
+Pretend that your selected model has a substantial difference in performance when evaluated on training versus holdout data. You are worried that the width of your model's outputted prediction intervals will be optimistically narrow. However you still want to keep this model because it has the best performance when evaluated on holdout data^[Or some other reason, e.g. you are not able to retrain it or have some business constraint that means you are stuck with this model.]. An alternative to fitting a more simple model is to adjust the confidence level of your prediction intervals, tuning them based on the coverage level on a holdout dataset. To describe this solution, I will define three ways of thinking about coverage:
 
 * target coverage: The level of coverage you want to attain on a holdout dataset (i.e. the proportion of observations you want to fall within your prediction intervals).
 * expected coverage: The level of confidence in the model for the prediction intervals, e.g. asking the model to predict 90% prediction intervals.
-* empirical coverage: The level of coverage actually observed when evaluated on a dataset, typically a holdout dataset not used to train the model.
+* empirical coverage: The level of coverage actually observed when evaluated on a dataset, typically a holdout dataset not used in training the model.
 
-Ideally all three align. However, Let's consider a hypothetical example, when your model is overfit and you have a 90% target coverage. You might see that a 90% expected coverage leads to an 85% empirical coverage on a holdout dataset. To align your target and empirical coverage at 90%, may require setting expected coverage at something like 94%^[Tuning your alpha level until the coverage on a holdout dataset is where you want it.]. 
+Ideally all three align. However let's say in our hypothetical example you have a 90% target coverage. If our model is slightly overfit, you might see that a 90% expected coverage leads to an 85% empirical coverage on a holdout dataset. To align your target and empirical coverage at 90%, may require setting expected coverage at something like 93%^[Tuning your alpha level until the coverage on a holdout dataset is where you want it.]. 
 
 This is called "adaptive coverage" and is discussed briefly by Emmanuel Candes in the video below:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/61tpigfLHso?start=1654" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-In a __follow-up post__ I will walk through an example similar to the one above.
+In a follow-up post, __Building Prediction Intervals with Quantile Regression__ I will walk through a similar example where I tune the expected coverage.
 
 # Generalizability
 
@@ -330,12 +332,12 @@ preds_intervals <- predict(
 preds_intervals %>% 
   select(-Sale_Price) %>% 
   slice(1) %>% 
-  knitr::kable()
+  knitr::kable(digits = 1)
 ```
 
 This suggests that, given these attributes, we would expect that the `Sale_Price` for an individual observation would fall between \$140,208 and \$242,793 (with 90% confidence). Our example offer of \$184,000 falls well within this range, meaning that -- based on the model -- the offer does not appear unreasonable.
 
-Let's review what 90% prediction intervals look like against the *actual* prices on a subset of observations in our holdout dataset (log transformations are applied on the x and y axis to adjust for the fact that variability in estimates, and therefore prediction intervals, increase with the predicted `Sale_Price`[^6]):
+Let's review a sample of what 90% prediction intervals look like against the *actual* prices on a subset of observations in our holdout dataset:
 ```{r prediction-intervals-sample}
 set.seed(1234)
 p <- preds_intervals %>% 
@@ -358,6 +360,8 @@ p +
 
 ```
 
+(Log transformations are applied on the x and y axis to adjust for the fact that variability in estimates, and therefore prediction intervals, increase with the predicted `Sale_Price`[^6])
+
 [^6]: As noted previously the model was built to predict `log(Sale_Price, 10)` (as opposed to `Sale_Price`) as errors increase with the predicted price of the house. Hence why the transformed scales in the text are appropriate. If you are curious though, the figure below shows the prediction intervals on raw `Sale_Price` scale.
     
     ```{r}
@@ -369,9 +373,7 @@ p +
 
 ## Coverage
 
-Let's now check what proportion of our holdout observations are actually "covered" by their prediction intervals^[I.e. the rate at which the *actual* value fall within the range of the prediction interval (coverage is essentially checking whether the range you expect from your prediction intervals is actually what is achieved).]. 
-
-Hence for our 90% prediction intervals, we will expect coverage on a holdout set to be 90%.
+Let's review what proportion of our holdout observations are actually "covered" by their 90% prediction intervals^[I.e. the rate at which the *actual* value fall within the range of the prediction interval (coverage is essentially checking whether the range you expect from your prediction intervals is actually what is achieved). For our 90% prediction intervals, we will expect coverage on a holdout dataset to be 90%.].
 ```{r}
 preds_intervals %>%
   mutate(covered = ifelse(Sale_Price >= .pred_lower & Sale_Price <= .pred_upper, 1, 0)) %>% 
@@ -381,12 +383,12 @@ preds_intervals %>%
             ),
             stderror = sd(covered) / sqrt(n),
             coverage_prop = n_covered / n) %>% 
-  knitr::kable()
+  knitr::kable(digits = 2)
 ```
 
-~93% of our holdout observations were actually covered^[The difference between 93% and the expected coverage of 90% may just be the result of random variability in the data.]. We can likely trust these intervals aren't too narrow^[Though they are perhaps slightly conservative. To get a better estimate for coverage, we could use cross validation as this will provide estimates for coverage across multiple iterations of model fitting.]. It is usually better to be on the slightly conservative than optimistic side regarding coverage (as models tend to perform worse than expected when put into production)^[I.e. it is betterthat our empirical coverage is greater than our target coverage than less than our target coverage -- even if it would be ideal for these to align.]. 
+~93% of our holdout observations were actually covered^[The difference between 93% and the expected coverage of 90% may just be the result of random variability in the data.]. We can likely trust these intervals aren't too narrow^[Though they are perhaps slightly conservative. To get a better estimate for coverage, we could use cross validation as this will provide estimates for coverage across multiple iterations of model fitting.]. It is usually better to be on the slightly conservative than optimistic side regarding coverage^[As models tend to perform worse than expected when put into production. I.e. it is better that our empirical coverage is greater than our target coverage than less than our target coverage -- even if it would be ideal for these to align.]. 
 
-It may also helpful to review coverage across predictions, rather than just in aggregate. This distinction is related to the notion of "marginal" vs "conditional" coverage^["Marginal" coverage generally means "on average across observations", whereas "conditional" means conditioned on the specific attributes for an observation. Hence "90%" marginal coverage allows that coverage may be higher in some areas and lower in others. 90% conditional coverage means that the conditional rate should be 90% across observations. "Conditional" coverage is generally harder to get than "marginal" coverage and is actually impossible to achieve without some assumptions.].
+In addition to reviewing overall coverage, it may be helpful to review coverage across predictions. This distinction is related to the notion of "marginal" vs "conditional" coverage^["Marginal" coverage generally means "on average across observations", whereas "conditional" means conditioned on the specific attributes for an observation. Hence "90%" marginal coverage allows that coverage may be higher in some areas and lower in others. 90% conditional coverage means that the conditional rate should be 90% across observations. "Conditional" coverage is generally harder to get than "marginal" coverage and is actually impossible to achieve without some assumptions.].
 
 The chart below splits the holdout data into five segments ordered by predicted price with equal number of observations^[Mostly equal -- there are 146 or 147 observations summarised in each row.] and checks the proportion covered over each quintile.
 
@@ -428,13 +430,15 @@ preds_intervals %>%
   with(chisq.test(price_grouped, covered))
 ```
 
-The results provide evidence that whether an observation is covered or not-covered may depend (to some extent) on which quintile for predicted `Sale_Price` the observation falls within^[More explicitly, this test shows that the distribution of `price_grouped by quintile` across `covered` would only occur ~3.4% of the time under the assumption of "no relationship". This is very unlikely, so we reject the NULL hypothesis of "no relationship".].
+The results provide evidence that whether an observation is covered or not-covered may depend (to some extent) on which quintile of predicted `Sale_Price` the observation falls within^[More explicitly, this test shows that the distribution of `price_grouped by quintile` across `covered` would only occur ~3.4% of the time under the assumption of "no relationship". This is very unlikely, so we reject the NULL hypothesis of "no relationship".].
 
-I will show in a follow-up post covering __Simulation Methods for Building Prediction Intervals__ intervals that seem to have more consistent coverage rates across predicted `Sale_Price`.
+I will show in a follow-up post on __Simulation Methods for Building Prediction Intervals__ intervals that seem to have more consistent coverage rates across predicted `Sale_Price`.
 
 ## Interval Width
 
-Another helpful metric for evaluating your prediction intervals is to review their width. More narrow bands suggest a more precise model. Remember from the notes in [Consider Variability] that the size of the errors will change with the size of the prediction. To adjust for this an appropriate metric can be to review 'interval width' around `Sale_Price` as a percentage of the prediction^[Alternatively could just have evaluated the interval widths in the `log(Sale_Price, 10)` terms outputted by the model.]. I will review these across the quintiles of our model.
+Another helpful way to evaluate prediction intervals is by their width. More narrow bands indicate a more precise model. 
+
+Remember from the section on [Considering Uncertainty] that the errors in `Sale_Price` increase with the size of the prediction. To adjust for this an appropriate metric can be to review interval width as a percentage of a percentage of predicted `Sale_Price`^[Alternatively could just have evaluated the interval widths in the `log(Sale_Price, 10)` terms outputted by the model.]. I will review these across quintiles of the predictions.
 
 ```{r}
 lm_interval_widths <- preds_intervals %>% 
@@ -452,24 +456,22 @@ lm_interval_widths <- preds_intervals %>%
   select(-price_grouped) 
 
 lm_interval_widths %>% 
-  knitr::kable()
+  knitr::kable(digits = 4)
 ```
 
-The relative interval width is highly consistent across predicted `Sale_Price` and between observations^[Varying on average less than half a percent between observations.]. The 90% interval represents on average about ~54% of the predicted `Sale_Price`^[Methods in follow-up posts will show greater diversity of interval widths.]. For the analytic approach the only factor that contributes to differences in interval width across predictions is the distance of an observations from the centroid of the data (this has a relatively small impact compared to the sampling variance which is treated as constant)^[While the see-saw analogy does make a difference in causing some observations to have wider intervals than others, in aggregate you can see the difference is not *that* big -- values like the Mean Squared Error (MSE) or similar aggregate error metrics actually give a pretty close semblance of what you will expect to get when going through the process of creating prediction intervals specific to each observation. Note also however that the difference in interval width will still be greater for the more extreme observations. In future posts some of the methods I walk through will be more flexible or have other advantages (e.g. less strict reliance on distributional assumptions).]. 
+The relative interval width is consistent across predicted `Sale_Price` and between observations^[Varying on average less than half a percent between observations.]. The 90% interval represents an average of ~54% of the predicted `Sale_Price`^[Methods in follow-up posts will show greater diversity of interval widths.]. Recall from [Analytic Method of Calculating Prediction Intervals] that the only factor contributing to differences in interval width across predictions is the distance of an observations from the centroid of the data. This has a relatively small impact on interval width compared to the sampling variance (which is treated as constant across observations)^[While the see-saw analogy does make a difference in causing some observations to have wider intervals than others, in aggregate you can see the difference is not *that* big -- values like the Mean Squared Error (MSE) or similar aggregate error metrics actually give a pretty close semblance of what you will expect to get when going through the process of creating prediction intervals specific to each observation. Note also however that the difference in interval width will still be greater for the more extreme observations. In future posts some of the methods I walk through will be more flexible or have other advantages (e.g. less strict reliance on distributional assumptions).]. 
 
 # Closing Notes
 
 *Upsides of prediction intervals using parametric method with linear regression:*
 
-* Most common (largest number of people are familiar with)
-* Straightforward, intuitive calculation
-* Low computation costs
+* Most common (largest number of people are familiar)
+* Straightforward calculation with low computation costs
 
 *Downsides:*
 
-* Prediction intervals produced in this way have a variety of strong assumptions that they depend on, [resource](https://online.stat.psu.edu/stat501/lesson/3/3.3/#paragraph--766).
-    * Generally this approach relies more heavily on model assumptions compared to alternatives. 
-* Assumes you have the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic^[Though linear models are less likely to overfit compared to most model types.])
+* Prediction intervals produced in this way have a variety of [strong assumptions](https://online.stat.psu.edu/stat501/lesson/3/3.3/#paragraph--766) that they depend on (generally more heavily than other approaches). 
+* Assumes the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic^[Though linear models are less likely to overfit compared to most model types.])
 
 **Wrap-up:**
 
