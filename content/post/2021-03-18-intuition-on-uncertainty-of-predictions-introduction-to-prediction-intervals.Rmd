@@ -18,6 +18,12 @@ Prediction intervals provide a measure of uncertainty on individual observations
 
 I use the R programming language and the [tidyverse](https://www.tidyverse.org/) + [tidymodels](https://www.tidymodels.org/) suite of packages to create all models and figures. Similar to a [previous post on pricing](https://www.bryanshalloway.com/2020/08/17/pricing-insights-from-historical-data-part-1/), I use the [AmesHousing](https://github.com/topepo/AmesHousing) data for my examples.
 
+This is the first of a three posts on prediction intervals:
+
+1. 
+1. 
+1.
+
 # Providing More Than Point Estimates
 
 Imagine you are an analyst for a business to business (B2B) seller and are responsible for identifying appropriate prices for complicated products with non-standard prices^[Non-standard, negotiated prices are common in the B2B world.]. If you have more than one or two variables that influence price, then a statistical or machine learning model is a helpful approach for determining the optimal way to combine features to pinpoint expected prices for future deals[^analysts] (of course margin, market positioning, and other business considerations also matter). 
