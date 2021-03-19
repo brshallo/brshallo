@@ -10,13 +10,11 @@ thumbnail: /post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction
 knitr::opts_chunk$set(echo = TRUE,  message = FALSE, warning = FALSE)
 ```
 
-**TLDR:** Prediction intervals can be a helpful indicator for understanding your model and for evaluating potential observations. Prediction Intervals can be thought of as a mix of uncertainty in estimating the expected value and uncertainty in the sample. Measures such as coverage and average interval width are helpful ways to evaluate your prediction intervals.
+Prediction intervals provide a measure of uncertainty on individual observations. This post... 
 
-This post... 
-
-* builds up to a potential motivating example for using prediction intervals
-* describes how to think about prediction intervals
-* shows how to build and then review prediction intervals
+* builds up a motivating example for using prediction intervals
+* describes factors that influence prediction intervals
+* shows how to build and review prediction intervals
 
 I use the R programming language and the [tidyverse](https://www.tidyverse.org/) + [tidymodels](https://www.tidymodels.org/) suite of packages to create all models and figures. Similar to a [previous post on pricing](https://www.bryanshalloway.com/2020/08/17/pricing-insights-from-historical-data-part-1/), I use the [AmesHousing](https://github.com/topepo/AmesHousing) data for my examples.
 
@@ -30,17 +28,16 @@ Imagine you are an analyst for a business to business (B2B) seller and are respo
     
     I've seen many occassions when an analyst keeps slicing their data and reviewing univariate relationships until they've convinced themselves they've found something -- even when the sample sizes at this point are small and the nature of the relationship unconvincing.
 
-You might first build a model of *expected sale prices* that is fit based on the patterns in historical sales data. The naive approach would be to use predictions from this model as a reference point. If a customer's offer falls above the "expected" price, you might interpret this is a "good" deal. If the offer falls "below" the predicted price you might be tempted to view the deal as "bad." 
+You might first build a model of *expected sale prices* that is fit based on the patterns in historical sales data. The naive approach would be to use predictions from this model as a reference point. If a customer's offer falls above the "expected" price, you might interpret this as a "good" deal; if the offer falls "below" the predicted price you might view the deal as "bad." 
 
-As a stand-in for the large complicated products typically sold in B2B markets, I will use for my examples home sales from Ames, Iowa . 
+As a stand-in for the large complicated products typically sold in B2B markets, I will use data on home sales from Ames, Iowa for my examples. 
 
-With the code below I load in the data and split it into a training dataset (for exploration and model development) and validation dataset (holdout data not used in model training but reserved for evaluating model performance)^[If I was being a little more careful, I'd also split the `train` data into a validation set or I'd use `rsample` to set-up cross validation. In this post though I largely use `test` how you might use a validation set though. See [Tidy Modeling with R, 10.2](https://www.tmwr.org/resampling.html) for more.]. 
+Load in the data and then split it into a training dataset (for exploration and model development) and validation dataset (holdout data not used in model training but reserved for evaluating model performance)^[If I was being a little more careful, I'd also split the `train` data into a validation set or I'd use `rsample` to set-up cross validation. In this post though I largely use `test` how you might use a validation set though. See [Tidy Modeling with R, 10.2](https://www.tmwr.org/resampling.html) for more.]. 
 
 ```{r load-data-packages}
 library(tidyverse)
 library(tidymodels)
 library(AmesHousing)
-
 
 ames <- make_ames() %>% 
   mutate(Years_Old = Year_Sold - Year_Built,
@@ -53,7 +50,7 @@ ames_train <- training(data_split)
 ames_holdout  <- testing(data_split)
 ```
 
-Specify pre-processing and workflow to build a relatively simple multiple linear regression model to predict `Sale_Price` -- actually $\log_{10}{}Sale\:Price$[^1]. (Note that I am skipping *a lot of important steps* you typically would take when building predictive models^[E.g. data exploration, review of model assumptions, use of a separate validation set, hyperparameter tuning, etc.]).
+Specify preprocessing steps and multiple linear regression model to predict `Sale_Price` -- actually $\log_{10}{}Sale\:Price$[^1]. (Note that I am not including many important features and am skipping *a lot of important steps* you typically would take when building predictive models^[E.g. data exploration, review of model assumptions, use of a separate validation set, hyperparameter tuning, etc.]).
 
 [^1]: A log transform on the target can be thought of roughly as changing the model tobe about changes in percent of `Sale_Price` rather than raw `Sale_Price`. Throughout the post I will be performing a log transformation on our target, `Sale_Price` prior to modeling. Hence in some cases I make comparisons against the log of dollars offered OR I will use some metric that is in terms of *percent* rather than raw `Sale_Price`. It is generally best to conduct model evaluation against whatever transformed scale is used in model building (i.e. in our case `log(Sale_Price, 10)`). This is suggested in [Tidymodels with R](https://www.tmwr.org/performance.html):
     
@@ -118,18 +115,18 @@ data_preds %>%
   knitr::kable()
 ```
 
-Whether an offer is above or below this *expected* price may provide a first indication of whether the deal is 'good' or 'bad' for the seller^[Relative to prior deals which the model was trained on.]. The magnitude of the difference between the offer and the expected price might also be important. However you often will care about how big this difference is relative to the underlying *uncertainty* in `Sale_Price` on the given observation -- which calls for the use of statistics, specifically predictive inference. Statistics can help to provide a sense of the accuracy of the model and the extent to which an offer seems reasonable in the context of the variability in prices^[When you are dealing with problems that consider both magnitude and variability, statitistics are often helpful.].
+Using the naive approach, whether an offer is above or below this *expected* price may provide a first indication of whether the deal is 'good' or 'bad' for the seller^[Relative to prior deals which the model was trained on.]. The magnitude of the difference between the offer and the expected price might also be important. However you often will care about how big this difference is relative to the underlying uncertainty in `Sale_Price`-- which calls for the use of statistics, specifically predictive inference. Statistics can help to provide a sense of the accuracy of the model and the extent to which an offer seems reasonable in the context of the variability in prices^[When you are dealing with problems that consider both magnitude and variability, statitistics are often helpful.].
 
 # Considering Uncertainty
 
-For example, Let's consider an offer of \$180,000 for the example house mentioned above. You might first think you ought to reject the offer due to it being ~\$4,500 less than the expected price. However statistics can provide context as to whether this represents a *small* or *large* deviation from expectations. A *less naive* approach would be to compare the \$180,000 offer in the context of the model's observed accuracy when making predictions on a holdout set. 
+For example, Let's consider an offer of \$180,000 for the example house mentioned above. You might first think you ought to reject the offer due to it being ~\$4,500 less than the expected price. However a *less naive* approach would be to compare the \$180,000 offer in the context of the model's observed accuracy when making predictions on a holdout set^[Atatistics can provide context as to whether this represents a *small* or *large* deviation from expectations.]. 
 
-We need to be careful regarding how we consider performance and the errors of our model. For this particular problem, the variability in our model's errors increase with the magnitude of the predictions for `Sale_Price`^[This is known as heteroskedasticity. We generally want our error metrics to be homoskedastic, i.e. 'same variance'. This is why we built the model on the target `log(Sale_Price, 10)`. Note that the base rate of 10 doesn't really matter that much, we could just have easily have built the model using hte natural logarithm and gotten similar results.], We want an error metric that will not inflate with `Sale_Price`, hence rather than review the difference between `Sale_Price` and Expected[`Sale_Price`], it is more appropriate to review either:
+We need to be careful regarding how we consider performance and the errors of our model. For this particular problem, the variability in our model's errors increase with the magnitude of the predictions for `Sale_Price`^[This is known as heteroskedasticity. We generally want our error metrics to be homoskedastic, i.e. 'same variance'. This is why we built the model on the target `log(Sale_Price, 10)`. Note that the base rate of 10 doesn't really matter that much, we could just have easily have built the model using hte natural logarithm and gotten similar results.]. We want an error metric that will not inflate with `Sale_Price`. Hence rather than review the difference between `Sale_Price` and Expected[`Sale_Price`], it is more appropriate to review either:
 
 * $\log_{10}Sale_Price$ against Expected[$\log_{10}Sale_Price$] OR
-* an error metric that is in terms of percent
+* an error metric that is in terms of percent of `Sale_Price`
 
-For simplicity of explanation, I will use the latter method and focus on the percent error^[During model building and evaluation the former would often be more appropriate to review. In particular the root mean squared error (RMSE) of the errors of the predictions for `log(Sale_Price)`.]. We see the offer of $180,000 -- representing a 2.5% deviation from expectations -- falls well within the distribution of typical errors seen by our model.
+For simplicity of explanation, I will use the latter method and focus on the percentage error^[During model building and evaluation the former would often be more appropriate to review. In particular the root mean squared error (RMSE) of the errors of the predictions for `log(Sale_Price)`.]. The offer of $180,000 represents a 2.5% deviation from expectations. This falls well within the distribution of typical errors seen by our model.
 
 ```{r}
 offer <- tibble(PE = (184503 - 180000) / 180000, offer = "offer")
@@ -145,12 +142,12 @@ data_preds %>%
   theme_bw()
 ```
 
-On average our model is off by around ~12% of the actual `Sale_Price` observed. This estimate is based on evaluation on our holdout dataset (data not seen during model training and reserved for the purpose of model evaluation).
+On average our model is off by around ~12% of the actual `Sale_Price` observed. These estimates are based on performance on the holdout dataset^[Data not seen during model training and reserved for the purpose of model evaluation].
 
 ```{r}
 data_preds %>% 
   yardstick::mape(Sale_Price, .pred) %>% 
-  knitr::kable()
+  knitr::kable(digits = 1)
 ```
 
 90% of errors on the holdout dataset were between -27.1% and 21.3% of the actual `Sale_Price`. 
@@ -159,35 +156,35 @@ data_preds %>%
 data_preds %>% 
   mutate(PE = (Sale_Price - .pred) / Sale_Price,
          APE = abs(PE)) %>% 
-  summarise(quant_05 = quantile(PE, 0.05),
-            quant_95 = quantile(PE, 0.95)) %>% 
-  knitr::kable()
+  summarise(quant_05 = quantile(PE, 0.05) * 100,
+            quant_95 = quantile(PE, 0.95) * 100) %>% 
+  knitr::kable(digits = 1)
 ```
 
-All of which suggests th3 \$180,000 offer does not represent a substantial outlier from the typical variability of *actual* from *predicted* `Sale_Price`^[Based on the obervation level estimates given by our model on a holdout set.].
+All of which suggests the \$180,000 offer does not represent a substantial outlier from the typical variability of observed from predicted `Sale_Price`^[Based on the obervation level estimates given by our model on a holdout set.].
 
 **Is your model performant enough to be useful?**
 
-Before using your model for predictive inference, you *should* have reviewed performance on a holdout set to ensure your model is sufficiently accurate for your business context. For example, in our problem, is an average error of ~12% and 90% prediction intervals of +/- ~25% of `Sale_Price` useful? If the answer is "no," that suggests the need for more effort in improving the accuracy of the model (e.g. trying other transformations, features, model types)^[Or a focus on other pieces of information outside of your model for making decisions.]. For our examples we are assuming the answer is 'yes,' our model is accurate enough, so that we can move-on to focus on prediction intervals. 
+Before using the model for predictive inference, one *should* have reviewed performance on a holdout dataset to ensure the model is sufficiently accurate for the business context. For example, in our problem, is an average error of ~12% and 90% prediction intervals of +/- ~25% of `Sale_Price` useful? If the answer is "no," that suggests the need for more effort in improving the accuracy of the model (e.g. trying other transformations, features, model types)^[Or a focus on other pieces of information outside of your model for making decisions.]. For our examples we are assuming the answer is 'yes,' our model is accurate enough (so that we can move-on to focus on prediction intervals). 
 
 # Observation Specific Intervals
 
-While a good starting point, a limitation with using aggregate error metrics to estimate intervals for *specific* observations is that individual cases may have differences in the uncertainty of predictions. Specifically, predictions further from the centroid of the data generally have more uncertainty in the expected price. 
+While a good starting point, a limitation with using aggregate error metrics to estimate intervals indiscriminately across observations^[As shown above in [Considering Uncertainty].] is that different attributes may associate with different levels of uncertainty in the prediction. Specifically, predictions further from the centroid of the data generally have more uncertainty in the expected price. 
 
-A see-saw is a good analogy for this phenomenon: 
+A toy see-saw is a good analogy for this phenomenon: 
 
-> As the angle of the bench changes, the further you are from the center, the more distance you will move up/down &rightarrow;  
-> The angle of the seasaw represents variability in the model function being estimated &rightarrow;  
-> The distance from the see-saw's pivot point corresponds with the distance from the centroid of the data &rightarrow;  
-* The dashed blue bars below represent this variability in estimating the model's expected value. 
+> As the angle of the bench changes... the further you are from the center, the more distance you will move up/down &rightarrow;  
+> The angle of the seasaw represents variability in the model function being estimated. The distance from the see-saw's pivot point corresponds with the distance from the centroid of the data
+
+This variability in estimating the model's expected value is represented by dashed blue lines in the chart below (of a generic linear model):
 
 ![Image [source](https://i.stack.imgur.com/GeeI3.png)](https://i.stack.imgur.com/GeeI3.png)
 
-Because of this it is often preferable to determine a plausible price range by using a prediction interval that is specific to the attributes for the observation^[Rather than just looking at your observation of interest through the lens of aggregate error metrics.]. 
+Because of this variability in the uncertainty of the expected value of the model, it is preferable to determine a plausible price range that is specific to the attributes of the observations^[Rather than just looking at your observation of interest through the lens of aggregate error metrics.]. 
 
-(Note that the uncertainty described above corresponds with the *confidence intervals* and not as directly with the *prediction intervals*. The distinction and relationship between these will be discussed in [A Few Things to Understand About Prediction Intervals].)
+(The uncertainty described above corresponds with the *confidence intervals* and not as directly with the *prediction intervals* -- that are the focus of this post. The distinction and relationship between these will be discussed in [A Few Things to Understand About Prediction Intervals].)
 
-# Understanding Prediction Intervals
+# A Few Things to Understand About Prediction Intervals
 
 ## Prediction Intervals and Confidence Intervals 
 

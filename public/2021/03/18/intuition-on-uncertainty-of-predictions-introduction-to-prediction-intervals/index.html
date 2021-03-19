@@ -83,7 +83,7 @@
 <li><a href="#providing-more-than-point-estimates">Providing More Than Point Estimates</a></li>
 <li><a href="#considering-uncertainty">Considering Uncertainty</a></li>
 <li><a href="#observation-specific-intervals">Observation Specific Intervals</a></li>
-<li><a href="#understanding-prediction-intervals">Understanding Prediction Intervals</a><ul>
+<li><a href="#a-few-things-to-understand-about-prediction-intervals">A Few Things to Understand About Prediction Intervals</a><ul>
 <li><a href="#prediction-intervals-and-confidence-intervals">Prediction Intervals and Confidence Intervals</a></li>
 <li><a href="#analytic-method-of-calculating-prediction-intervals">Analytic Method of Calculating Prediction Intervals</a></li>
 <li><a href="#visual-comparison-of-prediction-intervals-and-confidence-intervals">Visual Comparison of Prediction Intervals and Confidence Intervals</a></li>
@@ -99,24 +99,22 @@
 </ul>
 </div>
 
-<p><strong>TLDR:</strong> Prediction intervals can be a helpful indicator for understanding your model and for evaluating potential observations. Prediction Intervals can be thought of as a mix of uncertainty in estimating the expected value and uncertainty in the sample. Measures such as coverage and average interval width are helpful ways to evaluate your prediction intervals.</p>
-<p>This post…</p>
+<p>Prediction intervals provide a measure of uncertainty on individual observations. This post…</p>
 <ul>
-<li>builds up to a potential motivating example for using prediction intervals</li>
-<li>describes how to think about prediction intervals</li>
-<li>shows how to build and then review prediction intervals</li>
+<li>builds up a motivating example for using prediction intervals</li>
+<li>describes factors that influence prediction intervals</li>
+<li>shows how to build and review prediction intervals</li>
 </ul>
 <p>I use the R programming language and the <a href="https://www.tidyverse.org/">tidyverse</a> + <a href="https://www.tidymodels.org/">tidymodels</a> suite of packages to create all models and figures. Similar to a <a href="https://www.bryanshalloway.com/2020/08/17/pricing-insights-from-historical-data-part-1/">previous post on pricing</a>, I use the <a href="https://github.com/topepo/AmesHousing">AmesHousing</a> data for my examples.</p>
 <div id="providing-more-than-point-estimates" class="section level1">
 <h1>Providing More Than Point Estimates</h1>
 <p>Imagine you are an analyst for a business to business (B2B) seller and are responsible for identifying appropriate prices for complicated products with non-standard prices<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. If you have more than one or two variables that influence price, then a statistical or machine learning model is a helpful approach for determining the optimal way to combine features to pinpoint expected prices for future deals<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> (of course margin, market positioning, and other business considerations also matter).</p>
-<p>You might first build a model of <em>expected sale prices</em> that is fit based on the patterns in historical sales data. The naive approach would be to use predictions from this model as a reference point. If a customer’s offer falls above the “expected” price, you might interpret this is a “good” deal. If the offer falls “below” the predicted price you might be tempted to view the deal as “bad.”</p>
-<p>As a stand-in for the large complicated products typically sold in B2B markets, I will use for my examples home sales from Ames, Iowa .</p>
-<p>With the code below I load in the data and split it into a training dataset (for exploration and model development) and validation dataset (holdout data not used in model training but reserved for evaluating model performance)<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
+<p>You might first build a model of <em>expected sale prices</em> that is fit based on the patterns in historical sales data. The naive approach would be to use predictions from this model as a reference point. If a customer’s offer falls above the “expected” price, you might interpret this as a “good” deal; if the offer falls “below” the predicted price you might view the deal as “bad.”</p>
+<p>As a stand-in for the large complicated products typically sold in B2B markets, I will use data on home sales from Ames, Iowa for my examples.</p>
+<p>Load in the data and then split it into a training dataset (for exploration and model development) and validation dataset (holdout data not used in model training but reserved for evaluating model performance)<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
 <pre class="r"><code>library(tidyverse)
 library(tidymodels)
 library(AmesHousing)
-
 
 ames &lt;- make_ames() %&gt;% 
   mutate(Years_Old = Year_Sold - Year_Built,
@@ -127,7 +125,7 @@ data_split &lt;- initial_split(ames, strata = &quot;Sale_Price&quot;, p = 0.75)
 
 ames_train &lt;- training(data_split)
 ames_holdout  &lt;- testing(data_split)</code></pre>
-<p>Specify pre-processing and workflow to build a relatively simple multiple linear regression model to predict <code>Sale_Price</code> – actually <span class="math inline">\(\log_{10}{}Sale\:Price\)</span><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. (Note that I am skipping <em>a lot of important steps</em> you typically would take when building predictive models<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>).</p>
+<p>Specify preprocessing steps and multiple linear regression model to predict <code>Sale_Price</code> – actually <span class="math inline">\(\log_{10}{}Sale\:Price\)</span><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. (Note that I am not including many important features and am skipping <em>a lot of important steps</em> you typically would take when building predictive models<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>).</p>
 <pre class="r"><code>lm_recipe &lt;- 
   recipe(
     Sale_Price ~ Lot_Area + Neighborhood  + Years_Old + Gr_Liv_Area + Overall_Qual + Total_Bsmt_SF + Garage_Area, 
@@ -208,17 +206,17 @@ lm_wf &lt;- workflows::workflow() %&gt;%
 </tr>
 </tbody>
 </table>
-<p>Whether an offer is above or below this <em>expected</em> price may provide a first indication of whether the deal is ‘good’ or ‘bad’ for the seller<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. The magnitude of the difference between the offer and the expected price might also be important. However you often will care about how big this difference is relative to the underlying <em>uncertainty</em> in <code>Sale_Price</code> on the given observation – which calls for the use of statistics, specifically predictive inference. Statistics can help to provide a sense of the accuracy of the model and the extent to which an offer seems reasonable in the context of the variability in prices<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
+<p>Using the naive approach, whether an offer is above or below this <em>expected</em> price may provide a first indication of whether the deal is ‘good’ or ‘bad’ for the seller<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. The magnitude of the difference between the offer and the expected price might also be important. However you often will care about how big this difference is relative to the underlying uncertainty in <code>Sale_Price</code>– which calls for the use of statistics, specifically predictive inference. Statistics can help to provide a sense of the accuracy of the model and the extent to which an offer seems reasonable in the context of the variability in prices<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
 </div>
 <div id="considering-uncertainty" class="section level1">
 <h1>Considering Uncertainty</h1>
-<p>For example, Let’s consider an offer of $180,000 for the example house mentioned above. You might first think you ought to reject the offer due to it being ~$4,500 less than the expected price. However statistics can provide context as to whether this represents a <em>small</em> or <em>large</em> deviation from expectations. A <em>less naive</em> approach would be to compare the $180,000 offer in the context of the model’s observed accuracy when making predictions on a holdout set.</p>
-<p>We need to be careful regarding how we consider performance and the errors of our model. For this particular problem, the variability in our model’s errors increase with the magnitude of the predictions for <code>Sale_Price</code><a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>, We want an error metric that will not inflate with <code>Sale_Price</code>, hence rather than review the difference between <code>Sale_Price</code> and Expected[<code>Sale_Price</code>], it is more appropriate to review either:</p>
+<p>For example, Let’s consider an offer of $180,000 for the example house mentioned above. You might first think you ought to reject the offer due to it being ~$4,500 less than the expected price. However a <em>less naive</em> approach would be to compare the $180,000 offer in the context of the model’s observed accuracy when making predictions on a holdout set<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
+<p>We need to be careful regarding how we consider performance and the errors of our model. For this particular problem, the variability in our model’s errors increase with the magnitude of the predictions for <code>Sale_Price</code><a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>. We want an error metric that will not inflate with <code>Sale_Price</code>. Hence rather than review the difference between <code>Sale_Price</code> and Expected[<code>Sale_Price</code>], it is more appropriate to review either:</p>
 <ul>
 <li><span class="math inline">\(\log_{10}Sale_Price\)</span> against Expected[<span class="math inline">\(\log_{10}Sale_Price\)</span>] OR</li>
-<li>an error metric that is in terms of percent</li>
+<li>an error metric that is in terms of percent of <code>Sale_Price</code></li>
 </ul>
-<p>For simplicity of explanation, I will use the latter method and focus on the percent error<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>. We see the offer of $180,000 – representing a 2.5% deviation from expectations – falls well within the distribution of typical errors seen by our model.</p>
+<p>For simplicity of explanation, I will use the latter method and focus on the percentage error<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>. The offer of $180,000 represents a 2.5% deviation from expectations. This falls well within the distribution of typical errors seen by our model.</p>
 <pre class="r"><code>offer &lt;- tibble(PE = (184503 - 180000) / 180000, offer = &quot;offer&quot;)
 
 data_preds %&gt;% 
@@ -231,10 +229,10 @@ data_preds %&gt;%
   labs(x = &quot;Percent Error&quot;)+
   theme_bw()</code></pre>
 <p><img src="/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>On average our model is off by around ~12% of the actual <code>Sale_Price</code> observed. This estimate is based on evaluation on our holdout dataset (data not seen during model training and reserved for the purpose of model evaluation).</p>
+<p>On average our model is off by around ~12% of the actual <code>Sale_Price</code> observed. These estimates are based on performance on the holdout dataset<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>.</p>
 <pre class="r"><code>data_preds %&gt;% 
   yardstick::mape(Sale_Price, .pred) %&gt;% 
-  knitr::kable()</code></pre>
+  knitr::kable(digits = 1)</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -247,7 +245,7 @@ data_preds %&gt;%
 <tr class="odd">
 <td align="left">mape</td>
 <td align="left">standard</td>
-<td align="right">11.76149</td>
+<td align="right">11.8</td>
 </tr>
 </tbody>
 </table>
@@ -255,9 +253,9 @@ data_preds %&gt;%
 <pre class="r"><code>data_preds %&gt;% 
   mutate(PE = (Sale_Price - .pred) / Sale_Price,
          APE = abs(PE)) %&gt;% 
-  summarise(quant_05 = quantile(PE, 0.05),
-            quant_95 = quantile(PE, 0.95)) %&gt;% 
-  knitr::kable()</code></pre>
+  summarise(quant_05 = quantile(PE, 0.05) * 100,
+            quant_95 = quantile(PE, 0.95) * 100) %&gt;% 
+  knitr::kable(digits = 1)</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -267,38 +265,37 @@ data_preds %&gt;%
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">-0.2712696</td>
-<td align="right">0.2134343</td>
+<td align="right">-27.1</td>
+<td align="right">21.3</td>
 </tr>
 </tbody>
 </table>
-<p>All of which suggests th3 $180,000 offer does not represent a substantial outlier from the typical variability of <em>actual</em> from <em>predicted</em> <code>Sale_Price</code><a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
+<p>All of which suggests the $180,000 offer does not represent a substantial outlier from the typical variability of observed from predicted <code>Sale_Price</code><a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</p>
 <p><strong>Is your model performant enough to be useful?</strong></p>
-<p>Before using your model for predictive inference, you <em>should</em> have reviewed performance on a holdout set to ensure your model is sufficiently accurate for your business context. For example, in our problem, is an average error of ~12% and 90% prediction intervals of +/- ~25% of <code>Sale_Price</code> useful? If the answer is “no,” that suggests the need for more effort in improving the accuracy of the model (e.g. trying other transformations, features, model types)<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>. For our examples we are assuming the answer is ‘yes,’ our model is accurate enough, so that we can move-on to focus on prediction intervals.</p>
+<p>Before using the model for predictive inference, one <em>should</em> have reviewed performance on a holdout dataset to ensure the model is sufficiently accurate for the business context. For example, in our problem, is an average error of ~12% and 90% prediction intervals of +/- ~25% of <code>Sale_Price</code> useful? If the answer is “no,” that suggests the need for more effort in improving the accuracy of the model (e.g. trying other transformations, features, model types)<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>. For our examples we are assuming the answer is ‘yes,’ our model is accurate enough (so that we can move-on to focus on prediction intervals).</p>
 </div>
 <div id="observation-specific-intervals" class="section level1">
 <h1>Observation Specific Intervals</h1>
-<p>While a good starting point, a limitation with using aggregate error metrics to estimate intervals for <em>specific</em> observations is that individual cases may have differences in the uncertainty of predictions. Specifically, predictions further from the centroid of the data generally have more uncertainty in the expected price.</p>
-<p>A see-saw is a good analogy for this phenomenon:</p>
+<p>While a good starting point, a limitation with using aggregate error metrics to estimate intervals indiscriminately across observations<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a> is that different attributes may associate with different levels of uncertainty in the prediction. Specifically, predictions further from the centroid of the data generally have more uncertainty in the expected price.</p>
+<p>A toy see-saw is a good analogy for this phenomenon:</p>
 <blockquote>
-<p>As the angle of the bench changes, the further you are from the center, the more distance you will move up/down →<br />
-The angle of the seasaw represents variability in the model function being estimated →<br />
-The distance from the see-saw’s pivot point corresponds with the distance from the centroid of the data →<br />
-* The dashed blue bars below represent this variability in estimating the model’s expected value.</p>
+<p>As the angle of the bench changes… the further you are from the center, the more distance you will move up/down →<br />
+The angle of the seasaw represents variability in the model function being estimated. The distance from the see-saw’s pivot point corresponds with the distance from the centroid of the data</p>
 </blockquote>
+<p>This variability in estimating the model’s expected value is represented by dashed blue lines in the chart below (of a generic linear model):</p>
 <div class="figure">
 <img src="https://i.stack.imgur.com/GeeI3.png" alt="Image source" />
 <p class="caption">Image <a href="https://i.stack.imgur.com/GeeI3.png">source</a></p>
 </div>
-<p>Because of this it is often preferable to determine a plausible price range by using a prediction interval that is specific to the attributes for the observation<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</p>
-<p>(Note that the uncertainty described above corresponds with the <em>confidence intervals</em> and not as directly with the <em>prediction intervals</em>. The distinction and relationship between these will be discussed in [A Few Things to Understand About Prediction Intervals].)</p>
+<p>Because of this variability in the uncertainty of the expected value of the model, it is preferable to determine a plausible price range that is specific to the attributes of the observations<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>.</p>
+<p>(The uncertainty described above corresponds with the <em>confidence intervals</em> and not as directly with the <em>prediction intervals</em> – that are the focus of this post. The distinction and relationship between these will be discussed in <a href="#a-few-things-to-understand-about-prediction-intervals">A Few Things to Understand About Prediction Intervals</a>.)</p>
 </div>
-<div id="understanding-prediction-intervals" class="section level1">
-<h1>Understanding Prediction Intervals</h1>
+<div id="a-few-things-to-understand-about-prediction-intervals" class="section level1">
+<h1>A Few Things to Understand About Prediction Intervals</h1>
 <div id="prediction-intervals-and-confidence-intervals" class="section level2">
 <h2>Prediction Intervals and Confidence Intervals</h2>
-<p>Prediction intervals and confidence intervals<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a> are often confused. Confidence intervals generally refer to making inferences on aggregates or <em>average</em> relationships – this is most useful for evaluating parameter estimates, performance metrics, relationships with covariates, etc. However if you are interested in price ranges on <em>individual</em> observations (as in our case), prediction intervals are what you want<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>. Rob Hyndman has a helpful post where he describes the differences in more detail: <a href="https://robjhyndman.com/hyndsight/intervals/">The difference between prediction intervals and confidence intervals</a><a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>.</p>
-<p>In linear regression, “prediction intervals” refers to a type of <a href="https://en.wikipedia.org/wiki/Confidence_interval">confidence interval</a><a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>, namely the confidence interval for a single observation (a “predictive confidence interval”). “Confidence intervals” have a specific statistical interpretation… in later posts on this topic, the intervals I create do not quite mirror the interpretations that go with a predictive confidence interval. I will use the term “prediction interval” somewhat loosely to refer to a plausible range of values for an observation based on its attributes<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>.</p>
+<p>Prediction intervals and confidence intervals<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a> are often confused. Confidence intervals generally refer to making inferences on aggregates or <em>average</em> relationships – this is most useful for evaluating parameter estimates, performance metrics, relationships with covariates, etc. However if you are interested in price ranges on <em>individual</em> observations (as in our case), prediction intervals are what you want<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>. Rob Hyndman has a helpful post where he describes the differences in more detail: <a href="https://robjhyndman.com/hyndsight/intervals/">The difference between prediction intervals and confidence intervals</a><a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>.</p>
+<p>In linear regression, “prediction intervals” refers to a type of <a href="https://en.wikipedia.org/wiki/Confidence_interval">confidence interval</a><a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>, namely the confidence interval for a single observation (a “predictive confidence interval”). “Confidence intervals” have a specific statistical interpretation… in later posts on this topic, the intervals I create do not quite mirror the interpretations that go with a predictive confidence interval. I will use the term “prediction interval” somewhat loosely to refer to a plausible range of values for an observation based on its attributes<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>.</p>
 </div>
 <div id="analytic-method-of-calculating-prediction-intervals" class="section level2">
 <h2>Analytic Method of Calculating Prediction Intervals</h2>
@@ -313,18 +310,18 @@ The distance from the see-saw’s pivot point corresponds with the distance from
 x {MSE: multiplier for average error}<br />
 x {<span class="math inline">\(\dfrac{(x_h-\bar{x})^2}{\sum(x_i-\bar{x})^2}\)</span> : multiplier for distance from centroid of data}</p>
 </blockquote>
-<p>You will notice the equation for the prediction interval is very similar to that of the equation for a confidence interval<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>:</p>
+<p>You will notice the equation for the prediction interval is very similar to that of the equation for a confidence interval<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a>:</p>
 <p class="text-align-center">
 <span class="math inline">\(\hat{y}_h \pm t_{(1-\alpha/2, n-2)} \times \sqrt{MSE \left(\dfrac{1}{n} + \dfrac{(x_h-\bar{x})^2}{\sum(x_i-\bar{x})^2}\right)}\)</span>
 </p>
-<p>The variance for the prediction interval just has an extra Mean Squared Error (MSE) term<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>. The prediction interval is essentially the variance in estimating the model<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a> combined with the variability in the sample of individual obsevations.</p>
+<p>The variance for the prediction interval just has an extra Mean Squared Error (MSE) term<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a>. The prediction interval is essentially the variance in estimating the model<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a> combined with the variability in the sample of individual obsevations.</p>
 <p>Paraphrasing, the uncertainty in predictions can be thought of as coming from two sources:</p>
 <ol style="list-style-type: decimal">
 <li>uncertainty in fitting the model, i.e. determining the <em>expected</em> value</li>
 <li>uncertainty in the sample</li>
 </ol>
-<p>The first may vary depending on position relative to the centroid (think back to the see-saw analogyin <a href="#observation-specific-intervals">Observation Specific Intervals</a> and the importance of position in determining magnitude of change i.e. uncertainty). The latter part is assumed to be constant across observations<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a>.</p>
-<p>Do not think of these sources of uncertainty as being compounded on one another to produce the prediction interval. They are added together<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a> and then the square root is taken. In most cases the variability due to the sample will be greater than the variability in estimating the expected value. Hence, the interval’s width due to uncertainty in estimating the model is somewhat ‘watered down’ by the variability in the sample. Therefore (for prediction intervals produced analytically at least) we will generally not see huge differences in the widths of prediction intervals across observations (even at points that are relatively far from the centroid of the data). Therefore our prediction intervals in later sections in this will actually not be that much different from those that might been produced using aggregate metrics similar to those discussed in <a href="#considering-uncertainty">Considering Uncertainty</a>.</p>
+<p>The first may vary depending on position relative to the centroid (think back to the see-saw analogyin <a href="#observation-specific-intervals">Observation Specific Intervals</a> and the importance of position in determining magnitude of change i.e. uncertainty). The latter part is assumed to be constant across observations<a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a>.</p>
+<p>Do not think of these sources of uncertainty as being compounded on one another to produce the prediction interval. They are added together<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a> and then the square root is taken. In most cases the variability due to the sample will be greater than the variability in estimating the expected value. Hence, the interval’s width due to uncertainty in estimating the model is somewhat ‘watered down’ by the variability in the sample. Therefore (for prediction intervals produced analytically at least) we will generally not see huge differences in the widths of prediction intervals across observations (even at points that are relatively far from the centroid of the data). Therefore our prediction intervals in later sections in this will actually not be that much different from those that might been produced using aggregate metrics similar to those discussed in <a href="#considering-uncertainty">Considering Uncertainty</a>.</p>
 <p>However understanding the intuition on these sources of uncertainty in prediction intervals is helpful. We will see in follow-up posts that use more sophisticated methods for producing prediction intervals that we can get substantive levels of variability in prediction intervals between observations.</p>
 </div>
 <div id="visual-comparison-of-prediction-intervals-and-confidence-intervals" class="section level2">
@@ -343,34 +340,34 @@ x {<span class="math inline">\(\dfrac{(x_h-\bar{x})^2}{\sum(x_i-\bar{x})^2}\)</s
 </div>
 <div id="inference-or-prediction" class="section level2">
 <h2>Inference or Prediction?</h2>
-<p>Predictive modeling is typically used either for making predictions or inferences. The assumptions associated with your model usually matter more when doing inference compared to prediction<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a>. Therefore to get a sense of how careful you should be regarding model assumptions in our example you might ask: <em>“Are prediction intervals an example of prediction or inference?”</em></p>
+<p>Predictive modeling is typically used either for making predictions or inferences. The assumptions associated with your model usually matter more when doing inference compared to prediction<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a>. Therefore to get a sense of how careful you should be regarding model assumptions in our example you might ask: <em>“Are prediction intervals an example of prediction or inference?”</em></p>
 <p>The answer is, while it (kind of) depends…</p>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/QRLEXAFOvkM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
 </iframe>
 <p><em>really</em>, prediction intervals should be thought of as a kind of inference.</p>
-<p>In this post the prediction interval is explicitly an inference on the predictions. In a later post on quantile regression I will actually just be making predictions of upper and lower bounds. However, generally, intervals should be thought of as a kind of inference<a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a>. Therefore you should be thoughtful regarding the assumptions you are making about the nature of your data and model specification<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a>.</p>
+<p>In this post the prediction interval is explicitly an inference on the predictions. In a later post on quantile regression I will actually just be making predictions of upper and lower bounds. However, generally, intervals should be thought of as a kind of inference<a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a>. Therefore you should be thoughtful regarding the assumptions you are making about the nature of your data and model specification<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a>.</p>
 <p>For example, an important assumption is heterskedasticity of errors – which means that the variability <em>in our observations</em> should be constant across our predictions. As mentioned previously, when building a model for <em>Sale Price</em> we would find that errors tend to increase with our predictions. Hence instead of building a model to predict <em>Sale Price</em> we build models to predict <span class="math inline">\(\log_{10}Sale\:Price\)</span> – this helps ensure that our model’s outputted prediction intervals will be more appropriate across observations.</p>
-<p>In follow up posts the methods I introduce do not depend <em>as</em> strongly on assumptions to produce reliable prediction intervals<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a>.</p>
+<p>In follow up posts the methods I introduce do not depend <em>as</em> strongly on assumptions to produce reliable prediction intervals<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a>.</p>
 </div>
 <div id="cautions-with-overfitting" class="section level2">
 <h2>Cautions with Overfitting</h2>
-<p>You want the findings and predictions of your model to be <em>generalizable</em>, i.e. usable outside of the context of your training dataset. This is why we holdout data to review performance – we want to review the performance on data the model has never seen before. If your model <a href="https://en.wikipedia.org/wiki/Overfitting">overfits</a><a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a> the training data, the prediction interval will often underestimate the expected variability in price and your prediction intervals may be too narrow. Two strategies you might use to correct for this:</p>
+<p>You want the findings and predictions of your model to be <em>generalizable</em>, i.e. usable outside of the context of your training dataset. This is why we holdout data to review performance – we want to review the performance on data the model has never seen before. If your model <a href="https://en.wikipedia.org/wiki/Overfitting">overfits</a><a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a> the training data, the prediction interval will often underestimate the expected variability in price and your prediction intervals may be too narrow. Two strategies you might use to correct for this:</p>
 <ol style="list-style-type: decimal">
-<li>Consider a more simple model<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a></li>
+<li>Consider a more simple model<a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a></li>
 <li>Tune your prediction bands based on coverage on holdout data (coverage represents the proportion of observations that actually fall within their prediction intervals).</li>
 </ol>
 <p>A quick heuristic to check if your model is overfitting is to compare the model’s performance on a holdout dataset compared against performance on the data that was used to train the model. If performance is substantially better on the training dataset, it may suggest your model is overfitting.</p>
 <p><strong>Simpler model</strong></p>
-<p>If your model seems to be overfittng, you may want to try fitting a more simple model<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a>. If your model has a small difference in performance metrics between training and holdout datasets, you likely will have more faith in the ranges given by the prediction intervals.</p>
+<p>If your model seems to be overfittng, you may want to try fitting a more simple model<a href="#fn32" class="footnote-ref" id="fnref32"><sup>32</sup></a>. If your model has a small difference in performance metrics between training and holdout datasets, you likely will have more faith in the ranges given by the prediction intervals.</p>
 <p><strong>Problem with comparing difference in performance between training &amp; holdout data</strong></p>
-<p>However, for the most part, your performance is going to <em>always be better</em> on the training data than on the holdout data<a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a>. With regard to overfitting, you really care about whether performance is becoming <em>worse</em> on the holdout set compared to an alternative simpler model’s performance on the holdout set. You don’t really care if performance on training and holdout data is similar, just that performance on a holdout dataset is as good as possible.</p>
-<p>Let’s take an example when building random forest models and tuning on the <code>min_n</code> attribute (smaller values for <code>min_n</code><a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a> represent more complicated models.):</p>
+<p>However, for the most part, your performance is going to <em>always be better</em> on the training data than on the holdout data<a href="#fn33" class="footnote-ref" id="fnref33"><sup>33</sup></a>. With regard to overfitting, you really care about whether performance is becoming <em>worse</em> on the holdout set compared to an alternative simpler model’s performance on the holdout set. You don’t really care if performance on training and holdout data is similar, just that performance on a holdout dataset is as good as possible.</p>
+<p>Let’s take an example when building random forest models and tuning on the <code>min_n</code> attribute (smaller values for <code>min_n</code><a href="#fn34" class="footnote-ref" id="fnref34"><sup>34</sup></a> represent more complicated models.):</p>
 <div class="figure">
 <img src="https://camo.githubusercontent.com/c498111162b8f8d4fced8fe07f7b532fe2de3c4a66f68e29b9f29832148ab674/68747470733a2f2f692e696d6775722e636f6d2f316e53687836792e706e67" alt="See my gist for code" />
 <p class="caption">See my <a href="https://gist.github.com/brshallo/516e8e52fb911a96efafbf01d606a113">gist</a> for code</p>
 </div>
-<p>The gap in train-holdout performance is greater for more complicated models<a href="#fn32" class="footnote-ref" id="fnref32"><sup>32</sup></a> (which, as mentioned above, may signal overfitting) – however performance on the holdout data is also better. Hence, in this instance, we would likely want to select the most complicated model among these<a href="#fn33" class="footnote-ref" id="fnref33"><sup>33</sup></a> <em>even though</em> the performance estimates on the training data are the most unrealistic.</p>
-<p>While a difference in performance on training and holdout datasets may provide a helpful indicator for overfitting, it is not really what you care about during model selection<a href="#fn34" class="footnote-ref" id="fnref34"><sup>34</sup></a>.</p>
+<p>The gap in train-holdout performance is greater for more complicated models<a href="#fn35" class="footnote-ref" id="fnref35"><sup>35</sup></a> (which, as mentioned above, may signal overfitting) – however performance on the holdout data is also better. Hence, in this instance, we would likely want to select the most complicated model among these<a href="#fn36" class="footnote-ref" id="fnref36"><sup>36</sup></a> <em>even though</em> the performance estimates on the training data are the most unrealistic.</p>
+<p>While a difference in performance on training and holdout datasets may provide a helpful indicator for overfitting, it is not really what you care about during model selection<a href="#fn37" class="footnote-ref" id="fnref37"><sup>37</sup></a>.</p>
 <p><strong>Tune your bands based on the holdout set</strong></p>
 <p>Let’s say your selected model has a substantial difference in performance between the training &amp; holdout data and you are worried that the <em>expected</em> width of your prediction intervals may be optimistically narrow, however you still want to keep this model because it has the best performance when evaluated on holdout data. An alternative to trying to fit a more simple model is to adjust your prediction bands, tuning them based on the coverage level on a holdout dataset. To describe this idea I will define three ways of thinking about coverage:</p>
 <ul>
@@ -378,7 +375,7 @@ x {<span class="math inline">\(\dfrac{(x_h-\bar{x})^2}{\sum(x_i-\bar{x})^2}\)</s
 <li>expected coverage: The level of confidence in the model for the prediction intervals, e.g. asking the model to predict 90% prediction intervals.</li>
 <li>empirical coverage: The level of coverage actually observed when evaluated on a dataset, typically a holdout dataset not used to train the model.</li>
 </ul>
-<p>Ideally all three align. However, Let’s consider a hypothetical example, when your model is overfit and you have a 90% target coverage. You might see that a 90% expected coverage leads to an 85% empirical coverage on a holdout dataset. To align your target and empirical coverage at 90%, may require setting expected coverage at something like 94%<a href="#fn35" class="footnote-ref" id="fnref35"><sup>35</sup></a>.</p>
+<p>Ideally all three align. However, Let’s consider a hypothetical example, when your model is overfit and you have a 90% target coverage. You might see that a 90% expected coverage leads to an 85% empirical coverage on a holdout dataset. To align your target and empirical coverage at 90%, may require setting expected coverage at something like 94%<a href="#fn38" class="footnote-ref" id="fnref38"><sup>38</sup></a>.</p>
 <p>This is called “adaptive coverage” and is discussed briefly by Emmanuel Candes in the video below:</p>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/61tpigfLHso?start=1654" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
 </iframe>
@@ -487,7 +484,7 @@ preds_intervals %&gt;%
 </tbody>
 </table>
 <p>This suggests that, given these attributes, we would expect that the <code>Sale_Price</code> for an individual observation would fall between $140,208 and $242,793 (with 90% confidence). Our example offer of $184,000 falls well within this range, meaning that – based on the model – the offer does not appear unreasonable.</p>
-<p>Let’s review what 90% prediction intervals look like against the <em>actual</em> prices on a subset of observations in our holdout dataset (log transformations are applied on the x and y axis to adjust for the fact that variability in estimates, and therefore prediction intervals, increase with the predicted <code>Sale_Price</code><a href="#fn36" class="footnote-ref" id="fnref36"><sup>36</sup></a>):</p>
+<p>Let’s review what 90% prediction intervals look like against the <em>actual</em> prices on a subset of observations in our holdout dataset (log transformations are applied on the x and y axis to adjust for the fact that variability in estimates, and therefore prediction intervals, increase with the predicted <code>Sale_Price</code><a href="#fn39" class="footnote-ref" id="fnref39"><sup>39</sup></a>):</p>
 <pre class="r"><code>set.seed(1234)
 p &lt;- preds_intervals %&gt;% 
   mutate(pred_interval = ggplot2::cut_number(.pred, 10)) %&gt;% 
@@ -509,7 +506,7 @@ p +
 <p><img src="/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/prediction-intervals-sample-1.png" width="672" /></p>
 <div id="coverage" class="section level2">
 <h2>Coverage</h2>
-<p>Let’s now check what proportion of our holdout observations are actually “covered” by their prediction intervals<a href="#fn37" class="footnote-ref" id="fnref37"><sup>37</sup></a>.</p>
+<p>Let’s now check what proportion of our holdout observations are actually “covered” by their prediction intervals<a href="#fn40" class="footnote-ref" id="fnref40"><sup>40</sup></a>.</p>
 <p>Hence for our 90% prediction intervals, we will expect coverage on a holdout set to be 90%.</p>
 <pre class="r"><code>preds_intervals %&gt;%
   mutate(covered = ifelse(Sale_Price &gt;= .pred_lower &amp; Sale_Price &lt;= .pred_upper, 1, 0)) %&gt;% 
@@ -538,9 +535,9 @@ p +
 </tr>
 </tbody>
 </table>
-<p>~93% of our holdout observations were actually covered<a href="#fn38" class="footnote-ref" id="fnref38"><sup>38</sup></a>. We can likely trust these intervals aren’t too narrow<a href="#fn39" class="footnote-ref" id="fnref39"><sup>39</sup></a>. It is usually better to be on the slightly conservative than optimistic side regarding coverage (as models tend to perform worse than expected when put into production)<a href="#fn40" class="footnote-ref" id="fnref40"><sup>40</sup></a>.</p>
-<p>It may also helpful to review coverage across predictions, rather than just in aggregate. This distinction is related to the notion of “marginal” vs “conditional” coverage<a href="#fn41" class="footnote-ref" id="fnref41"><sup>41</sup></a>.</p>
-<p>The chart below splits the holdout data into five segments ordered by predicted price with equal number of observations<a href="#fn42" class="footnote-ref" id="fnref42"><sup>42</sup></a> and checks the proportion covered over each quintile.</p>
+<p>~93% of our holdout observations were actually covered<a href="#fn41" class="footnote-ref" id="fnref41"><sup>41</sup></a>. We can likely trust these intervals aren’t too narrow<a href="#fn42" class="footnote-ref" id="fnref42"><sup>42</sup></a>. It is usually better to be on the slightly conservative than optimistic side regarding coverage (as models tend to perform worse than expected when put into production)<a href="#fn43" class="footnote-ref" id="fnref43"><sup>43</sup></a>.</p>
+<p>It may also helpful to review coverage across predictions, rather than just in aggregate. This distinction is related to the notion of “marginal” vs “conditional” coverage<a href="#fn44" class="footnote-ref" id="fnref44"><sup>44</sup></a>.</p>
+<p>The chart below splits the holdout data into five segments ordered by predicted price with equal number of observations<a href="#fn45" class="footnote-ref" id="fnref45"><sup>45</sup></a> and checks the proportion covered over each quintile.</p>
 <pre class="r"><code>preds_intervals %&gt;%
   mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %&gt;% 
   mutate(covered = ifelse(Sale_Price &gt;= .pred_lower &amp; Sale_Price &lt;= .pred_upper, 1, 0)) %&gt;% 
@@ -566,7 +563,7 @@ p +
        caption = &quot;Error bars represent {coverage} +/- 2 * {coverage standard error}&quot;)+
   theme_bw()</code></pre>
 <p><img src="/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<p>This suggests there may be slightly different levels of coverage at different quintiles (e.g. the cheapest predicted houses have less coverage than those in the 2nd quintile.)<a href="#fn43" class="footnote-ref" id="fnref43"><sup>43</sup></a>.</p>
+<p>This suggests there may be slightly different levels of coverage at different quintiles (e.g. the cheapest predicted houses have less coverage than those in the 2nd quintile.)<a href="#fn46" class="footnote-ref" id="fnref46"><sup>46</sup></a>.</p>
 <p>A test for checking whether variability in the categorical variable <code>covered</code> (covered / not-covered) does not vary across the quintile of predicted <code>Sale_Price</code> (1st, 2nd, 3rd, 4th, 5th) could be done using a <a href="https://en.wikipedia.org/wiki/Chi-squared_test">Chi-square statistical test</a>:</p>
 <pre class="r"><code>preds_intervals %&gt;% 
   mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %&gt;% 
@@ -577,12 +574,12 @@ p +
 ## 
 ## data:  price_grouped and covered
 ## X-squared = 10.389, df = 4, p-value = 0.03436</code></pre>
-<p>The results provide evidence that whether an observation is covered or not-covered may depend (to some extent) on which quintile for predicted <code>Sale_Price</code> the observation falls within<a href="#fn44" class="footnote-ref" id="fnref44"><sup>44</sup></a>.</p>
+<p>The results provide evidence that whether an observation is covered or not-covered may depend (to some extent) on which quintile for predicted <code>Sale_Price</code> the observation falls within<a href="#fn47" class="footnote-ref" id="fnref47"><sup>47</sup></a>.</p>
 <p>I will show in a follow-up post covering <strong>Simulation Methods for Building Prediction Intervals</strong> intervals that seem to have more consistent coverage rates across predicted <code>Sale_Price</code>.</p>
 </div>
 <div id="interval-width" class="section level2">
 <h2>Interval Width</h2>
-<p>Another helpful metric for evaluating your prediction intervals is to review their width. More narrow bands suggest a more precise model. Remember from the notes in [Consider Variability] that the size of the errors will change with the size of the prediction. To adjust for this an appropriate metric can be to review ‘interval width’ around <code>Sale_Price</code> as a percentage of the prediction<a href="#fn45" class="footnote-ref" id="fnref45"><sup>45</sup></a>. I will review these across the quintiles of our model.</p>
+<p>Another helpful metric for evaluating your prediction intervals is to review their width. More narrow bands suggest a more precise model. Remember from the notes in [Consider Variability] that the size of the errors will change with the size of the prediction. To adjust for this an appropriate metric can be to review ‘interval width’ around <code>Sale_Price</code> as a percentage of the prediction<a href="#fn48" class="footnote-ref" id="fnref48"><sup>48</sup></a>. I will review these across the quintiles of our model.</p>
 <pre class="r"><code>lm_interval_widths &lt;- preds_intervals %&gt;% 
   mutate(interval_width = .pred_upper - .pred_lower,
          interval_pred_ratio = interval_width / .pred) %&gt;% 
@@ -653,7 +650,7 @@ lm_interval_widths %&gt;%
 </tr>
 </tbody>
 </table>
-<p>The relative interval width is highly consistent across predicted <code>Sale_Price</code> and between observations<a href="#fn46" class="footnote-ref" id="fnref46"><sup>46</sup></a>. The 90% interval represents on average about ~54% of the predicted <code>Sale_Price</code><a href="#fn47" class="footnote-ref" id="fnref47"><sup>47</sup></a>. For the analytic approach the only factor that contributes to differences in interval width across predictions is the distance of an observations from the centroid of the data (this has a relatively small impact compared to the sampling variance which is treated as constant)<a href="#fn48" class="footnote-ref" id="fnref48"><sup>48</sup></a>.</p>
+<p>The relative interval width is highly consistent across predicted <code>Sale_Price</code> and between observations<a href="#fn49" class="footnote-ref" id="fnref49"><sup>49</sup></a>. The 90% interval represents on average about ~54% of the predicted <code>Sale_Price</code><a href="#fn50" class="footnote-ref" id="fnref50"><sup>50</sup></a>. For the analytic approach the only factor that contributes to differences in interval width across predictions is the distance of an observations from the centroid of the data (this has a relatively small impact compared to the sampling variance which is treated as constant)<a href="#fn51" class="footnote-ref" id="fnref51"><sup>51</sup></a>.</p>
 </div>
 </div>
 <div id="closing-notes" class="section level1">
@@ -670,7 +667,7 @@ lm_interval_widths %&gt;%
 <ul>
 <li>Generally this approach relies more heavily on model assumptions compared to alternatives.</li>
 </ul></li>
-<li>Assumes you have the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic<a href="#fn49" class="footnote-ref" id="fnref49"><sup>49</sup></a>)</li>
+<li>Assumes you have the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic<a href="#fn52" class="footnote-ref" id="fnref52"><sup>52</sup></a>)</li>
 </ul>
 <p><strong>Wrap-up:</strong></p>
 <p>Prediction intervals provide an indicator for the uncertainty of individual observations. They are useful for generating a reasonable range you would expect for an observation. These ranges can be used to evaluate things like potential Sale Prices and have the advantages over more simple methods (e.g. comparing whether a deal is above or below expectated Sale Price) in that they take into account both the magnitude and level of variability in the data to provide a notion of a “reasonable” range of values for an observation.</p>
@@ -692,52 +689,55 @@ lm_interval_widths %&gt;%
 <li id="fn5"><p>E.g. data exploration, review of model assumptions, use of a separate validation set, hyperparameter tuning, etc.<a href="#fnref5" class="footnote-back">↩</a></p></li>
 <li id="fn6"><p>Relative to prior deals which the model was trained on.<a href="#fnref6" class="footnote-back">↩</a></p></li>
 <li id="fn7"><p>When you are dealing with problems that consider both magnitude and variability, statitistics are often helpful.<a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>This is known as heteroskedasticity. We generally want our error metrics to be homoskedastic, i.e. ‘same variance’. This is why we built the model on the target <code>log(Sale_Price, 10)</code>. Note that the base rate of 10 doesn’t really matter that much, we could just have easily have built the model using hte natural logarithm and gotten similar results.<a href="#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p>During model building and evaluation the former would often be more appropriate to review. In particular the root mean squared error (RMSE) of the errors of the predictions for <code>log(Sale_Price)</code>.<a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p>Based on the obervation level estimates given by our model on a holdout set.<a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p>Or a focus on other pieces of information outside of your model for making decisions.<a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>Rather than just looking at your observation of interest through the lens of aggregate error metrics.<a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p>Or when using bayesian methods, credible intervals.<a href="#fnref13" class="footnote-back">↩</a></p></li>
-<li id="fn14"><p>Confidence intervals are more directly related to the <em>standard error</em> of your sample, while prediction intervals are associated with the <em>standard deviation</em> of the errors. The width of your confidence intervals follow the central limit theorem and are thus sensitive to the sample size of your data and become more narrow as you collect more observations (and you gain ‘confidence’ in where the ‘true’ expected value resides). For prediction intervals, more observations may improve your estimate of the model or give you more faith in your prediction intervals, however the width of the intervals will not necessarily shrink in any substantial way.<a href="#fnref14" class="footnote-back">↩</a></p></li>
-<li id="fn15"><p>Confidence intervals are typically the default output of many packages and functions that output “intervals” – <a href="https://github.com/robjhyndman/forecast">forecast</a> and other forecasting packages though typically default to prediction intervals.<a href="#fnref15" class="footnote-back">↩</a></p></li>
-<li id="fn16"><p>Again, speaking through a frequentist lens.<a href="#fnref16" class="footnote-back">↩</a></p></li>
-<li id="fn17"><p>“Predictive band” may be a more appropriate term.<a href="#fnref17" class="footnote-back">↩</a></p></li>
-<li id="fn18"><p>I.e. the band around the <em>average</em> value, rather than the band around the value for an <em>individual</em> observation – as discussed in [A Few Things to Understand About Prediction Intervals].<a href="#fnref18" class="footnote-back">↩</a></p></li>
-<li id="fn19"><p>If this is unclear to you, try distributing the MSE term and look again. Penn State also has helpful lessons on regression available <a href="https://online.stat.psu.edu/stat501/lesson/3/3.3#paragraph--766">publicly online</a>.<a href="#fnref19" class="footnote-back">↩</a></p></li>
-<li id="fn20"><p>The square root of which is used to calculate the confidence interval.<a href="#fnref20" class="footnote-back">↩</a></p></li>
-<li id="fn21"><p>This assumption of constant variability of the sample is common in many techniques for producing prediction intervals – even some techniques that use simulation based approaches.<a href="#fnref21" class="footnote-back">↩</a></p></li>
-<li id="fn22"><p>To get the variance.<a href="#fnref22" class="footnote-back">↩</a></p></li>
-<li id="fn23"><p>This is because your assumptions will influence the nature of the uncertainty in your model. When focused on prediction, you generally just care about minimizing error (in one form or another), assumptions regarding distributions of parameters, errors, etc. can often be ignored or at least relaxed.<a href="#fnref23" class="footnote-back">↩</a></p></li>
-<li id="fn24"><p>Prediction intervals concern uncertainty, and whenever you are making estimates around uncertainty you are generally doing a kind of statistical inference.<a href="#fnref24" class="footnote-back">↩</a></p></li>
-<li id="fn25"><p>Even when using simulation based techniques that, for other estimates, may allow you to be a little more cavalier regarding model assumptions… when it comes to predictive inference you will essentially always have <em>some</em> assumptions you need to hold onto.<a href="#fnref25" class="footnote-back">↩</a></p></li>
-<li id="fn26"><p>However there are limitations on assumption free predictive inference, (<a href="https://www.stat.cmu.edu/~ryantibs/papers/limits.pdf">Barber, et al</a>).<a href="#fnref26" class="footnote-back">↩</a></p></li>
-<li id="fn27"><p>Model generalizability is a big topic I am going to just barely touch on it here.<a href="#fnref27" class="footnote-back">↩</a></p></li>
-<li id="fn28"><p>That still fits the data well but is likely to overfit on the training data.<a href="#fnref28" class="footnote-back">↩</a></p></li>
-<li id="fn29"><p>Lower <a href="https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff">variance</a>.<a href="#fnref29" class="footnote-back">↩</a></p></li>
-<li id="fn30"><p>This is true of some models to a greater extent than others.<a href="#fnref30" class="footnote-back">↩</a></p></li>
-<li id="fn31"><p>Representing the minimum number of observations in a node for it to be split.<a href="#fnref31" class="footnote-back">↩</a></p></li>
-<li id="fn32"><p>When <code>min_n</code> is smaller.<a href="#fnref32" class="footnote-back">↩</a></p></li>
-<li id="fn33"><p>Again, when <code>min_n</code> is smallest.<a href="#fnref33" class="footnote-back">↩</a></p></li>
-<li id="fn34"><p>This is likely the case even when you are planning on using the model to generate prediction intervals and not just point estimates.<a href="#fnref34" class="footnote-back">↩</a></p></li>
-<li id="fn35"><p>Tuning your alpha level until the coverage on a holdout dataset is where you want it.<a href="#fnref35" class="footnote-back">↩</a></p></li>
-<li id="fn36"><p>As noted previously the model was built to predict <code>log(Sale_Price, 10)</code> (as opposed to <code>Sale_Price</code>) as errors increase with the predicted price of the house. Hence why the transformed scales in the text are appropriate. If you are curious though, the figure below shows the prediction intervals on raw <code>Sale_Price</code> scale.</p>
+<li id="fn8"><p>Atatistics can provide context as to whether this represents a <em>small</em> or <em>large</em> deviation from expectations.<a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>This is known as heteroskedasticity. We generally want our error metrics to be homoskedastic, i.e. ‘same variance’. This is why we built the model on the target <code>log(Sale_Price, 10)</code>. Note that the base rate of 10 doesn’t really matter that much, we could just have easily have built the model using hte natural logarithm and gotten similar results.<a href="#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn10"><p>During model building and evaluation the former would often be more appropriate to review. In particular the root mean squared error (RMSE) of the errors of the predictions for <code>log(Sale_Price)</code>.<a href="#fnref10" class="footnote-back">↩</a></p></li>
+<li id="fn11"><p>Data not seen during model training and reserved for the purpose of model evaluation<a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn12"><p>Based on the obervation level estimates given by our model on a holdout set.<a href="#fnref12" class="footnote-back">↩</a></p></li>
+<li id="fn13"><p>Or a focus on other pieces of information outside of your model for making decisions.<a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn14"><p>As shown above in <a href="#considering-uncertainty">Considering Uncertainty</a>.<a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn15"><p>Rather than just looking at your observation of interest through the lens of aggregate error metrics.<a href="#fnref15" class="footnote-back">↩</a></p></li>
+<li id="fn16"><p>Or when using bayesian methods, credible intervals.<a href="#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn17"><p>Confidence intervals are more directly related to the <em>standard error</em> of your sample, while prediction intervals are associated with the <em>standard deviation</em> of the errors. The width of your confidence intervals follow the central limit theorem and are thus sensitive to the sample size of your data and become more narrow as you collect more observations (and you gain ‘confidence’ in where the ‘true’ expected value resides). For prediction intervals, more observations may improve your estimate of the model or give you more faith in your prediction intervals, however the width of the intervals will not necessarily shrink in any substantial way.<a href="#fnref17" class="footnote-back">↩</a></p></li>
+<li id="fn18"><p>Confidence intervals are typically the default output of many packages and functions that output “intervals” – <a href="https://github.com/robjhyndman/forecast">forecast</a> and other forecasting packages though typically default to prediction intervals.<a href="#fnref18" class="footnote-back">↩</a></p></li>
+<li id="fn19"><p>Again, speaking through a frequentist lens.<a href="#fnref19" class="footnote-back">↩</a></p></li>
+<li id="fn20"><p>“Predictive band” may be a more appropriate term.<a href="#fnref20" class="footnote-back">↩</a></p></li>
+<li id="fn21"><p>I.e. the band around the <em>average</em> value, rather than the band around the value for an <em>individual</em> observation – as discussed in <a href="#a-few-things-to-understand-about-prediction-intervals">A Few Things to Understand About Prediction Intervals</a>.<a href="#fnref21" class="footnote-back">↩</a></p></li>
+<li id="fn22"><p>If this is unclear to you, try distributing the MSE term and look again. Penn State also has helpful lessons on regression available <a href="https://online.stat.psu.edu/stat501/lesson/3/3.3#paragraph--766">publicly online</a>.<a href="#fnref22" class="footnote-back">↩</a></p></li>
+<li id="fn23"><p>The square root of which is used to calculate the confidence interval.<a href="#fnref23" class="footnote-back">↩</a></p></li>
+<li id="fn24"><p>This assumption of constant variability of the sample is common in many techniques for producing prediction intervals – even some techniques that use simulation based approaches.<a href="#fnref24" class="footnote-back">↩</a></p></li>
+<li id="fn25"><p>To get the variance.<a href="#fnref25" class="footnote-back">↩</a></p></li>
+<li id="fn26"><p>This is because your assumptions will influence the nature of the uncertainty in your model. When focused on prediction, you generally just care about minimizing error (in one form or another), assumptions regarding distributions of parameters, errors, etc. can often be ignored or at least relaxed.<a href="#fnref26" class="footnote-back">↩</a></p></li>
+<li id="fn27"><p>Prediction intervals concern uncertainty, and whenever you are making estimates around uncertainty you are generally doing a kind of statistical inference.<a href="#fnref27" class="footnote-back">↩</a></p></li>
+<li id="fn28"><p>Even when using simulation based techniques that, for other estimates, may allow you to be a little more cavalier regarding model assumptions… when it comes to predictive inference you will essentially always have <em>some</em> assumptions you need to hold onto.<a href="#fnref28" class="footnote-back">↩</a></p></li>
+<li id="fn29"><p>However there are limitations on assumption free predictive inference, (<a href="https://www.stat.cmu.edu/~ryantibs/papers/limits.pdf">Barber, et al</a>).<a href="#fnref29" class="footnote-back">↩</a></p></li>
+<li id="fn30"><p>Model generalizability is a big topic I am going to just barely touch on it here.<a href="#fnref30" class="footnote-back">↩</a></p></li>
+<li id="fn31"><p>That still fits the data well but is likely to overfit on the training data.<a href="#fnref31" class="footnote-back">↩</a></p></li>
+<li id="fn32"><p>Lower <a href="https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff">variance</a>.<a href="#fnref32" class="footnote-back">↩</a></p></li>
+<li id="fn33"><p>This is true of some models to a greater extent than others.<a href="#fnref33" class="footnote-back">↩</a></p></li>
+<li id="fn34"><p>Representing the minimum number of observations in a node for it to be split.<a href="#fnref34" class="footnote-back">↩</a></p></li>
+<li id="fn35"><p>When <code>min_n</code> is smaller.<a href="#fnref35" class="footnote-back">↩</a></p></li>
+<li id="fn36"><p>Again, when <code>min_n</code> is smallest.<a href="#fnref36" class="footnote-back">↩</a></p></li>
+<li id="fn37"><p>This is likely the case even when you are planning on using the model to generate prediction intervals and not just point estimates.<a href="#fnref37" class="footnote-back">↩</a></p></li>
+<li id="fn38"><p>Tuning your alpha level until the coverage on a holdout dataset is where you want it.<a href="#fnref38" class="footnote-back">↩</a></p></li>
+<li id="fn39"><p>As noted previously the model was built to predict <code>log(Sale_Price, 10)</code> (as opposed to <code>Sale_Price</code>) as errors increase with the predicted price of the house. Hence why the transformed scales in the text are appropriate. If you are curious though, the figure below shows the prediction intervals on raw <code>Sale_Price</code> scale.</p>
 <pre class="r"><code>p + 
   scale_x_continuous(labels = scales::dollar)+
   scale_y_continuous(labels = scales::dollar)</code></pre>
-<p><img src="/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/unnamed-chunk-8-1.png" width="672" /><a href="#fnref36" class="footnote-back">↩</a></p></li>
-<li id="fn37"><p>I.e. the rate at which the <em>actual</em> value fall within the range of the prediction interval (coverage is essentially checking whether the range you expect from your prediction intervals is actually what is achieved).<a href="#fnref37" class="footnote-back">↩</a></p></li>
-<li id="fn38"><p>The difference between 93% and the expected coverage of 90% may just be the result of random variability in the data.<a href="#fnref38" class="footnote-back">↩</a></p></li>
-<li id="fn39"><p>Though they are perhaps slightly conservative. To get a better estimate for coverage, we could use cross validation as this will provide estimates for coverage across multiple iterations of model fitting.<a href="#fnref39" class="footnote-back">↩</a></p></li>
-<li id="fn40"><p>I.e. it is betterthat our empirical coverage is greater than our target coverage than less than our target coverage – even if it would be ideal for these to align.<a href="#fnref40" class="footnote-back">↩</a></p></li>
-<li id="fn41"><p>“Marginal” coverage generally means “on average across observations”, whereas “conditional” means conditioned on the specific attributes for an observation. Hence “90%” marginal coverage allows that coverage may be higher in some areas and lower in others. 90% conditional coverage means that the conditional rate should be 90% across observations. “Conditional” coverage is generally harder to get than “marginal” coverage and is actually impossible to achieve without some assumptions.<a href="#fnref41" class="footnote-back">↩</a></p></li>
-<li id="fn42"><p>Mostly equal – there are 146 or 147 observations summarised in each row.<a href="#fnref42" class="footnote-back">↩</a></p></li>
-<li id="fn43"><p>Not shown here, but it may also be valuable to review your coverage levels across key variables of interest.<a href="#fnref43" class="footnote-back">↩</a></p></li>
-<li id="fn44"><p>More explicitly, this test shows that the distribution of <code>price_grouped by quintile</code> across <code>covered</code> would only occur ~3.4% of the time under the assumption of “no relationship”. This is very unlikely, so we reject the NULL hypothesis of “no relationship”.<a href="#fnref44" class="footnote-back">↩</a></p></li>
-<li id="fn45"><p>Alternatively could just have evaluated the interval widths in the <code>log(Sale_Price, 10)</code> terms outputted by the model.<a href="#fnref45" class="footnote-back">↩</a></p></li>
-<li id="fn46"><p>Varying on average less than half a percent between observations.<a href="#fnref46" class="footnote-back">↩</a></p></li>
-<li id="fn47"><p>Methods in follow-up posts will show greater diversity of interval widths.<a href="#fnref47" class="footnote-back">↩</a></p></li>
-<li id="fn48"><p>While the see-saw analogy does make a difference in causing some observations to have wider intervals than others, in aggregate you can see the difference is not <em>that</em> big – values like the Mean Squared Error (MSE) or similar aggregate error metrics actually give a pretty close semblance of what you will expect to get when going through the process of creating prediction intervals specific to each observation. Note also however that the difference in interval width will still be greater for the more extreme observations. In future posts some of the methods I walk through will be more flexible or have other advantages (e.g. less strict reliance on distributional assumptions).<a href="#fnref48" class="footnote-back">↩</a></p></li>
-<li id="fn49"><p>Though linear models are less likely to overfit compared to most model types.<a href="#fnref49" class="footnote-back">↩</a></p></li>
+<p><img src="/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/unnamed-chunk-8-1.png" width="672" /><a href="#fnref39" class="footnote-back">↩</a></p></li>
+<li id="fn40"><p>I.e. the rate at which the <em>actual</em> value fall within the range of the prediction interval (coverage is essentially checking whether the range you expect from your prediction intervals is actually what is achieved).<a href="#fnref40" class="footnote-back">↩</a></p></li>
+<li id="fn41"><p>The difference between 93% and the expected coverage of 90% may just be the result of random variability in the data.<a href="#fnref41" class="footnote-back">↩</a></p></li>
+<li id="fn42"><p>Though they are perhaps slightly conservative. To get a better estimate for coverage, we could use cross validation as this will provide estimates for coverage across multiple iterations of model fitting.<a href="#fnref42" class="footnote-back">↩</a></p></li>
+<li id="fn43"><p>I.e. it is betterthat our empirical coverage is greater than our target coverage than less than our target coverage – even if it would be ideal for these to align.<a href="#fnref43" class="footnote-back">↩</a></p></li>
+<li id="fn44"><p>“Marginal” coverage generally means “on average across observations”, whereas “conditional” means conditioned on the specific attributes for an observation. Hence “90%” marginal coverage allows that coverage may be higher in some areas and lower in others. 90% conditional coverage means that the conditional rate should be 90% across observations. “Conditional” coverage is generally harder to get than “marginal” coverage and is actually impossible to achieve without some assumptions.<a href="#fnref44" class="footnote-back">↩</a></p></li>
+<li id="fn45"><p>Mostly equal – there are 146 or 147 observations summarised in each row.<a href="#fnref45" class="footnote-back">↩</a></p></li>
+<li id="fn46"><p>Not shown here, but it may also be valuable to review your coverage levels across key variables of interest.<a href="#fnref46" class="footnote-back">↩</a></p></li>
+<li id="fn47"><p>More explicitly, this test shows that the distribution of <code>price_grouped by quintile</code> across <code>covered</code> would only occur ~3.4% of the time under the assumption of “no relationship”. This is very unlikely, so we reject the NULL hypothesis of “no relationship”.<a href="#fnref47" class="footnote-back">↩</a></p></li>
+<li id="fn48"><p>Alternatively could just have evaluated the interval widths in the <code>log(Sale_Price, 10)</code> terms outputted by the model.<a href="#fnref48" class="footnote-back">↩</a></p></li>
+<li id="fn49"><p>Varying on average less than half a percent between observations.<a href="#fnref49" class="footnote-back">↩</a></p></li>
+<li id="fn50"><p>Methods in follow-up posts will show greater diversity of interval widths.<a href="#fnref50" class="footnote-back">↩</a></p></li>
+<li id="fn51"><p>While the see-saw analogy does make a difference in causing some observations to have wider intervals than others, in aggregate you can see the difference is not <em>that</em> big – values like the Mean Squared Error (MSE) or similar aggregate error metrics actually give a pretty close semblance of what you will expect to get when going through the process of creating prediction intervals specific to each observation. Note also however that the difference in interval width will still be greater for the more extreme observations. In future posts some of the methods I walk through will be more flexible or have other advantages (e.g. less strict reliance on distributional assumptions).<a href="#fnref51" class="footnote-back">↩</a></p></li>
+<li id="fn52"><p>Though linear models are less likely to overfit compared to most model types.<a href="#fnref52" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
 
