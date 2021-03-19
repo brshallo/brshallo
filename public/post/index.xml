@@ -17,9 +17,10 @@
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#providing-more-than-point-estimates&#34;&gt;Providing More Than Point Estimates&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#providing-more-than-point-estimates&#34;&gt;Providing More Than Point Estimates&lt;/a&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#considering-uncertainty&#34;&gt;Considering Uncertainty&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#observation-specific-intervals&#34;&gt;Observation Specific Intervals&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#a-few-things-to-understand-about-prediction-intervals&#34;&gt;A Few Things to Understand About Prediction Intervals&lt;/a&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#prediction-intervals-and-confidence-intervals&#34;&gt;Prediction Intervals and Confidence Intervals&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#analytic-method-of-calculating-prediction-intervals&#34;&gt;Analytic Method of Calculating Prediction Intervals&lt;/a&gt;&lt;/li&gt;
@@ -28,7 +29,7 @@
 &lt;li&gt;&lt;a href=&#34;#cautions-with-overfitting&#34;&gt;Cautions with Overfitting&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#generalizability&#34;&gt;Generalizability&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#extract-prediction-intervals&#34;&gt;Extract Prediction Intervals&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#review-prediction-intervals&#34;&gt;Review Prediction Intervals&lt;/a&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#coverage&#34;&gt;Coverage&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#interval-width&#34;&gt;Interval Width&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
@@ -144,9 +145,8 @@ lm_wf &amp;lt;- workflows::workflow() %&amp;gt;%
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Using the naive approach, whether an offer is above or below this &lt;em&gt;expected&lt;/em&gt; price may provide a first indication of whether the deal is ‘good’ or ‘bad’ for the seller&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;. The magnitude of the difference between the offer and the expected price might also be important. However you often will care about how big this difference is relative to the underlying uncertainty in &lt;code&gt;Sale_Price&lt;/code&gt;– which calls for the use of statistics, specifically predictive inference. Statistics can help to provide a sense of the accuracy of the model and the extent to which an offer seems reasonable in the context of the variability in prices&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;considering-uncertainty&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Considering Uncertainty&lt;/h1&gt;
+&lt;div id=&#34;considering-uncertainty&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Considering Uncertainty&lt;/h2&gt;
 &lt;p&gt;For example, Let’s consider an offer of $180,000 for the example house mentioned above. You might first think you ought to reject the offer due to it being ~$4,500 less than the expected price. However a &lt;em&gt;less naive&lt;/em&gt; approach would be to compare the $180,000 offer in the context of the model’s observed accuracy when making predictions on a holdout set&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;We need to be careful regarding how we consider performance and the errors of our model. For this particular problem, the variability in our model’s errors increase with the magnitude of the predictions for &lt;code&gt;Sale_Price&lt;/code&gt;&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt;. We want an error metric that will not inflate with &lt;code&gt;Sale_Price&lt;/code&gt;. Hence rather than review the difference between &lt;code&gt;Sale_Price&lt;/code&gt; and Expected[&lt;code&gt;Sale_Price&lt;/code&gt;], it is more appropriate to review either:&lt;/p&gt;
 &lt;ul&gt;
@@ -211,8 +211,8 @@ data_preds %&amp;gt;%
 &lt;p&gt;&lt;strong&gt;Is your model performant enough to be useful?&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Before using the model for predictive inference, one &lt;em&gt;should&lt;/em&gt; have reviewed performance on a holdout dataset to ensure the model is sufficiently accurate for the business context. For example, in our problem, is an average error of ~12% and 90% prediction intervals of +/- ~25% of &lt;code&gt;Sale_Price&lt;/code&gt; useful? If the answer is “no,” that suggests the need for more effort in improving the accuracy of the model (e.g. trying other transformations, features, model types)&lt;a href=&#34;#fn13&#34; class=&#34;footnote-ref&#34; id=&#34;fnref13&#34;&gt;&lt;sup&gt;13&lt;/sup&gt;&lt;/a&gt;. For our examples we are assuming the answer is ‘yes,’ our model is accurate enough (so that we can move-on to focus on prediction intervals).&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;observation-specific-intervals&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Observation Specific Intervals&lt;/h1&gt;
+&lt;div id=&#34;observation-specific-intervals&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Observation Specific Intervals&lt;/h2&gt;
 &lt;p&gt;While a good starting point, a limitation with using aggregate error metrics to estimate intervals indiscriminately across observations&lt;a href=&#34;#fn14&#34; class=&#34;footnote-ref&#34; id=&#34;fnref14&#34;&gt;&lt;sup&gt;14&lt;/sup&gt;&lt;/a&gt; is that different attributes may associate with different levels of uncertainty in the prediction. Specifically, predictions further from the centroid of the data generally have more uncertainty in the expected price.&lt;/p&gt;
 &lt;p&gt;A toy see-saw is a good analogy for this phenomenon:&lt;/p&gt;
 &lt;blockquote&gt;
@@ -226,6 +226,7 @@ The angle of the seasaw represents variability in the model function being estim
 &lt;/div&gt;
 &lt;p&gt;Because of this variability in the uncertainty of the expected value of the model, it is preferable to determine a plausible price range that is specific to the attributes of the observations&lt;a href=&#34;#fn15&#34; class=&#34;footnote-ref&#34; id=&#34;fnref15&#34;&gt;&lt;sup&gt;15&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;(The uncertainty described above corresponds with the &lt;em&gt;confidence intervals&lt;/em&gt; and not as directly with the &lt;em&gt;prediction intervals&lt;/em&gt; – that are the focus of this post. The distinction and relationship between these will be discussed in &lt;a href=&#34;#a-few-things-to-understand-about-prediction-intervals&#34;&gt;A Few Things to Understand About Prediction Intervals&lt;/a&gt;.)&lt;/p&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;a-few-things-to-understand-about-prediction-intervals&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;A Few Things to Understand About Prediction Intervals&lt;/h1&gt;
@@ -367,8 +368,8 @@ bind_rows(
 &lt;/table&gt;
 &lt;p&gt;Performance on the training and holdout datasets are not grossly different, hence there does not seem to be a major concern with overfitting in our model.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;extract-prediction-intervals&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Extract Prediction Intervals&lt;/h1&gt;
+&lt;div id=&#34;review-prediction-intervals&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Review Prediction Intervals&lt;/h1&gt;
 &lt;p&gt;90% prediction interval for our example case:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;preds_intervals &amp;lt;- predict(
   workflows::pull_workflow_fit(lm_wf),
@@ -610,8 +611,8 @@ lm_interval_widths %&amp;gt;%
 &lt;li&gt;Assumes the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic&lt;a href=&#34;#fn55&#34; class=&#34;footnote-ref&#34; id=&#34;fnref55&#34;&gt;&lt;sup&gt;55&lt;/sup&gt;&lt;/a&gt;)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;strong&gt;Wrap-up:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Prediction intervals provide an indicator for the uncertainty of individual observations. They are useful for generating a reasonable range you would expect for an observation. These ranges can be used to evaluate things like potential Sale Prices and have the advantages over more simple methods (e.g. comparing whether a deal is above or below expectated Sale Price) in that they take into account both the magnitude and level of variability in the data to provide a notion of a “reasonable” range of values for an observation.&lt;/p&gt;
-&lt;p&gt;Measures like &lt;em&gt;coverage&lt;/em&gt; and &lt;em&gt;interval width&lt;/em&gt; are helpful for evaluating your intervals. These metrics will be used in follow-up posts on &lt;strong&gt;Building Prediction Intervals Using Quantile Regression&lt;/strong&gt; and &lt;strong&gt;Building Prediction Intervals Using Simulation&lt;/strong&gt;, where I walk through using more sophisticated methods for building prediction intervals.&lt;/p&gt;
+&lt;p&gt;Prediction intervals provide an indicator for the uncertainty of individual observations. They are useful for generating a range of plausible values for an observation. They have advantages over point estimates in that they take into account both the magnitude and level of variability in the data to provide a notion of a “reasonable” range of values for an observation.&lt;/p&gt;
+&lt;p&gt;Measures like &lt;em&gt;coverage&lt;/em&gt; and &lt;em&gt;interval width&lt;/em&gt; are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on &lt;strong&gt;Building Prediction Intervals Using Quantile Regression&lt;/strong&gt; and &lt;strong&gt;Building Prediction Intervals Using Simulation&lt;/strong&gt;, where I walk through more sophisticated and flexible methods for building prediction intervals.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;

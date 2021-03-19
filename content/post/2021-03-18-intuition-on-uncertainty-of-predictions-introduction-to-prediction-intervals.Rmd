@@ -117,7 +117,7 @@ data_preds %>%
 
 Using the naive approach, whether an offer is above or below this *expected* price may provide a first indication of whether the deal is 'good' or 'bad' for the seller^[Relative to prior deals which the model was trained on.]. The magnitude of the difference between the offer and the expected price might also be important. However you often will care about how big this difference is relative to the underlying uncertainty in `Sale_Price`-- which calls for the use of statistics, specifically predictive inference. Statistics can help to provide a sense of the accuracy of the model and the extent to which an offer seems reasonable in the context of the variability in prices^[When you are dealing with problems that consider both magnitude and variability, statitistics are often helpful.].
 
-# Considering Uncertainty
+## Considering Uncertainty
 
 For example, Let's consider an offer of \$180,000 for the example house mentioned above. You might first think you ought to reject the offer due to it being ~\$4,500 less than the expected price. However a *less naive* approach would be to compare the \$180,000 offer in the context of the model's observed accuracy when making predictions on a holdout set^[Atatistics can provide context as to whether this represents a *small* or *large* deviation from expectations.]. 
 
@@ -167,7 +167,7 @@ All of which suggests the \$180,000 offer does not represent a substantial outli
 
 Before using the model for predictive inference, one *should* have reviewed performance on a holdout dataset to ensure the model is sufficiently accurate for the business context. For example, in our problem, is an average error of ~12% and 90% prediction intervals of +/- ~25% of `Sale_Price` useful? If the answer is "no," that suggests the need for more effort in improving the accuracy of the model (e.g. trying other transformations, features, model types)^[Or a focus on other pieces of information outside of your model for making decisions.]. For our examples we are assuming the answer is 'yes,' our model is accurate enough (so that we can move-on to focus on prediction intervals). 
 
-# Observation Specific Intervals
+## Observation Specific Intervals
 
 While a good starting point, a limitation with using aggregate error metrics to estimate intervals indiscriminately across observations^[As shown above in [Considering Uncertainty].] is that different attributes may associate with different levels of uncertainty in the prediction. Specifically, predictions further from the centroid of the data generally have more uncertainty in the expected price. 
 
@@ -315,7 +315,7 @@ bind_rows(
 
 Performance on the training and holdout datasets are not grossly different, hence there does not seem to be a major concern with overfitting in our model. 
 
-# Extract Prediction Intervals
+# Review Prediction Intervals
 
 90% prediction interval for our example case:
 ```{r}
@@ -475,6 +475,6 @@ The relative interval width is consistent across predicted `Sale_Price` and betw
 
 **Wrap-up:**
 
-Prediction intervals provide an indicator for the uncertainty of individual observations. They are useful for generating a reasonable range you would expect for an observation. These ranges can be used to evaluate things like potential Sale Prices and have the advantages over more simple methods (e.g. comparing whether a deal is above or below expectated Sale Price) in that they take into account both the magnitude and level of variability in the data to provide a notion of a "reasonable" range of values for an observation.
+Prediction intervals provide an indicator for the uncertainty of individual observations. They are useful for generating a range of plausible values for an observation. They have advantages over point estimates in that they take into account both the magnitude and level of variability in the data to provide a notion of a "reasonable" range of values for an observation.
 
-Measures like *coverage* and *interval width* are helpful for evaluating your intervals. These metrics will be used in follow-up posts on __Building Prediction Intervals Using Quantile Regression__ and __Building Prediction Intervals Using Simulation__, where I walk through using more sophisticated methods for building prediction intervals.
+Measures like *coverage* and *interval width* are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on __Building Prediction Intervals Using Quantile Regression__ and __Building Prediction Intervals Using Simulation__, where I walk through more sophisticated and flexible methods for building prediction intervals.

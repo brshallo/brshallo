@@ -9,9 +9,10 @@ thumbnail: /post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction
 
 <div id="TOC">
 <ul>
-<li><a href="#providing-more-than-point-estimates">Providing More Than Point Estimates</a></li>
+<li><a href="#providing-more-than-point-estimates">Providing More Than Point Estimates</a><ul>
 <li><a href="#considering-uncertainty">Considering Uncertainty</a></li>
 <li><a href="#observation-specific-intervals">Observation Specific Intervals</a></li>
+</ul></li>
 <li><a href="#a-few-things-to-understand-about-prediction-intervals">A Few Things to Understand About Prediction Intervals</a><ul>
 <li><a href="#prediction-intervals-and-confidence-intervals">Prediction Intervals and Confidence Intervals</a></li>
 <li><a href="#analytic-method-of-calculating-prediction-intervals">Analytic Method of Calculating Prediction Intervals</a></li>
@@ -20,7 +21,7 @@ thumbnail: /post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction
 <li><a href="#cautions-with-overfitting">Cautions with Overfitting</a></li>
 </ul></li>
 <li><a href="#generalizability">Generalizability</a></li>
-<li><a href="#extract-prediction-intervals">Extract Prediction Intervals</a><ul>
+<li><a href="#review-prediction-intervals">Review Prediction Intervals</a><ul>
 <li><a href="#coverage">Coverage</a></li>
 <li><a href="#interval-width">Interval Width</a></li>
 </ul></li>
@@ -136,9 +137,8 @@ lm_wf &lt;- workflows::workflow() %&gt;%
 </tbody>
 </table>
 <p>Using the naive approach, whether an offer is above or below this <em>expected</em> price may provide a first indication of whether the deal is ‘good’ or ‘bad’ for the seller<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. The magnitude of the difference between the offer and the expected price might also be important. However you often will care about how big this difference is relative to the underlying uncertainty in <code>Sale_Price</code>– which calls for the use of statistics, specifically predictive inference. Statistics can help to provide a sense of the accuracy of the model and the extent to which an offer seems reasonable in the context of the variability in prices<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
-</div>
-<div id="considering-uncertainty" class="section level1">
-<h1>Considering Uncertainty</h1>
+<div id="considering-uncertainty" class="section level2">
+<h2>Considering Uncertainty</h2>
 <p>For example, Let’s consider an offer of $180,000 for the example house mentioned above. You might first think you ought to reject the offer due to it being ~$4,500 less than the expected price. However a <em>less naive</em> approach would be to compare the $180,000 offer in the context of the model’s observed accuracy when making predictions on a holdout set<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
 <p>We need to be careful regarding how we consider performance and the errors of our model. For this particular problem, the variability in our model’s errors increase with the magnitude of the predictions for <code>Sale_Price</code><a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>. We want an error metric that will not inflate with <code>Sale_Price</code>. Hence rather than review the difference between <code>Sale_Price</code> and Expected[<code>Sale_Price</code>], it is more appropriate to review either:</p>
 <ul>
@@ -203,8 +203,8 @@ data_preds %&gt;%
 <p><strong>Is your model performant enough to be useful?</strong></p>
 <p>Before using the model for predictive inference, one <em>should</em> have reviewed performance on a holdout dataset to ensure the model is sufficiently accurate for the business context. For example, in our problem, is an average error of ~12% and 90% prediction intervals of +/- ~25% of <code>Sale_Price</code> useful? If the answer is “no,” that suggests the need for more effort in improving the accuracy of the model (e.g. trying other transformations, features, model types)<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>. For our examples we are assuming the answer is ‘yes,’ our model is accurate enough (so that we can move-on to focus on prediction intervals).</p>
 </div>
-<div id="observation-specific-intervals" class="section level1">
-<h1>Observation Specific Intervals</h1>
+<div id="observation-specific-intervals" class="section level2">
+<h2>Observation Specific Intervals</h2>
 <p>While a good starting point, a limitation with using aggregate error metrics to estimate intervals indiscriminately across observations<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a> is that different attributes may associate with different levels of uncertainty in the prediction. Specifically, predictions further from the centroid of the data generally have more uncertainty in the expected price.</p>
 <p>A toy see-saw is a good analogy for this phenomenon:</p>
 <blockquote>
@@ -218,6 +218,7 @@ The angle of the seasaw represents variability in the model function being estim
 </div>
 <p>Because of this variability in the uncertainty of the expected value of the model, it is preferable to determine a plausible price range that is specific to the attributes of the observations<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>.</p>
 <p>(The uncertainty described above corresponds with the <em>confidence intervals</em> and not as directly with the <em>prediction intervals</em> – that are the focus of this post. The distinction and relationship between these will be discussed in <a href="#a-few-things-to-understand-about-prediction-intervals">A Few Things to Understand About Prediction Intervals</a>.)</p>
+</div>
 </div>
 <div id="a-few-things-to-understand-about-prediction-intervals" class="section level1">
 <h1>A Few Things to Understand About Prediction Intervals</h1>
@@ -359,8 +360,8 @@ bind_rows(
 </table>
 <p>Performance on the training and holdout datasets are not grossly different, hence there does not seem to be a major concern with overfitting in our model.</p>
 </div>
-<div id="extract-prediction-intervals" class="section level1">
-<h1>Extract Prediction Intervals</h1>
+<div id="review-prediction-intervals" class="section level1">
+<h1>Review Prediction Intervals</h1>
 <p>90% prediction interval for our example case:</p>
 <pre class="r"><code>preds_intervals &lt;- predict(
   workflows::pull_workflow_fit(lm_wf),
@@ -602,8 +603,8 @@ lm_interval_widths %&gt;%
 <li>Assumes the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic<a href="#fn55" class="footnote-ref" id="fnref55"><sup>55</sup></a>)</li>
 </ul>
 <p><strong>Wrap-up:</strong></p>
-<p>Prediction intervals provide an indicator for the uncertainty of individual observations. They are useful for generating a reasonable range you would expect for an observation. These ranges can be used to evaluate things like potential Sale Prices and have the advantages over more simple methods (e.g. comparing whether a deal is above or below expectated Sale Price) in that they take into account both the magnitude and level of variability in the data to provide a notion of a “reasonable” range of values for an observation.</p>
-<p>Measures like <em>coverage</em> and <em>interval width</em> are helpful for evaluating your intervals. These metrics will be used in follow-up posts on <strong>Building Prediction Intervals Using Quantile Regression</strong> and <strong>Building Prediction Intervals Using Simulation</strong>, where I walk through using more sophisticated methods for building prediction intervals.</p>
+<p>Prediction intervals provide an indicator for the uncertainty of individual observations. They are useful for generating a range of plausible values for an observation. They have advantages over point estimates in that they take into account both the magnitude and level of variability in the data to provide a notion of a “reasonable” range of values for an observation.</p>
+<p>Measures like <em>coverage</em> and <em>interval width</em> are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on <strong>Building Prediction Intervals Using Quantile Regression</strong> and <strong>Building Prediction Intervals Using Simulation</strong>, where I walk through more sophisticated and flexible methods for building prediction intervals.</p>
 </div>
 <div class="footnotes">
 <hr />
