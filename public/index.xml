@@ -34,28 +34,25 @@
 &lt;li&gt;&lt;a href=&#34;#interval-width&#34;&gt;Interval Width&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#closing-notes&#34;&gt;Closing Notes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#pros-cons&#34;&gt;Pros &amp;amp; Cons&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 
 &lt;p&gt;Prediction intervals provide a measure of uncertainty for predictions on individual observations. This post…&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;builds up a motivating example for using prediction intervals&lt;/li&gt;
+&lt;li&gt;builds up a motivating example&lt;/li&gt;
 &lt;li&gt;describes factors that influence prediction intervals&lt;/li&gt;
 &lt;li&gt;shows examples of how to build and review prediction intervals&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;I use the R programming language and the &lt;a href=&#34;https://www.tidyverse.org/&#34;&gt;tidyverse&lt;/a&gt; + &lt;a href=&#34;https://www.tidymodels.org/&#34;&gt;tidymodels&lt;/a&gt; suite of packages to create all models and figures.&lt;/p&gt;
-&lt;p&gt;This is the first of three posts on prediction intervals:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;Introduction to Prediction Intervals (this post)&lt;/li&gt;
-&lt;li&gt;Quantile Regression for Prediction Intervals&lt;/li&gt;
-&lt;li&gt;Simulating Prediction Intervals&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;This is the first of three posts on prediction intervals (&lt;strong&gt;part 2&lt;/strong&gt; employs quantile regression, and &lt;strong&gt;part 3&lt;/strong&gt; simulation techniques). I use the R programming language and the &lt;a href=&#34;https://www.tidyverse.org/&#34;&gt;tidyverse&lt;/a&gt; + &lt;a href=&#34;https://www.tidymodels.org/&#34;&gt;tidymodels&lt;/a&gt; suites of packages to create all models and figures.&lt;/p&gt;
 &lt;div id=&#34;providing-more-than-point-estimates&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Providing More Than Point Estimates&lt;/h1&gt;
-&lt;p&gt;Imagine you are an analyst for a business to business (B2B) seller and are responsible for identifying appropriate prices for complicated products with non-standard selling prices&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;. If you have more than one or two variables that influence price, statistical or machine learning models offer useful techniques for determining the optimal way to combine features to pinpoint expected prices of future deals&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt; (of course margin, market positioning, and other business considerations also matter).&lt;/p&gt;
-&lt;p&gt;You might first build a model for &lt;em&gt;expected sale price&lt;/em&gt; that is fit based on the patterns in historical sales data. The naive approach would be to use predictions from this model as a reference point. If a customer’s offer falls above the expected price, you interpret this as a “good” deal; if the offer falls below the predicted price the deal as “bad.”&lt;/p&gt;
+&lt;p&gt;Imagine you are an analyst for a business to business (B2B) seller and are responsible for identifying appropriate prices for complicated products with non-standard selling practices&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;. If you have more than one or two variables that influence price, statistical or machine learning models offer useful techniques for determining the optimal way to combine features to pinpoint expected prices of future deals&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt; (of course margin, market positioning, and other business considerations also matter).&lt;/p&gt;
+&lt;p&gt;You might first build a model for &lt;em&gt;expected sale price&lt;/em&gt; that is fit based on the patterns in historical sales data. The naive approach would be to use point estimates from this model as a reference. If a customer’s offer falls above the expected price, you interpret this as a “good” deal, if below, a “bad” deal.&lt;/p&gt;
 &lt;p&gt;As a stand-in for the large complicated products typically sold in B2B markets, I will use &lt;a href=&#34;https://github.com/topepo/AmesHousing&#34;&gt;data on home sales&lt;/a&gt; from Ames, Iowa for my examples&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Load in the data and then split it into a training dataset (for exploration and model development) and validation dataset (holdout data not used in model training but reserved for evaluating model performance)&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Load in the data and then split it into a training dataset (for exploration and model development) and validation dataset (holdout data not used in model training, reserved for evaluating model performance)&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
 library(tidymodels)
 library(AmesHousing)
@@ -227,7 +224,7 @@ data_preds %&amp;gt;%
 &lt;/div&gt;
 &lt;blockquote&gt;
 &lt;p&gt;As the angle of the bench changes… the further you are from the center, the more distance you will move up/down →&lt;/p&gt;
-&lt;p&gt;The angle of the seesaw represents variability in the model function being estimated. The distance from the seesaw’s pivot point corresponds with the distance from the centroid of the data&lt;/p&gt;
+&lt;p&gt;The angle of the seesaw represents variability in the model function being estimated. The distance from the seesaw’s pivot point corresponds with the distance from the centroid of the data.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;This variability in estimating the model’s expected value is represented by dashed blue lines in the chart below of a generic linear model:&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
@@ -235,7 +232,7 @@ data_preds %&amp;gt;%
 &lt;p class=&#34;caption&#34;&gt;Image &lt;a href=&#34;https://i.stack.imgur.com/GeeI3.png&#34;&gt;source&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;Because of this variability in the uncertainty of the expected value of the model, it is preferable to determine a plausible price range that is specific to the attributes of the observation&lt;a href=&#34;#fn16&#34; class=&#34;footnote-ref&#34; id=&#34;fnref16&#34;&gt;&lt;sup&gt;16&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The uncertainty described here corresponds with the &lt;em&gt;confidence intervals&lt;/em&gt; and not quite as directly with the &lt;em&gt;prediction intervals&lt;/em&gt; (the latter of which is the focus of this post). The distinction and relationship between these will be discussed in &lt;a href=&#34;#a-few-things-to-understand-about-prediction-intervals&#34;&gt;A Few Things to Understand About Prediction Intervals&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The uncertainty described here corresponds with the &lt;em&gt;confidence intervals&lt;/em&gt; and not quite as directly with the &lt;em&gt;prediction intervals&lt;/em&gt; (the focus of this post). The distinction and relationship between these will be discussed in &lt;a href=&#34;#a-few-things-to-understand-about-prediction-intervals&#34;&gt;A Few Things to Understand About Prediction Intervals&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;a-few-things-to-understand-about-prediction-intervals&#34; class=&#34;section level1&#34;&gt;
@@ -612,7 +609,14 @@ lm_interval_widths %&amp;gt;%
 &lt;/div&gt;
 &lt;div id=&#34;closing-notes&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Closing Notes&lt;/h1&gt;
-&lt;p&gt;&lt;em&gt;Upsides of prediction intervals using parametric method with linear regression:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Prediction intervals provide an indicator for the uncertainty of individual predictions. They have advantages over point estimates in that they take into account the variability in the data to provide a “reasonable” range of values for an observation.&lt;/p&gt;
+&lt;p&gt;Measures like &lt;em&gt;coverage&lt;/em&gt; and &lt;em&gt;interval width&lt;/em&gt; are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on &lt;strong&gt;Building Prediction Intervals Using Quantile Regression&lt;/strong&gt; and &lt;strong&gt;Building Prediction Intervals Using Simulation&lt;/strong&gt;, where I walk through more sophisticated and flexible methods for building prediction intervals.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;div id=&#34;pros-cons&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Pros &amp;amp; Cons&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;Upsides of prediction intervals using parametric methods with linear regression:&lt;/em&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Most common (largest number of people are familiar)&lt;/li&gt;
 &lt;li&gt;Straightforward calculation with low computation costs&lt;/li&gt;
@@ -621,11 +625,9 @@ lm_interval_widths %&amp;gt;%
 &lt;ul&gt;
 &lt;li&gt;Less flexible than alternative approaches.&lt;/li&gt;
 &lt;li&gt;Prediction intervals produced in this way have a variety of &lt;a href=&#34;https://online.stat.psu.edu/stat501/lesson/3/3.3/#paragraph--766&#34;&gt;strong assumptions&lt;/a&gt; that they depend on (generally more heavily than other approaches).&lt;/li&gt;
-&lt;li&gt;Assumes the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic&lt;a href=&#34;#fn57&#34; class=&#34;footnote-ref&#34; id=&#34;fnref57&#34;&gt;&lt;sup&gt;57&lt;/sup&gt;&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Assumes the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic&lt;a href=&#34;#fn57&#34; class=&#34;footnote-ref&#34; id=&#34;fnref57&#34;&gt;&lt;sup&gt;57&lt;/sup&gt;&lt;/a&gt;).&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Wrap-up:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Prediction intervals provide an indicator for the uncertainty of individual predictions. They have advantages over point estimates in that they take into account the variability in the data to provide a “reasonable” range of values for an observation.&lt;/p&gt;
-&lt;p&gt;Measures like &lt;em&gt;coverage&lt;/em&gt; and &lt;em&gt;interval width&lt;/em&gt; are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on &lt;strong&gt;Building Prediction Intervals Using Quantile Regression&lt;/strong&gt; and &lt;strong&gt;Building Prediction Intervals Using Simulation&lt;/strong&gt;, where I walk through more sophisticated and flexible methods for building prediction intervals.&lt;/p&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;

@@ -12,21 +12,15 @@ knitr::opts_chunk$set(echo = TRUE,  message = FALSE, warning = FALSE)
 
 Prediction intervals provide a measure of uncertainty for predictions on individual observations. This post... 
 
-* builds up a motivating example for using prediction intervals
+* builds up a motivating example 
 * describes factors that influence prediction intervals
 * shows examples of how to build and review prediction intervals
 
-I use the R programming language and the [tidyverse](https://www.tidyverse.org/) + [tidymodels](https://www.tidymodels.org/) suite of packages to create all models and figures.
-
-This is the first of three posts on prediction intervals:
-
-1. Introduction to Prediction Intervals (this post)
-1. Quantile Regression for Prediction Intervals
-1. Simulating Prediction Intervals
+This is the first of three posts on prediction intervals (__part 2__ employs quantile regression, and __part 3__ simulation techniques). I use the R programming language and the [tidyverse](https://www.tidyverse.org/) + [tidymodels](https://www.tidymodels.org/) suites of packages to create all models and figures.
 
 # Providing More Than Point Estimates
 
-Imagine you are an analyst for a business to business (B2B) seller and are responsible for identifying appropriate prices for complicated products with non-standard selling prices^[Non-standard, negotiated prices are common in the B2B world.]. If you have more than one or two variables that influence price, statistical or machine learning models offer useful techniques for determining the optimal way to combine features to pinpoint expected prices of future deals[^analysts] (of course margin, market positioning, and other business considerations also matter). 
+Imagine you are an analyst for a business to business (B2B) seller and are responsible for identifying appropriate prices for complicated products with non-standard selling practices^[Non-standard, negotiated prices are common in the B2B world.]. If you have more than one or two variables that influence price, statistical or machine learning models offer useful techniques for determining the optimal way to combine features to pinpoint expected prices of future deals[^analysts] (of course margin, market positioning, and other business considerations also matter). 
 
 [^analysts]: Analysts are sometimes tempted to compare the specific deal of interest against *only* historical deals that have similar attributes. The problem with attempting to do this is that, when you filter you lose data. After filtering across more than a couple dimensions, you likely will only have a few deals left in your sub-segment -- too few to get a reliable sense of price variability. Prediction intervals offer a method for determining the variability of your estimates that spans across the multi-dimensional space that your data inhabits.  
     
@@ -34,11 +28,11 @@ Imagine you are an analyst for a business to business (B2B) seller and are respo
     
     I've seen many occassions when an analyst keeps slicing their data and reviewing univariate relationships until they've convinced themselves they've found something -- even when the sample sizes at this point are small and the nature of the relationship unconvincing.
 
-You might first build a model for *expected sale price* that is fit based on the patterns in historical sales data. The naive approach would be to use predictions from this model as a reference point. If a customer's offer falls above the expected price, you interpret this as a "good" deal; if the offer falls below the predicted price the deal as "bad." 
+You might first build a model for *expected sale price* that is fit based on the patterns in historical sales data. The naive approach would be to use point estimates from this model as a reference. If a customer's offer falls above the expected price, you interpret this as a "good" deal, if below, a "bad" deal. 
 
 As a stand-in for the large complicated products typically sold in B2B markets, I will use [data on home sales](https://github.com/topepo/AmesHousing) from Ames, Iowa for my examples^[This is similar to what I did on a [previous post on pricing](https://www.bryanshalloway.com/2020/08/17/pricing-insights-from-historical-data-part-1/).]. 
 
-Load in the data and then split it into a training dataset (for exploration and model development) and validation dataset (holdout data not used in model training but reserved for evaluating model performance)^[If I was being a little more careful, I'd also split the `train` data into a validation set or I'd use `rsample` to set-up cross validation. In this post though I largely use `test` how you might use a validation set though. See [Tidy Modeling with R, 10.2](https://www.tmwr.org/resampling.html) for more.]. 
+Load in the data and then split it into a training dataset (for exploration and model development) and validation dataset (holdout data not used in model training, reserved for evaluating model performance)^[If I was being a little more careful, I'd also split the `train` data into a validation set or I'd use `rsample` to set-up cross validation. In this post though I largely use `test` how you might use a validation set though. See [Tidy Modeling with R, 10.2](https://www.tmwr.org/resampling.html) for more.]. 
 
 ```{r load-data-packages}
 library(tidyverse)
@@ -183,7 +177,7 @@ A toy seesaw is a good analogy for this phenomenon:
 
 > As the angle of the bench changes... the further you are from the center, the more distance you will move up/down &rightarrow;  
 >  
-> The angle of the seesaw represents variability in the model function being estimated. The distance from the seesaw's pivot point corresponds with the distance from the centroid of the data
+> The angle of the seesaw represents variability in the model function being estimated. The distance from the seesaw's pivot point corresponds with the distance from the centroid of the data.
 
 This variability in estimating the model's expected value is represented by dashed blue lines in the chart below of a generic linear model:
 
@@ -191,7 +185,7 @@ This variability in estimating the model's expected value is represented by dash
 
 Because of this variability in the uncertainty of the expected value of the model, it is preferable to determine a plausible price range that is specific to the attributes of the observation^[Rather than just looking at your observation of interest through the lens of aggregate error metrics.]. 
 
-The uncertainty described here corresponds with the *confidence intervals* and not quite as directly with the *prediction intervals* (the latter of which is the focus of this post). The distinction and relationship between these will be discussed in [A Few Things to Understand About Prediction Intervals].
+The uncertainty described here corresponds with the *confidence intervals* and not quite as directly with the *prediction intervals* (the focus of this post). The distinction and relationship between these will be discussed in [A Few Things to Understand About Prediction Intervals].
 
 # A Few Things to Understand About Prediction Intervals
 
@@ -474,7 +468,15 @@ The relative interval width is consistent across predicted `Sale_Price` and betw
 
 # Closing Notes
 
-*Upsides of prediction intervals using parametric method with linear regression:*
+Prediction intervals provide an indicator for the uncertainty of individual predictions. They have advantages over point estimates in that they take into account the variability in the data to provide a "reasonable" range of values for an observation.
+
+Measures like *coverage* and *interval width* are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on __Building Prediction Intervals Using Quantile Regression__ and __Building Prediction Intervals Using Simulation__, where I walk through more sophisticated and flexible methods for building prediction intervals.
+
+# Appendix
+
+## Pros & Cons 
+
+*Upsides of prediction intervals using parametric methods with linear regression:*
 
 * Most common (largest number of people are familiar)
 * Straightforward calculation with low computation costs
@@ -483,10 +485,4 @@ The relative interval width is consistent across predicted `Sale_Price` and betw
 
 * Less flexible than alternative approaches.
 * Prediction intervals produced in this way have a variety of [strong assumptions](https://online.stat.psu.edu/stat501/lesson/3/3.3/#paragraph--766) that they depend on (generally more heavily than other approaches). 
-* Assumes the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic^[Though linear models are less likely to overfit compared to most model types.])
-
-**Wrap-up:**
-
-Prediction intervals provide an indicator for the uncertainty of individual predictions. They have advantages over point estimates in that they take into account the variability in the data to provide a "reasonable" range of values for an observation.
-
-Measures like *coverage* and *interval width* are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on __Building Prediction Intervals Using Quantile Regression__ and __Building Prediction Intervals Using Simulation__, where I walk through more sophisticated and flexible methods for building prediction intervals.
+* Assumes the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic^[Though linear models are less likely to overfit compared to most model types.]).
