@@ -16,7 +16,25 @@ Prediction intervals provide a measure of uncertainty for predictions on individ
 * describes factors that influence prediction intervals
 * shows examples of how to build and review prediction intervals
 
-This is the first of three posts on prediction intervals (__part 2__ employs quantile regression, and __part 3__ simulation techniques). I use the R programming language and the [tidyverse](https://www.tidyverse.org/) + [tidymodels](https://www.tidymodels.org/) suites of packages to create all models and figures.
+This is the first of three posts on prediction intervals (__part 2__ employs quantile regression and __part 3__ simulation techniques). I use the R programming language and the [tidyverse](https://www.tidyverse.org/) + [tidymodels](https://www.tidymodels.org/) suite of packages to create all models and figures.
+
+
+```{r load-packages}
+library(tidyverse)
+library(tidymodels)
+library(AmesHousing)
+library(gt)
+
+# function copied from here:
+# https://github.com/rstudio/gt/issues/613#issuecomment-772072490 
+# (simpler solution should be implemented in future versions of {gt})
+fmt_if_number <- function(..., digits = 2) {
+  input <- c(...)
+  fmt <- paste0("%.", digits, "f")
+  if (is.numeric(input))   return(sprintf(fmt, input))
+  return(input)
+}
+```
 
 # Providing More Than Point Estimates
 
@@ -34,11 +52,7 @@ As a stand-in for the large complicated products typically sold in B2B markets, 
 
 Load in the data and then split it into a training dataset (for exploration and model development) and validation dataset (holdout data not used in model training, reserved for evaluating model performance)^[If I was being a little more careful, I'd also split the `train` data into a validation set or I'd use `rsample` to set-up cross validation. In this post though I largely use `test` how you might use a validation set though. See [Tidy Modeling with R, 10.2](https://www.tmwr.org/resampling.html) for more.]. 
 
-```{r load-data-packages}
-library(tidyverse)
-library(tidymodels)
-library(AmesHousing)
-
+```{r load-data}
 ames <- make_ames() %>% 
   mutate(Years_Old = Year_Sold - Year_Built,
          Years_Old = ifelse(Years_Old < 0, 0, Years_Old))
@@ -112,7 +126,8 @@ the model would predict the `Sale_Price` for the home to be $184,503.
 data_preds %>% 
   select(-Sale_Price) %>% 
   head(1) %>% 
-  knitr::kable(digits = 0)
+  gt::gt() %>% 
+ gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 0))
 ```
 
 Using the naive approach, whether an offer is above or below this *expected* price may provide a first indication of whether the deal is 'good' or 'bad' for the seller^[Relative to prior deals which the model was trained on.]. The magnitude of the difference between the offer and the expected price is also important. However you often will care about how big this difference is relative to the underlying uncertainty in `Sale_Price` -- which calls for the use of statistics, specifically predictive inference^[When you are dealing with problems that consider both magnitude and variability, statistics are often helpful. Statistics can help to provide a sense of the accuracy of the model and the extent to which an offer seems reasonable in the context of the variability in prices.].
@@ -123,7 +138,7 @@ Let's consider an offer of \$180,000 for our example house. You might first thin
 
 We need to be careful regarding how we consider performance and the errors of our model. For this particular problem, the variability in our model's errors increase with the magnitude of the predictions for `Sale_Price`^[This is known as heteroskedasticity. We generally want our error metrics to be homoskedastic, i.e. 'same variance'. This is why we built the model on the target `log(Sale_Price, 10)`. Note that the base rate of 10 doesn't really matter that much, we could just have easily have built the model using the natural logarithm and gotten similar results.]. We want an error metric that will not inflate with `Sale_Price`. Hence rather than review the difference between `Sale_Price` and Expected[`Sale_Price`], it is more appropriate to review either:
 
-* $\log_{10}(Sale\_Price)$ against Expected[$\log_{10}(Sale\_Price)$] OR
+* $\log_{10}(Sale\_Price)$ against $Expected[\log_{10}(Sale\_Price)]$ OR
 * an error metric that is in terms of percent of `Sale_Price`
 
 I will use the latter method and focus on the percentage error^[I chose this method as I thought it would be easier to explain and some readers may be intimated by logs. During model building and evaluation the former would often be more appropriate to review. In particular the root mean squared error (RMSE) of the errors of the predictions for `log(Sale_Price)`.]. The offer of $180,000 corresponds with a 2.5% difference from expectations. This falls well within the distribution of errors seen by our model on a holdout dataset^[Data not seen during model training and reserved for the purpose of model evaluation].
@@ -147,7 +162,8 @@ On average our model is off by around ~12% of the actual `Sale_Price` observed.
 ```{r}
 data_preds %>% 
   yardstick::mape(Sale_Price, .pred) %>% 
-  knitr::kable(digits = 1)
+  gt::gt() %>% 
+ gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 1))
 ```
 
 90% of errors on the holdout dataset were between -27.1% and 21.3% of the actual `Sale_Price`. 
@@ -158,7 +174,8 @@ data_preds %>%
          APE = abs(PE)) %>% 
   summarise(quant_05 = quantile(PE, 0.05) * 100,
             quant_95 = quantile(PE, 0.95) * 100) %>% 
-  knitr::kable(digits = 1)
+  gt::gt() %>% 
+ gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 1))
 ```
 
 All of which suggests the \$180,000 offer does not represent a substantial outlier from the typical variability of observed from predicted `Sale_Price`^[Based on the observation level estimates given by our model on a holdout set.].
@@ -226,7 +243,7 @@ The first source may vary in part depending on position relative to the centroid
 
 Do not think of these sources of uncertainty as being compounded on one another to produce the prediction interval. They are added together^[To get the variance.] and then the square root is taken. In most cases the variability due to the sample will be greater than the variability in estimating the expected value. Hence, the interval's width due to uncertainty in estimating the model is somewhat 'watered down' by the variability in the sample. Therefore (for prediction intervals produced analytically at least) we will generally not see large differences in the widths of prediction intervals across observations (even at points that are relatively far from the centroid of the data). Therefore our prediction intervals in later sections of this post will not actually be that much different from those that might have been produced using aggregated error metrics similar to those discussed in [Considering Uncertainty].
 
-However understanding the intuition on these sources of uncertainty in prediction intervals is still helpful. In follow-up posts I use more flexible methods for building prediction intervals. These other methods can produce substantive differences in the width of prediction intervals between observations6[For example, simulation techniques are able to capture uncertainty in model estimation in ways that do not depend on distance of an observation from the centroid of the data. They also capture uncertainty that results from trying to estimate too many parameters relative to the size of the dataset.].
+However understanding the intuition on these sources of uncertainty in prediction intervals is still helpful. In follow-up posts I use more flexible methods for building prediction intervals. These other methods can produce substantive differences in the width of prediction intervals between observations^[For example, simulation techniques are able to capture uncertainty in model estimation in ways that do not depend on distance of an observation from the centroid of the data. They also capture uncertainty that results from trying to estimate too many parameters relative to the size of the dataset.].
 
 ## Visual Comparison of Prediction Intervals and Confidence Intervals
 
@@ -316,7 +333,8 @@ bind_rows(
   yardstick::mape(data_preds, Sale_Price, .pred)
 ) %>% 
   mutate(dataset = c("training", "validation")) %>% 
-  knitr::kable(digits = 1)
+  gt::gt() %>% 
+ gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 1))
 ```
 
 Performance on the training and holdout datasets are not grossly different, hence there does not seem to be a major concern with overfitting in our model^[This is typically the way this check would be used -- if there is no difference, you can say there is no overfitting. If there is a difference, you may still be OK with that provided performance is still good enough (or better than alternatives) on a holdout dataset.]. 
@@ -338,7 +356,8 @@ preds_intervals <- predict(
 preds_intervals %>% 
   select(-Sale_Price) %>% 
   slice(1) %>% 
-  knitr::kable(digits = 0)
+  gt::gt() %>% 
+ gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 0))
 ```
 
 This suggests that, given these attributes, we would expect that the `Sale_Price` for an individual observation would fall between \$140,208 and \$242,793 (with 90% confidence). Our example offer of \$184,000 falls well within this range, meaning that -- based on the model -- the offer does not appear unreasonable.
@@ -388,7 +407,8 @@ preds_intervals %>%
             ),
             stderror = 100 * sd(covered) / sqrt(n),
             coverage_prop = 100 * n_covered / n) %>% 
-  knitr::kable(digits = 2)
+  gt::gt() %>% 
+ gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 2))
 ```
 
 ~93% of our holdout observations were actually covered^[The difference between 93% and the expected coverage of 90% may just be the result of random variability in the data.]. We can likely trust these intervals aren't too narrow^[Though they are perhaps slightly conservative. To get a better estimate for coverage, we could use cross validation as this will provide estimates for coverage across multiple iterations of model fitting.]. It is usually better to be on the slightly conservative than optimistic side regarding coverage^[As models tend to perform worse than expected when put into production. I.e. it is better that our empirical coverage is greater than our target coverage than less than our target coverage -- even if it would be ideal for these to align.]. 
@@ -432,7 +452,8 @@ A test for checking whether variability in the categorical variable `covered` (c
 preds_intervals %>% 
   mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %>% 
   mutate(covered = ifelse(Sale_Price >= .pred_lower & Sale_Price <= .pred_upper, 1, 0)) %>% 
-  with(chisq.test(price_grouped, covered))
+  with(chisq.test(price_grouped, covered)) %>% 
+  pander::pander()
 ```
 
 The results provide evidence that whether an observation is covered or not-covered may depend (to some extent) on which quintile of predicted `Sale_Price` the observation falls within^[More explicitly, this test shows that the distribution of `price_grouped by quintile` across `covered` would only occur ~3.4% of the time under the assumption of "no relationship". This is very unlikely, so we reject the NULL hypothesis of "no relationship".].
@@ -461,7 +482,9 @@ lm_interval_widths <- preds_intervals %>%
   select(-price_grouped) 
 
 lm_interval_widths %>% 
-  knitr::kable(digits = 4)
+  gt::gt() %>% 
+ gt::fmt_number(c("stdev", "stderror"), decimals = 4) %>% 
+ gt::fmt_number("mean_interval_width_percentage", decimals = 2)
 ```
 
 The relative interval width is consistent across predicted `Sale_Price` and between observations^[Varying on average less than half a percent between observations.]. The 90% interval represents an average of ~54% of the predicted `Sale_Price`^[Methods in follow-up posts will show greater diversity of interval widths.]. Recall from [Analytic Method of Calculating Prediction Intervals] that the only factor contributing to differences in interval width across predictions is the distance of an observations from the centroid of the data. This has a relatively small impact on interval width given the number of observations and sample variance (which are treated as constant across observations)^[While the seesaw analogy does make a difference in causing some observations to have wider intervals than others, in aggregate you can see the difference is not *that* big -- values like the Mean Squared Error (MSE) or similar aggregate error metrics actually give a pretty close semblance of what you will expect to get when going through the process of creating prediction intervals specific to each observation. Note also however that the difference in interval width will still be greater for the more extreme observations. In future posts some of the methods I walk through will be more flexible or have other advantages (e.g. less strict reliance on distributional assumptions).] in our data. 
