@@ -7,3 +7,11 @@ todo.txt
 # knitr and R markdown default cache directories
 *_cache/
 /cache/
+
+# recommended by blogdown::check_site()
+.DS_Store
+Thumbs.db
+
+# when netlify builds the site can add to ignore
+/public/
+/resources/
