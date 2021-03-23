@@ -1,5 +1,5 @@
 ---
-title: Introduction to Prediction Intervals
+title: Understanding Prediction Intervals
 author: Bryan Shalloway
 date: '2021-03-18'
 slug: intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals
@@ -202,9 +202,9 @@ This variability in estimating the model's expected value is represented by dash
 
 Because of this variability in the uncertainty of the expected value of the model, it is preferable to determine a plausible price range that is specific to the attributes of the observation^[Rather than just looking at your observation of interest through the lens of aggregate error metrics.]. 
 
-The uncertainty described here corresponds with the *confidence intervals* and not quite as directly with the *prediction intervals* (the focus of this post). The distinction and relationship between these will be discussed in [A Few Things to Understand About Prediction Intervals].
+The uncertainty described here corresponds with the *confidence intervals* and not quite as directly with the *prediction intervals* (the focus of this post). The distinction and relationship between these will be discussed in [A Few Things to Know About Prediction Intervals].
 
-# A Few Things to Understand About Prediction Intervals
+# A Few Things to Know About Prediction Intervals
 
 If you are primarily interested in how to build and review prediction intervals you can skip to [Review Prediction Intervals].
 
@@ -228,7 +228,7 @@ Pseudo-translation of key parts of equation:
 * {$\dfrac{MSE}{n}$ : multiplier based on number of observations -- fewer contributes to greater variability.}
 * {$MSE\dfrac{(x_h-\bar{x})^2}{\sum(x_i-\bar{x})^2}$ : multiplier for distance from centroid of data}
 
-You will notice the equation for the prediction interval is very similar to that of the equation for a confidence interval^[I.e. the band around the *average* value, rather than the band around the value for an *individual* observation -- as discussed in [A Few Things to Understand About Prediction Intervals].]:
+You will notice the equation for the prediction interval is very similar to that of the equation for a confidence interval^[I.e. the band around the *average* value, rather than the band around the value for an *individual* observation -- as discussed in [A Few Things to Know About Prediction Intervals].]:
 
 <p class="text-align-center">\(\hat{y}_h \pm t_{(1-\alpha/2, n-2)} \times \sqrt{MSE \left(\dfrac{1}{n} + \dfrac{(x_h-\bar{x})^2}{\sum(x_i-\bar{x})^2}\right)}\)</p>
 
@@ -243,7 +243,7 @@ The first source may vary in part depending on position relative to the centroid
 
 Do not think of these sources of uncertainty as being compounded on one another to produce the prediction interval. They are added together^[To get the variance.] and then the square root is taken. In most cases the variability due to the sample will be greater than the variability in estimating the expected value. Hence, the interval's width due to uncertainty in estimating the model is somewhat 'watered down' by the variability in the sample. Therefore (for prediction intervals produced analytically at least) we will generally not see large differences in the widths of prediction intervals across observations (even at points that are relatively far from the centroid of the data). Therefore our prediction intervals in later sections of this post will not actually be that much different from those that might have been produced using aggregated error metrics similar to those discussed in [Considering Uncertainty].
 
-However understanding the intuition on these sources of uncertainty in prediction intervals is still helpful. In follow-up posts I use more flexible methods for building prediction intervals. These other methods can produce substantive differences in the width of prediction intervals between observations^[For example, simulation techniques are able to capture uncertainty in model estimation in ways that do not depend on distance of an observation from the centroid of the data. They also capture uncertainty that results from trying to estimate too many parameters relative to the size of the dataset.].
+However understanding the intuition on these sources of uncertainty in prediction intervals is still helpful. In follow-up posts I use more flexible methods for building prediction intervals. These other methods can produce substantive differences in the width of prediction intervals between observations (in ways that depend on more than distance of an observation from the centroid of the data).
 
 ## Visual Comparison of Prediction Intervals and Confidence Intervals
 
@@ -496,6 +496,15 @@ Prediction intervals provide an indicator for the uncertainty of individual pred
 Measures like *coverage* and *interval width* are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on __Building Prediction Intervals Using Quantile Regression__ and __Building Prediction Intervals Using Simulation__, where I walk through more sophisticated and flexible methods for building prediction intervals.
 
 # Appendix
+
+## Bayesian Inference
+
+In this and the immediate follow-up posts I approach prediction intervals from a more [frequentist](https://en.wikipedia.org/wiki/Frequentist_inference) perspective. However when you really care about thinking through the nature of uncertainty in your model, [Bayesian](https://en.wikipedia.org/wiki/Bayesian_inference) methods are often more appropriate. I may cover Bayesian approaches in a future post, in the meantime, here are a few resources:
+
+* The [stan](https://mc-stan.org/) computing platform for Bayesian modeling and inference has various excellent R package interfaces. [rstan](https://github.com/stan-dev/rstan), [rstanarm](https://github.com/stan-dev/rstanarm), [brms](https://github.com/paul-buerkner/brms) and [tidybayes](https://github.com/mjskay/tidybayes) are the ones of greatest interest to me^[Along with [rethinking](https://github.com/rmcelreath/rethinking) which supports the "Statistical Rethinking" [book](https://xcelab.net/rm/statistical-rethinking/) and [course](https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists) -- also see [study guide](https://bookdown.org/content/4857/)].  
+* Michael Clark provides a helpful applied [introduction](https://m-clark.github.io/bayesian-basics/) to Bayesian analysis in R. 
+* Note also that you can interact with stan through the `parsnip` package by setting `parsnip::set_engine(engine = "stan")` for linear models.
+* There is also a python interface, [PyStan](https://mc-stan.org/users/interfaces/pystan). The most popular Bayesian library in python however is [PyMC3](https://github.com/pymc-devs/pymc3)^[PyMC3 is built on Theano. If you are wondering why this is not being updated to rely on tensorflow (as many other tools based on theano have been), read [The Future of PyMC3, or: Theano is Dead, Long Live Theano](https://pymc-devs.medium.com/the-future-of-pymc3-or-theano-is-dead-long-live-theano-d8005f8a0e9b).]. You might also check-out [Tensorflow Probability](https://blog.tensorflow.org/2018/12/an-introduction-to-probabilistic.html)^[See [video](https://www.youtube.com/watch?v=_U-1kJo76o4) explaining how it uses Bayesian methods to provide uncertainty for parameter estimates in tensorflow).].
 
 ## Pros & Cons 
 
