@@ -29,6 +29,7 @@ thumbnail: /post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction
 <li><a href="#appendix">Appendix</a><ul>
 <li><a href="#bayesian-inference">Bayesian Inference</a></li>
 <li><a href="#pros-cons">Pros &amp; Cons</a></li>
+<li><a href="#prediction-intervals-on-raw-sale-price">Prediction Intervals on Raw Sale Price</a></li>
 </ul></li>
 </ul>
 </div>
@@ -114,7 +115,7 @@ lm_wf &lt;- workflows::workflow() %&gt;%
   select(-Sale_Price) %&gt;% 
   head(1) %&gt;% 
   gt::gt() %&gt;% 
- gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 0))</code></pre>
+  gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 0))</code></pre>
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
@@ -506,7 +507,7 @@ data_preds %&gt;%
 <pre class="r"><code>data_preds %&gt;% 
   yardstick::mape(Sale_Price, .pred) %&gt;% 
   gt::gt() %&gt;% 
- gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 1))</code></pre>
+  gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 1))</code></pre>
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
@@ -869,7 +870,7 @@ data_preds %&gt;%
   summarise(quant_05 = quantile(PE, 0.05) * 100,
             quant_95 = quantile(PE, 0.95) * 100) %&gt;% 
   gt::gt() %&gt;% 
- gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 1))</code></pre>
+  gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 1))</code></pre>
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
@@ -1242,9 +1243,9 @@ data_preds %&gt;%
 <p>This variability in estimating the model’s expected value is represented by dashed blue lines in the chart below of a generic linear model:</p>
 <div class="figure">
 <img src="https://i.stack.imgur.com/GeeI3.png" alt="Image source" />
-<p class="caption">Image <a href="https://i.stack.imgur.com/GeeI3.png">source</a></p>
+<p class="caption"><a href="https://i.stack.imgur.com/GeeI3.png">Image source</a></p>
 </div>
-<p>Because of this variability in the uncertainty of the expected value of the model, it is preferable to determine a plausible price range that is specific to the attributes of the observation<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
+<p>Because of this varying uncertainty of the expected value of the model (represented by the differing interval widths encapsulated by the blue lines at any value of <em>x</em>), it is preferable to determine a plausible price range that is specific to the attributes of the observation<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
 <p>The uncertainty described here corresponds with the <em>confidence intervals</em> and not quite as directly with the <em>prediction intervals</em> (the focus of this post). The distinction and relationship between these will be discussed in <a href="#a-few-things-to-know-about-prediction-intervals">A Few Things to Know About Prediction Intervals</a>.</p>
 </div>
 </div>
@@ -1270,7 +1271,7 @@ data_preds %&gt;%
 </li>
 <li>{MSE: multiplier for average error}<br />
 </li>
-<li>{<span class="math inline">\(\dfrac{MSE}{n}\)</span> : multiplier based on number of observations – fewer contributes to greater variability.}</li>
+<li>{<span class="math inline">\(\dfrac{MSE}{n}\)</span> : multiplier based on number of observations – smaller <em>n</em> contributes to greater variability.}</li>
 <li>{<span class="math inline">\(MSE\dfrac{(x_h-\bar{x})^2}{\sum(x_i-\bar{x})^2}\)</span> : multiplier for distance from centroid of data}</li>
 </ul>
 <p>You will notice the equation for the prediction interval is very similar to that of the equation for a confidence interval<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a>:</p>
@@ -1312,8 +1313,9 @@ data_preds %&gt;%
 </iframe>
 <p><em>really</em>, prediction intervals should be thought of as a kind of inference.</p>
 <p>For this post the prediction interval is explicitly an inference on the predictions. In a later post I will actually just be making <em>predictions</em> for quantiles at upper and lower bounds of interest. However, generally, intervals should be thought of as a kind of inference<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a>. Therefore you should be thoughtful regarding the assumptions you are making about the nature of the data and your model specification<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a>.</p>
-<p>For example, an important assumption when doing predictive inference is heteroskedasticity of errors – which means that the variability of our errors should be constant across our predictions. As mentioned previously, if building a model for <em>Sale Price</em> we would find that errors tend to increase with our predictions. Hence instead of building a model to predict <em>Sale Price</em> we build a model to predict <span class="math inline">\(\log_{10}(Sale\:Price)\)</span> – this helps our model’s outputted prediction intervals to be more appropriate across observations<a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a>.</p>
+<p>For example, an important assumption when doing predictive inference is heteroskedasticity of errors – which means that the variability of our errors should be constant across our predictions[^puzzle]. As mentioned in <a href="#considering-uncertainty">Considering Uncertainty</a>, if building a model for <em>Sale Price</em> we would find that errors tend to increase with our predictions. Hence instead of building a model to predict <em>Sale Price</em> we build a model to predict <span class="math inline">\(\log_{10}(Sale\:Price)\)</span> – this helps our model’s outputted prediction intervals to be more appropriate across observations<a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a>.</p>
 <p>In follow up posts the methods I describe do not depend <em>as</em> strongly on assumptions to produce reliable prediction intervals<a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a>.</p>
+<p>[puzzle]: You may be puzzled why differing uncertainty depending on the distance of a point is from the centroid of the data is not thought of as a kind of heteroskedasticity. My understanding is this is becuase <em>that</em> difference has to do with uncertainty in estimating the model, not uncertainty in the sample (which is assumed to be constant).</p>
 </div>
 <div id="cautions-with-overfitting" class="section level2">
 <h2>Cautions with Overfitting</h2>
@@ -1364,7 +1366,7 @@ bind_rows(
 ) %&gt;% 
   mutate(dataset = c(&quot;training&quot;, &quot;validation&quot;)) %&gt;% 
   gt::gt() %&gt;% 
- gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 1))</code></pre>
+  gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 1))</code></pre>
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
@@ -1747,7 +1749,7 @@ preds_intervals %&gt;%
   select(-Sale_Price) %&gt;% 
   slice(1) %&gt;% 
   gt::gt() %&gt;% 
- gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 0))</code></pre>
+  gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 0))</code></pre>
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
@@ -2138,7 +2140,7 @@ p +
   scale_x_log10(labels = scales::dollar)+
   scale_y_log10(labels = scales::dollar)</code></pre>
 <p><img src="/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/prediction-intervals-sample-1.png" width="672" /></p>
-<p>(Log transformations are applied on the x and y axis to adjust for the fact that variability in estimates, and therefore prediction intervals, increases with predicted <code>Sale_Price</code><a href="#fn44" class="footnote-ref" id="fnref44"><sup>44</sup></a>.)</p>
+<p>Log transformations are applied on the x and y axis. Remember the model was built to predict <span class="math inline">\(\log_{10}{(Sale\:Price)}\)</span> (as opposed to raw <code>Sale_Price</code>)<a href="#fn44" class="footnote-ref" id="fnref44"><sup>44</sup></a>.</p>
 <div id="coverage" class="section level2">
 <h2>Coverage</h2>
 <p>Let’s review what proportion of our holdout observations are actually “covered” by their 90% prediction intervals<a href="#fn45" class="footnote-ref" id="fnref45"><sup>45</sup></a>.</p>
@@ -2151,7 +2153,7 @@ p +
             stderror = 100 * sd(covered) / sqrt(n),
             coverage_prop = 100 * n_covered / n) %&gt;% 
   gt::gt() %&gt;% 
- gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 2))</code></pre>
+  gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 2))</code></pre>
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
@@ -2536,7 +2538,7 @@ p +
        subtitle = &quot;On a holdout Set&quot;,
        caption = &quot;Error bars represent {coverage} +/- 2 * {coverage standard error}&quot;)+
   theme_bw()</code></pre>
-<p><img src="/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>This suggests there may be slightly different levels of coverage at different quintiles (e.g. the cheapest predicted houses have less coverage than those in the 2nd quintile.)<a href="#fn51" class="footnote-ref" id="fnref51"><sup>51</sup></a>.</p>
 <p>A test for checking whether variability in the categorical variable <code>covered</code> (covered / not-covered) does not vary across the quintile of predicted <code>Sale_Price</code> (1st, 2nd, 3rd, 4th, 5th) could be done using a <a href="https://en.wikipedia.org/wiki/Chi-squared_test">Chi-square statistical test</a>:</p>
 <pre class="r"><code>preds_intervals %&gt;% 
@@ -2572,7 +2574,7 @@ p +
 <div id="interval-width" class="section level2">
 <h2>Interval Width</h2>
 <p>Another helpful way to evaluate prediction intervals is by their width. More narrow bands indicate a more precise model.</p>
-<p>Remember from the section on <a href="#considering-uncertainty">Considering Uncertainty</a> that the errors in <code>Sale_Price</code> increase with the size of the prediction. To adjust for this, an appropriate metric is interval width as a percentage of predicted <code>Sale_Price</code><a href="#fn53" class="footnote-ref" id="fnref53"><sup>53</sup></a>. I will review these across quintiles of the predictions.</p>
+<p>Remember from the section on <a href="#considering-uncertainty">Considering Uncertainty</a> that the errors on raw <code>Sale_Price</code> increase with the size of the prediction. To adjust for this, an appropriate metric is interval width as a percentage of predicted <code>Sale_Price</code><a href="#fn53" class="footnote-ref" id="fnref53"><sup>53</sup></a>. I will review these across quintiles of the predictions.</p>
 <pre class="r"><code>lm_interval_widths &lt;- preds_intervals %&gt;% 
   mutate(interval_width = .pred_upper - .pred_lower,
          interval_pred_ratio = interval_width / .pred) %&gt;% 
@@ -2588,9 +2590,10 @@ p +
   select(-price_grouped) 
 
 lm_interval_widths %&gt;% 
+  mutate(across(c(mean_interval_width_percentage, stdev, stderror), ~.x*100)) %&gt;% 
   gt::gt() %&gt;% 
- gt::fmt_number(c(&quot;stdev&quot;, &quot;stderror&quot;), decimals = 4) %&gt;% 
- gt::fmt_number(&quot;mean_interval_width_percentage&quot;, decimals = 2)</code></pre>
+  gt::fmt_number(c(&quot;stdev&quot;, &quot;stderror&quot;), decimals = 2) %&gt;% 
+  gt::fmt_number(&quot;mean_interval_width_percentage&quot;, decimals = 1)</code></pre>
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
@@ -2942,41 +2945,41 @@ lm_interval_widths %&gt;%
   <tbody class="gt_table_body">
     <tr>
       <td class="gt_row gt_center">147</td>
-      <td class="gt_row gt_right">0.54</td>
-      <td class="gt_row gt_right">0.0046</td>
-      <td class="gt_row gt_right">0.0004</td>
+      <td class="gt_row gt_right">54.3</td>
+      <td class="gt_row gt_right">0.46</td>
+      <td class="gt_row gt_right">0.04</td>
       <td class="gt_row gt_right">43000</td>
       <td class="gt_row gt_right">121000</td>
     </tr>
     <tr>
       <td class="gt_row gt_center">146</td>
-      <td class="gt_row gt_right">0.54</td>
-      <td class="gt_row gt_right">0.0029</td>
-      <td class="gt_row gt_right">0.0002</td>
+      <td class="gt_row gt_right">54.0</td>
+      <td class="gt_row gt_right">0.29</td>
+      <td class="gt_row gt_right">0.02</td>
       <td class="gt_row gt_right">121000</td>
       <td class="gt_row gt_right">146000</td>
     </tr>
     <tr>
       <td class="gt_row gt_center">146</td>
-      <td class="gt_row gt_right">0.54</td>
-      <td class="gt_row gt_right">0.0038</td>
-      <td class="gt_row gt_right">0.0003</td>
+      <td class="gt_row gt_right">54.0</td>
+      <td class="gt_row gt_right">0.38</td>
+      <td class="gt_row gt_right">0.03</td>
       <td class="gt_row gt_right">146000</td>
       <td class="gt_row gt_right">176000</td>
     </tr>
     <tr>
       <td class="gt_row gt_center">146</td>
-      <td class="gt_row gt_right">0.54</td>
-      <td class="gt_row gt_right">0.0049</td>
-      <td class="gt_row gt_right">0.0004</td>
+      <td class="gt_row gt_right">54.1</td>
+      <td class="gt_row gt_right">0.49</td>
+      <td class="gt_row gt_right">0.04</td>
       <td class="gt_row gt_right">176000</td>
       <td class="gt_row gt_right">223000</td>
     </tr>
     <tr>
       <td class="gt_row gt_center">146</td>
-      <td class="gt_row gt_right">0.54</td>
-      <td class="gt_row gt_right">0.0033</td>
-      <td class="gt_row gt_right">0.0003</td>
+      <td class="gt_row gt_right">54.1</td>
+      <td class="gt_row gt_right">0.33</td>
+      <td class="gt_row gt_right">0.03</td>
       <td class="gt_row gt_right">223000</td>
       <td class="gt_row gt_right">487000</td>
     </tr>
@@ -2984,7 +2987,9 @@ lm_interval_widths %&gt;%
   
   
 </table></div>
-<p>The relative interval width is consistent across predicted <code>Sale_Price</code> and between observations<a href="#fn54" class="footnote-ref" id="fnref54"><sup>54</sup></a>. The 90% interval represents an average of ~54% of the predicted <code>Sale_Price</code><a href="#fn55" class="footnote-ref" id="fnref55"><sup>55</sup></a>. Recall from <a href="#analytic-method-of-calculating-prediction-intervals">Analytic Method of Calculating Prediction Intervals</a> that the only factor contributing to differences in interval width across predictions is the distance of an observations from the centroid of the data. This has a relatively small impact on interval width given the number of observations and sample variance (which are treated as constant across observations)<a href="#fn56" class="footnote-ref" id="fnref56"><sup>56</sup></a> in our data.</p>
+<p>The 90% interval represents an average of ~54% of the predicted <code>Sale_Price</code>. I.e. the difference between the upper and lower bounds of the prediction interval for <code>Sale_Price</code> will be about half of the predicted <code>Sale_Price</code> (to eye-ball this, see <a href="#prediction-intervals-on-raw-sale-price">Prediction Intervals on Raw Sale Price</a>).</p>
+<p>The relative interval width seems to be consistent across values for predicted <code>Sale_Price</code> (~54% for all quintiles)<a href="#fn54" class="footnote-ref" id="fnref54"><sup>54</sup></a>. There is also little difference in uncertainty between observations – varying on average less than half a percent between observations as indicated by the standard deviation.</p>
+<p>Recall from <a href="#analytic-method-of-calculating-prediction-intervals">Analytic Method of Calculating Prediction Intervals</a> that the only factor contributing to differences in interval width across predictions is the distance of an observations from the centroid of the data. This has a small impact on relative interval width in our data (given the number of observations and sample variance – which are treated as constant across observations)<a href="#fn55" class="footnote-ref" id="fnref55"><sup>55</sup></a>.</p>
 </div>
 </div>
 <div id="closing-notes" class="section level1">
@@ -2998,11 +3003,11 @@ lm_interval_widths %&gt;%
 <h2>Bayesian Inference</h2>
 <p>In this and the immediate follow-up posts I approach prediction intervals from a more <a href="https://en.wikipedia.org/wiki/Frequentist_inference">frequentist</a> perspective. However when you really care about thinking through the nature of uncertainty in your model, <a href="https://en.wikipedia.org/wiki/Bayesian_inference">Bayesian</a> methods are often more appropriate. I may cover Bayesian approaches in a future post, in the meantime, here are a few resources:</p>
 <ul>
-<li>The <a href="https://mc-stan.org/">stan</a> computing platform for Bayesian modeling and inference has various excellent R package interfaces. <a href="https://github.com/stan-dev/rstan">rstan</a>, <a href="https://github.com/stan-dev/rstanarm">rstanarm</a>, <a href="https://github.com/paul-buerkner/brms">brms</a> and <a href="https://github.com/mjskay/tidybayes">tidybayes</a> are the ones of greatest interest to me<a href="#fn57" class="footnote-ref" id="fnref57"><sup>57</sup></a>.<br />
+<li>The <a href="https://mc-stan.org/">stan</a> computing platform for Bayesian modeling and inference has various excellent R package interfaces. <a href="https://github.com/stan-dev/rstan">rstan</a>, <a href="https://github.com/stan-dev/rstanarm">rstanarm</a>, <a href="https://github.com/paul-buerkner/brms">brms</a> and <a href="https://github.com/mjskay/tidybayes">tidybayes</a> are the ones of greatest interest to me<a href="#fn56" class="footnote-ref" id="fnref56"><sup>56</sup></a>.<br />
 </li>
 <li>Michael Clark provides a helpful applied <a href="https://m-clark.github.io/bayesian-basics/">introduction</a> to Bayesian analysis in R.</li>
 <li>Note also that you can interact with stan through the <code>parsnip</code> package by setting <code>parsnip::set_engine(engine = "stan")</code> for linear models.</li>
-<li>There is also a python interface, <a href="https://mc-stan.org/users/interfaces/pystan">PyStan</a>. The most popular Bayesian library in python however is <a href="https://github.com/pymc-devs/pymc3">PyMC3</a><a href="#fn58" class="footnote-ref" id="fnref58"><sup>58</sup></a>. You might also check-out <a href="https://blog.tensorflow.org/2018/12/an-introduction-to-probabilistic.html">Tensorflow Probability</a><a href="#fn59" class="footnote-ref" id="fnref59"><sup>59</sup></a>.</li>
+<li>There is also a python interface, <a href="https://mc-stan.org/users/interfaces/pystan">PyStan</a>. The most popular Bayesian library in python however is <a href="https://github.com/pymc-devs/pymc3">PyMC3</a><a href="#fn57" class="footnote-ref" id="fnref57"><sup>57</sup></a>. You might also check-out <a href="https://blog.tensorflow.org/2018/12/an-introduction-to-probabilistic.html">Tensorflow Probability</a><a href="#fn58" class="footnote-ref" id="fnref58"><sup>58</sup></a>.</li>
 </ul>
 </div>
 <div id="pros-cons" class="section level2">
@@ -3016,8 +3021,16 @@ lm_interval_widths %&gt;%
 <ul>
 <li>Less flexible than alternative approaches.</li>
 <li>Prediction intervals produced in this way have a variety of <a href="https://online.stat.psu.edu/stat501/lesson/3/3.3/#paragraph--766">strong assumptions</a> that they depend on (generally more heavily than other approaches).</li>
-<li>Assumes the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic<a href="#fn60" class="footnote-ref" id="fnref60"><sup>60</sup></a>).</li>
+<li>Assumes the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic<a href="#fn59" class="footnote-ref" id="fnref59"><sup>59</sup></a>).</li>
 </ul>
+</div>
+<div id="prediction-intervals-on-raw-sale-price" class="section level2">
+<h2>Prediction Intervals on Raw Sale Price</h2>
+<p>Because the model is on <span class="math inline">\(\log_{10}{(Sale\:Price)}\)</span> when we transform our scale to be in terms of <em>Sale_Price</em>, the errors would increase with the predicted price of the house – hence why the transformed scales in <a href="#review-prediction-intervals">Review Prediction Intervals</a> are appropriate. The figure below shows the prediction intervals on the scale of raw <code>Sale_Price</code>.</p>
+<pre class="r"><code>p + 
+  scale_x_continuous(labels = scales::dollar)+
+  scale_y_continuous(labels = scales::dollar)</code></pre>
+<p><img src="/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
 </div>
 <div class="footnotes">
@@ -3072,11 +3085,7 @@ lm_interval_widths %&gt;%
 <li id="fn41"><p>Or some other reason, e.g. you are not able to retrain it or have some business constraint that means you are stuck with this model.<a href="#fnref41" class="footnote-back">↩</a></p></li>
 <li id="fn42"><p>Tuning your alpha level until the coverage on a holdout dataset is where you want it.<a href="#fnref42" class="footnote-back">↩</a></p></li>
 <li id="fn43"><p>This is typically the way this check would be used – if there is no difference, you can say there is no overfitting. If there is a difference, you may still be OK with that provided performance is still good enough (or better than alternatives) on a holdout dataset.<a href="#fnref43" class="footnote-back">↩</a></p></li>
-<li id="fn44"><p>As noted previously the model was built to predict <code>log(Sale_Price, 10)</code> (as opposed to <code>Sale_Price</code>) as errors increase with the predicted price of the house. Hence why the transformed scales in the text are appropriate. If you are curious though, the figure below shows the prediction intervals on raw <code>Sale_Price</code> scale.</p>
-<pre class="r"><code>p + 
-  scale_x_continuous(labels = scales::dollar)+
-  scale_y_continuous(labels = scales::dollar)</code></pre>
-<p><img src="/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/unnamed-chunk-8-1.png" width="672" /><a href="#fnref44" class="footnote-back">↩</a></p></li>
+<li id="fn44"><p>See [Prediction Intervals on Raw Sale_Price] in the <a href="#appendix">Appendix</a> for a chart that does not apply log transformations.<a href="#fnref44" class="footnote-back">↩</a></p></li>
 <li id="fn45"><p>I.e. the rate at which the <em>actual</em> value fall within the range of the prediction interval (coverage is essentially checking whether the range you expect from your prediction intervals is actually what is achieved). For our 90% prediction intervals, we will expect coverage on a holdout dataset to be 90%.<a href="#fnref45" class="footnote-back">↩</a></p></li>
 <li id="fn46"><p>The difference between 93% and the expected coverage of 90% may just be the result of random variability in the data.<a href="#fnref46" class="footnote-back">↩</a></p></li>
 <li id="fn47"><p>Though they are perhaps slightly conservative. To get a better estimate for coverage, we could use cross validation as this will provide estimates for coverage across multiple iterations of model fitting.<a href="#fnref47" class="footnote-back">↩</a></p></li>
@@ -3086,12 +3095,11 @@ lm_interval_widths %&gt;%
 <li id="fn51"><p>Not shown here, but it may also be valuable to review your coverage levels across key variables of interest.<a href="#fnref51" class="footnote-back">↩</a></p></li>
 <li id="fn52"><p>More explicitly, this test shows that the distribution of <code>price_grouped by quintile</code> across <code>covered</code> would only occur ~3.4% of the time under the assumption of “no relationship”. This is very unlikely, so we reject the NULL hypothesis of “no relationship”.<a href="#fnref52" class="footnote-back">↩</a></p></li>
 <li id="fn53"><p>Alternatively could just have evaluated the interval widths in the <code>log(Sale_Price, 10)</code> terms outputted by the model.<a href="#fnref53" class="footnote-back">↩</a></p></li>
-<li id="fn54"><p>Varying on average less than half a percent between observations.<a href="#fnref54" class="footnote-back">↩</a></p></li>
-<li id="fn55"><p>Methods in follow-up posts will show greater diversity of interval widths.<a href="#fnref55" class="footnote-back">↩</a></p></li>
-<li id="fn56"><p>While the seesaw analogy does make a difference in causing some observations to have wider intervals than others, in aggregate you can see the difference is not <em>that</em> big – values like the Mean Squared Error (MSE) or similar aggregate error metrics actually give a pretty close semblance of what you will expect to get when going through the process of creating prediction intervals specific to each observation. Note also however that the difference in interval width will still be greater for the more extreme observations. In future posts some of the methods I walk through will be more flexible or have other advantages (e.g. less strict reliance on distributional assumptions).<a href="#fnref56" class="footnote-back">↩</a></p></li>
-<li id="fn57"><p>Along with <a href="https://github.com/rmcelreath/rethinking">rethinking</a> which supports the “Statistical Rethinking” <a href="https://xcelab.net/rm/statistical-rethinking/">book</a> and <a href="https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists">course</a> – also see <a href="https://bookdown.org/content/4857/">study guide</a><a href="#fnref57" class="footnote-back">↩</a></p></li>
-<li id="fn58"><p>PyMC3 is built on Theano. If you are wondering why this is not being updated to rely on tensorflow (as many other tools based on theano have been), read <a href="https://pymc-devs.medium.com/the-future-of-pymc3-or-theano-is-dead-long-live-theano-d8005f8a0e9b">The Future of PyMC3, or: Theano is Dead, Long Live Theano</a>.<a href="#fnref58" class="footnote-back">↩</a></p></li>
-<li id="fn59"><p>See <a href="https://www.youtube.com/watch?v=_U-1kJo76o4">video</a> explaining how it uses Bayesian methods to provide uncertainty for parameter estimates in tensorflow).<a href="#fnref59" class="footnote-back">↩</a></p></li>
-<li id="fn60"><p>Though linear models are less likely to overfit compared to most model types.<a href="#fnref60" class="footnote-back">↩</a></p></li>
+<li id="fn54"><p>Methods in follow-up posts will show greater diversity of interval widths.<a href="#fnref54" class="footnote-back">↩</a></p></li>
+<li id="fn55"><p>While the seesaw analogy does make a difference in causing some observations to have wider intervals than others, in aggregate you can see the difference is not <em>that</em> big – values like the Mean Squared Error (MSE) or similar aggregate error metrics actually give a pretty close semblance of what you will expect to get when going through the process of creating prediction intervals specific to each observation. Note also however that the difference in interval width will still be greater for the more extreme observations. In future posts some of the methods I walk through will be more flexible or have other advantages (e.g. less strict reliance on distributional assumptions).<a href="#fnref55" class="footnote-back">↩</a></p></li>
+<li id="fn56"><p>Along with <a href="https://github.com/rmcelreath/rethinking">rethinking</a> which supports the “Statistical Rethinking” <a href="https://xcelab.net/rm/statistical-rethinking/">book</a> and <a href="https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists">course</a> – also see <a href="https://bookdown.org/content/4857/">study guide</a><a href="#fnref56" class="footnote-back">↩</a></p></li>
+<li id="fn57"><p>PyMC3 is built on Theano. If you are wondering why this is not being updated to rely on tensorflow (as many other tools based on theano have been), read <a href="https://pymc-devs.medium.com/the-future-of-pymc3-or-theano-is-dead-long-live-theano-d8005f8a0e9b">The Future of PyMC3, or: Theano is Dead, Long Live Theano</a>.<a href="#fnref57" class="footnote-back">↩</a></p></li>
+<li id="fn58"><p>See <a href="https://www.youtube.com/watch?v=_U-1kJo76o4">video</a> explaining how it uses Bayesian methods to provide uncertainty for parameter estimates in tensorflow).<a href="#fnref58" class="footnote-back">↩</a></p></li>
+<li id="fn59"><p>Though linear models are less likely to overfit compared to most model types.<a href="#fnref59" class="footnote-back">↩</a></p></li>
 </ol>
 </div>

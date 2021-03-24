@@ -127,7 +127,7 @@ data_preds %>%
   select(-Sale_Price) %>% 
   head(1) %>% 
   gt::gt() %>% 
- gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 0))
+  gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 0))
 ```
 
 Using the naive approach, whether an offer is above or below this *expected* price may provide a first indication of whether the deal is 'good' or 'bad' for the seller^[Relative to prior deals which the model was trained on.]. The magnitude of the difference between the offer and the expected price is also important. However you often will care about how big this difference is relative to the underlying uncertainty in `Sale_Price` -- which calls for the use of statistics, specifically predictive inference^[When you are dealing with problems that consider both magnitude and variability, statistics are often helpful. Statistics can help to provide a sense of the accuracy of the model and the extent to which an offer seems reasonable in the context of the variability in prices.].
@@ -163,7 +163,7 @@ On average our model is off by around ~12% of the actual `Sale_Price` observed.
 data_preds %>% 
   yardstick::mape(Sale_Price, .pred) %>% 
   gt::gt() %>% 
- gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 1))
+  gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 1))
 ```
 
 90% of errors on the holdout dataset were between -27.1% and 21.3% of the actual `Sale_Price`. 
@@ -175,7 +175,7 @@ data_preds %>%
   summarise(quant_05 = quantile(PE, 0.05) * 100,
             quant_95 = quantile(PE, 0.95) * 100) %>% 
   gt::gt() %>% 
- gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 1))
+  gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 1))
 ```
 
 All of which suggests the \$180,000 offer does not represent a substantial outlier from the typical variability of observed from predicted `Sale_Price`^[Based on the observation level estimates given by our model on a holdout set.].
@@ -198,9 +198,9 @@ A toy seesaw is a good analogy for this phenomenon:
 
 This variability in estimating the model's expected value is represented by dashed blue lines in the chart below of a generic linear model:
 
-![Image [source](https://i.stack.imgur.com/GeeI3.png)](https://i.stack.imgur.com/GeeI3.png)
+![[Image source](https://i.stack.imgur.com/GeeI3.png)](https://i.stack.imgur.com/GeeI3.png)
 
-Because of this variability in the uncertainty of the expected value of the model, it is preferable to determine a plausible price range that is specific to the attributes of the observation^[Rather than just looking at your observation of interest through the lens of aggregate error metrics.]. 
+Because of this varying uncertainty of the expected value of the model (represented by the differing interval widths encapsulated by the blue lines at any value of *x*), it is preferable to determine a plausible price range that is specific to the attributes of the observation^[Rather than just looking at your observation of interest through the lens of aggregate error metrics.]. 
 
 The uncertainty described here corresponds with the *confidence intervals* and not quite as directly with the *prediction intervals* (the focus of this post). The distinction and relationship between these will be discussed in [A Few Things to Know About Prediction Intervals].
 
@@ -225,7 +225,7 @@ Pseudo-translation of key parts of equation:
 * {$\hat{y}_h$ : prediction}  
 * {$t_{(1-\alpha/2, n-2)}$ : multiplier for desired level of confidence, e.g. 95%}   
 * {MSE: multiplier for average error}   
-* {$\dfrac{MSE}{n}$ : multiplier based on number of observations -- fewer contributes to greater variability.}
+* {$\dfrac{MSE}{n}$ : multiplier based on number of observations -- smaller *n* contributes to greater variability.}
 * {$MSE\dfrac{(x_h-\bar{x})^2}{\sum(x_i-\bar{x})^2}$ : multiplier for distance from centroid of data}
 
 You will notice the equation for the prediction interval is very similar to that of the equation for a confidence interval^[I.e. the band around the *average* value, rather than the band around the value for an *individual* observation -- as discussed in [A Few Things to Know About Prediction Intervals].]:
@@ -271,9 +271,11 @@ The answer is, while it (kind of) depends...
 
 For this post the prediction interval is explicitly an inference on the predictions. In a later post I will actually just be making *predictions* for quantiles at upper and lower bounds of interest. However, generally, intervals should be thought of as a kind of inference^[Prediction intervals concern uncertainty, and whenever you are making estimates around uncertainty you are generally doing a kind of statistical inference.]. Therefore you should be thoughtful regarding the assumptions you are making about the nature of the data and your model specification^[Even when using simulation based techniques that, for other estimates, may allow you to be a little more cavalier regarding model assumptions... when it comes to predictive inference you will essentially always have *some* assumptions you need to hold onto.]. 
 
-For example, an important assumption when doing predictive inference is heteroskedasticity of errors -- which means that the variability of our errors should be constant across our predictions. As mentioned previously, if building a model for *Sale Price* we would find that errors tend to increase with our predictions. Hence instead of building a model to predict *Sale Price* we build a model to predict $\log_{10}(Sale\:Price)$ -- this helps our model's outputted prediction intervals to be more appropriate across observations^[If we did not do this our prediction intervals would be far too large for smaller values of `Sale_Price` and far too small for larger values of `Sale_Price`.].
+For example, an important assumption when doing predictive inference is heteroskedasticity of errors -- which means that the variability of our errors should be constant across our predictions[^puzzle]. As mentioned in [Considering Uncertainty], if building a model for *Sale Price* we would find that errors tend to increase with our predictions. Hence instead of building a model to predict *Sale Price* we build a model to predict $\log_{10}(Sale\:Price)$ -- this helps our model's outputted prediction intervals to be more appropriate across observations^[If we did not do this our prediction intervals would be far too large for smaller values of `Sale_Price` and far too small for larger values of `Sale_Price`.].
 
 In follow up posts the methods I describe do not depend *as* strongly on assumptions to produce reliable prediction intervals^[However there are limitations on assumption free predictive inference, ([Barber, et al](https://www.stat.cmu.edu/~ryantibs/papers/limits.pdf)).].
+
+[puzzle]: You may be puzzled why differing uncertainty depending on the distance of a point is from the centroid of the data is not thought of as a kind of heteroskedasticity. My understanding is this is becuase *that* difference has to do with uncertainty in estimating the model, not uncertainty in the sample (which is assumed to be constant).
 
 ## Cautions with Overfitting
 
@@ -334,7 +336,7 @@ bind_rows(
 ) %>% 
   mutate(dataset = c("training", "validation")) %>% 
   gt::gt() %>% 
- gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 1))
+  gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 1))
 ```
 
 Performance on the training and holdout datasets are not grossly different, hence there does not seem to be a major concern with overfitting in our model^[This is typically the way this check would be used -- if there is no difference, you can say there is no overfitting. If there is a difference, you may still be OK with that provided performance is still good enough (or better than alternatives) on a holdout dataset.]. 
@@ -357,7 +359,7 @@ preds_intervals %>%
   select(-Sale_Price) %>% 
   slice(1) %>% 
   gt::gt() %>% 
- gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 0))
+  gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 0))
 ```
 
 This suggests that, given these attributes, we would expect that the `Sale_Price` for an individual observation would fall between \$140,208 and \$242,793 (with 90% confidence). Our example offer of \$184,000 falls well within this range, meaning that -- based on the model -- the offer does not appear unreasonable.
@@ -384,16 +386,7 @@ p +
   scale_y_log10(labels = scales::dollar)
 ```
 
-(Log transformations are applied on the x and y axis to adjust for the fact that variability in estimates, and therefore prediction intervals, increases with predicted `Sale_Price`[^6].)
-
-[^6]: As noted previously the model was built to predict `log(Sale_Price, 10)` (as opposed to `Sale_Price`) as errors increase with the predicted price of the house. Hence why the transformed scales in the text are appropriate. If you are curious though, the figure below shows the prediction intervals on raw `Sale_Price` scale.
-    
-    ```{r}
-    p + 
-      scale_x_continuous(labels = scales::dollar)+
-      scale_y_continuous(labels = scales::dollar)
-    ```
-
+Log transformations are applied on the x and y axis. Remember the model was built to predict $\log_{10}{(Sale\:Price)}$ (as opposed to raw `Sale_Price`)^[See [Prediction Intervals on Raw Sale_Price] in the [Appendix] for a chart that does not apply log transformations.].
 
 ## Coverage
 
@@ -408,7 +401,7 @@ preds_intervals %>%
             stderror = 100 * sd(covered) / sqrt(n),
             coverage_prop = 100 * n_covered / n) %>% 
   gt::gt() %>% 
- gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 2))
+  gt::fmt(gt::everything(), fns = function(x) fmt_if_number(x, digits = 2))
 ```
 
 ~93% of our holdout observations were actually covered^[The difference between 93% and the expected coverage of 90% may just be the result of random variability in the data.]. We can likely trust these intervals aren't too narrow^[Though they are perhaps slightly conservative. To get a better estimate for coverage, we could use cross validation as this will provide estimates for coverage across multiple iterations of model fitting.]. It is usually better to be on the slightly conservative than optimistic side regarding coverage^[As models tend to perform worse than expected when put into production. I.e. it is better that our empirical coverage is greater than our target coverage than less than our target coverage -- even if it would be ideal for these to align.]. 
@@ -464,7 +457,7 @@ I will show in a follow-up post on __Simulation Methods for Building Prediction 
 
 Another helpful way to evaluate prediction intervals is by their width. More narrow bands indicate a more precise model. 
 
-Remember from the section on [Considering Uncertainty] that the errors in `Sale_Price` increase with the size of the prediction. To adjust for this, an appropriate metric is interval width as a percentage of predicted `Sale_Price`^[Alternatively could just have evaluated the interval widths in the `log(Sale_Price, 10)` terms outputted by the model.]. I will review these across quintiles of the predictions.
+Remember from the section on [Considering Uncertainty] that the errors on raw `Sale_Price` increase with the size of the prediction. To adjust for this, an appropriate metric is interval width as a percentage of predicted `Sale_Price`^[Alternatively could just have evaluated the interval widths in the `log(Sale_Price, 10)` terms outputted by the model.]. I will review these across quintiles of the predictions.
 
 ```{r}
 lm_interval_widths <- preds_intervals %>% 
@@ -482,12 +475,17 @@ lm_interval_widths <- preds_intervals %>%
   select(-price_grouped) 
 
 lm_interval_widths %>% 
+  mutate(across(c(mean_interval_width_percentage, stdev, stderror), ~.x*100)) %>% 
   gt::gt() %>% 
- gt::fmt_number(c("stdev", "stderror"), decimals = 4) %>% 
- gt::fmt_number("mean_interval_width_percentage", decimals = 2)
+  gt::fmt_number(c("stdev", "stderror"), decimals = 2) %>% 
+  gt::fmt_number("mean_interval_width_percentage", decimals = 1)
 ```
 
-The relative interval width is consistent across predicted `Sale_Price` and between observations^[Varying on average less than half a percent between observations.]. The 90% interval represents an average of ~54% of the predicted `Sale_Price`^[Methods in follow-up posts will show greater diversity of interval widths.]. Recall from [Analytic Method of Calculating Prediction Intervals] that the only factor contributing to differences in interval width across predictions is the distance of an observations from the centroid of the data. This has a relatively small impact on interval width given the number of observations and sample variance (which are treated as constant across observations)^[While the seesaw analogy does make a difference in causing some observations to have wider intervals than others, in aggregate you can see the difference is not *that* big -- values like the Mean Squared Error (MSE) or similar aggregate error metrics actually give a pretty close semblance of what you will expect to get when going through the process of creating prediction intervals specific to each observation. Note also however that the difference in interval width will still be greater for the more extreme observations. In future posts some of the methods I walk through will be more flexible or have other advantages (e.g. less strict reliance on distributional assumptions).] in our data. 
+The 90% interval represents an average of ~54% of the predicted `Sale_Price`. I.e. the difference between the upper and lower bounds of the prediction interval for `Sale_Price` will be about half of the predicted `Sale_Price` (to eye-ball this, see [Prediction Intervals on Raw Sale Price]).
+
+The relative interval width seems to be consistent across values for predicted `Sale_Price` (~54% for all quintiles)^[Methods in follow-up posts will show greater diversity of interval widths.]. There is also little difference in uncertainty between observations -- varying on average less than half a percent between observations as indicated by the standard deviation.
+
+Recall from [Analytic Method of Calculating Prediction Intervals] that the only factor contributing to differences in interval width across predictions is the distance of an observations from the centroid of the data. This has a small impact on relative interval width in our data (given the number of observations and sample variance -- which are treated as constant across observations)^[While the seesaw analogy does make a difference in causing some observations to have wider intervals than others, in aggregate you can see the difference is not *that* big -- values like the Mean Squared Error (MSE) or similar aggregate error metrics actually give a pretty close semblance of what you will expect to get when going through the process of creating prediction intervals specific to each observation. Note also however that the difference in interval width will still be greater for the more extreme observations. In future posts some of the methods I walk through will be more flexible or have other advantages (e.g. less strict reliance on distributional assumptions).]. 
 
 # Closing Notes
 
@@ -518,3 +516,13 @@ In this and the immediate follow-up posts I approach prediction intervals from a
 * Less flexible than alternative approaches.
 * Prediction intervals produced in this way have a variety of [strong assumptions](https://online.stat.psu.edu/stat501/lesson/3/3.3/#paragraph--766) that they depend on (generally more heavily than other approaches). 
 * Assumes the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic^[Though linear models are less likely to overfit compared to most model types.]).
+
+## Prediction Intervals on Raw Sale Price
+
+Because the model is on $\log_{10}{(Sale\:Price)}$ when we transform our scale to be in terms of *Sale_Price*, the errors would increase with the predicted price of the house -- hence why the transformed scales in [Review Prediction Intervals] are appropriate. The figure below shows the prediction intervals on the scale of raw `Sale_Price`.
+
+```{r}
+p + 
+  scale_x_continuous(labels = scales::dollar)+
+  scale_y_continuous(labels = scales::dollar)
+```
