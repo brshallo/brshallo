@@ -16,7 +16,7 @@ Prediction intervals provide a measure of uncertainty for predictions on individ
 * describes factors that influence prediction intervals
 * shows examples of how to build and review prediction intervals
 
-This is the first of three posts on prediction intervals (__part 2__ employs quantile regression and __part 3__ simulation techniques). I use the R programming language and the [tidyverse](https://www.tidyverse.org/) + [tidymodels](https://www.tidymodels.org/) suite of packages to create all models and figures.
+This is the first of three posts on prediction intervals (__part 2__ employs simulation techniques and __part 3__ quantile regression). I use the R programming language and the [tidyverse](https://www.tidyverse.org/) + [tidymodels](https://www.tidymodels.org/) suite of packages to create all models and figures.
 
 
 ```{r load-packages}
@@ -483,15 +483,15 @@ lm_interval_widths %>%
 
 The 90% interval represents an average of ~54% of the predicted `Sale_Price`. I.e. the difference between the upper and lower bounds of the prediction interval for `Sale_Price` will be about half of the predicted `Sale_Price` (to eye-ball this, see [Prediction Intervals on Raw Sale Price]).
 
-The relative interval width seems to be consistent across values for predicted `Sale_Price` (~54% for all quintiles)^[Methods in follow-up posts will show greater diversity of interval widths.]. There is also little difference in uncertainty between observations -- varying on average less than half a percent between observations as indicated by the standard deviation.
+The relative interval width seems to be consistent across values for predicted `Sale_Price` (~54% for all quintiles). There is also little difference in uncertainty between observations -- varying on average less than half a percent between observations as indicated by the standard deviation.
 
-Recall from [Analytic Method of Calculating Prediction Intervals] that the only factor contributing to differences in interval width across predictions is the distance of an observations from the centroid of the data. This has a small impact on relative interval width in our data (given the number of observations and sample variance -- which are treated as constant across observations)^[While the seesaw analogy does make a difference in causing some observations to have wider intervals than others, in aggregate you can see the difference is not *that* big -- values like the Mean Squared Error (MSE) or similar aggregate error metrics actually give a pretty close semblance of what you will expect to get when going through the process of creating prediction intervals specific to each observation. Note also however that the difference in interval width will still be greater for the more extreme observations. In future posts some of the methods I walk through will be more flexible or have other advantages (e.g. less strict reliance on distributional assumptions).]. 
+Recall from [Analytic Method of Calculating Prediction Intervals] that the only factor contributing to differences in interval width across predictions is the distance of an observations from the centroid of the data. This has a small impact on relative interval width in our problem (given the number of observations and sample variance -- which are treated as constant across observations)^[While the seesaw analogy does make a difference in causing some observations to have wider intervals than others, in aggregate you can see the difference is not *that* big -- values like the Mean Squared Error (MSE) or similar aggregate error metrics actually give a pretty close semblance of what you will expect to get when going through the process of creating prediction intervals specific to each observation. Note also however that the difference in interval width will still be greater for the more extreme observations. In future posts some of the methods I walk through will be more flexible or have other advantages (e.g. less strict reliance on distributional assumptions).]. Methods used in future posts will show a greater diversity of interval widths.
 
 # Closing Notes
 
 Prediction intervals provide an indicator for the uncertainty of individual predictions. They have advantages over point estimates in that they take into account the variability in the data to provide a "reasonable" range of values for an observation.
 
-Measures like *coverage* and *interval width* are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on __Building Prediction Intervals Using Quantile Regression__ and __Building Prediction Intervals Using Simulation__, where I walk through more sophisticated and flexible methods for building prediction intervals.
+Measures like *coverage* and *interval width* are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on __Building Prediction Intervals Using Simulation__ and __Building Prediction Intervals Using Quantile Regression__, where I walk through more sophisticated and flexible methods for building prediction intervals.
 
 # Appendix
 

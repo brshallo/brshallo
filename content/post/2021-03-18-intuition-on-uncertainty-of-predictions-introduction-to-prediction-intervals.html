@@ -40,7 +40,7 @@ thumbnail: /post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction
 <li>describes factors that influence prediction intervals</li>
 <li>shows examples of how to build and review prediction intervals</li>
 </ul>
-<p>This is the first of three posts on prediction intervals (<strong>part 2</strong> employs quantile regression and <strong>part 3</strong> simulation techniques). I use the R programming language and the <a href="https://www.tidyverse.org/">tidyverse</a> + <a href="https://www.tidymodels.org/">tidymodels</a> suite of packages to create all models and figures.</p>
+<p>This is the first of three posts on prediction intervals (<strong>part 2</strong> employs simulation techniques and <strong>part 3</strong> quantile regression). I use the R programming language and the <a href="https://www.tidyverse.org/">tidyverse</a> + <a href="https://www.tidymodels.org/">tidymodels</a> suite of packages to create all models and figures.</p>
 <pre class="r"><code>library(tidyverse)
 library(tidymodels)
 library(AmesHousing)
@@ -2988,14 +2988,14 @@ lm_interval_widths %&gt;%
   
 </table></div>
 <p>The 90% interval represents an average of ~54% of the predicted <code>Sale_Price</code>. I.e. the difference between the upper and lower bounds of the prediction interval for <code>Sale_Price</code> will be about half of the predicted <code>Sale_Price</code> (to eye-ball this, see <a href="#prediction-intervals-on-raw-sale-price">Prediction Intervals on Raw Sale Price</a>).</p>
-<p>The relative interval width seems to be consistent across values for predicted <code>Sale_Price</code> (~54% for all quintiles)<a href="#fn54" class="footnote-ref" id="fnref54"><sup>54</sup></a>. There is also little difference in uncertainty between observations – varying on average less than half a percent between observations as indicated by the standard deviation.</p>
-<p>Recall from <a href="#analytic-method-of-calculating-prediction-intervals">Analytic Method of Calculating Prediction Intervals</a> that the only factor contributing to differences in interval width across predictions is the distance of an observations from the centroid of the data. This has a small impact on relative interval width in our data (given the number of observations and sample variance – which are treated as constant across observations)<a href="#fn55" class="footnote-ref" id="fnref55"><sup>55</sup></a>.</p>
+<p>The relative interval width seems to be consistent across values for predicted <code>Sale_Price</code> (~54% for all quintiles). There is also little difference in uncertainty between observations – varying on average less than half a percent between observations as indicated by the standard deviation.</p>
+<p>Recall from <a href="#analytic-method-of-calculating-prediction-intervals">Analytic Method of Calculating Prediction Intervals</a> that the only factor contributing to differences in interval width across predictions is the distance of an observations from the centroid of the data. This has a small impact on relative interval width in our problem (given the number of observations and sample variance – which are treated as constant across observations)<a href="#fn54" class="footnote-ref" id="fnref54"><sup>54</sup></a>. Methods used in future posts will show a greater diversity of interval widths.</p>
 </div>
 </div>
 <div id="closing-notes" class="section level1">
 <h1>Closing Notes</h1>
 <p>Prediction intervals provide an indicator for the uncertainty of individual predictions. They have advantages over point estimates in that they take into account the variability in the data to provide a “reasonable” range of values for an observation.</p>
-<p>Measures like <em>coverage</em> and <em>interval width</em> are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on <strong>Building Prediction Intervals Using Quantile Regression</strong> and <strong>Building Prediction Intervals Using Simulation</strong>, where I walk through more sophisticated and flexible methods for building prediction intervals.</p>
+<p>Measures like <em>coverage</em> and <em>interval width</em> are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on <strong>Building Prediction Intervals Using Simulation</strong> and <strong>Building Prediction Intervals Using Quantile Regression</strong>, where I walk through more sophisticated and flexible methods for building prediction intervals.</p>
 </div>
 <div id="appendix" class="section level1">
 <h1>Appendix</h1>
@@ -3003,11 +3003,11 @@ lm_interval_widths %&gt;%
 <h2>Bayesian Inference</h2>
 <p>In this and the immediate follow-up posts I approach prediction intervals from a more <a href="https://en.wikipedia.org/wiki/Frequentist_inference">frequentist</a> perspective. However when you really care about thinking through the nature of uncertainty in your model, <a href="https://en.wikipedia.org/wiki/Bayesian_inference">Bayesian</a> methods are often more appropriate. I may cover Bayesian approaches in a future post, in the meantime, here are a few resources:</p>
 <ul>
-<li>The <a href="https://mc-stan.org/">stan</a> computing platform for Bayesian modeling and inference has various excellent R package interfaces. <a href="https://github.com/stan-dev/rstan">rstan</a>, <a href="https://github.com/stan-dev/rstanarm">rstanarm</a>, <a href="https://github.com/paul-buerkner/brms">brms</a> and <a href="https://github.com/mjskay/tidybayes">tidybayes</a> are the ones of greatest interest to me<a href="#fn56" class="footnote-ref" id="fnref56"><sup>56</sup></a>.<br />
+<li>The <a href="https://mc-stan.org/">stan</a> computing platform for Bayesian modeling and inference has various excellent R package interfaces. <a href="https://github.com/stan-dev/rstan">rstan</a>, <a href="https://github.com/stan-dev/rstanarm">rstanarm</a>, <a href="https://github.com/paul-buerkner/brms">brms</a> and <a href="https://github.com/mjskay/tidybayes">tidybayes</a> are the ones of greatest interest to me<a href="#fn55" class="footnote-ref" id="fnref55"><sup>55</sup></a>.<br />
 </li>
 <li>Michael Clark provides a helpful applied <a href="https://m-clark.github.io/bayesian-basics/">introduction</a> to Bayesian analysis in R.</li>
 <li>Note also that you can interact with stan through the <code>parsnip</code> package by setting <code>parsnip::set_engine(engine = "stan")</code> for linear models.</li>
-<li>There is also a python interface, <a href="https://mc-stan.org/users/interfaces/pystan">PyStan</a>. The most popular Bayesian library in python however is <a href="https://github.com/pymc-devs/pymc3">PyMC3</a><a href="#fn57" class="footnote-ref" id="fnref57"><sup>57</sup></a>. You might also check-out <a href="https://blog.tensorflow.org/2018/12/an-introduction-to-probabilistic.html">Tensorflow Probability</a><a href="#fn58" class="footnote-ref" id="fnref58"><sup>58</sup></a>.</li>
+<li>There is also a python interface, <a href="https://mc-stan.org/users/interfaces/pystan">PyStan</a>. The most popular Bayesian library in python however is <a href="https://github.com/pymc-devs/pymc3">PyMC3</a><a href="#fn56" class="footnote-ref" id="fnref56"><sup>56</sup></a>. You might also check-out <a href="https://blog.tensorflow.org/2018/12/an-introduction-to-probabilistic.html">Tensorflow Probability</a><a href="#fn57" class="footnote-ref" id="fnref57"><sup>57</sup></a>.</li>
 </ul>
 </div>
 <div id="pros-cons" class="section level2">
@@ -3021,7 +3021,7 @@ lm_interval_widths %&gt;%
 <ul>
 <li>Less flexible than alternative approaches.</li>
 <li>Prediction intervals produced in this way have a variety of <a href="https://online.stat.psu.edu/stat501/lesson/3/3.3/#paragraph--766">strong assumptions</a> that they depend on (generally more heavily than other approaches).</li>
-<li>Assumes the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic<a href="#fn59" class="footnote-ref" id="fnref59"><sup>59</sup></a>).</li>
+<li>Assumes the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic<a href="#fn58" class="footnote-ref" id="fnref58"><sup>58</sup></a>).</li>
 </ul>
 </div>
 <div id="prediction-intervals-on-raw-sale-price" class="section level2">
@@ -3095,11 +3095,10 @@ lm_interval_widths %&gt;%
 <li id="fn51"><p>Not shown here, but it may also be valuable to review your coverage levels across key variables of interest.<a href="#fnref51" class="footnote-back">↩</a></p></li>
 <li id="fn52"><p>More explicitly, this test shows that the distribution of <code>price_grouped by quintile</code> across <code>covered</code> would only occur ~3.4% of the time under the assumption of “no relationship”. This is very unlikely, so we reject the NULL hypothesis of “no relationship”.<a href="#fnref52" class="footnote-back">↩</a></p></li>
 <li id="fn53"><p>Alternatively could just have evaluated the interval widths in the <code>log(Sale_Price, 10)</code> terms outputted by the model.<a href="#fnref53" class="footnote-back">↩</a></p></li>
-<li id="fn54"><p>Methods in follow-up posts will show greater diversity of interval widths.<a href="#fnref54" class="footnote-back">↩</a></p></li>
-<li id="fn55"><p>While the seesaw analogy does make a difference in causing some observations to have wider intervals than others, in aggregate you can see the difference is not <em>that</em> big – values like the Mean Squared Error (MSE) or similar aggregate error metrics actually give a pretty close semblance of what you will expect to get when going through the process of creating prediction intervals specific to each observation. Note also however that the difference in interval width will still be greater for the more extreme observations. In future posts some of the methods I walk through will be more flexible or have other advantages (e.g. less strict reliance on distributional assumptions).<a href="#fnref55" class="footnote-back">↩</a></p></li>
-<li id="fn56"><p>Along with <a href="https://github.com/rmcelreath/rethinking">rethinking</a> which supports the “Statistical Rethinking” <a href="https://xcelab.net/rm/statistical-rethinking/">book</a> and <a href="https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists">course</a> – also see <a href="https://bookdown.org/content/4857/">study guide</a><a href="#fnref56" class="footnote-back">↩</a></p></li>
-<li id="fn57"><p>PyMC3 is built on Theano. If you are wondering why this is not being updated to rely on tensorflow (as many other tools based on theano have been), read <a href="https://pymc-devs.medium.com/the-future-of-pymc3-or-theano-is-dead-long-live-theano-d8005f8a0e9b">The Future of PyMC3, or: Theano is Dead, Long Live Theano</a>.<a href="#fnref57" class="footnote-back">↩</a></p></li>
-<li id="fn58"><p>See <a href="https://www.youtube.com/watch?v=_U-1kJo76o4">video</a> explaining how it uses Bayesian methods to provide uncertainty for parameter estimates in tensorflow).<a href="#fnref58" class="footnote-back">↩</a></p></li>
-<li id="fn59"><p>Though linear models are less likely to overfit compared to most model types.<a href="#fnref59" class="footnote-back">↩</a></p></li>
+<li id="fn54"><p>While the seesaw analogy does make a difference in causing some observations to have wider intervals than others, in aggregate you can see the difference is not <em>that</em> big – values like the Mean Squared Error (MSE) or similar aggregate error metrics actually give a pretty close semblance of what you will expect to get when going through the process of creating prediction intervals specific to each observation. Note also however that the difference in interval width will still be greater for the more extreme observations. In future posts some of the methods I walk through will be more flexible or have other advantages (e.g. less strict reliance on distributional assumptions).<a href="#fnref54" class="footnote-back">↩</a></p></li>
+<li id="fn55"><p>Along with <a href="https://github.com/rmcelreath/rethinking">rethinking</a> which supports the “Statistical Rethinking” <a href="https://xcelab.net/rm/statistical-rethinking/">book</a> and <a href="https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists">course</a> – also see <a href="https://bookdown.org/content/4857/">study guide</a><a href="#fnref55" class="footnote-back">↩</a></p></li>
+<li id="fn56"><p>PyMC3 is built on Theano. If you are wondering why this is not being updated to rely on tensorflow (as many other tools based on theano have been), read <a href="https://pymc-devs.medium.com/the-future-of-pymc3-or-theano-is-dead-long-live-theano-d8005f8a0e9b">The Future of PyMC3, or: Theano is Dead, Long Live Theano</a>.<a href="#fnref56" class="footnote-back">↩</a></p></li>
+<li id="fn57"><p>See <a href="https://www.youtube.com/watch?v=_U-1kJo76o4">video</a> explaining how it uses Bayesian methods to provide uncertainty for parameter estimates in tensorflow).<a href="#fnref57" class="footnote-back">↩</a></p></li>
+<li id="fn58"><p>Though linear models are less likely to overfit compared to most model types.<a href="#fnref58" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
