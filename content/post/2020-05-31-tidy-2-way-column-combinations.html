@@ -14,10 +14,12 @@ output:
     toc: yes
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 <div id="TOC">
 <ul>
-<li><a href="#overview">Overview</a><ul>
+<li><a href="#overview">Overview</a>
+<ul>
 <li><a href="#i.-nest-and-pivot">I. Nest and pivot</a></li>
 <li><a href="#ii.-expand-combinations">II. Expand combinations</a></li>
 <li><a href="#iii.-filter-redundancies">III. Filter redundancies</a></li>
@@ -28,7 +30,8 @@ output:
 <li><a href="#functionalize">Functionalize</a></li>
 <li><a href="#example-creating-evaluating-features">Example creating &amp; evaluating features</a></li>
 <li><a href="#when-is-this-approach-inappropriate">When is this approach inappropriate?</a></li>
-<li><a href="#appendix">Appendix</a><ul>
+<li><a href="#appendix">Appendix</a>
+<ul>
 <li><a href="#interactions-example-tidymodels">Interactions example, tidymodels</a></li>
 <li><a href="#expand-via-join">Expand via join</a></li>
 <li><a href="#nested-tibbles">Nested tibbles</a></li>
@@ -110,7 +113,7 @@ ames_subset &lt;- select(ames, ames_cols) %&gt;%
   summarise(Sale_Price = list(Sale_Price)) </code></pre>
 <pre><code>## # A tibble: 12 x 2
 ##    Mo_Sold Sale_Price 
-##  *   &lt;int&gt; &lt;list&gt;     
+##      &lt;int&gt; &lt;list&gt;     
 ##  1       1 &lt;int [123]&gt;
 ##  2       2 &lt;int [133]&gt;
 ##  3       3 &lt;int [232]&gt;
@@ -272,7 +275,6 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
 <h1>Functionalize</h1>
 <p>I put these steps into a few (unpolished) functions found at <a href="https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1">this gist</a><a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>.</p>
 <pre class="r"><code>devtools::source_gist(&quot;https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1&quot;)</code></pre>
-<pre><code>## Error in get(genname, envir = envir) : object &#39;testthat_print&#39; not found</code></pre>
 <p><code>mutate_pairwise()</code> takes in your dataframe, the set of numeric columns to create pairwise combinations from, and a list of functions<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a> to apply.</p>
 </div>
 <div id="example-creating-evaluating-features" class="section level1">
@@ -454,45 +456,45 @@ How you can use <code>dplyr::mutate()</code> to return a dataframe consisting of
 <li>I’d need to make some functions that make it so I can remove all the places where I have <code>var</code> and <code>var2</code> type column names hard-coded</li>
 <li>Alternatively, I might shift approaches and make better use of <code>combn()</code></li>
 </ul>
-<a href="#fnref1" class="footnote-back">↩</a></li>
-<li id="fn2"><p>Though this “throw everything and the kitchen-sink” approach may not always be a good idea.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>I’ve done this type of operation in a variety of ways. Sometimes without any really good reason as to why I used one approach or another. It isn’t completely clear (at least to me) the recommended way of doing these type of operations within the tidyverse – hence the diversity of my approaches in the past and deciding to document the typical steps in the approach I take… via writing this post.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>Or the tidymodels implementation <code>corrr::correlate()</code> in the <a href="https://corrr.tidymodels.org/">corrr</a> package.<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>or is not in a style you prefer<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>I’ll also reference related approaches / small tweaks (putting those materials in the <a href="#appendix">Appendix</a>. This is by no means an exhaustive list (e.g. don’t have an example with a <code>for</code> loop or with a <code>%do%</code> operator). The source code of my post on <a href="https://www.bryanshalloway.com/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/">Ambiguous Absolute Value</a> signs shows a related but more complex / messy approach on a combinatorics problem.<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>In particular, the chapters on “Iteration” and “Many Models” in <a href="https://r4ds.had.co.nz/iteration.html">R for Data Science</a>. I would also recommend Rebecca Barter’s <a href="http://www.rebeccabarter.com/blog/2019-08-19_purrr/">Learn to purrr</a> blog post.<a href="#fnref7" class="footnote-back">↩</a></p></li>
+<a href="#fnref1" class="footnote-back">↩︎</a></li>
+<li id="fn2"><p>Though this “throw everything and the kitchen-sink” approach may not always be a good idea.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>I’ve done this type of operation in a variety of ways. Sometimes without any really good reason as to why I used one approach or another. It isn’t completely clear (at least to me) the recommended way of doing these type of operations within the tidyverse – hence the diversity of my approaches in the past and deciding to document the typical steps in the approach I take… via writing this post.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>Or the tidymodels implementation <code>corrr::correlate()</code> in the <a href="https://corrr.tidymodels.org/">corrr</a> package.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>or is not in a style you prefer<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>I’ll also reference related approaches / small tweaks (putting those materials in the <a href="#appendix">Appendix</a>. This is by no means an exhaustive list (e.g. don’t have an example with a <code>for</code> loop or with a <code>%do%</code> operator). The source code of my post on <a href="https://www.bryanshalloway.com/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/">Ambiguous Absolute Value</a> signs shows a related but more complex / messy approach on a combinatorics problem.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>In particular, the chapters on “Iteration” and “Many Models” in <a href="https://r4ds.had.co.nz/iteration.html">R for Data Science</a>. I would also recommend Rebecca Barter’s <a href="http://www.rebeccabarter.com/blog/2019-08-19_purrr/">Learn to purrr</a> blog post.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
 <li id="fn8"><p>The new <code>dplyr</code> 1.0.0. contains new functions that would have been potentially useful for several of these operations. I highly recommend checking these updates out in the various <a href="https://www.tidyverse.org/tags/dplyr-1-0-0/">recent posts</a> by Hadley Wickham. Some of the major updates (potentially relevant to the types of operations I’ll be discussing in my post):</p>
 <ul>
 <li>new approach for across-column operations (replacing <code>_at()</code>, <code>_if()</code>, <code>_all()</code> variants with <code>across()</code> function)</li>
 <li>brought-back rowwise operations</li>
 <li>emphasize ability to output tibbles / multiple columns in core <code>dplyr</code> verbs. This is something I had only taken advantage of occassionally in the past (<a href="https://stackoverflow.com/a/54725732/9059865">example</a>), but will look to use more going forward.</li>
 </ul>
-<a href="#fnref8" class="footnote-back">↩</a></li>
-<li id="fn9"><p>f I’d spotted this issue initially I’m not sure I would have written this post. However what this post offers is a more verbose treatment of the problem which may be useful for people newer to pairwise operations or the tidyverse.<a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p>For technical reasons, I also converted all integer types to doubles – was getting integer overflow problems in later operations before changing. <a href="https://stackoverflow.com/questions/8804779/what-is-integer-overflow-in-r-and-how-can-it-happen">Thread</a> on integer overflow in R. In this post I’m not taking a disciplined approach to feature engineering. For example it may make sense to normalize the variables so that variable combinations would be starting on a similar scale. This could be done using <code>recipes::step_normalize()</code> or with code like <code>dplyr::mutate_all(df, ~(. - mean(.)) / sd(.))</code> .<a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p>Note that this part of the problem is one where I actually find using <code>tidyr::gather()</code> easier – but I’ve been forcing myself to switch over to using the <code>pivot_()</code> functions over <code>spread()</code> and <code>gather()</code>.<a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>The more common approach.<a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p>If your variables are across rows you are likely concerned with getting summary metrics rather than creating new features – as if your data is across rows there is nothing guaranteeing you have the same number of observations or that they are lined-up appropriately. If you <em>are</em> interested in creating new features, you should probably have first reshaped your data to ensure each column represented a variable.<a href="#fnref13" class="footnote-back">↩</a></p></li>
-<li id="fn14"><p>As switching these would be more computationally efficient – see <a href="#when-is-this-approach-inappropriate">When is this approach inappropriate?</a> for notes related to this. Switching the order here would suggest using approaches with the<code>combn()</code> function.<a href="#fnref14" class="footnote-back">↩</a></p></li>
-<li id="fn15"><p>I.e. has the same output regardless of the order of the variables. E.g. multiplication or addition but not subtraction or division.<a href="#fnref15" class="footnote-back">↩</a></p></li>
-<li id="fn16"><p>Function(s) that output vectors of length 1 (or less than length of input vectors).<a href="#fnref16" class="footnote-back">↩</a></p></li>
-<li id="fn17"><p>Note that the pairwise implementation <code>psych::corr.test()</code> could have been used on your original subsetted dataframe, see <a href="https://stackoverflow.com/questions/13112238/a-matrix-version-of-cor-test">stack overflow thread</a>.<a href="#fnref17" class="footnote-back">↩</a></p></li>
-<li id="fn18"><p>Function(s) that output vector of length equal to length of input vectors.<a href="#fnref18" class="footnote-back">↩</a></p></li>
-<li id="fn19"><p>Did not print this output because cluttered-up page with so many column names.<a href="#fnref19" class="footnote-back">↩</a></p></li>
-<li id="fn20"><p>Steps I - III and V &amp; VI are essentially direct copies of the code above. The approach I took with Step IV may take more effort to follow as it requires understanding a little <code>rlang</code> and could likely have been done more simply.<a href="#fnref20" class="footnote-back">↩</a></p></li>
-<li id="fn21"><p>Must have two vectors as input, but do not need to be infix functions.<a href="#fnref21" class="footnote-back">↩</a></p></li>
-<li id="fn22"><p>Non-technical article discussing combinatorial explosion in context of company user growth targets: <a href="https://medium.com/@TorBair/exponential-growth-isn-t-cool-combinatorial-growth-is-85a0b1fdb6a5">Exponential Growth Isn’t Cool. Combinatorial Growth Is.</a>.<a href="#fnref22" class="footnote-back">↩</a></p></li>
-<li id="fn23"><p>E.g. <a href="https://github.com/Rdatatable/data.table">data.table</a> dataframes<a href="#fnref23" class="footnote-back">↩</a></p></li>
-<li id="fn24"><p>Hence, if you are doing operations across combinations of lots of variables it may not make sense to do the operations directly within dataframes.<a href="#fnref24" class="footnote-back">↩</a></p></li>
-<li id="fn25"><p>Much (if not most) of the <code>tidyverse</code> (and the R programming language generally) is about creating a smooth interface between the analyst/scientist and the back-end complexity of the operations they are performing. Projects like <a href="https://spark.rstudio.com/">sparklyr</a>, <a href="https://db.rstudio.com/dbi/">DBI</a>, <a href="https://github.com/rstudio/reticulate">reticulate</a>, <a href="https://www.tidymodels.org/">tidymodels</a>, and <a href="https://github.com/paul-buerkner/brms">brms</a> (to name a few) represent cases where this <em>interface</em> role of R is most apparent.<a href="#fnref25" class="footnote-back">↩</a></p></li>
-<li id="fn26"><p>For tidyverse packages, this is often returned into or in the form of a dataframe.<a href="#fnref26" class="footnote-back">↩</a></p></li>
-<li id="fn27"><p>Could make better use of <code>combn()</code> function to help.<a href="#fnref27" class="footnote-back">↩</a></p></li>
-<li id="fn28"><p>Depending on the complexity may just need to brush-up on your linear algebra.<a href="#fnref28" class="footnote-back">↩</a></p></li>
-<li id="fn29"><p><code>corrr</code> can also be used to run the operation on databases that may have larger data than you could fit on your computer.<a href="#fnref29" class="footnote-back">↩</a></p></li>
-<li id="fn30"><p>Likely more common for many, if not most, analysts and data scientists.<a href="#fnref30" class="footnote-back">↩</a></p></li>
-<li id="fn31"><p>I.e. multiplying two variables together<a href="#fnref31" class="footnote-back">↩</a></p></li>
-<li id="fn32"><p>Created upon the recipe being <em>baked</em> or <em>juiced</em> – if you have not checked it out, <a href="https://github.com/tidymodels/recipes">recipes</a> is AWESOME!<a href="#fnref32" class="footnote-back">↩</a></p></li>
-<li id="fn33"><p>Maybe at a future date I’ll make a post writing out the example here using the newer approaches now available in <code>tidymodels</code>. <a href="https://gist.github.com/brshallo/674ff06608c1a55fefb8d5dc49896d65">Gist</a> of <code>combn_ttible()</code>… starting place for if I ever get to that write-up.<a href="#fnref33" class="footnote-back">↩</a></p></li>
-<li id="fn34"><p>Could also have used <code>right_join()</code> or <code>full_join()</code>.<a href="#fnref34" class="footnote-back">↩</a></p></li>
+<a href="#fnref8" class="footnote-back">↩︎</a></li>
+<li id="fn9"><p>f I’d spotted this issue initially I’m not sure I would have written this post. However what this post offers is a more verbose treatment of the problem which may be useful for people newer to pairwise operations or the tidyverse.<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>For technical reasons, I also converted all integer types to doubles – was getting integer overflow problems in later operations before changing. <a href="https://stackoverflow.com/questions/8804779/what-is-integer-overflow-in-r-and-how-can-it-happen">Thread</a> on integer overflow in R. In this post I’m not taking a disciplined approach to feature engineering. For example it may make sense to normalize the variables so that variable combinations would be starting on a similar scale. This could be done using <code>recipes::step_normalize()</code> or with code like <code>dplyr::mutate_all(df, ~(. - mean(.)) / sd(.))</code> .<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>Note that this part of the problem is one where I actually find using <code>tidyr::gather()</code> easier – but I’ve been forcing myself to switch over to using the <code>pivot_()</code> functions over <code>spread()</code> and <code>gather()</code>.<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>The more common approach.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>If your variables are across rows you are likely concerned with getting summary metrics rather than creating new features – as if your data is across rows there is nothing guaranteeing you have the same number of observations or that they are lined-up appropriately. If you <em>are</em> interested in creating new features, you should probably have first reshaped your data to ensure each column represented a variable.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p>As switching these would be more computationally efficient – see <a href="#when-is-this-approach-inappropriate">When is this approach inappropriate?</a> for notes related to this. Switching the order here would suggest using approaches with the<code>combn()</code> function.<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
+<li id="fn15"><p>I.e. has the same output regardless of the order of the variables. E.g. multiplication or addition but not subtraction or division.<a href="#fnref15" class="footnote-back">↩︎</a></p></li>
+<li id="fn16"><p>Function(s) that output vectors of length 1 (or less than length of input vectors).<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
+<li id="fn17"><p>Note that the pairwise implementation <code>psych::corr.test()</code> could have been used on your original subsetted dataframe, see <a href="https://stackoverflow.com/questions/13112238/a-matrix-version-of-cor-test">stack overflow thread</a>.<a href="#fnref17" class="footnote-back">↩︎</a></p></li>
+<li id="fn18"><p>Function(s) that output vector of length equal to length of input vectors.<a href="#fnref18" class="footnote-back">↩︎</a></p></li>
+<li id="fn19"><p>Did not print this output because cluttered-up page with so many column names.<a href="#fnref19" class="footnote-back">↩︎</a></p></li>
+<li id="fn20"><p>Steps I - III and V &amp; VI are essentially direct copies of the code above. The approach I took with Step IV may take more effort to follow as it requires understanding a little <code>rlang</code> and could likely have been done more simply.<a href="#fnref20" class="footnote-back">↩︎</a></p></li>
+<li id="fn21"><p>Must have two vectors as input, but do not need to be infix functions.<a href="#fnref21" class="footnote-back">↩︎</a></p></li>
+<li id="fn22"><p>Non-technical article discussing combinatorial explosion in context of company user growth targets: <a href="https://medium.com/@TorBair/exponential-growth-isn-t-cool-combinatorial-growth-is-85a0b1fdb6a5">Exponential Growth Isn’t Cool. Combinatorial Growth Is.</a>.<a href="#fnref22" class="footnote-back">↩︎</a></p></li>
+<li id="fn23"><p>E.g. <a href="https://github.com/Rdatatable/data.table">data.table</a> dataframes<a href="#fnref23" class="footnote-back">↩︎</a></p></li>
+<li id="fn24"><p>Hence, if you are doing operations across combinations of lots of variables it may not make sense to do the operations directly within dataframes.<a href="#fnref24" class="footnote-back">↩︎</a></p></li>
+<li id="fn25"><p>Much (if not most) of the <code>tidyverse</code> (and the R programming language generally) is about creating a smooth interface between the analyst/scientist and the back-end complexity of the operations they are performing. Projects like <a href="https://spark.rstudio.com/">sparklyr</a>, <a href="https://db.rstudio.com/dbi/">DBI</a>, <a href="https://github.com/rstudio/reticulate">reticulate</a>, <a href="https://www.tidymodels.org/">tidymodels</a>, and <a href="https://github.com/paul-buerkner/brms">brms</a> (to name a few) represent cases where this <em>interface</em> role of R is most apparent.<a href="#fnref25" class="footnote-back">↩︎</a></p></li>
+<li id="fn26"><p>For tidyverse packages, this is often returned into or in the form of a dataframe.<a href="#fnref26" class="footnote-back">↩︎</a></p></li>
+<li id="fn27"><p>Could make better use of <code>combn()</code> function to help.<a href="#fnref27" class="footnote-back">↩︎</a></p></li>
+<li id="fn28"><p>Depending on the complexity may just need to brush-up on your linear algebra.<a href="#fnref28" class="footnote-back">↩︎</a></p></li>
+<li id="fn29"><p><code>corrr</code> can also be used to run the operation on databases that may have larger data than you could fit on your computer.<a href="#fnref29" class="footnote-back">↩︎</a></p></li>
+<li id="fn30"><p>Likely more common for many, if not most, analysts and data scientists.<a href="#fnref30" class="footnote-back">↩︎</a></p></li>
+<li id="fn31"><p>I.e. multiplying two variables together<a href="#fnref31" class="footnote-back">↩︎</a></p></li>
+<li id="fn32"><p>Created upon the recipe being <em>baked</em> or <em>juiced</em> – if you have not checked it out, <a href="https://github.com/tidymodels/recipes">recipes</a> is AWESOME!<a href="#fnref32" class="footnote-back">↩︎</a></p></li>
+<li id="fn33"><p>Maybe at a future date I’ll make a post writing out the example here using the newer approaches now available in <code>tidymodels</code>. <a href="https://gist.github.com/brshallo/674ff06608c1a55fefb8d5dc49896d65">Gist</a> of <code>combn_ttible()</code>… starting place for if I ever get to that write-up.<a href="#fnref33" class="footnote-back">↩︎</a></p></li>
+<li id="fn34"><p>Could also have used <code>right_join()</code> or <code>full_join()</code>.<a href="#fnref34" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

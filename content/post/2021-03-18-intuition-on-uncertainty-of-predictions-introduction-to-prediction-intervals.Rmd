@@ -65,7 +65,9 @@ ames_train <- training(data_split)
 ames_holdout  <- testing(data_split)
 ```
 
-Specify preprocessing steps and a multiple linear regression model to predict *Sale Price* -- actually $\log_{10}{(Sale\:Price)}$[^1]. (There are many important features I do not include. I am also skipping a lot of *important* steps in predictive modeling^[E.g. data exploration, review of model assumptions, use of a separate validation set, feature engineering, tuning, etc.]).
+Specify preprocessing steps and a multiple linear regression model[^skipping] to predict *Sale Price* -- actually $\log_{10}{(Sale\:Price)}$[^1]. 
+
+[^skipping]: There are many important features I do not include. I am also skipping a lot of *important* steps in predictive modeling, e.g. data exploration, review of model assumptions, use of a separate validation set, feature engineering, tuning, etc.].
 
 [^1]: A log transform on the target can be thought of roughly as changing the model to be about changes in percent of `Sale_Price` rather than raw `Sale_Price`. Throughout the post I will be performing a log transformation on our target, `Sale_Price` prior to modeling. Hence in some cases I make comparisons against the log of dollars offered OR I will use some metric that is in terms of *percent* rather than raw `Sale_Price`. It is generally best to conduct model evaluation against whatever transformed scale is used in model building (i.e. in our case `log(Sale_Price, 10)`). This is suggested in [Tidymodels with R](https://www.tmwr.org/performance.html):
     
@@ -135,7 +137,7 @@ Using the naive approach, whether an offer is above or below this *expected* pri
 
 ## Considering Uncertainty
 
-Let's consider an offer of \$180,000 for our example house. You might first think you ought to reject the offer due to it being ~\$4,500 less than the expected price. However a *less naive* approach would be to compare the \$180,000 offer in the context of the model's observed accuracy when making predictions on a holdout set^[Statistics can provide context as to whether this represents a *small* or *large* deviation from expectations.]. 
+Let's consider a pretend offer of \$180,000 for our example house. You might first think you ought to reject the offer due to it being ~\$4,500 less than the expected price. However a *less naive* approach would be to compare the \$180,000 offer in the context of the model's observed accuracy when making predictions on a holdout set^[Statistics can provide context as to whether this represents a *small* or *large* deviation from expectations.]. 
 
 We need to be careful regarding how we consider performance and the errors of our model. For this particular problem, the variability in our model's errors increase with the magnitude of the predictions for `Sale_Price`^[This is known as heteroskedasticity. We generally want our error metrics to be homoskedastic, i.e. 'same variance'. This is why we built the model on the target `log(Sale_Price, 10)`. Note that the base rate of 10 doesn't really matter that much, we could just have easily have built the model using the natural logarithm and gotten similar results.]. We want an error metric that will not inflate with `Sale_Price`. Hence rather than review the difference between `Sale_Price` and Expected[`Sale_Price`], it is more appropriate to review either:
 
