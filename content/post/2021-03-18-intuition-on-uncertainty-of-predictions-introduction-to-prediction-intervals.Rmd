@@ -2,12 +2,13 @@
 title: Understanding Prediction Intervals
 author: Bryan Shalloway
 date: '2021-03-18'
+codefolding_show: hide
 slug: intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals
 thumbnail: /post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/prediction-intervals-sample-1.png
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,  message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE,  message = FALSE, warning = FALSE, codefolding_show = "hide")
 ```
 
 Prediction intervals provide a measure of uncertainty for predictions on individual observations. This post... 
@@ -50,7 +51,7 @@ You might first build a model for *expected sale price* that is fit based on the
 
 As a stand-in for the large complicated products typically sold in B2B markets, I will use [data on home sales](https://github.com/topepo/AmesHousing) from Ames, Iowa for my examples^[This is similar to what I did on a [previous post on pricing](https://www.bryanshalloway.com/2020/08/17/pricing-insights-from-historical-data-part-1/).]. 
 
-Load in the data and then split it into a training dataset (for exploration and model development) and validation dataset (holdout data not used in model training, reserved for evaluating model performance)^[If I was being a little more careful, I'd also split the `train` data into a validation set or I'd use `rsample` to set-up cross validation. In this post though I largely use `test` how you might use a validation set though. See [Tidy Modeling with R, 10.2](https://www.tmwr.org/resampling.html) for more.]. 
+Load in the data and then split it into a training dataset (for exploration and model development) and a validation dataset (holdout dataset not used in model training, reserved for evaluating model performance)^[If I was being a little more careful, I'd also split the `train` data into a validation set or I'd use `rsample` to set-up cross validation. In this post though I largely use `test` how you might use a validation set though. See [Tidy Modeling with R, 10.2](https://www.tmwr.org/resampling.html) for more.]. 
 
 ```{r load-data}
 ames <- make_ames() %>% 
