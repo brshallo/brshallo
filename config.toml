@@ -32,7 +32,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_cache$", "\\.knit\\.md$", "\\.utf8\
     url = "https://www.linkedin.com/in/bryanshalloway/"
     weight = 4
 [[menu.main]]
-    name = "YouTube"
+    name = "Presentations"
     url = "https://www.youtube.com/watch?v=gme4Fb9JVjk&list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95"
     weight = 5
 

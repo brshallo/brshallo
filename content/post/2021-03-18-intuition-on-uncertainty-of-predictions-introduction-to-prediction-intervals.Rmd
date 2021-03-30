@@ -65,7 +65,9 @@ ames_train <- training(data_split)
 ames_holdout  <- testing(data_split)
 ```
 
-Specify preprocessing steps and a multiple linear regression model[^skipping] to predict *Sale Price* -- actually $\log_{10}{(Sale\:Price)}$[^1]. 
+Specify preprocessing steps[^preprocess] and a multiple linear regression model[^skipping] to predict *Sale Price* -- actually $\log_{10}{(Sale\:Price)}$[^1]. 
+
+[^preprocess]: It is important that we capture any uncertainty in our preprocessing steps, hence the need for using the [recipes](https://recipes.tidymodels.org/) package.
 
 [^skipping]: There are many important features I do not include. I am also skipping a lot of *important* steps in predictive modeling, e.g. data exploration, review of model assumptions, use of a separate validation set, feature engineering, tuning, etc.].
 
