@@ -2,6 +2,18 @@
 title: Understanding Prediction Intervals
 author: Bryan Shalloway
 date: '2021-03-18'
+categories:
+  - rstats
+  - r
+  - statistics
+  - business
+  - data science
+tags:
+  - business
+  - distributions
+  - tidymodels
+  - pricing
+  - ml
 codefolding_show: hide
 slug: intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals
 thumbnail: /post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/prediction-intervals-sample-1.png
@@ -282,7 +294,7 @@ In follow up posts the methods I describe do not depend *as* strongly on assumpt
 
 [puzzle]: You may be puzzled why differing uncertainty depending on the distance of a point is from the centroid of the data is not thought of as a kind of heteroskedasticity. My understanding is this is becuase *that* difference has to do with uncertainty in estimating the model, not uncertainty in the sample (which is assumed to be constant).
 
-## Cautions with Overfitting
+## Cautions With Overfitting
 
 You want the inferences and predictions of your model to be *generalizable*, i.e. usable outside of the context of your training dataset. This is why we holdout data to review performance: we want to review the model's performance on data it has never seen. If your model [overfits](https://en.wikipedia.org/wiki/Overfitting)^[Model generalizability is a big topic I am going to just barely touch on it here.] the training data, the prediction interval will often underestimate the expected variability in price and your prediction intervals may be too narrow. Two strategies you might use to correct for this:
 
@@ -321,7 +333,7 @@ This is called "adaptive coverage" and is discussed briefly by Emmanuel Candes i
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/61tpigfLHso?start=1654" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-In a follow-up post, __Building Prediction Intervals with Quantile Regression__ I will walk through a similar example where I tune the expected coverage.
+In a follow-up post, __Quantile Regression for Prediction Intervals__ I will walk through a similar example where I tune the expected coverage.
 
 # Generalizability
 
@@ -456,7 +468,7 @@ preds_intervals %>%
 
 The results provide evidence that whether an observation is covered or not-covered may depend (to some extent) on which quintile of predicted `Sale_Price` the observation falls within^[More explicitly, this test shows that the distribution of `price_grouped by quintile` across `covered` would only occur ~3.4% of the time under the assumption of "no relationship". This is very unlikely, so we reject the NULL hypothesis of "no relationship".].
 
-I will show in a follow-up post on __Simulation Methods for Building Prediction Intervals__ intervals that seem to have more consistent coverage rates across predicted `Sale_Price`.
+I will show in a follow-up post on __Simulating Prediction Intervals__ intervals that seem to have more consistent coverage rates across predicted `Sale_Price`.
 
 ## Interval Width
 
@@ -496,7 +508,7 @@ Recall from [Analytic Method of Calculating Prediction Intervals] that the only 
 
 Prediction intervals provide an indicator for the uncertainty of individual predictions. They have advantages over point estimates in that they take into account the variability in the data to provide a "reasonable" range of values for an observation.
 
-Measures like *coverage* and *interval width* are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on __Building Prediction Intervals Using Simulation__ and __Building Prediction Intervals Using Quantile Regression__, where I walk through more sophisticated and flexible methods for building prediction intervals.
+Measures like *coverage* and *interval width* are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on __Simulating Prediction Intervals__ and __Quantile Regression for Prediction Intervals__, where I walk through more sophisticated and flexible methods for building prediction intervals.
 
 # Appendix
 
@@ -531,3 +543,22 @@ p +
   scale_x_continuous(labels = scales::dollar)+
   scale_y_continuous(labels = scales::dollar)
 ```
+
+## `parsnip` Support for Prediction Intervals
+
+Run the following code to check which `parsnip` supported models have modules for prediction intervals or quantiles (cross-posted [here](https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/3))".
+
+```{r, eval = FALSE}
+library(tidyverse)
+
+envir <- parsnip::get_model_env()
+
+ls(envir) %>% 
+  tibble(name = .) %>% 
+  filter(str_detect(name, "_predict")) %>% 
+  mutate(prediction_modules  = map(name, parsnip::get_from_env)) %>% 
+  unnest(prediction_modules) %>% 
+  filter(str_detect(type, "pred_int|quantile"))
+```
+
+In future posts, I will use some approaches that are not directly (currently) supported by predict methods in `parsnip`.

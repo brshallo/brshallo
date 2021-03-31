@@ -2,6 +2,18 @@
 title: Understanding Prediction Intervals
 author: Bryan Shalloway
 date: '2021-03-18'
+categories:
+  - rstats
+  - r
+  - statistics
+  - business
+  - data science
+tags:
+  - business
+  - distributions
+  - tidymodels
+  - pricing
+  - ml
 codefolding_show: hide
 slug: intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals
 thumbnail: /post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/prediction-intervals-sample-1.png
@@ -22,7 +34,7 @@ thumbnail: /post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction
 <li><a href="#analytic-method-of-calculating-prediction-intervals">Analytic Method of Calculating Prediction Intervals</a></li>
 <li><a href="#visual-comparison-of-prediction-intervals-and-confidence-intervals">Visual Comparison of Prediction Intervals and Confidence Intervals</a></li>
 <li><a href="#inference-or-prediction">Inference or Prediction?</a></li>
-<li><a href="#cautions-with-overfitting">Cautions with Overfitting</a></li>
+<li><a href="#cautions-with-overfitting">Cautions With Overfitting</a></li>
 </ul></li>
 <li><a href="#generalizability">Generalizability</a></li>
 <li><a href="#review-prediction-intervals">Review Prediction Intervals</a>
@@ -36,6 +48,7 @@ thumbnail: /post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction
 <li><a href="#bayesian-inference">Bayesian Inference</a></li>
 <li><a href="#pros-cons">Pros &amp; Cons</a></li>
 <li><a href="#prediction-intervals-on-raw-sale-price">Prediction Intervals on Raw Sale Price</a></li>
+<li><a href="#parsnip-support-for-prediction-intervals"><code>parsnip</code> Support for Prediction Intervals</a></li>
 </ul></li>
 </ul>
 </div>
@@ -1324,7 +1337,7 @@ data_preds %&gt;%
 <p>[puzzle]: You may be puzzled why differing uncertainty depending on the distance of a point is from the centroid of the data is not thought of as a kind of heteroskedasticity. My understanding is this is becuase <em>that</em> difference has to do with uncertainty in estimating the model, not uncertainty in the sample (which is assumed to be constant).</p>
 </div>
 <div id="cautions-with-overfitting" class="section level2">
-<h2>Cautions with Overfitting</h2>
+<h2>Cautions With Overfitting</h2>
 <p>You want the inferences and predictions of your model to be <em>generalizable</em>, i.e. usable outside of the context of your training dataset. This is why we holdout data to review performance: we want to review the model’s performance on data it has never seen. If your model <a href="https://en.wikipedia.org/wiki/Overfitting">overfits</a><a href="#fn33" class="footnote-ref" id="fnref33"><sup>33</sup></a> the training data, the prediction interval will often underestimate the expected variability in price and your prediction intervals may be too narrow. Two strategies you might use to correct for this:</p>
 <ol style="list-style-type: decimal">
 <li>Consider a more simple model<a href="#fn34" class="footnote-ref" id="fnref34"><sup>34</sup></a></li>
@@ -1353,7 +1366,7 @@ data_preds %&gt;%
 <p>This is called “adaptive coverage” and is discussed briefly by Emmanuel Candes in the video below:</p>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/61tpigfLHso?start=1654" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
 </iframe>
-<p>In a follow-up post, <strong>Building Prediction Intervals with Quantile Regression</strong> I will walk through a similar example where I tune the expected coverage.</p>
+<p>In a follow-up post, <strong>Quantile Regression for Prediction Intervals</strong> I will walk through a similar example where I tune the expected coverage.</p>
 </div>
 </div>
 <div id="generalizability" class="section level1">
@@ -2575,7 +2588,7 @@ p +
 </tbody>
 </table>
 <p>The results provide evidence that whether an observation is covered or not-covered may depend (to some extent) on which quintile of predicted <code>Sale_Price</code> the observation falls within<a href="#fn53" class="footnote-ref" id="fnref53"><sup>53</sup></a>.</p>
-<p>I will show in a follow-up post on <strong>Simulation Methods for Building Prediction Intervals</strong> intervals that seem to have more consistent coverage rates across predicted <code>Sale_Price</code>.</p>
+<p>I will show in a follow-up post on <strong>Simulating Prediction Intervals</strong> intervals that seem to have more consistent coverage rates across predicted <code>Sale_Price</code>.</p>
 </div>
 <div id="interval-width" class="section level2">
 <h2>Interval Width</h2>
@@ -3001,7 +3014,7 @@ lm_interval_widths %&gt;%
 <div id="closing-notes" class="section level1">
 <h1>Closing Notes</h1>
 <p>Prediction intervals provide an indicator for the uncertainty of individual predictions. They have advantages over point estimates in that they take into account the variability in the data to provide a “reasonable” range of values for an observation.</p>
-<p>Measures like <em>coverage</em> and <em>interval width</em> are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on <strong>Building Prediction Intervals Using Simulation</strong> and <strong>Building Prediction Intervals Using Quantile Regression</strong>, where I walk through more sophisticated and flexible methods for building prediction intervals.</p>
+<p>Measures like <em>coverage</em> and <em>interval width</em> are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on <strong>Simulating Prediction Intervals</strong> and <strong>Quantile Regression for Prediction Intervals</strong>, where I walk through more sophisticated and flexible methods for building prediction intervals.</p>
 </div>
 <div id="appendix" class="section level1">
 <h1>Appendix</h1>
@@ -3037,6 +3050,21 @@ lm_interval_widths %&gt;%
   scale_x_continuous(labels = scales::dollar)+
   scale_y_continuous(labels = scales::dollar)</code></pre>
 <p><img src="/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="parsnip-support-for-prediction-intervals" class="section level2">
+<h2><code>parsnip</code> Support for Prediction Intervals</h2>
+<p>Run the following code to check which <code>parsnip</code> supported models have modules for prediction intervals or quantiles (cross-posted <a href="https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/3">here</a>)".</p>
+<pre class="r"><code>library(tidyverse)
+
+envir &lt;- parsnip::get_model_env()
+
+ls(envir) %&gt;% 
+  tibble(name = .) %&gt;% 
+  filter(str_detect(name, &quot;_predict&quot;)) %&gt;% 
+  mutate(prediction_modules  = map(name, parsnip::get_from_env)) %&gt;% 
+  unnest(prediction_modules) %&gt;% 
+  filter(str_detect(type, &quot;pred_int|quantile&quot;))</code></pre>
+<p>In future posts, I will use some approaches that are not directly (currently) supported by predict methods in <code>parsnip</code>.</p>
 </div>
 </div>
 <div class="footnotes">
