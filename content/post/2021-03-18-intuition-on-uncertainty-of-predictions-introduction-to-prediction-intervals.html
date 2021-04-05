@@ -88,7 +88,7 @@ set.seed(4595)
 data_split &lt;- initial_split(ames, strata = &quot;Sale_Price&quot;, p = 0.75)
 
 ames_train &lt;- training(data_split)
-ames_holdout  &lt;- testing(data_split)</code></pre>
+ames_holdout  &lt;- testing(data_split) </code></pre>
 <p>Specify preprocessing steps<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> and a multiple linear regression model<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> to predict <em>Sale Price</em> – actually <span class="math inline">\(\log_{10}{(Sale\:Price)}\)</span><a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
 <pre class="r"><code>lm_recipe &lt;- 
   recipe(
@@ -105,9 +105,9 @@ ames_holdout  &lt;- testing(data_split)</code></pre>
 
 lm_mod &lt;- linear_reg() %&gt;% 
   set_engine(engine = &quot;lm&quot;) %&gt;%
-  set_mode(&quot;regression&quot;)
-
-lm_wf &lt;- workflows::workflow() %&gt;% 
+  set_mode(&quot;regression&quot;)</code></pre>
+<p>Put together into a workflow and fit model:</p>
+<pre class="r"><code>lm_wf &lt;- workflows::workflow() %&gt;% 
   add_model(lm_mod) %&gt;% 
   add_recipe(lm_recipe) %&gt;% 
   fit(ames_train)</code></pre>
@@ -2142,7 +2142,7 @@ preds_intervals %&gt;%
 <p>Let’s view 90% prediction intervals against <em>actual</em> prices on a sample of observations in our holdout dataset:</p>
 <pre class="r"><code>set.seed(1234)
 p &lt;- preds_intervals %&gt;% 
-  mutate(pred_interval = ggplot2::cut_number(.pred, 10)) %&gt;% 
+  mutate(pred_interval = ggplot2::cut_number(Sale_Price, 10)) %&gt;% 
   group_by(pred_interval) %&gt;% 
   sample_n(2) %&gt;% 
   ggplot(aes(x = .pred))+
@@ -2157,9 +2157,10 @@ p &lt;- preds_intervals %&gt;%
 
 p +
   scale_x_log10(labels = scales::dollar)+
-  scale_y_log10(labels = scales::dollar)</code></pre>
+  scale_y_log10(labels = scales::dollar) </code></pre>
 <p><img src="/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/prediction-intervals-sample-1.png" width="672" /></p>
 <p>Log transformations are applied on the x and y axis. Remember the model was built to predict <span class="math inline">\(\log_{10}{(Sale\:Price)}\)</span> (as opposed to raw <code>Sale_Price</code>)<a href="#fn45" class="footnote-ref" id="fnref45"><sup>45</sup></a>.</p>
+<p>We would expect ~9 out of 10 observations to fall within their bands – which a cursory glance appears to be just about what we see.</p>
 <div id="coverage" class="section level2">
 <h2>Coverage</h2>
 <p>Let’s review what proportion of our holdout observations are actually “covered” by their 90% prediction intervals<a href="#fn46" class="footnote-ref" id="fnref46"><sup>46</sup></a>.</p>
@@ -2532,7 +2533,7 @@ p +
 </table></div>
 <p>~93% of our holdout observations were actually covered<a href="#fn47" class="footnote-ref" id="fnref47"><sup>47</sup></a>. We can likely trust these intervals aren’t too narrow<a href="#fn48" class="footnote-ref" id="fnref48"><sup>48</sup></a>. It is usually better to be on the slightly conservative than optimistic side regarding coverage<a href="#fn49" class="footnote-ref" id="fnref49"><sup>49</sup></a>.</p>
 <p>In addition to reviewing overall coverage, it may be helpful to review coverage across predictions. This may be helpful in providing evidence of whether we have “marginal” or “conditional” coverage<a href="#fn50" class="footnote-ref" id="fnref50"><sup>50</sup></a>.</p>
-<p>The chart below splits the holdout data into five segments ordered by predicted price with equal number of observations<a href="#fn51" class="footnote-ref" id="fnref51"><sup>51</sup></a> and checks the proportion covered over each quintile.</p>
+<p>The chart below splits the holdout data into five segments ordered by predicted price<a href="#fn51" class="footnote-ref" id="fnref51"><sup>51</sup></a> with equal number of observations<a href="#fn52" class="footnote-ref" id="fnref52"><sup>52</sup></a> and checks the proportion covered over each quintile.</p>
 <pre class="r"><code>preds_intervals %&gt;%
   mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %&gt;% 
   mutate(covered = ifelse(Sale_Price &gt;= .pred_lower &amp; Sale_Price &lt;= .pred_upper, 1, 0)) %&gt;% 
@@ -2558,7 +2559,7 @@ p +
        caption = &quot;Error bars represent {coverage} +/- 2 * {coverage standard error}&quot;)+
   theme_bw()</code></pre>
 <p><img src="/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p>This suggests there may be slightly different levels of coverage at different quintiles (e.g. the cheapest predicted houses have less coverage than those in the 2nd quintile.)<a href="#fn52" class="footnote-ref" id="fnref52"><sup>52</sup></a>.</p>
+<p>This suggests there may be slightly different levels of coverage at different quintiles (e.g. the cheapest predicted houses have less coverage than those in the 2nd quintile.)<a href="#fn53" class="footnote-ref" id="fnref53"><sup>53</sup></a>.</p>
 <p>A test for checking whether variability in the categorical variable <code>covered</code> (covered / not-covered) does not vary across the quintile of predicted <code>Sale_Price</code> (1st, 2nd, 3rd, 4th, 5th) could be done using a <a href="https://en.wikipedia.org/wiki/Chi-squared_test">Chi-square statistical test</a>:</p>
 <pre class="r"><code>preds_intervals %&gt;% 
   mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %&gt;% 
@@ -2587,13 +2588,13 @@ p +
 </tr>
 </tbody>
 </table>
-<p>The results provide evidence that whether an observation is covered or not-covered may depend (to some extent) on which quintile of predicted <code>Sale_Price</code> the observation falls within<a href="#fn53" class="footnote-ref" id="fnref53"><sup>53</sup></a>.</p>
+<p>The results provide evidence that whether an observation is covered or not-covered may depend (to some extent) on which quintile of predicted <code>Sale_Price</code> the observation falls within<a href="#fn54" class="footnote-ref" id="fnref54"><sup>54</sup></a>.</p>
 <p>I will show in a follow-up post on <strong>Simulating Prediction Intervals</strong> intervals that seem to have more consistent coverage rates across predicted <code>Sale_Price</code>.</p>
 </div>
 <div id="interval-width" class="section level2">
 <h2>Interval Width</h2>
 <p>Another helpful way to evaluate prediction intervals is by their width. More narrow bands indicate a more precise model.</p>
-<p>Remember from the section on <a href="#considering-uncertainty">Considering Uncertainty</a> that the errors on raw <code>Sale_Price</code> increase with the size of the prediction. To adjust for this, an appropriate metric is interval width as a percentage of predicted <code>Sale_Price</code><a href="#fn54" class="footnote-ref" id="fnref54"><sup>54</sup></a>. I will review these across quintiles of the predictions.</p>
+<p>Remember from the section on <a href="#considering-uncertainty">Considering Uncertainty</a> that the errors on raw <code>Sale_Price</code> increase with the size of the prediction. To adjust for this, an appropriate metric is interval width as a percentage of predicted <code>Sale_Price</code><a href="#fn55" class="footnote-ref" id="fnref55"><sup>55</sup></a>. I will review these across quintiles of the predictions.</p>
 <pre class="r"><code>lm_interval_widths &lt;- preds_intervals %&gt;% 
   mutate(interval_width = .pred_upper - .pred_lower,
          interval_pred_ratio = interval_width / .pred) %&gt;% 
@@ -3008,7 +3009,7 @@ lm_interval_widths %&gt;%
 </table></div>
 <p>The 90% interval represents an average of ~54% of the predicted <code>Sale_Price</code>. I.e. the difference between the upper and lower bounds of the prediction interval for <code>Sale_Price</code> will be about half of the predicted <code>Sale_Price</code> (to eye-ball this, see <a href="#prediction-intervals-on-raw-sale-price">Prediction Intervals on Raw Sale Price</a>).</p>
 <p>The relative interval width seems to be consistent across values for predicted <code>Sale_Price</code> (~54% for all quintiles). There is also little difference in uncertainty between observations – varying on average less than half a percent between observations as indicated by the standard deviation.</p>
-<p>Recall from <a href="#analytic-method-of-calculating-prediction-intervals">Analytic Method of Calculating Prediction Intervals</a> that the only factor contributing to differences in interval width across predictions is the distance of an observations from the centroid of the data. This has a small impact on relative interval width in our problem (given the number of observations and sample variance – which are treated as constant across observations)<a href="#fn55" class="footnote-ref" id="fnref55"><sup>55</sup></a>. Methods used in future posts will show a greater diversity of interval widths.</p>
+<p>Recall from <a href="#analytic-method-of-calculating-prediction-intervals">Analytic Method of Calculating Prediction Intervals</a> that the only factor contributing to differences in interval width across predictions is the distance of an observations from the centroid of the data. This has a small impact on relative interval width in our problem (given the number of observations and sample variance – which are treated as constant across observations)<a href="#fn56" class="footnote-ref" id="fnref56"><sup>56</sup></a>. Methods used in future posts will show a greater diversity of interval widths.</p>
 </div>
 </div>
 <div id="closing-notes" class="section level1">
@@ -3022,11 +3023,11 @@ lm_interval_widths %&gt;%
 <h2>Bayesian Inference</h2>
 <p>In this and the immediate follow-up posts I approach prediction intervals from a more <a href="https://en.wikipedia.org/wiki/Frequentist_inference">frequentist</a> perspective. However when you really care about thinking through the nature of uncertainty in your model, <a href="https://en.wikipedia.org/wiki/Bayesian_inference">Bayesian</a> methods are often more appropriate. I may cover Bayesian approaches in a future post, in the meantime, here are a few resources:</p>
 <ul>
-<li>The <a href="https://mc-stan.org/">stan</a> computing platform for Bayesian modeling and inference has various excellent R package interfaces. <a href="https://github.com/stan-dev/rstan">rstan</a>, <a href="https://github.com/stan-dev/rstanarm">rstanarm</a>, <a href="https://github.com/paul-buerkner/brms">brms</a> and <a href="https://github.com/mjskay/tidybayes">tidybayes</a> are the ones of greatest interest to me<a href="#fn56" class="footnote-ref" id="fnref56"><sup>56</sup></a>.<br />
+<li>The <a href="https://mc-stan.org/">stan</a> computing platform for Bayesian modeling and inference has various excellent R package interfaces. <a href="https://github.com/stan-dev/rstan">rstan</a>, <a href="https://github.com/stan-dev/rstanarm">rstanarm</a>, <a href="https://github.com/paul-buerkner/brms">brms</a> and <a href="https://github.com/mjskay/tidybayes">tidybayes</a> are the ones of greatest interest to me<a href="#fn57" class="footnote-ref" id="fnref57"><sup>57</sup></a>.<br />
 </li>
 <li>Michael Clark provides a helpful applied <a href="https://m-clark.github.io/bayesian-basics/">introduction</a> to Bayesian analysis in R.</li>
 <li>Note also that you can interact with stan through the <code>parsnip</code> package by setting <code>parsnip::set_engine(engine = "stan")</code> for linear models.</li>
-<li>There is also a python interface, <a href="https://mc-stan.org/users/interfaces/pystan">PyStan</a>. The most popular Bayesian library in python however is <a href="https://github.com/pymc-devs/pymc3">PyMC3</a><a href="#fn57" class="footnote-ref" id="fnref57"><sup>57</sup></a>. You might also check-out <a href="https://blog.tensorflow.org/2018/12/an-introduction-to-probabilistic.html">Tensorflow Probability</a><a href="#fn58" class="footnote-ref" id="fnref58"><sup>58</sup></a>.</li>
+<li>There is also a python interface, <a href="https://mc-stan.org/users/interfaces/pystan">PyStan</a>. The most popular Bayesian library in python however is <a href="https://github.com/pymc-devs/pymc3">PyMC3</a><a href="#fn58" class="footnote-ref" id="fnref58"><sup>58</sup></a>. You might also check-out <a href="https://blog.tensorflow.org/2018/12/an-introduction-to-probabilistic.html">Tensorflow Probability</a><a href="#fn59" class="footnote-ref" id="fnref59"><sup>59</sup></a>.</li>
 </ul>
 </div>
 <div id="pros-cons" class="section level2">
@@ -3040,7 +3041,7 @@ lm_interval_widths %&gt;%
 <ul>
 <li>Less flexible than alternative approaches.</li>
 <li>Prediction intervals produced in this way have a variety of <a href="https://online.stat.psu.edu/stat501/lesson/3/3.3/#paragraph--766">strong assumptions</a> that they depend on (generally more heavily than other approaches).</li>
-<li>Assumes the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic<a href="#fn59" class="footnote-ref" id="fnref59"><sup>59</sup></a>).</li>
+<li>Assumes the correct model (If your model overfits, the associated prediction intervals will likely be overly optimistic<a href="#fn60" class="footnote-ref" id="fnref60"><sup>60</sup></a>).</li>
 </ul>
 </div>
 <div id="prediction-intervals-on-raw-sale-price" class="section level2">
@@ -3126,14 +3127,15 @@ ls(envir) %&gt;%
 <li id="fn48"><p>Though they are perhaps slightly conservative. To get a better estimate for coverage, we could use cross validation as this will provide estimates for coverage across multiple iterations of model fitting.<a href="#fnref48" class="footnote-back">↩︎</a></p></li>
 <li id="fn49"><p>As models tend to perform worse than expected when put into production. I.e. it is better that our empirical coverage is greater than our target coverage than less than our target coverage – even if it would be ideal for these to align.<a href="#fnref49" class="footnote-back">↩︎</a></p></li>
 <li id="fn50"><p>“Marginal” coverage generally means “on average across observations”, whereas “conditional” coverage means conditioned on the specific attributes for an observation. Hence “90%” marginal coverage allows that coverage may be higher in some areas and lower in others. 90% conditional coverage means that the conditional rate should be 90% across observations. “Conditional” coverage is generally harder to get than “marginal” coverage and is actually impossible to achieve without some assumptions.<a href="#fnref50" class="footnote-back">↩︎</a></p></li>
-<li id="fn51"><p>Mostly equal – there are 146 or 147 observations summarized in each row.<a href="#fnref51" class="footnote-back">↩︎</a></p></li>
-<li id="fn52"><p>Not shown here, but it may also be valuable to review your coverage levels across key variables of interest.<a href="#fnref52" class="footnote-back">↩︎</a></p></li>
-<li id="fn53"><p>More explicitly, this test shows that the distribution of <code>price_grouped by quintile</code> across <code>covered</code> would only occur ~3.4% of the time under the assumption of “no relationship”. This is very unlikely, so we reject the NULL hypothesis of “no relationship”.<a href="#fnref53" class="footnote-back">↩︎</a></p></li>
-<li id="fn54"><p>Alternatively could just have evaluated the interval widths in the <code>log(Sale_Price, 10)</code> terms outputted by the model.<a href="#fnref54" class="footnote-back">↩︎</a></p></li>
-<li id="fn55"><p>While the seesaw analogy does make a difference in causing some observations to have wider intervals than others, in aggregate you can see the difference is not <em>that</em> big – values like the Mean Squared Error (MSE) or similar aggregate error metrics actually give a pretty close semblance of what you will expect to get when going through the process of creating prediction intervals specific to each observation. Note also however that the difference in interval width will still be greater for the more extreme observations. In future posts some of the methods I walk through will be more flexible or have other advantages (e.g. less strict reliance on distributional assumptions).<a href="#fnref55" class="footnote-back">↩︎</a></p></li>
-<li id="fn56"><p>Along with <a href="https://github.com/rmcelreath/rethinking">rethinking</a> which supports the “Statistical Rethinking” <a href="https://xcelab.net/rm/statistical-rethinking/">book</a> and <a href="https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists">course</a> – also see <a href="https://bookdown.org/content/4857/">study guide</a><a href="#fnref56" class="footnote-back">↩︎</a></p></li>
-<li id="fn57"><p>PyMC3 is built on Theano. If you are wondering why this is not being updated to rely on tensorflow (as many other tools based on theano have been), read <a href="https://pymc-devs.medium.com/the-future-of-pymc3-or-theano-is-dead-long-live-theano-d8005f8a0e9b">The Future of PyMC3, or: Theano is Dead, Long Live Theano</a>.<a href="#fnref57" class="footnote-back">↩︎</a></p></li>
-<li id="fn58"><p>See <a href="https://www.youtube.com/watch?v=_U-1kJo76o4">video</a> explaining how it uses Bayesian methods to provide uncertainty for parameter estimates in tensorflow).<a href="#fnref58" class="footnote-back">↩︎</a></p></li>
-<li id="fn59"><p>Though linear models are less likely to overfit compared to most model types.<a href="#fnref59" class="footnote-back">↩︎</a></p></li>
+<li id="fn51"><p>I ended-up splitting these based on predicted price. I think it may have made more sense actually to split these based on actual <code>Sale_Price</code>. One of the chief reasons is that in future posts I view these same charts and by splitting it across predictions the groups are based on the predictions and intervals rather than on the actual values of the data. This means that it is possible that if the predictions change the groups change – hence future posts tests / comparisons may not be perfectly comparable.<a href="#fnref51" class="footnote-back">↩︎</a></p></li>
+<li id="fn52"><p>Mostly equal – there are 146 or 147 observations summarized in each row.<a href="#fnref52" class="footnote-back">↩︎</a></p></li>
+<li id="fn53"><p>Not shown here, but it may also be valuable to review your coverage levels across key variables of interest.<a href="#fnref53" class="footnote-back">↩︎</a></p></li>
+<li id="fn54"><p>More explicitly, this test shows that the distribution of <code>price_grouped by quintile</code> across <code>covered</code> would only occur ~3.4% of the time under the assumption of “no relationship”. This is very unlikely, so we reject the NULL hypothesis of “no relationship”.<a href="#fnref54" class="footnote-back">↩︎</a></p></li>
+<li id="fn55"><p>Alternatively could just have evaluated the interval widths in the <code>log(Sale_Price, 10)</code> terms outputted by the model.<a href="#fnref55" class="footnote-back">↩︎</a></p></li>
+<li id="fn56"><p>While the seesaw analogy does make a difference in causing some observations to have wider intervals than others, in aggregate you can see the difference is not <em>that</em> big – values like the Mean Squared Error (MSE) or similar aggregate error metrics actually give a pretty close semblance of what you will expect to get when going through the process of creating prediction intervals specific to each observation. Note also however that the difference in interval width will still be greater for the more extreme observations. In future posts some of the methods I walk through will be more flexible or have other advantages (e.g. less strict reliance on distributional assumptions).<a href="#fnref56" class="footnote-back">↩︎</a></p></li>
+<li id="fn57"><p>Along with <a href="https://github.com/rmcelreath/rethinking">rethinking</a> which supports the “Statistical Rethinking” <a href="https://xcelab.net/rm/statistical-rethinking/">book</a> and <a href="https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists">course</a> – also see <a href="https://bookdown.org/content/4857/">study guide</a><a href="#fnref57" class="footnote-back">↩︎</a></p></li>
+<li id="fn58"><p>PyMC3 is built on Theano. If you are wondering why this is not being updated to rely on tensorflow (as many other tools based on theano have been), read <a href="https://pymc-devs.medium.com/the-future-of-pymc3-or-theano-is-dead-long-live-theano-d8005f8a0e9b">The Future of PyMC3, or: Theano is Dead, Long Live Theano</a>.<a href="#fnref58" class="footnote-back">↩︎</a></p></li>
+<li id="fn59"><p>See <a href="https://www.youtube.com/watch?v=_U-1kJo76o4">video</a> explaining how it uses Bayesian methods to provide uncertainty for parameter estimates in tensorflow).<a href="#fnref59" class="footnote-back">↩︎</a></p></li>
+<li id="fn60"><p>Though linear models are less likely to overfit compared to most model types.<a href="#fnref60" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

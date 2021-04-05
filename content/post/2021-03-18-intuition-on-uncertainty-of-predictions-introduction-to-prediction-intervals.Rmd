@@ -20,7 +20,7 @@ thumbnail: /post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,  message = FALSE, warning = FALSE, codefolding_show = "hide")
+knitr::opts_chunk$set(echo = TRUE,  message = FALSE, warning = FALSE)
 ```
 
 Prediction intervals provide a measure of uncertainty for predictions on individual observations. This post... 
@@ -74,7 +74,7 @@ set.seed(4595)
 data_split <- initial_split(ames, strata = "Sale_Price", p = 0.75)
 
 ames_train <- training(data_split)
-ames_holdout  <- testing(data_split)
+ames_holdout  <- testing(data_split) 
 ```
 
 Specify preprocessing steps[^preprocess] and a multiple linear regression model[^skipping] to predict *Sale Price* -- actually $\log_{10}{(Sale\:Price)}$[^1]. 
@@ -88,7 +88,6 @@ Specify preprocessing steps[^preprocess] and a multiple linear regression model[
     > "It is best practice to analyze the predictions on the transformed scale (if one were used) even if the predictions are reported using the original units." -Kuhn, Silge    
     
     This may not apply perfectly in our case (as we are talking more about evaluation steps that would likely happen after initial model building and selection and has more to do with particular predictions)... however we will still keep this in mind and try to mindful of how we present our evaluation metrics.
-
 
 ```{r lin-rec-mod}
 lm_recipe <- 
@@ -107,7 +106,11 @@ lm_recipe <-
 lm_mod <- linear_reg() %>% 
   set_engine(engine = "lm") %>%
   set_mode("regression")
+```
 
+Put together into a workflow and fit model:
+
+```{r lin-workflow}
 lm_wf <- workflows::workflow() %>% 
   add_model(lm_mod) %>% 
   add_recipe(lm_recipe) %>% 
@@ -385,7 +388,7 @@ Let's view 90% prediction intervals against *actual* prices on a sample of obser
 ```{r prediction-intervals-sample}
 set.seed(1234)
 p <- preds_intervals %>% 
-  mutate(pred_interval = ggplot2::cut_number(.pred, 10)) %>% 
+  mutate(pred_interval = ggplot2::cut_number(Sale_Price, 10)) %>% 
   group_by(pred_interval) %>% 
   sample_n(2) %>% 
   ggplot(aes(x = .pred))+
@@ -400,10 +403,12 @@ p <- preds_intervals %>%
 
 p +
   scale_x_log10(labels = scales::dollar)+
-  scale_y_log10(labels = scales::dollar)
+  scale_y_log10(labels = scales::dollar) 
 ```
 
 Log transformations are applied on the x and y axis. Remember the model was built to predict $\log_{10}{(Sale\:Price)}$ (as opposed to raw `Sale_Price`)^[See [Prediction Intervals on Raw Sale_Price] in the [Appendix] for a chart that does not apply log transformations.].
+
+We would expect ~9 out of 10 observations to fall within their bands -- which a cursory glance appears to be just about what we see.
 
 ## Coverage
 
@@ -425,7 +430,9 @@ preds_intervals %>%
 
 In addition to reviewing overall coverage, it may be helpful to review coverage across predictions. This may be helpful in providing evidence of whether we have "marginal" or "conditional" coverage^["Marginal" coverage generally means "on average across observations", whereas "conditional" coverage means conditioned on the specific attributes for an observation. Hence "90%" marginal coverage allows that coverage may be higher in some areas and lower in others. 90% conditional coverage means that the conditional rate should be 90% across observations. "Conditional" coverage is generally harder to get than "marginal" coverage and is actually impossible to achieve without some assumptions.].
 
-The chart below splits the holdout data into five segments ordered by predicted price with equal number of observations^[Mostly equal -- there are 146 or 147 observations summarized in each row.] and checks the proportion covered over each quintile.
+The chart below splits the holdout data into five segments ordered by predicted price[^actual-vs-predicted] with equal number of observations^[Mostly equal -- there are 146 or 147 observations summarized in each row.] and checks the proportion covered over each quintile.
+
+[^actual-vs-predicted]: I ended-up splitting these based on predicted price. I think it may have made more sense actually to split these based on actual `Sale_Price`. One of the chief reasons is that in future posts I view these same charts and by splitting it across predictions the groups are based on the predictions and intervals rather than on the actual values of the data. This means that it is possible that if the predictions change the groups change -- hence future posts tests / comparisons may not be perfectly comparable.
 
 ```{r}
 preds_intervals %>%
