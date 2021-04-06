@@ -158,7 +158,7 @@ Let's consider a pretend offer of \$180,000 for our example house. You might fir
 
 We need to be careful regarding how we consider performance and the errors of our model. For this particular problem, the variability in our model's errors increase with the magnitude of the predictions for `Sale_Price`^[This is known as heteroskedasticity. We generally want our error metrics to be homoskedastic, i.e. 'same variance'. This is why we built the model on the target `log(Sale_Price, 10)`. Note that the base rate of 10 doesn't really matter that much, we could just have easily have built the model using the natural logarithm and gotten similar results.]. We want an error metric that will not inflate with `Sale_Price`. Hence rather than review the difference between `Sale_Price` and Expected[`Sale_Price`], it is more appropriate to review either:
 
-* $\log_{10}(Sale\_Price)$ against $Expected[\log_{10}(Sale\_Price)]$ OR
+* $\log(Sale\_Price)$ against $Expected[\log(Sale\_Price)]$ OR
 * an error metric that is in terms of percent of `Sale_Price`
 
 I will use the latter method and focus on the percentage error^[I chose this method as I thought it would be easier to explain and some readers may be intimated by logs. During model building and evaluation the former would often be more appropriate to review. In particular the root mean squared error (RMSE) of the errors of the predictions for `log(Sale_Price)`.]. The offer of $180,000 corresponds with a 2.5% difference from expectations. This falls well within the distribution of errors seen by our model on a holdout dataset^[Data not seen during model training and reserved for the purpose of model evaluation].
@@ -295,7 +295,7 @@ For example, an important assumption when doing predictive inference is heterosk
 
 In follow up posts the methods I describe do not depend *as* strongly on assumptions to produce reliable prediction intervals^[However there are limitations on assumption free predictive inference, ([Barber, et al](https://www.stat.cmu.edu/~ryantibs/papers/limits.pdf)).].
 
-[puzzle]: You may be puzzled why differing uncertainty depending on the distance of a point is from the centroid of the data is not thought of as a kind of heteroskedasticity. My understanding is this is becuase *that* difference has to do with uncertainty in estimating the model, not uncertainty in the sample (which is assumed to be constant).
+[^puzzle]: You may be puzzled why differing uncertainty depending on the distance of a point is from the centroid of the data is not thought of as a kind of heteroskedasticity. My understanding is this is becuase *that* difference has to do with uncertainty in estimating the model, not uncertainty in the sample (which is assumed to be constant).
 
 ## Cautions With Overfitting
 

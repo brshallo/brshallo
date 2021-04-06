@@ -79,7 +79,7 @@ Dan's post provides more precise symbolic representations as well as more figure
 
 ![*Example of more sensible handling of non-normality of errors, from Dan Saattrup's excellent post [Bootstrapping prediction intervals](https://saattrupdan.github.io/2020-03-01-bootstrap-prediction/)*](https://saattrupdan.github.io/img/prediction-bootstrap-linear-lognormal.png)
 
-The [Appendix] provides links to [Other Examples Using Simulation]].
+The [Appendix] provides links to [Other Examples Using Simulation].
 
 # Example
 
@@ -326,7 +326,7 @@ Highly related to what I presented in this post... the academic discipline of us
 * [Assumption-free prediction intervals for black-box regression algorithms - Aaditya Ramdas (YouTube)](https://www.youtube.com/watch?v=GMnCO7_HIOY): professor at CMU giving overview of problem, approaches, and current "state-of-the-art".
 * [Tutorial on conformal inference](https://cdsamii.github.io/cds-demos/conformal/conformal-tutorial.html), [Dataiku article](https://blog.dataiku.com/measuring-models-uncertainty-conformal-prediction), [Analytics Vidhya article](https://medium.com/analytics-vidhya/a-guideline-to-conformal-prediction-7a392fc29bc1#:~:text=Conformal%20prediction%20uses%20past%20experiences,looks%20relative%20to%20previous%20examples.)
 
-## Other Examples Using Simulation]
+## Other Examples Using Simulation
 
 Here is a video walk-through of a simple example using a linear model:
 
