@@ -21,7 +21,7 @@ Outside of his direct responsibilities, Bryan is active in fostering internal an
 
 * Co-lead NetApp Data Science study group on topics including *Feature Engineering*, *Statistical Learning*, *Pricing Optimization*, and internal prediction competitions.
 * Promote adoption of improved practices in areas such as hiring Data Scientists and workflows for predictive modeling.
-* Regular presenter to NetApp Data Science community and local technical communities. See [YouTube](https://www.youtube.com/watch?v=gme4Fb9JVjk&list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95) for examples of recorded presentations.
+* Regular presenter to NetApp Data Science community and local technical communities. 
 * Mentor emerging NetApp talent and supported local university students completing their cap-stone projects in data analytics.
 * "NetApp Service Award" recipient in recognition of volunteerism.
 
