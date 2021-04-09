@@ -86,13 +86,13 @@ thumbnail: /2021/04/05/simulating-prediction-intervals/index_files/figure-html/u
 <p>Given the model training dataset with <em>n</em> number of observations…</p>
 <ol style="list-style-type: decimal">
 <li>Build <em>b</em> number of models using <em>b</em> bootstrap resamples on the training dataset (default of <em>b</em> is the square root of <em>n</em>)<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</li>
-<li>Use the <a href="https://stats.stackexchange.com/a/96750/193123">0.632+ rule</a> for blending errors from analysis and assessment sets (based on amount of overfitting in analysis set) and create a distribution of residuals evenly spaced across quantiles of length <em>n</em> – represents distribution for the uncertainty due to the sample.</li>
+<li>Use the <a href="https://stats.stackexchange.com/a/96750/193123">0.632+ rule</a> for blending errors from analysis and assessment sets<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> (based on amount of overfitting in analysis set) and create a distribution of residuals evenly spaced across quantiles of length <em>n</em> – represents distribution for the uncertainty due to the sample.</li>
 </ol>
 <p>Given an observation (or set of observations) you would like to produce prediction intervals for…</p>
 <ol start="3" style="list-style-type: decimal">
 <li>For each new observation, produce a prediction using all of the <em>b</em> models created in step 1.</li>
 <li>Take the difference between each model’s prediction (from step 3) and the mean of <em>all</em> model predictions – the resulting <em>b</em> differences for each observation provides the distribution for the variability due to model estimation at each point.</li>
-<li>For each observation, repeatedly sample from “residuals” (step 2) and “model error / differences” (step 4) and add together – do this <em>h</em> times (with replacement) OR create all possible combinations from step 2 and step 5. Rather than <em>h</em>, the latter approach will produce a distribution composed of <em>n</em> x <em>b</em> elements<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> for each new observation (default behavior<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>).</li>
+<li>For each observation, repeatedly sample from “residuals” (step 2) and “model error / differences” (step 4) and add together – do this <em>h</em> times (with replacement) OR create all possible combinations from step 2 and step 5. Rather than <em>h</em>, the latter approach will produce a distribution composed of <em>n</em> x <em>b</em> elements<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> for each new observation (default behavior<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>).</li>
 <li>Pull quantiles (from the distribution created in step 5) according to the desired level of coverage of your intervals – e.g. 0.05 and 0.95 for a 90% prediction interval.</li>
 </ol>
 <p>See <a href="https://gist.github.com/brshallo/4053df78265ab9d77f753d95f5faaf5b">gist</a> for documentation on implementation.</p>
@@ -149,7 +149,7 @@ lm_mod &lt;- linear_reg() %&gt;%
 <div id="simulate-prediction-interval" class="section level2">
 <h2>Simulate Prediction Interval</h2>
 <p><strong>Steps 1 &amp; 2 from <a href="#procedure">Procedure</a>:</strong></p>
-<p><code>prep_interval()</code> takes in a workflow (model specification + pre-processing recipe<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>) along with a training dataset, and outputs a named list containing bootstrapped model fits + prepped recipes (<code>model_uncertainty</code>) and the resulting residuals from cross-validation (<code>sample_uncertainty</code>).</p>
+<p><code>prep_interval()</code> takes in a workflow (model specification + pre-processing recipe<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>) along with a training dataset, and outputs a named list containing bootstrapped model fits + prepped recipes (<code>model_uncertainty</code>) and the resulting residuals from cross-validation (<code>sample_uncertainty</code>).</p>
 <pre class="r"><code># load custom functions `prep_interval()` and ``predict_interval()`
 devtools::source_gist(&quot;https://gist.github.com/brshallo/4053df78265ab9d77f753d95f5faaf5b&quot;)
 
@@ -587,9 +587,9 @@ lm_sim_intervals %&gt;%
 <p>Simulation produced intervals show more differences in relative interval widths compared to those outputted with analytic methods (see <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals">Part 1, Review Prediction Intervals</a> where the relative interval widths were nearly constant across predictions).</p>
 <div id="interval-width" class="section level2">
 <h2>Interval Width</h2>
-<p>The relative widths of prediction intervals from the simulation based approach vary between observations by more than 10x what we saw in the <a href="http://localhost:4321/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#interval-width">Interval Widths</a> using analytic methods<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> (where interval width had a standard deviation of less than half a percentage point).</p>
+<p>The relative widths of prediction intervals from the simulation based approach vary between observations by more than 10x what we saw in the <a href="http://localhost:4321/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#interval-width">Interval Widths</a> using analytic methods<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a> (where interval width had a standard deviation of less than half a percentage point).</p>
 <p>We also see greater differences in interval width between buckets of predictions (a range of about 5.8 percentage points vs 0.4).</p>
-<p>This suggests the simulation based approach allows for greater differentiation in estimated levels of uncertainty by attributes<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</p>
+<p>This suggests the simulation based approach allows for greater differentiation in estimated levels of uncertainty by attributes<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>.</p>
 <pre class="r"><code>lm_sim_widths &lt;- lm_sim_intervals %&gt;% 
   mutate(interval_width = .pred_upper - .pred_lower,
          interval_pred_ratio = interval_width / .pred) %&gt;% 
@@ -1002,7 +1002,7 @@ lm_sim_widths %&gt;%
   
   
 </table></div>
-<p>Simultaneously, the average relative interval width is slightly more narrow: about 52% for the simulation based approach against 54% for the analytic method<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>.</p>
+<p>Simultaneously, the average relative interval width is slightly more narrow: about 52% for the simulation based approach against 54% for the analytic method<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>.</p>
 <pre class="r"><code>lm_sim_intervals %&gt;% 
   mutate(interval_width = .pred_upper - .pred_lower,
          interval_pred_ratio = interval_width / .pred) %&gt;% 
@@ -1371,7 +1371,7 @@ lm_sim_widths %&gt;%
 </div>
 <div id="coverage" class="section level2">
 <h2>Coverage</h2>
-<p>Coverage is essentially the same: 92.3% (vs 92.7% for <a href="http://localhost:4321/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#coverage">Coverage with the analytic method</a>)<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>.</p>
+<p>Coverage is essentially the same: 92.3% (vs 92.7% for <a href="http://localhost:4321/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#coverage">Coverage with the analytic method</a>)<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>.</p>
 <pre class="r"><code>lm_sim_intervals %&gt;%
   mutate(covered = ifelse(Sale_Price &gt;= .pred_lower &amp; Sale_Price &lt;= .pred_upper, 1, 0)) %&gt;% 
   summarise(n = n(),
@@ -1767,8 +1767,8 @@ lm_sim_widths %&gt;%
        caption = &quot;Error bars represent {coverage} +/- 2 * {coverage standard error}&quot;)+
   theme_bw() </code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p>The overall pattern appears broadly similar to that seen in the <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#coverage">analytic method</a>. However coverage rates seem to be slightly more consistent across quintiles in the simulation based approach – an improvement over the analytic method (where coverage levels had appeared to be slightly more dependent upon quintile of predicted <code>Sale_Price</code>)<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>.</p>
-<p>For example, a chi-squared test in the <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#coverage">previous post</a> had shown significant variation in coverage rates across quintiles when applied to the analytic method. However the same test applied to the results from the simulation based prediction intervals does not show a significant difference<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
+<p>The overall pattern appears broadly similar to that seen in the <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#coverage">analytic method</a>. However coverage rates seem to be slightly more consistent across quintiles in the simulation based approach – an improvement over the analytic method (where coverage levels had appeared to be slightly more dependent upon quintile of predicted <code>Sale_Price</code>)<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
+<p>For example, a chi-squared test in the <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#coverage">previous post</a> had shown significant variation in coverage rates across quintiles when applied to the analytic method. However the same test applied to the results from the simulation based prediction intervals does not show a significant difference<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>.</p>
 <pre class="r"><code>lm_sim_intervals %&gt;% 
   mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %&gt;% 
   mutate(covered = ifelse(Sale_Price &gt;= .pred_lower &amp; Sale_Price &lt;= .pred_upper, 1, 0)) %&gt;% 
@@ -1796,7 +1796,7 @@ lm_sim_widths %&gt;%
 </tr>
 </tbody>
 </table>
-<p>Keep in mind we are looking at just one model specification on one set of data<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>.</p>
+<p>Keep in mind we are looking at just one model specification on one set of data<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>.</p>
 <p>See <a href="#adjusting-procedure">Adjusting Procedure</a> in the <a href="#appendix">Appendix</a> for a couple examples of circumstances where you might want to make changes to <a href="#procedure">Procedure</a>.</p>
 </div>
 </div>
@@ -1806,24 +1806,24 @@ lm_sim_widths %&gt;%
 <p><em>Advantages of simulation based techniques for building prediction intervals:</em></p>
 <ul>
 <li>can produce prediction intervals for model types that are intractable to produce estimates for analytically.</li>
-<li>Even for model types that have analytic solutions for prediction intervals, simulation based approaches rely on fewer assumptions and can be more flexible<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>.</li>
+<li>Even for model types that have analytic solutions for prediction intervals, simulation based approaches rely on fewer assumptions and can be more flexible<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>.</li>
 </ul>
 <p><em>Downsides:</em></p>
 <ul>
-<li>These methods are far more computationally expensive as you will need to build <em>a lot</em> of models<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>.
+<li>These methods are far more computationally expensive as you will need to build <em>a lot</em> of models<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>.
 <ul>
 <li>See <a href="https://www.tmwr.org/resampling.html#parallel">Tidy Models with R, 10.4</a> for notes on how to set-up Parallel Processing.</li>
 </ul></li>
-<li>For predictive inference, you still can’t drop <em>all</em> assumptions<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>.</li>
+<li>For predictive inference, you still can’t drop <em>all</em> assumptions<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a>.</li>
 </ul>
 </div>
 <div id="appendix" class="section level1">
 <h1>Appendix</h1>
 <div id="conformal-inference" class="section level2">
 <h2>Conformal Inference</h2>
-<p>Highly related to what I presented in this post, the academic discipline of using out-of-sample data to create prediction intervals is known as <em>conformal inference</em> (much of the research in this field comes from Carnegie Mellon University and Royal Holloway University, London). I may do a follow-up post where I walk through a more formal example of using conformal inference. In the meantime, here are a few resources I glanced through<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a>:</p>
+<p>Highly related to what I presented in this post, the academic discipline of using out-of-sample data to create prediction intervals is known as <em>conformal inference</em> (much of the research in this field comes from Carnegie Mellon University and Royal Holloway University, London). I may do a follow-up post where I walk through a more formal example of using conformal inference. In the meantime, here are a few resources I glanced through<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a>:</p>
 <ul>
-<li><a href="https://github.com/ryantibs/conformal">ryantibs/conformal</a>: github repo with <code>conformalInference</code> R package and links to relevant articles on distribution-free predictive inference. The way model types are specified by <code>conformalInferene</code> seems to be not too dissimilar from the approach I took in this post<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a></li>
+<li><a href="https://github.com/ryantibs/conformal">ryantibs/conformal</a>: github repo with <code>conformalInference</code> R package and links to relevant articles on distribution-free predictive inference. The way model types are specified by <code>conformalInferene</code> seems to be not too dissimilar from the approach I took in this post<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a></li>
 <li><a href="https://github.com/donlnz/nonconformist">donlnz/nonconformist</a>: python package for conformal inference</li>
 <li><a href="https://cml.rhul.ac.uk/cp.html">Conformal Prediction</a>: Link to Royal Holloway University website by creators of method – Vladimir Vovk and Alex Gammerman.</li>
 <li><a href="https://www.youtube.com/watch?v=GMnCO7_HIOY">Assumption-free prediction intervals for black-box regression algorithms - Aaditya Ramdas (YouTube)</a>: professor at CMU giving overview of problem, approaches, and current “state-of-the-art”.</li>
@@ -1835,7 +1835,7 @@ lm_sim_widths %&gt;%
 <p>Here is a video walk-through of a simple example using a linear model:</p>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/c3gD_PwsCGM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
 </iframe>
-<p>A slightly modified version of this approach that adjusts for the <a href="https://en.wikipedia.org/wiki/Leverage_(statistics)">leverage</a> of the observations (leverage<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a> has to do with distance of a point from the centroid of the data<a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a>) can be found at this <a href="https://stats.stackexchange.com/a/254321/193123">Cross Validated Thread</a>.</p>
+<p>A slightly modified version of this approach that adjusts for the <a href="https://en.wikipedia.org/wiki/Leverage_(statistics)">leverage</a> of the observations (leverage<a href="#fn24" class="footnote-ref" id="fnref24"><sup>24</sup></a> has to do with distance of a point from the centroid of the data<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a>) can be found at this <a href="https://stats.stackexchange.com/a/254321/193123">Cross Validated Thread</a>.</p>
 <p>Limitation with these examples (as encoded):</p>
 <ul>
 <li>re-estimate some component of their prediction intervals based on performance on the data used to train the model.</li>
@@ -1844,7 +1844,7 @@ lm_sim_widths %&gt;%
 </div>
 <div id="confusion-with-confidence-intervals" class="section level2">
 <h2>Confusion With Confidence Intervals</h2>
-<p>It seems to be common for people to seem to set-out to simulate prediction intervals but end-up simulating confidence intervals<a href="#fn25" class="footnote-ref" id="fnref25"><sup>25</sup></a> – i.e. they account for uncertainty in estimating the model while forgetting to account for the uncertainty of the sample. I wrote more on this in <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#prediction-intervals-and-confidence-intervals">Prediction Intervals and Confidence Intervals</a> from Part 1<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a>.</p>
+<p>It seems to be common for people to seem to set-out to simulate prediction intervals but end-up simulating confidence intervals<a href="#fn26" class="footnote-ref" id="fnref26"><sup>26</sup></a> – i.e. they account for uncertainty in estimating the model while forgetting to account for the uncertainty of the sample. I wrote more on this in <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#prediction-intervals-and-confidence-intervals">Prediction Intervals and Confidence Intervals</a> from Part 1<a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a>.</p>
 </div>
 <div id="adjusting-procedure" class="section level2">
 <h2>Adjusting Procedure</h2>
@@ -1853,7 +1853,7 @@ lm_sim_widths %&gt;%
 <p>If we see that coverage rates depend on predicted value of <code>Sale_Price</code> (or on some other attribute) we might:</p>
 <ul>
 <li>try altering the pre-processing recipe</li>
-<li>adjust <a href="#procedure">Procedure</a> to segment<a href="#fn27" class="footnote-ref" id="fnref27"><sup>27</sup></a> the residuals by predicted <code>Sale_Price</code> and shuffle the errors within segments (rather than across the entire dataset). This would allow the uncertainty due to the sample to vary according to the predicted <code>Sale_Price</code><a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a>.</li>
+<li>adjust <a href="#procedure">Procedure</a> to segment<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a> the residuals by predicted <code>Sale_Price</code> and shuffle the errors within segments (rather than across the entire dataset). This would allow the uncertainty due to the sample to vary according to the predicted <code>Sale_Price</code><a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a>.</li>
 </ul>
 <p><strong>Random Splits Not Appropriate</strong></p>
 <p>The procedure I walk through assumes a random split in your data is fine and that your observations are iid. This is generally a requirement for using the bootstrap, however there are some approaches to using modified bootstrap that can adjust for this. In many cases it may make sense to have group or time based sampling schemes (see my <a href="https://www.youtube.com/watch?v=-wUzdeThODo&amp;list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95&amp;index=4">presentation</a> that discusses time-based resampling schemes). If a random sampling scheme is inappropriate, you will likely end-up creating too small of prediction intervals. I had <em>considered</em> making <em>prep_interval()</em> capable of taking in custom resampling specifications but did not set this up… but could be potentially edited.</p>
@@ -1862,14 +1862,14 @@ lm_sim_widths %&gt;%
 <h2>Alternative Procedure With CV</h2>
 <p>Given the model training dataset with <em>n</em> number of observations…</p>
 <ol style="list-style-type: decimal">
-<li>Build <em>b</em> number of models using <em>b</em> bootstrap resamples on the training dataset (default of <em>b</em> is the square root of <em>n</em>)<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a>.</li>
-<li>Build another set of <em>k</em> models<a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a> using <em>k</em>-fold cross-validation<a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a> (default of <em>k</em> is 10) and extract the residuals, composed of <em>n</em> elements – providing distribution for uncertainty due to the sample<a href="#fn32" class="footnote-ref" id="fnref32"><sup>32</sup></a>.</li>
+<li>Build <em>b</em> number of models using <em>b</em> bootstrap resamples on the training dataset (default of <em>b</em> is the square root of <em>n</em>)<a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a>.</li>
+<li>Build another set of <em>k</em> models<a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a> using <em>k</em>-fold cross-validation<a href="#fn32" class="footnote-ref" id="fnref32"><sup>32</sup></a> (default of <em>k</em> is 10) and extract the residuals, composed of <em>n</em> elements – providing distribution for uncertainty due to the sample<a href="#fn33" class="footnote-ref" id="fnref33"><sup>33</sup></a>.</li>
 </ol>
 <p>Given an observation (or set of observations) you would like to produce prediction intervals for…</p>
 <ol start="3" style="list-style-type: decimal">
 <li>For each new observation, produce a prediction using all of the <em>b</em> models created in step 1.</li>
 <li>Take the difference between each model’s prediction (from step 3) and the mean of all the model’s predictions – the resulting <em>b</em> differences for each observation provides the distribution for the variability due to model estimation at each point.</li>
-<li>For each observation, repeatedly sample from “residuals” (step 2) and “model error / differences” (step 4) and add together – do this <em>h</em> times (with replacement) OR create all possible combinations from step 2 and step 5. Rather than <em>h</em>, the latter approach will produce a distribution composed of <em>n</em> x <em>b</em> elements<a href="#fn33" class="footnote-ref" id="fnref33"><sup>33</sup></a> for each new observation (default behavior<a href="#fn34" class="footnote-ref" id="fnref34"><sup>34</sup></a>).</li>
+<li>For each observation, repeatedly sample from “residuals” (step 2) and “model error / differences” (step 4) and add together – do this <em>h</em> times (with replacement) OR create all possible combinations from step 2 and step 5. Rather than <em>h</em>, the latter approach will produce a distribution composed of <em>n</em> x <em>b</em> elements<a href="#fn34" class="footnote-ref" id="fnref34"><sup>34</sup></a> for each new observation (default behavior<a href="#fn35" class="footnote-ref" id="fnref35"><sup>35</sup></a>).</li>
 <li>Pull quantiles (from the distribution created in step 5) according to the desired level of coverage of your intervals – e.g. 0.05 and 0.95 for a 90% prediction interval.</li>
 </ol>
 <p>See <a href="https://gist.github.com/brshallo/3db2cd25172899f91b196a90d5980690">gist</a> for documentation on implementation of this method.</p>
@@ -1877,7 +1877,7 @@ lm_sim_widths %&gt;%
 <p>This approach is influenced by <a href="https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo">suggestions</a> from <a href="https://twitter.com/topepos">Max Kuhn</a>. For example, I …</p>
 <ul>
 <li>only use out-of-sample estimates to produce the interval</li>
-<li>estimate the <em>uncertainty of the sample</em> using the residuals from a separate set of models built with cross-validation<a href="#fn35" class="footnote-ref" id="fnref35"><sup>35</sup></a></li>
+<li>estimate the <em>uncertainty of the sample</em> using the residuals from a separate set of models built with cross-validation<a href="#fn36" class="footnote-ref" id="fnref36"><sup>36</sup></a></li>
 </ul>
 </div>
 </div>
@@ -1891,33 +1891,34 @@ lm_sim_widths %&gt;%
 <li id="fn5"><p>I elaborated on intuitions for these sources of uncertainty in a <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#a-few-things-to-know-about-prediction-intervals">A Few Things to Know About Prediction Intervals</a><a href="#fnref5" class="footnote-back">↩︎</a></p></li>
 <li id="fn6"><p>Mine also includes supporting a pre-processing recipe in addition to a model specification.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
 <li id="fn7"><p>Per guidance on Nielsen’s post – though Kuhn suggests [here]((<a href="https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo" class="uri">https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo</a>) that more samples should be taken.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
-<li id="fn8"><p>{number of observations in model training dataset} x {number of models created}<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
-<li id="fn9"><p>Warning that this will become computationally expensive very quickly as number of observations in training data or number of models created increases.<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
-<li id="fn10"><p>Because a workflow contains both a function for fitting models and a pre-processing recipe, this procedure accounts for variability due to pre-processing as a part of the model-fitting procedure.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
-<li id="fn11"><p>This is a rough calculation, but I’m just looking at the standard deviations in the two respective tables. For the lowest bucket for example, the analytic method had a standard deviation of 0.46 percentage points, for the simulation based technique it is 8.45 percentage points, 8.45 / 0.46 which is closer to 20x, but the difference is not quite so big in other groups.<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
-<li id="fn12"><p>E.g. based on the attributes of an observation. Remember that the analytic method only allowed for <em>slight</em> variability in prediction intervals across observations. Based on a constrained definition of the distance of an observation from the centroid of the data.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
-<li id="fn13"><p>This suggests a slightly more precise accounting of uncertainty.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
-<li id="fn14"><p>+/- ~2 percentage points<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
-<li id="fn15"><p>The reason you want consistent coverage rates is because then you can trust your interval captures your data at the rate you would expect across observations and not just in aggregate. The difference is related to conditional vs marginal coverage.<a href="#fnref15" class="footnote-back">↩︎</a></p></li>
-<li id="fn16"><p>There are more direct ways available for comparing these. This, after all, isn’t a test comparing the two distributions but two separate tests against the NULL hypothesis. Also noted in a footnote in Part 1, it would likely have been better to base the groupings on <code>Sale_Price</code> rather than predicted <code>Sale_Price</code> so could have had paired groups. Rather than a general chi-squared test, something like <a href="https://en.wikipedia.org/wiki/McNemar%27s_test">McNemar’s test</a> may be more appropriate.<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
-<li id="fn17"><p>Further examples would be needed to make more general statements on the qualities of simulation versus parametric based approaches to building prediction intervals.<a href="#fnref17" class="footnote-back">↩︎</a></p></li>
-<li id="fn18"><p>For example, you generally don’t need to worry about having “normality of errors” – simulation will generate whatever distribution your errors follow.<a href="#fnref18" class="footnote-back">↩︎</a></p></li>
-<li id="fn19"><p>If <a href="#procedure">Procedure</a> was changed could make less expensive in some cases. E.g. Some linear model types have computational tricks available that can make this far less taxing. Some out-of-sample techniques do not actually require more data at all. Some related techniques (e.g. split-conformal) may only require a few more models.<a href="#fnref19" class="footnote-back">↩︎</a></p></li>
-<li id="fn20"><p>See <a href="https://www.stat.cmu.edu/~ryantibs/papers/limits.pdf">The limits of distribution-free conditional predictive inference</a>, Barber, et al.<a href="#fnref20" class="footnote-back">↩︎</a></p></li>
-<li id="fn21"><p>I also posted these <a href="https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/19?u=brshallo">here</a>.<a href="#fnref21" class="footnote-back">↩︎</a></p></li>
-<li id="fn22"><p>In that it takes in a model generating algorithm as input – seems could set-up interface or something similar in a way that is pretty tidy friendly (e.g. <code>add_conformal()</code> …<a href="#fnref22" class="footnote-back">↩︎</a></p></li>
-<li id="fn23"><p>And is usually thought of in the context of linear regression.<a href="#fnref23" class="footnote-back">↩︎</a></p></li>
-<li id="fn24"><p>The influence of observation centrality was discussed extensively in <a href="http://localhost:4321/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#a-few-things-to-know-about-prediction-intervals">Part 1</a> – points further from the center of the data have greater uncertainty in model estimation.<a href="#fnref24" class="footnote-back">↩︎</a></p></li>
-<li id="fn25"><p>Example from response on Rstudio Community <a href="https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/9?u=brshallo">thread</a>. Or else they are ambiguous about which they intend to build as in this example from an online textbook on <a href="https://github.com/data-8/textbook/issues/153#issuecomment-798793835">Inferential Thinking</a>.<a href="#fnref25" class="footnote-back">↩︎</a></p></li>
-<li id="fn26"><p>This confusion may be particularly common in the case of simulation because bootstrapping is generally concerned with estimating the distribution of <em>parameter</em> estimates rather than individual observations.<a href="#fnref26" class="footnote-back">↩︎</a></p></li>
-<li id="fn27"><p>Or perhaps segmented in a fuzzy way so rather than having discrete bins is done on a potentially continuous scale<a href="#fnref27" class="footnote-back">↩︎</a></p></li>
-<li id="fn28"><p>Or any other selected attribute – though would need to put some more thought into how to do properly, appropriate number of observations, etc., hard or fuzzy segmenting, how many buckets or how to handle continuously…<a href="#fnref28" class="footnote-back">↩︎</a></p></li>
-<li id="fn29"><p>Per guidance on Nielsen’s post – though Kuhn suggests <a href="https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo">here</a> that more samples should be taken.<a href="#fnref29" class="footnote-back">↩︎</a></p></li>
-<li id="fn30"><p>Though functions can also be set such that will just use the bootstrapped models (rather than building a separate set).<a href="#fnref30" class="footnote-back">↩︎</a></p></li>
-<li id="fn31"><p>I think Max suggested using cross-validation here instead of the residuals on the out-of-bag samples in the bootstraps because bootstrap samples tend to overestimate the errors (I believe).<a href="#fnref31" class="footnote-back">↩︎</a></p></li>
-<li id="fn32"><p>I ignore any adjustments due to centroid as I’m not sure how to do this appropriately outside of the linear regression context.<a href="#fnref32" class="footnote-back">↩︎</a></p></li>
-<li id="fn33"><p>{number of observations in model training dataset} x {number of models created}<a href="#fnref33" class="footnote-back">↩︎</a></p></li>
-<li id="fn34"><p>Warning that this will become computationally expensive very quickly as number of observations in training data or number of models created increases.<a href="#fnref34" class="footnote-back">↩︎</a></p></li>
-<li id="fn35"><p>Rather than the residuals of the bootstrapped samples used to estimate the <em>uncertainty of the model</em>. (However the functions I create do allow for using the bootstrapped resamples to calculate the uncertainty in the sample – see <a href="https://gist.github.com/brshallo/3db2cd25172899f91b196a90d5980690">gist</a>)<a href="#fnref35" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>The reason this is done is that the errors on the analysis set may be too small and on the assessment set too big (because are not using full dataset to train on any one model) so this tries to find a balance between these.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>{number of observations in model training dataset} x {number of models created}<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>Warning that this will become computationally expensive very quickly as number of observations in training data or number of models created increases.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>Because a workflow contains both a function for fitting models and a pre-processing recipe, this procedure accounts for variability due to pre-processing as a part of the model-fitting procedure.<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>This is a rough calculation, but I’m just looking at the standard deviations in the two respective tables. For the lowest bucket for example, the analytic method had a standard deviation of 0.46 percentage points, for the simulation based technique it is 8.45 percentage points, 8.45 / 0.46 which is closer to 20x, but the difference is not quite so big in other groups.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>E.g. based on the attributes of an observation. Remember that the analytic method only allowed for <em>slight</em> variability in prediction intervals across observations. Based on a constrained definition of the distance of an observation from the centroid of the data.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p>This suggests a slightly more precise accounting of uncertainty.<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
+<li id="fn15"><p>+/- ~2 percentage points<a href="#fnref15" class="footnote-back">↩︎</a></p></li>
+<li id="fn16"><p>The reason you want consistent coverage rates is because then you can trust your interval captures your data at the rate you would expect across observations and not just in aggregate. The difference is related to conditional vs marginal coverage.<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
+<li id="fn17"><p>There are more direct ways available for comparing these. This, after all, isn’t a test comparing the two distributions but two separate tests against the NULL hypothesis. Also noted in a footnote in Part 1, it would likely have been better to base the groupings on <code>Sale_Price</code> rather than predicted <code>Sale_Price</code> so could have had paired groups. Rather than a general chi-squared test, something like <a href="https://en.wikipedia.org/wiki/McNemar%27s_test">McNemar’s test</a> may be more appropriate.<a href="#fnref17" class="footnote-back">↩︎</a></p></li>
+<li id="fn18"><p>Further examples would be needed to make more general statements on the qualities of simulation versus parametric based approaches to building prediction intervals.<a href="#fnref18" class="footnote-back">↩︎</a></p></li>
+<li id="fn19"><p>For example, you generally don’t need to worry about having “normality of errors” – simulation will generate whatever distribution your errors follow.<a href="#fnref19" class="footnote-back">↩︎</a></p></li>
+<li id="fn20"><p>If <a href="#procedure">Procedure</a> was changed could make less expensive in some cases. E.g. Some linear model types have computational tricks available that can make this far less taxing. Some out-of-sample techniques do not actually require more data at all. Some related techniques (e.g. split-conformal) may only require a few more models.<a href="#fnref20" class="footnote-back">↩︎</a></p></li>
+<li id="fn21"><p>See <a href="https://www.stat.cmu.edu/~ryantibs/papers/limits.pdf">The limits of distribution-free conditional predictive inference</a>, Barber, et al.<a href="#fnref21" class="footnote-back">↩︎</a></p></li>
+<li id="fn22"><p>I also posted these <a href="https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/19?u=brshallo">here</a>.<a href="#fnref22" class="footnote-back">↩︎</a></p></li>
+<li id="fn23"><p>In that it takes in a model generating algorithm as input – seems could set-up interface or something similar in a way that is pretty tidy friendly (e.g. <code>add_conformal()</code> …<a href="#fnref23" class="footnote-back">↩︎</a></p></li>
+<li id="fn24"><p>And is usually thought of in the context of linear regression.<a href="#fnref24" class="footnote-back">↩︎</a></p></li>
+<li id="fn25"><p>The influence of observation centrality was discussed extensively in <a href="http://localhost:4321/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#a-few-things-to-know-about-prediction-intervals">Part 1</a> – points further from the center of the data have greater uncertainty in model estimation.<a href="#fnref25" class="footnote-back">↩︎</a></p></li>
+<li id="fn26"><p>Example from response on Rstudio Community <a href="https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/9?u=brshallo">thread</a>. Or else they are ambiguous about which they intend to build as in this example from an online textbook on <a href="https://github.com/data-8/textbook/issues/153#issuecomment-798793835">Inferential Thinking</a>.<a href="#fnref26" class="footnote-back">↩︎</a></p></li>
+<li id="fn27"><p>This confusion may be particularly common in the case of simulation because bootstrapping is generally concerned with estimating the distribution of <em>parameter</em> estimates rather than individual observations.<a href="#fnref27" class="footnote-back">↩︎</a></p></li>
+<li id="fn28"><p>Or perhaps segmented in a fuzzy way so rather than having discrete bins is done on a potentially continuous scale<a href="#fnref28" class="footnote-back">↩︎</a></p></li>
+<li id="fn29"><p>Or any other selected attribute – though would need to put some more thought into how to do properly, appropriate number of observations, etc., hard or fuzzy segmenting, how many buckets or how to handle continuously…<a href="#fnref29" class="footnote-back">↩︎</a></p></li>
+<li id="fn30"><p>Per guidance on Nielsen’s post – though Kuhn suggests <a href="https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo">here</a> that more samples should be taken.<a href="#fnref30" class="footnote-back">↩︎</a></p></li>
+<li id="fn31"><p>Though functions can also be set such that will just use the bootstrapped models (rather than building a separate set).<a href="#fnref31" class="footnote-back">↩︎</a></p></li>
+<li id="fn32"><p>I think Max suggested using cross-validation here instead of the residuals on the out-of-bag samples in the bootstraps because bootstrap samples tend to overestimate the errors (I believe).<a href="#fnref32" class="footnote-back">↩︎</a></p></li>
+<li id="fn33"><p>I ignore any adjustments due to centroid as I’m not sure how to do this appropriately outside of the linear regression context.<a href="#fnref33" class="footnote-back">↩︎</a></p></li>
+<li id="fn34"><p>{number of observations in model training dataset} x {number of models created}<a href="#fnref34" class="footnote-back">↩︎</a></p></li>
+<li id="fn35"><p>Warning that this will become computationally expensive very quickly as number of observations in training data or number of models created increases.<a href="#fnref35" class="footnote-back">↩︎</a></p></li>
+<li id="fn36"><p>Rather than the residuals of the bootstrapped samples used to estimate the <em>uncertainty of the model</em>. (However the functions I create do allow for using the bootstrapped resamples to calculate the uncertainty in the sample – see <a href="https://gist.github.com/brshallo/3db2cd25172899f91b196a90d5980690">gist</a>)<a href="#fnref36" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

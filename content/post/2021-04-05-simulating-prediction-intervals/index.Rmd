@@ -69,7 +69,7 @@ The [Appendix] provides links from the web to [Other Examples Using Simulation].
 Given the model training dataset with *n* number of observations...
 
 1. Build *b* number of models using *b* bootstrap resamples on the training dataset (default of *b* is the square root of *n*)^[Per guidance on Nielsen's post -- though Kuhn suggests [here]((https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo) that more samples should be taken.].
-2. Use the [0.632+ rule](https://stats.stackexchange.com/a/96750/193123) for blending errors from analysis and assessment sets (based on amount of overfitting in analysis set) and create a distribution of residuals evenly spaced across quantiles of length *n* -- represents distribution for the uncertainty due to the sample.
+2. Use the [0.632+ rule](https://stats.stackexchange.com/a/96750/193123) for blending errors from analysis and assessment sets^[The reason this is done is that the errors on the analysis set may be too small and on the assessment set too big (because are not using full dataset to train on any one model) so this tries to find a balance between these.] (based on amount of overfitting in analysis set) and create a distribution of residuals evenly spaced across quantiles of length *n* -- represents distribution for the uncertainty due to the sample.
 
 Given an observation (or set of observations) you would like to produce prediction intervals for...
 
