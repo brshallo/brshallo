@@ -2,6 +2,18 @@
 title: Simulating Prediction Intervals
 author: Bryan Shalloway
 date: '2021-04-05'
+categories:
+  - rstats
+  - r
+  - statistics
+  - business
+  - data science
+tags:
+  - business
+  - distributions
+  - tidymodels
+  - pricing
+  - ml
 codefolding_show: hide
 disable_codefolding: false
 slug: simulating-prediction-intervals
@@ -35,21 +47,30 @@ Compared to analytic approaches, estimating sources of uncertainty through simul
 
 The simulation based technique I walk through will take resamples of the data and generate separate distributions for what can be loosely thought of as:
 
-* the uncertainty due to model estimation 
-* the uncertainty due to the sample 
+1. the uncertainty due to model estimation 
+1. the uncertainty due to the sample 
 
 These will then be combined to produce an overall measure of uncertainty for the prediction^[I elaborated on intuitions for these sources of uncertainty in a [A Few Things to Know About Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#a-few-things-to-know-about-prediction-intervals)]. 
 
 [^assumptions]: With the caveat that some model types may require *lots* of simulations for the interval produced to be appropriate as discussed [here](https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo) by Max Kuhn. Also, there is usually the assumption that errors are [exchangable](https://en.wikipedia.org/wiki/Exchangeable_random_variables) across observations.
 
-# Procedure
 
-**To produce simulated prediction intervals in [Example], I apply the following steps:**
+# Inspiration
+
+[Dan Saattrup Nielsen](https://saattrupdan.github.io/) also wrote a series of posts on prediction intervals. My approach here is mostly taken from the one he describes in [Boostrapping prediction intervals](https://saattrupdan.github.io/2020-03-01-bootstrap-prediction/). (In the [Appendix], I describe and link to an implementation of an [Alternative Procedure With CV] that is influenced by [suggestions](https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo) from [Max Kuhn](https://twitter.com/topepos).)
+
+Dan's post provides more precise symbolic representations as well as more figures showcasing results and advantages of simulation based approaches, e.g.
+
+![*Example of more sensible handling of non-normality of errors, from Dan Saattrup's excellent post [Bootstrapping prediction intervals](https://saattrupdan.github.io/2020-03-01-bootstrap-prediction/)*](https://saattrupdan.github.io/img/prediction-bootstrap-linear-lognormal.png)
+
+The [Appendix] provides links from the web to [Other Examples Using Simulation].
+
+# Procedure
 
 Given the model training dataset with *n* number of observations...
 
 1. Build *b* number of models using *b* bootstrap resamples on the training dataset (default of *b* is the square root of *n*)^[Per guidance on Nielsen's post -- though Kuhn suggests [here]((https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo) that more samples should be taken.].
-2. Build another set of *k* models^[Though functions can also be set such that will just use the bootstrapped models (rather than building a separate set).] using *k*-fold cross-validation^[I think Max suggested using cross-validation here instead of the residuals on the out-of-bag samples in the bootstraps because bootstrap samples tend to overestimate the errors (I believe).] (default of *k* is 10) and extract the residuals, composed of *n* elements -- providing distribution for uncertainty due to the sample^[I ignore any adjustments due to centroid as I'm not sure how to do this appropriately outside of the linear regression context.].
+2. Use the [0.632+ rule](https://stats.stackexchange.com/a/96750/193123) for blending errors from analysis and assessment sets (based on amount of overfitting in analysis set) and create a distribution of residuals evenly spaced across quantiles of length *n* -- represents the uncertainty due to the sample.
 
 Given an observation (or set of observations) you would like to produce prediction intervals for...
 
@@ -58,22 +79,7 @@ Given an observation (or set of observations) you would like to produce predicti
 5. For each observation, repeatedly sample from "residuals" (step 2) and "model error / differences" (step 4) and add together -- do this *h* times (with replacement) OR create all possible combinations from step 2 and step 5. Rather than *h*, the latter approach will produce a distribution composed of *n* x *b* elements^[{number of observations in model training dataset} x {number of models created}] for each new observation (default behavior^[Warning that this will become computationally expensive very quickly as number of observations in training data or number of models created increases.]).
 6. Pull quantiles (from the distribution created in step 5) according to the desired level of coverage of your intervals -- e.g. 0.05 and 0.95 for a 90% prediction interval.
 
-See [gist](https://gist.github.com/brshallo/3db2cd25172899f91b196a90d5980690) for documentation on implementation.
-
-# Inspiration
-
-[Dan Saattrup Nielsen](https://saattrupdan.github.io/) also wrote a series of posts on prediction intervals. My approach here is similar to the one he describes in [Boostrapping prediction intervals](https://saattrupdan.github.io/2020-03-01-bootstrap-prediction/) but is influenced by [suggestions](https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo) from [Max Kuhn](https://twitter.com/topepos). For example, I ...
-
-* only use out-of-sample estimates to produce the interval 
-* estimate the *uncertainty of the sample* using the residuals from a separate set of models built with cross-validation^[Rather than the residuals of the bootstrapped samples used to estimate the *uncertainty of the model*. (However the functions I create do allow for using the bootstrapped resamples to calculate the uncertainty in the sample -- see [gist](https://gist.github.com/brshallo/3db2cd25172899f91b196a90d5980690))]
-* include in the simulation both a model fit specification *and* pre-processing recipe^[Rather than solely focusing on the model for my example.]
-* use the [tidymodels](https://www.tidymodels.org/) / [tidyverse](https://www.tidyverse.org/) ecosystem within R (whereas Dan's examples are encoded in python). 
-
-Dan's post provides more precise symbolic representations as well as more figures showcasing results and advantages of simulation based approaches, e.g.
-
-![*Example of more sensible handling of non-normality of errors, from Dan Saattrup's excellent post [Bootstrapping prediction intervals](https://saattrupdan.github.io/2020-03-01-bootstrap-prediction/)*](https://saattrupdan.github.io/img/prediction-bootstrap-linear-lognormal.png)
-
-The [Appendix] provides links from the web to [Other Examples Using Simulation].
+See [gist](https://gist.github.com/brshallo/4053df78265ab9d77f753d95f5faaf5b) for documentation on implementation.
 
 # Example
 
@@ -115,12 +121,12 @@ lm_rec_mod <- lm_wf <- workflows::workflow() %>%
 
 ```{r}
 # load custom functions `prep_interval()` and ``predict_interval()`
-devtools::source_gist("https://gist.github.com/brshallo/3db2cd25172899f91b196a90d5980690")
+devtools::source_gist("https://gist.github.com/brshallo/4053df78265ab9d77f753d95f5faaf5b")
 
 set.seed(1234)
 prepped_for_interval <- prep_interval(lm_rec_mod, ames_train, n_boot = 200)
 
-prepped_for_interval
+prepped_for_interval 
 ```
 
 **Steps 3-6 in [Procedure]:**
@@ -137,21 +143,21 @@ lm_sim_intervals <- pred_interval %>%
 
 lm_sim_intervals <- lm_sim_intervals %>% 
   rename(.pred = probs_0.50, .pred_lower = probs_0.05, .pred_upper = probs_0.95) %>% 
-  relocate(c(.pred_lower, .pred_upper, .pred))
+  relocate(c(.pred_lower, .pred_upper, .pred)) 
 ```
 
-See [gist](https://gist.github.com/brshallo/3db2cd25172899f91b196a90d5980690) for more documentation on `prep_interval()` and `predict_interval()`.
+See [gist](https://gist.github.com/brshallo/4053df78265ab9d77f753d95f5faaf5b) for more documentation on `prep_interval()` and `predict_interval()`.
 
 # Review
 
-Reviewing our example offer from the [Part 1](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals) post, we see a similar prediction interval to that specified by the analytic method:
+Reviewing our example offer from the [Part 1](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals) post, we see a roughly similar prediction interval to that specified by the analytic method:
 
 ```{r}
 lm_sim_intervals %>% 
   select(contains(".pred")) %>% 
   slice(1) %>% 
   gt::gt() %>% 
-  gt::fmt_number(c(".pred", ".pred_lower", ".pred_upper"), decimals = 0)
+  gt::fmt_number(c(".pred", ".pred_lower", ".pred_upper"), decimals = 0) 
 ```
 
 Though when reviewing a sample of observations, we notice an important contrast:
@@ -171,20 +177,20 @@ lm_sim_intervals %>%
   theme_bw()+
   coord_fixed()+
   scale_x_log10(labels = scales::dollar)+
-  scale_y_log10(labels = scales::dollar)
+  scale_y_log10(labels = scales::dollar) 
 ```
 
-Simulation produced intervals show more differences in relative interval widths compared to those outputted with analytic methods (see [Part 1, Review Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals), the relative interval widths were nearly constant across predictions).
+Simulation produced intervals show more differences in relative interval widths compared to those outputted with analytic methods (see [Part 1, Review Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals) -- the relative interval widths were nearly constant across predictions).
 
 ## Interval Width
 
-The relative prediction interval widths from the simulation based approach vary between observations by more than 10x what we saw in the [Interval Widths](http://localhost:4321/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#interval-width) using analytic methods[^differences] (where interval width had a standard deviation of less than half a percentage point). 
+The relative widths of prediction intervals from the simulation based approach vary between observations by more than 10x what we saw in the [Interval Widths](http://localhost:4321/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#interval-width) using analytic methods[^differences] (where interval width had a standard deviation of less than half a percentage point). 
 
-We also see greater differences in interval width between buckets of predictions (a range of about 6.5 percentage points vs 0.4). 
+We also see greater differences in interval width between buckets of predictions (a range of about 5.8 percentage points vs 0.4). 
 
 This suggests the simulation based approach allows for greater differentiation in estimated levels of uncertainty by attributes^[E.g. based on the attributes of an observation. Remember that the analytic method only allowed for *slight* variability in prediction intervals across observations. Based on a constrained definition of the distance of an observation from the centroid of the data.].
 
-[^differences]: This is a rough calculation, but I'm just looking at the standard deviations in the two respective tables. For the lowest bucket for example, the analytic method had a standard deviation of 0.46 percentage points, for the simulation based technique it is 10.1 percentage points, 10.1 / 0.46 is > 20, but the difference is not quite so big in other groups.
+[^differences]: This is a rough calculation, but I'm just looking at the standard deviations in the two respective tables. For the lowest bucket for example, the analytic method had a standard deviation of 0.46 percentage points, for the simulation based technique it is 8.45 percentage points, 8.45 / 0.46 which is closer to 20x, but the difference is not quite so big in other groups.
 
 ```{r}
 lm_sim_widths <- lm_sim_intervals %>% 
@@ -205,7 +211,7 @@ lm_sim_widths %>%
   mutate(across(c(mean_interval_width_percentage, stdev, stderror), ~.x*100)) %>% 
   gt::gt() %>% 
   gt::fmt_number(c("stdev", "stderror"), decimals = 2) %>% 
-  gt::fmt_number("mean_interval_width_percentage", decimals = 1)
+  gt::fmt_number("mean_interval_width_percentage", decimals = 1) 
 ```
 
 
@@ -221,12 +227,12 @@ lm_sim_intervals %>%
   mutate(across(c(mean_interval_width_percentage, stderror), ~.x * 100)) %>% 
   gt::gt() %>% 
   gt::fmt_number(c("mean_interval_width_percentage", "stderror"), decimals = 2) %>% 
-  gt::fmt_number("mean_interval_width_percentage", decimals = 1)
+  gt::fmt_number("mean_interval_width_percentage", decimals = 1) 
 ```
 
 ## Coverage
 
-Coverage is essentially the same: 92.2% (vs 92.7% for [Coverage with the analytic method](http://localhost:4321/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#coverage))^[+/- ~2 percentage points].
+Coverage is essentially the same: 92.3% (vs 92.7% for [Coverage with the analytic method](http://localhost:4321/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#coverage))^[+/- ~2 percentage points].
 ```{r}
 lm_sim_intervals %>%
   mutate(covered = ifelse(Sale_Price >= .pred_lower & Sale_Price <= .pred_upper, 1, 0)) %>% 
@@ -239,7 +245,7 @@ lm_sim_intervals %>%
   mutate(across(c(coverage_prop, stderror), ~.x * 100)) %>% 
   gt::gt() %>% 
   gt::fmt_number("stderror", decimals = 2) %>% 
-  gt::fmt_number("coverage_prop", decimals = 1)
+  gt::fmt_number("coverage_prop", decimals = 1) 
 ```
 
 Coverage rates across quintiles:
@@ -267,7 +273,7 @@ lm_sim_intervals %>%
        title = "Coverage by Quintile of Predictions",
        subtitle = "On a holdout Set",
        caption = "Error bars represent {coverage} +/- 2 * {coverage standard error}")+
-  theme_bw()
+  theme_bw() 
 ```
 
 The overall pattern appears broadly similar to that seen in the [analytic method](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#coverage). However coverage rates seem to be slightly more consistent across quintiles in the simulation based approach -- an improvement over the analytic method (where coverage levels had appeared to be slightly more dependent upon quintile of predicted `Sale_Price`)^[The reason you want consistent coverage rates is because then you can trust your interval captures your data at the rate you would expect across observations and not just in aggregate. The difference is related to conditional vs marginal coverage.]. 
@@ -279,7 +285,7 @@ lm_sim_intervals %>%
   mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %>% 
   mutate(covered = ifelse(Sale_Price >= .pred_lower & Sale_Price <= .pred_upper, 1, 0)) %>% 
   with(chisq.test(price_grouped, covered)) %>% 
-  pander::pander()
+  pander::pander() 
 ```
 
 Keep in mind we are looking at just one model specification on one set of data^[Further examples would be needed to make more general statements on the qualities of simulation versus parametric based approaches to building prediction intervals.]. 
@@ -347,4 +353,29 @@ If we see that coverage rates depend on predicted value of `Sale_Price` (or on s
 
 **Random Splits Not Appropriate**
 
-The procedure I walk through assumes a random split in your data is fine. However in many cases it may make sense to have group or time based sampling schemes (see my [presentation](https://www.youtube.com/watch?v=-wUzdeThODo&list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95&index=4) that discusses time-based resampling schemes). If a random sampling scheme is inappropriate, you will likely end-up creating too small of prediction intervals. I had *considered* making *prep_interval()* capable of taking in custom resampling specifications but did not set this up... but could be easily edited.
+The procedure I walk through assumes a random split in your data is fine and that your observations are iid. This is generally a requirement for using the bootstrap, however there are some approaches to using modified bootstrap that can adjust for this. In many cases it may make sense to have group or time based sampling schemes (see my [presentation](https://www.youtube.com/watch?v=-wUzdeThODo&list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95&index=4) that discusses time-based resampling schemes). If a random sampling scheme is inappropriate, you will likely end-up creating too small of prediction intervals. I had *considered* making *prep_interval()* capable of taking in custom resampling specifications but did not set this up... but could be potentially edited.
+
+## Alternative Procedure With CV
+
+Given the model training dataset with *n* number of observations...
+
+1. Build *b* number of models using *b* bootstrap resamples on the training dataset (default of *b* is the square root of *n*)^[Per guidance on Nielsen's post -- though Kuhn suggests [here](https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo) that more samples should be taken.].
+2. Build another set of *k* models^[Though functions can also be set such that will just use the bootstrapped models (rather than building a separate set).] using *k*-fold cross-validation^[I think Max suggested using cross-validation here instead of the residuals on the out-of-bag samples in the bootstraps because bootstrap samples tend to overestimate the errors (I believe).] (default of *k* is 10) and extract the residuals, composed of *n* elements -- providing distribution for uncertainty due to the sample^[I ignore any adjustments due to centroid as I'm not sure how to do this appropriately outside of the linear regression context.].
+
+Given an observation (or set of observations) you would like to produce prediction intervals for...
+
+3. For each new observation, produce a prediction using all of the *b* models created in step 1.
+4. Take the difference between each model's prediction (from step 3) and the mean of all the model's predictions -- the resulting *b* differences for each observation provides the distribution for the variability due to model estimation at each point.
+5. For each observation, repeatedly sample from "residuals" (step 2) and "model error / differences" (step 4) and add together -- do this *h* times (with replacement) OR create all possible combinations from step 2 and step 5. Rather than *h*, the latter approach will produce a distribution composed of *n* x *b* elements^[{number of observations in model training dataset} x {number of models created}] for each new observation (default behavior^[Warning that this will become computationally expensive very quickly as number of observations in training data or number of models created increases.]).
+6. Pull quantiles (from the distribution created in step 5) according to the desired level of coverage of your intervals -- e.g. 0.05 and 0.95 for a 90% prediction interval.
+
+See [gist](https://gist.github.com/brshallo/3db2cd25172899f91b196a90d5980690) for documentation on implementation of this method.
+
+**Differences from [Procedure]**
+
+This approach is influenced by [suggestions](https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo) from [Max Kuhn](https://twitter.com/topepos). For example, I ...
+
+* only use out-of-sample estimates to produce the interval 
+* estimate the *uncertainty of the sample* using the residuals from a separate set of models built with cross-validation^[Rather than the residuals of the bootstrapped samples used to estimate the *uncertainty of the model*. (However the functions I create do allow for using the bootstrapped resamples to calculate the uncertainty in the sample -- see [gist](https://gist.github.com/brshallo/3db2cd25172899f91b196a90d5980690))]
+* include in the simulation both a model fit specification *and* pre-processing recipe^[Rather than solely focusing on the model for my example.]
+* use the [tidymodels](https://www.tidymodels.org/) / [tidyverse](https://www.tidyverse.org/) ecosystem within R (whereas Dan's examples are encoded in python). 
