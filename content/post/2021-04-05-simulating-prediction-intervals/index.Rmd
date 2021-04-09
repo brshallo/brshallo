@@ -56,7 +56,7 @@ These will then be combined to produce an overall measure of uncertainty for the
 
 # Inspiration
 
-[Dan Saattrup Nielsen](https://saattrupdan.github.io/) also wrote a series of posts on prediction intervals. My approach here is mostly taken from the one he describes in [Boostrapping prediction intervals](https://saattrupdan.github.io/2020-03-01-bootstrap-prediction/). His approach is encoded in python whereas mine is in R and for a [tidymodels](https://www.tidymodels.org/) based set-up^[Mine also includes supporting a pre-processing recipe in addition to a model specification.]. (In the [Appendix], I describe and link to an implementation of an [Alternative Procedure With CV] that is influenced by [suggestions](https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo) from [Max Kuhn](https://twitter.com/topepos).)
+[Dan Saattrup Nielsen](https://saattrupdan.github.io/) also wrote a series of posts on prediction intervals. My approach here is mostly taken from the one he describes in [Boostrapping prediction intervals](https://saattrupdan.github.io/2020-03-01-bootstrap-prediction/). His approach is encoded in python whereas mine is in R for a [tidymodels](https://www.tidymodels.org/) based set-up^[Mine also includes supporting a pre-processing recipe in addition to a model specification.]. (In the [Appendix], I describe and link to an implementation of an [Alternative Procedure With CV] that is influenced by [suggestions](https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo) from [Max Kuhn](https://twitter.com/topepos).)
 
 Dan's post provides more precise symbolic representations as well as more figures showcasing results and advantages of simulation based approaches, e.g.
 
@@ -74,7 +74,7 @@ Given the model training dataset with *n* number of observations...
 Given an observation (or set of observations) you would like to produce prediction intervals for...
 
 3. For each new observation, produce a prediction using all of the *b* models created in step 1.
-4. Take the difference between each model's prediction (from step 3) and the mean of all the model's predictions -- the resulting *b* differences for each observation provides the distribution for the variability due to model estimation at each point.
+4. Take the difference between each model's prediction (from step 3) and the mean of *all* model predictions -- the resulting *b* differences for each observation provides the distribution for the variability due to model estimation at each point.
 5. For each observation, repeatedly sample from "residuals" (step 2) and "model error / differences" (step 4) and add together -- do this *h* times (with replacement) OR create all possible combinations from step 2 and step 5. Rather than *h*, the latter approach will produce a distribution composed of *n* x *b* elements^[{number of observations in model training dataset} x {number of models created}] for each new observation (default behavior^[Warning that this will become computationally expensive very quickly as number of observations in training data or number of models created increases.]).
 6. Pull quantiles (from the distribution created in step 5) according to the desired level of coverage of your intervals -- e.g. 0.05 and 0.95 for a 90% prediction interval.
 
@@ -179,7 +179,7 @@ lm_sim_intervals %>%
   scale_y_log10(labels = scales::dollar) 
 ```
 
-Simulation produced intervals show more differences in relative interval widths compared to those outputted with analytic methods (see [Part 1, Review Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals) -- the relative interval widths were nearly constant across predictions).
+Simulation produced intervals show more differences in relative interval widths compared to those outputted with analytic methods (see [Part 1, Review Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals) where the relative interval widths were nearly constant across predictions).
 
 ## Interval Width
 
@@ -302,17 +302,17 @@ This post walked through a rough implementation for simulating prediction interv
 
 *Downsides:*
 
-* These methods are far more computationally heavy as you will need to build *a lot* of models (in most cases[^12]).
+* These methods are far more computationally expensive as you will need to build *a lot* of models[^12].
     * See [Tidy Models with R, 10.4](https://www.tmwr.org/resampling.html#parallel) for notes on how to set-up Parallel Processing.
-* For predictive inference, you still can't drop *all* assumptions^[See [The limits of distribution-free conditional predictive inference](https://www.stat.cmu.edu/~ryantibs/papers/limits.pdf), Barber, et al].
+* For predictive inference, you still can't drop *all* assumptions^[See [The limits of distribution-free conditional predictive inference](https://www.stat.cmu.edu/~ryantibs/papers/limits.pdf), Barber, et al.].
 
-[^12]: Some linear model types have computational tricks available that can make this far less taxing. Also some out-of-sample techniques do not actually require more data at all. Some related techniques (e.g. split-conformal) may only require a few more models. 
+[^12]: If [Procedure] was changed could make less expensive in some cases. E.g. Some linear model types have computational tricks available that can make this far less taxing. Some out-of-sample techniques do not actually require more data at all. Some related techniques (e.g. split-conformal) may only require a few more models. 
 
 # Appendix
 
 ## Conformal Inference
 
-Highly related to what I presented in this post... the academic discipline of using out-of-sample data to create prediction intervals is known as *conformal inference* (much of the research in this field comes from Carnegie Mellon University and Royal Holloway University, London). I may do a follow-up post where I walk through a more formal example of using conformal inference. In the meantime, here are a few resources I glanced through^[I also posted these [here](https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/19?u=brshallo).]:
+Highly related to what I presented in this post, the academic discipline of using out-of-sample data to create prediction intervals is known as *conformal inference* (much of the research in this field comes from Carnegie Mellon University and Royal Holloway University, London). I may do a follow-up post where I walk through a more formal example of using conformal inference. In the meantime, here are a few resources I glanced through^[I also posted these [here](https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/19?u=brshallo).]:
 
 * [ryantibs/conformal](https://github.com/ryantibs/conformal): github repo with `conformalInference` R package and links to relevant articles on distribution-free predictive inference. The way model types are specified by `conformalInferene` seems to be not too dissimilar from the approach I took in this post^[In that it takes in a model generating algorithm as input -- seems could set-up interface or something similar in a way that is pretty tidy friendly (e.g. `add_conformal()` ...]
 * [donlnz/nonconformist](https://github.com/donlnz/nonconformist): python package for conformal inference

@@ -73,7 +73,7 @@ thumbnail: /2021/04/05/simulating-prediction-intervals/index_files/figure-html/u
 </div>
 <div id="inspiration" class="section level1">
 <h1>Inspiration</h1>
-<p><a href="https://saattrupdan.github.io/">Dan Saattrup Nielsen</a> also wrote a series of posts on prediction intervals. My approach here is mostly taken from the one he describes in <a href="https://saattrupdan.github.io/2020-03-01-bootstrap-prediction/">Boostrapping prediction intervals</a>. His approach is encoded in python whereas mine is in R and for a <a href="https://www.tidymodels.org/">tidymodels</a> based set-up<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. (In the <a href="#appendix">Appendix</a>, I describe and link to an implementation of an <a href="#alternative-procedure-with-cv">Alternative Procedure With CV</a> that is influenced by <a href="https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo">suggestions</a> from <a href="https://twitter.com/topepos">Max Kuhn</a>.)</p>
+<p><a href="https://saattrupdan.github.io/">Dan Saattrup Nielsen</a> also wrote a series of posts on prediction intervals. My approach here is mostly taken from the one he describes in <a href="https://saattrupdan.github.io/2020-03-01-bootstrap-prediction/">Boostrapping prediction intervals</a>. His approach is encoded in python whereas mine is in R for a <a href="https://www.tidymodels.org/">tidymodels</a> based set-up<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. (In the <a href="#appendix">Appendix</a>, I describe and link to an implementation of an <a href="#alternative-procedure-with-cv">Alternative Procedure With CV</a> that is influenced by <a href="https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/4?u=brshallo">suggestions</a> from <a href="https://twitter.com/topepos">Max Kuhn</a>.)</p>
 <p>Dan’s post provides more precise symbolic representations as well as more figures showcasing results and advantages of simulation based approaches, e.g.</p>
 <div class="figure">
 <img src="https://saattrupdan.github.io/img/prediction-bootstrap-linear-lognormal.png" alt="" />
@@ -91,7 +91,7 @@ thumbnail: /2021/04/05/simulating-prediction-intervals/index_files/figure-html/u
 <p>Given an observation (or set of observations) you would like to produce prediction intervals for…</p>
 <ol start="3" style="list-style-type: decimal">
 <li>For each new observation, produce a prediction using all of the <em>b</em> models created in step 1.</li>
-<li>Take the difference between each model’s prediction (from step 3) and the mean of all the model’s predictions – the resulting <em>b</em> differences for each observation provides the distribution for the variability due to model estimation at each point.</li>
+<li>Take the difference between each model’s prediction (from step 3) and the mean of <em>all</em> model predictions – the resulting <em>b</em> differences for each observation provides the distribution for the variability due to model estimation at each point.</li>
 <li>For each observation, repeatedly sample from “residuals” (step 2) and “model error / differences” (step 4) and add together – do this <em>h</em> times (with replacement) OR create all possible combinations from step 2 and step 5. Rather than <em>h</em>, the latter approach will produce a distribution composed of <em>n</em> x <em>b</em> elements<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> for each new observation (default behavior<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>).</li>
 <li>Pull quantiles (from the distribution created in step 5) according to the desired level of coverage of your intervals – e.g. 0.05 and 0.95 for a 90% prediction interval.</li>
 </ol>
@@ -584,7 +584,7 @@ lm_sim_intervals %&gt;%
   scale_x_log10(labels = scales::dollar)+
   scale_y_log10(labels = scales::dollar) </code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<p>Simulation produced intervals show more differences in relative interval widths compared to those outputted with analytic methods (see <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals">Part 1, Review Prediction Intervals</a> – the relative interval widths were nearly constant across predictions).</p>
+<p>Simulation produced intervals show more differences in relative interval widths compared to those outputted with analytic methods (see <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals">Part 1, Review Prediction Intervals</a> where the relative interval widths were nearly constant across predictions).</p>
 <div id="interval-width" class="section level2">
 <h2>Interval Width</h2>
 <p>The relative widths of prediction intervals from the simulation based approach vary between observations by more than 10x what we saw in the <a href="http://localhost:4321/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#interval-width">Interval Widths</a> using analytic methods<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> (where interval width had a standard deviation of less than half a percentage point).</p>
@@ -1810,7 +1810,7 @@ lm_sim_widths %&gt;%
 </ul>
 <p><em>Downsides:</em></p>
 <ul>
-<li>These methods are far more computationally heavy as you will need to build <em>a lot</em> of models (in most cases<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>).
+<li>These methods are far more computationally expensive as you will need to build <em>a lot</em> of models<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>.
 <ul>
 <li>See <a href="https://www.tmwr.org/resampling.html#parallel">Tidy Models with R, 10.4</a> for notes on how to set-up Parallel Processing.</li>
 </ul></li>
@@ -1821,7 +1821,7 @@ lm_sim_widths %&gt;%
 <h1>Appendix</h1>
 <div id="conformal-inference" class="section level2">
 <h2>Conformal Inference</h2>
-<p>Highly related to what I presented in this post… the academic discipline of using out-of-sample data to create prediction intervals is known as <em>conformal inference</em> (much of the research in this field comes from Carnegie Mellon University and Royal Holloway University, London). I may do a follow-up post where I walk through a more formal example of using conformal inference. In the meantime, here are a few resources I glanced through<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a>:</p>
+<p>Highly related to what I presented in this post, the academic discipline of using out-of-sample data to create prediction intervals is known as <em>conformal inference</em> (much of the research in this field comes from Carnegie Mellon University and Royal Holloway University, London). I may do a follow-up post where I walk through a more formal example of using conformal inference. In the meantime, here are a few resources I glanced through<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a>:</p>
 <ul>
 <li><a href="https://github.com/ryantibs/conformal">ryantibs/conformal</a>: github repo with <code>conformalInference</code> R package and links to relevant articles on distribution-free predictive inference. The way model types are specified by <code>conformalInferene</code> seems to be not too dissimilar from the approach I took in this post<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a></li>
 <li><a href="https://github.com/donlnz/nonconformist">donlnz/nonconformist</a>: python package for conformal inference</li>
@@ -1902,8 +1902,8 @@ lm_sim_widths %&gt;%
 <li id="fn16"><p>There are more direct ways available for comparing these. This, after all, isn’t a test comparing the two distributions but two separate tests against the NULL hypothesis. Also noted in a footnote in Part 1, it would likely have been better to base the groupings on <code>Sale_Price</code> rather than predicted <code>Sale_Price</code> so could have had paired groups. Rather than a general chi-squared test, something like <a href="https://en.wikipedia.org/wiki/McNemar%27s_test">McNemar’s test</a> may be more appropriate.<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
 <li id="fn17"><p>Further examples would be needed to make more general statements on the qualities of simulation versus parametric based approaches to building prediction intervals.<a href="#fnref17" class="footnote-back">↩︎</a></p></li>
 <li id="fn18"><p>For example, you generally don’t need to worry about having “normality of errors” – simulation will generate whatever distribution your errors follow.<a href="#fnref18" class="footnote-back">↩︎</a></p></li>
-<li id="fn19"><p>Some linear model types have computational tricks available that can make this far less taxing. Also some out-of-sample techniques do not actually require more data at all. Some related techniques (e.g. split-conformal) may only require a few more models.<a href="#fnref19" class="footnote-back">↩︎</a></p></li>
-<li id="fn20"><p>See <a href="https://www.stat.cmu.edu/~ryantibs/papers/limits.pdf">The limits of distribution-free conditional predictive inference</a>, Barber, et al<a href="#fnref20" class="footnote-back">↩︎</a></p></li>
+<li id="fn19"><p>If <a href="#procedure">Procedure</a> was changed could make less expensive in some cases. E.g. Some linear model types have computational tricks available that can make this far less taxing. Some out-of-sample techniques do not actually require more data at all. Some related techniques (e.g. split-conformal) may only require a few more models.<a href="#fnref19" class="footnote-back">↩︎</a></p></li>
+<li id="fn20"><p>See <a href="https://www.stat.cmu.edu/~ryantibs/papers/limits.pdf">The limits of distribution-free conditional predictive inference</a>, Barber, et al.<a href="#fnref20" class="footnote-back">↩︎</a></p></li>
 <li id="fn21"><p>I also posted these <a href="https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594/19?u=brshallo">here</a>.<a href="#fnref21" class="footnote-back">↩︎</a></p></li>
 <li id="fn22"><p>In that it takes in a model generating algorithm as input – seems could set-up interface or something similar in a way that is pretty tidy friendly (e.g. <code>add_conformal()</code> …<a href="#fnref22" class="footnote-back">↩︎</a></p></li>
 <li id="fn23"><p>And is usually thought of in the context of linear regression.<a href="#fnref23" class="footnote-back">↩︎</a></p></li>
