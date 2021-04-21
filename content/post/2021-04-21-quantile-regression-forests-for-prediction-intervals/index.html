@@ -1,0 +1,1555 @@
+---
+title: Quantile Regression Forests for Prediction Intervals
+author: Bryan Shalloway
+date: '2021-04-21'
+slug: quantile-regression-forests-for-prediction-intervals
+categories: []
+tags: []
+codefolding_show: hide
+disable_codefolding: false
+thumbnail: /2021/04/21/quantile-regression-forests-for-prediction-intervals/index_files/figure-html/unnamed-chunk-10-1.png
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+<div id="TOC">
+<ul>
+<li><a href="#quantile-regression">Quantile Regression</a></li>
+<li><a href="#example-quantile-regression-forest">Example: Quantile Regression Forest</a>
+<ul>
+<li><a href="#set-up">Set-up</a></li>
+</ul></li>
+<li><a href="#review-intervals">Review Intervals</a>
+<ul>
+<li><a href="#performance">Performance</a></li>
+<li><a href="#coverage">Coverage</a></li>
+<li><a href="#interval-width">Interval Width</a></li>
+<li><a href="#wrap-up-on-quantile-regression">Wrap-up on Quantile Regression</a></li>
+</ul></li>
+<li><a href="#appendix">Appendix</a>
+<ul>
+<li><a href="#misc">Misc</a></li>
+<li><a href="#other-charts">Other Charts</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p>In this post I will build prediction intervals with quantile regression, more specifically, quantile regression forests.</p>
+<p>This is the third post on prediction intervals. See my prior posts:</p>
+<ul>
+<li><a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/">Understanding Prediction Intervals</a> (Part 1)</li>
+<li><a href="https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/">Simulating Prediction Intervals</a> (Part 2)</li>
+</ul>
+<p>This post can be read as a continuation on Part 1<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. I do not reintroduce terms, figures, motivations, example dataset, etc. that are initially described in that post. I am also not as thorough in elucidating the procedure’s used in this post as I am in <a href="https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/#procedure">Part 2, Procedure</a>, for example. The purpose is to encode an example using the <a href="https://www.tidymodels.org/">tidymodels</a> suite of packages and briefly review interval quality.</p>
+<div id="quantile-regression" class="section level1">
+<h1>Quantile Regression</h1>
+<p>Rather than making a prediction for the mean and then adding measures of the variance to produce a prediction interval (as described in <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#a-few-things-to-know-about-prediction-intervals">Part 1, A Few Things to Know About Prediction Intervals</a>), quantile regression predicts the intervals directly. In quantile regression, predictions don’t correspond with the arithmetic mean but instead with a specified quantile<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. To generate a 90% prediction interval, you just make predictions at the 5th and 95th percentiles. Together, the two predictions constitute your prediction interval.</p>
+<p>The chief advantages over the parametric methods used in <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/">Understanding Prediction Intervals</a> are that quantile regression has…</p>
+<ul>
+<li>fewer and less stringent model assumptions<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</li>
+<li>well established approaches for fitting more sophisticated model types than linear regression, e.g. using ensembles of trees.</li>
+</ul>
+<p>An advantage over the approaches I describe in <a href="https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/">Simulating Prediction Intervals</a> is you do not need to build many models<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>, so computation costs do not get out of control with more sophisticated model types.</p>
+<p>For these reasons, quantile regression is often a highly practical choice for many modeling scenarios.</p>
+</div>
+<div id="example-quantile-regression-forest" class="section level1">
+<h1>Example: Quantile Regression Forest</h1>
+<p>The {parsnip} package does not yet have a <code>parsnip::linear_reg()</code> method that supports quantile regression<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> (see <a href="https://github.com/tidymodels/parsnip/issues/465">tidymodels/parsnip#465</a>. I will take this as an opportunity to set-up an example for a random forest model using the {ranger} package as the engine in my workflow<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>.</p>
+<p>Note then that when comparing the quality of prediction intervals created in this post in <a href="#review-intervals">Review Intervals</a> against those from <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals">Part 1</a> or <a href="https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/#review">Part 2</a>, that we will not be able to untangle whether the differences are due to the difference in model type (linear versus random forest) or the difference in interval estimation (parametric or simulated, against quantile regression).</p>
+<!-- Random Forest models are relatively robust to overfitting, nonetheless, I am going to be conservative here and tune on the `min_n`^["The minimum number of data points in a node that are required for the node to be split further." -- `parsnip` documentation] parameter to ensure I am not overfitting on a holdout set. I will make another split on my training data using the `rsample::validation_split()` function^[See [Tidy Modeling with R, chapter 11](https://www.tmwr.org/resampling.html#resampling-methods) for example using function] so that I don't have to touch my validation data in order tune on this. -->
+<div id="set-up" class="section level2">
+<h2>Set-up</h2>
+<p>Loading packages and data are the same as in the <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#providing-more-than-point-estimates">Providing More Than Point Estimates</a> section of part 1. The code below is being sourced and printed from that post’s .Rmd file.</p>
+<p>Load packages:</p>
+<pre class="r"><code>library(tidyverse)
+library(tidymodels)
+library(AmesHousing)
+library(gt)
+
+# function copied from here:
+# https://github.com/rstudio/gt/issues/613#issuecomment-772072490 
+# (simpler solution should be implemented in future versions of {gt})
+fmt_if_number &lt;- function(..., digits = 2) {
+  input &lt;- c(...)
+  fmt &lt;- paste0(&quot;%.&quot;, digits, &quot;f&quot;)
+  if (is.numeric(input))   return(sprintf(fmt, input))
+  return(input)
+}</code></pre>
+<p>Load data:</p>
+<pre class="r"><code>ames &lt;- make_ames() %&gt;% 
+  mutate(Years_Old = Year_Sold - Year_Built,
+         Years_Old = ifelse(Years_Old &lt; 0, 0, Years_Old))
+
+set.seed(4595)
+data_split &lt;- initial_split(ames, strata = &quot;Sale_Price&quot;, p = 0.75)
+
+ames_train &lt;- training(data_split)
+ames_holdout  &lt;- testing(data_split) </code></pre>
+<p>Unlike <a href="https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/#example">Part 2, Example</a>, the pre-processing and model set-up is not the same as in <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#providing-more-than-point-estimates">Part 1</a>.</p>
+<p>In setting-up our pre-processing recipe, we removed a few of the transformations that had been important for linear models:</p>
+<ul>
+<li>transformations that don’t change the order of regressors generally don’t make a difference for tree-based methods so we can remove most of the <code>step_log()</code>’s</li>
+<li>tree based models are also good at capturing dependent relationships on their own hence we can also remove <code>step_interact()</code></li>
+</ul>
+<pre class="r"><code>#RF models require comparably less pre-processing to linear models
+rf_recipe &lt;- 
+  recipe(
+    Sale_Price ~ Lot_Area + Neighborhood  + Years_Old + Gr_Liv_Area + Overall_Qual + Total_Bsmt_SF + Garage_Area, 
+    data = ames_train
+  ) %&gt;%
+  step_log(Sale_Price, base = 10) %&gt;%
+  step_other(Neighborhood, Overall_Qual, threshold = 50) %&gt;% 
+  step_novel(Neighborhood, Overall_Qual) %&gt;% 
+  step_dummy(Neighborhood, Overall_Qual) </code></pre>
+<p>For our quantile regression example, we are using a random forest model<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>. Specifying <code>quantreg = TRUE</code> tells {ranger} that we will be estimating quantiles rather than averages.</p>
+<pre class="r"><code>rf_mod &lt;- rand_forest() %&gt;% 
+  set_engine(&quot;ranger&quot;, importance = &quot;impurity&quot;, seed = 63233, quantreg = TRUE) %&gt;% 
+  set_mode(&quot;regression&quot;)
+
+set.seed(63233)
+rf_wf &lt;- workflows::workflow() %&gt;% 
+  add_model(rf_mod) %&gt;% 
+  add_recipe(rf_recipe) %&gt;% 
+  fit(ames_train)</code></pre>
+</div>
+</div>
+<div id="review-intervals" class="section level1">
+<h1>Review Intervals</h1>
+<p>Tidymodels does not yet have a <code>predict()</code> method for extracting quantiles (see open issue <a href="https://github.com/tidymodels/parsnip/issues/119">tidymodels/parsnip#119</a>). Hence in the code below I first extract the {ranger} fit object and then use this to make predictions for the quantiles.</p>
+<pre class="r"><code>preds_bind &lt;- function(data_fit, lower = 0.05, upper = 0.95){
+  predict(
+  rf_wf$fit$fit$fit, 
+  workflows::pull_workflow_prepped_recipe(rf_wf) %&gt;% bake(data_fit),
+  type = &quot;quantiles&quot;,
+  quantiles = c(lower, upper, 0.50)
+  ) %&gt;% 
+  with(predictions) %&gt;% 
+  as_tibble() %&gt;% 
+  set_names(paste0(&quot;.pred&quot;, c(&quot;_lower&quot;, &quot;_upper&quot;,  &quot;&quot;))) %&gt;% 
+  mutate(across(contains(&quot;.pred&quot;), ~10^.x)) %&gt;% 
+  bind_cols(data_fit) %&gt;% 
+  select(contains(&quot;.pred&quot;), Sale_Price, Lot_Area, Neighborhood, Years_Old, Gr_Liv_Area, Overall_Qual, Total_Bsmt_SF, Garage_Area)
+}
+
+rf_preds_test &lt;- preds_bind(ames_holdout)</code></pre>
+<p>Let’s review a sample of prediction intervals.</p>
+<pre class="r"><code>set.seed(1234)
+rf_preds_test %&gt;% 
+  mutate(pred_interval = ggplot2::cut_number(Sale_Price, 10)) %&gt;% 
+  group_by(pred_interval) %&gt;% 
+  sample_n(2) %&gt;% 
+  ggplot(aes(x = .pred))+
+  geom_point(aes(y = .pred, color = &quot;prediction interval&quot;))+
+  geom_errorbar(aes(ymin = .pred_lower, ymax = .pred_upper, color = &quot;prediction interval&quot;))+
+  geom_point(aes(y = Sale_Price, color = &quot;actuals&quot;))+
+  scale_x_log10(labels = scales::dollar)+
+  scale_y_log10(labels = scales::dollar)+
+  labs(title = &quot;90% Prediction intervals on a holdout dataset&quot;,
+       subtitle = &quot;Random Forest Model&quot;,
+         y = &quot;Sale_Price prediction intervals and actuals&quot;)+
+  theme_bw()+
+  coord_fixed()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Let’s compare these against the same samples using the <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals">analytic</a> and <a href="https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/#review">simulation</a> based approaches for linear regression models.</p>
+<pre class="r"><code>knitr::include_graphics(&quot;https://www.bryanshalloway.com/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/prediction-intervals-sample-1.png&quot;)
+
+knitr::include_graphics(&quot;https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/index_files/figure-html/unnamed-chunk-5-1.png&quot;)</code></pre>
+<p><img src="https://www.bryanshalloway.com/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/prediction-intervals-sample-1.png" width="45%" /><img src="https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/index_files/figure-html/unnamed-chunk-5-1.png" width="45%" /></p>
+<ul>
+<li>The width of the intervals from the quantile regression forests vary substantially more than when using either the analytic or simulation based approaches with linear models.</li>
+</ul>
+<div id="performance" class="section level2">
+<h2>Performance</h2>
+<p>As discussed in <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#cautions-with-overfitting">Part 1, Cautions With Overfitting</a>, we can compare performance on train and holdout to provide an indicator for overfitting</p>
+<pre class="r"><code>rf_preds_train &lt;- preds_bind(ames_train)
+
+bind_rows(
+  yardstick::mape(rf_preds_train, Sale_Price, .pred),
+  yardstick::mape(rf_preds_test, Sale_Price, .pred)
+) %&gt;% 
+  mutate(dataset = c(&quot;training&quot;, &quot;holdout&quot;))</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric .estimator .estimate dataset 
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;   
+## 1 mape    standard        4.68 training
+## 2 mape    standard       11.0  holdout</code></pre>
+<p>We do see a substantial discrepancy when comparing performance on the training v. holdout datasets<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>. This would likely put us on guard regarding the expected coverage of our prediction intervals<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>…</p>
+</div>
+<div id="coverage" class="section level2">
+<h2>Coverage</h2>
+<pre class="r"><code>coverage &lt;- function(df, ...){
+  df %&gt;%
+    mutate(covered = ifelse(Sale_Price &gt;= .pred_lower &amp; Sale_Price &lt;= .pred_upper, 1, 0)) %&gt;% 
+    group_by(...) %&gt;% 
+    summarise(n = n(),
+              n_covered = sum(
+                covered
+              ),
+              stderror = sd(covered) / sqrt(n),
+              coverage_prop = n_covered / n)
+}
+
+rf_preds_test %&gt;% 
+  coverage() %&gt;% 
+  mutate(across(c(coverage_prop, stderror), ~.x * 100)) %&gt;% 
+  gt::gt() %&gt;% 
+  gt::fmt_number(&quot;stderror&quot;, decimals = 2) %&gt;% 
+  gt::fmt_number(&quot;coverage_prop&quot;, decimals = 1) </code></pre>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#hebfvnxvbl .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#hebfvnxvbl .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hebfvnxvbl .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#hebfvnxvbl .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#hebfvnxvbl .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hebfvnxvbl .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hebfvnxvbl .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#hebfvnxvbl .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#hebfvnxvbl .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#hebfvnxvbl .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#hebfvnxvbl .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#hebfvnxvbl .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#hebfvnxvbl .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#hebfvnxvbl .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#hebfvnxvbl .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#hebfvnxvbl .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#hebfvnxvbl .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#hebfvnxvbl .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hebfvnxvbl .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#hebfvnxvbl .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hebfvnxvbl .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#hebfvnxvbl .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#hebfvnxvbl .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hebfvnxvbl .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hebfvnxvbl .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#hebfvnxvbl .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hebfvnxvbl .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#hebfvnxvbl .gt_left {
+  text-align: left;
+}
+
+#hebfvnxvbl .gt_center {
+  text-align: center;
+}
+
+#hebfvnxvbl .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#hebfvnxvbl .gt_font_normal {
+  font-weight: normal;
+}
+
+#hebfvnxvbl .gt_font_bold {
+  font-weight: bold;
+}
+
+#hebfvnxvbl .gt_font_italic {
+  font-style: italic;
+}
+
+#hebfvnxvbl .gt_super {
+  font-size: 65%;
+}
+
+#hebfvnxvbl .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="hebfvnxvbl" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">n</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">n_covered</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">stderror</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">coverage_prop</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_center">731</td>
+      <td class="gt_row gt_right">706</td>
+      <td class="gt_row gt_right">0.67</td>
+      <td class="gt_row gt_right">96.6</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+<p>Surprisingly, we see a coverage probability for our prediction intervals of ~96%<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> on our holdout dataset<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> – greater than our expected coverage of 90%. This suggests our prediction intervals are, in aggregate, quite conservative<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>. Typically the coverage on the holdout set would be the same or less than the expected coverage. In the future I may investigate why this occurred more closely, for now I just opened a <a href="https://stackoverflow.com/questions/66666257/prediction-intervals-from-quantile-regression-forests-have-higher-coverage-than">question on Cross Validated</a>.</p>
+<p>In <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#cautions-with-overfitting">Part 1, Cautions with overfitting</a>, I described how to tune prediction intervals using coverage rates on holdout data. The code below applies this approach – though due to the surprisingly high <em>empirical coverage</em> rate for our quantile regression forest example, I will be identifying a more narrow (rather than broader) <em>expected coverage</em> range<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>.</p>
+<pre class="r"><code>tune_alpha_coverage &lt;- function(lower, upper){
+  
+  preds &lt;- preds_bind(ames_holdout, lower, upper)
+  
+  preds %&gt;%
+    coverage() %&gt;% 
+    pull(coverage_prop)
+}</code></pre>
+<p>If we review the expected coverage against the empirical coverage rates, we see they are in general quite conservative – a large difference between expected and empirical coverage exists across prediction intervals<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>.</p>
+<pre class="r"><code>coverages &lt;- tibble(lower = seq(0.025, 0.2, by = 0.005)) %&gt;% 
+  mutate(upper = 1 - lower,
+         expected_coverage = upper - lower) %&gt;% 
+  mutate(hold_out_coverage = map2_dbl(lower, upper, tune_alpha_coverage))
+
+coverages %&gt;% 
+  ggplot()+
+  geom_line(aes(x = expected_coverage, y = hold_out_coverage))+
+  geom_line(aes(x = expected_coverage, y = expected_coverage, colour = &quot;expected = empirical&quot;), alpha = 0.5)+
+  geom_hline(aes(yintercept = 0.90, colour = &quot;90% target coverage&quot;))+
+  coord_fixed()+
+  theme_bw()+
+  labs(title = &quot;Requesting ~80% Prediction Intervals will Produce the Desired Coverage of ~90%&quot;,
+       x = &quot;Expected Coverage (i.e. requested prediction interval)&quot;,
+       y = &quot;Empirical Coverage (i.e. actual coverage on a holdout datset)&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>An expected prediction interval of 80% it seems will produce an actual prediction interval of the desired 90% coverage. For the remainder of charts I will display the 80% expected prediction intervals (90% empirical prediction intervals). (See <a href="#other-charts">Other Charts</a> in the <a href="#appendix">Appendix</a> for side-by-side comparisons with the 90% expected prediction intervals.)</p>
+<p><strong>Coverage Across Deciles</strong></p>
+<p>Let’s review coverage across deciles for our 80% and 90% expected prediction intervals:</p>
+<pre class="r"><code>separate_cut &lt;- function(df, group_var = price_grouped){
+  df %&gt;% 
+    mutate(x_tmp = str_sub({{ group_var }}, 2, -2)) %&gt;% 
+    separate(x_tmp, c(&quot;min&quot;, &quot;max&quot;), sep = &quot;,&quot;) %&gt;% 
+    mutate(across(c(min, max), as.double))
+}</code></pre>
+<pre class="r"><code>rf_preds_test_80 &lt;- preds_bind(ames_holdout, lower = 0.10, upper = 0.90)
+
+coverage_80 &lt;- rf_preds_test_80 %&gt;% 
+  mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %&gt;% 
+  coverage(price_grouped) %&gt;% 
+  separate_cut() %&gt;% 
+  mutate(expected_coverage = &quot;80%&quot;)</code></pre>
+<pre class="r"><code>coverage_80 %&gt;% 
+  ggplot(aes(x = forcats::fct_reorder(scales::dollar(max, scale = 1/1000), max), y = coverage_prop))+
+  geom_line(aes(group = expected_coverage))+
+  geom_errorbar(aes(ymin = coverage_prop - 2 * stderror, ymax = ifelse(coverage_prop + 2 * stderror &gt; 1, 1, coverage_prop + 2 * stderror)))+
+  coord_cartesian(ylim = c(0.70, 1))+
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))+
+  # facet_wrap(~expected_coverage)+
+  labs(x = &quot;Max Predicted Price for Quintile (in thousands)&quot;,
+       y = &quot;Coverage at Quintile (On a holdout Set)&quot;,
+       title = &quot;Coverage by Quintile of Predictions&quot;,
+       subtitle = &quot;Quantile Regression Forest&quot;,
+       caption = &quot;Error bars represent {coverage} +/- 2 * {coverage standard error}&quot;)+
+  theme_bw()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/rf-coverage-quintiles-1.png" width="672" /></p>
+<p>There <em>appears</em> to be slightly lower empirical coverage rates for smaller predicted prices, however a statistical test suggests any difference is not significant:</p>
+<p><em>Chi-squared test of association between {covered} ~ {predicted price group}:</em></p>
+<pre class="r"><code>rf_preds_test_80 %&gt;% 
+  mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %&gt;% 
+  mutate(covered = ifelse(Sale_Price &gt;= .pred_lower &amp; Sale_Price &lt;= .pred_upper, 1, 0)) %&gt;% 
+  with(chisq.test(price_grouped, covered)) %&gt;% 
+  pander::pander() </code></pre>
+<table style="width:44%;">
+<caption>Pearson’s Chi-squared test: <code>price_grouped</code> and <code>covered</code></caption>
+<colgroup>
+<col width="23%" />
+<col width="6%" />
+<col width="13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Test statistic</th>
+<th align="center">df</th>
+<th align="center">P value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">7.936</td>
+<td align="center">4</td>
+<td align="center">0.09394</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="interval-width" class="section level2">
+<h2>Interval Width</h2>
+<p>Below I generate the prediction interval width as a percentage of the prediction.</p>
+<p><strong>In aggregate:</strong></p>
+<pre class="r"><code>get_interval_width &lt;- function(df, ...){
+  df %&gt;% 
+    mutate(interval_width = .pred_upper - .pred_lower,
+           interval_pred_ratio = interval_width / .pred) %&gt;% 
+    group_by(...) %&gt;% 
+    summarise(n = n(),
+              mean_interval_width_percentage = mean(interval_pred_ratio),
+              stdev = sd(interval_pred_ratio),
+              stderror = sd(interval_pred_ratio) / sqrt(n))
+}
+
+rf_preds_test_80 %&gt;% 
+  get_interval_width() %&gt;% 
+  mutate(across(c(mean_interval_width_percentage, stdev, stderror), ~.x*100)) %&gt;% 
+  gt::gt() %&gt;% 
+  gt::fmt_number(c(&quot;stdev&quot;, &quot;stderror&quot;), decimals = 2) %&gt;% 
+  gt::fmt_number(&quot;mean_interval_width_percentage&quot;, decimals = 1)</code></pre>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#bodxaucnjb .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#bodxaucnjb .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bodxaucnjb .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#bodxaucnjb .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#bodxaucnjb .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bodxaucnjb .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bodxaucnjb .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#bodxaucnjb .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#bodxaucnjb .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#bodxaucnjb .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#bodxaucnjb .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#bodxaucnjb .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#bodxaucnjb .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#bodxaucnjb .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#bodxaucnjb .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#bodxaucnjb .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#bodxaucnjb .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#bodxaucnjb .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bodxaucnjb .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#bodxaucnjb .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bodxaucnjb .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#bodxaucnjb .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#bodxaucnjb .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bodxaucnjb .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bodxaucnjb .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#bodxaucnjb .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bodxaucnjb .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#bodxaucnjb .gt_left {
+  text-align: left;
+}
+
+#bodxaucnjb .gt_center {
+  text-align: center;
+}
+
+#bodxaucnjb .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#bodxaucnjb .gt_font_normal {
+  font-weight: normal;
+}
+
+#bodxaucnjb .gt_font_bold {
+  font-weight: bold;
+}
+
+#bodxaucnjb .gt_font_italic {
+  font-style: italic;
+}
+
+#bodxaucnjb .gt_super {
+  font-size: 65%;
+}
+
+#bodxaucnjb .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="bodxaucnjb" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">n</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">mean_interval_width_percentage</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">stdev</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">stderror</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_center">731</td>
+      <td class="gt_row gt_right">44.1</td>
+      <td class="gt_row gt_right">19.19</td>
+      <td class="gt_row gt_right">0.71</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+<p><strong>By quintiles of predictions:</strong></p>
+<pre class="r"><code>interval_width_80 &lt;- rf_preds_test_80 %&gt;% 
+  mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %&gt;% 
+  get_interval_width(price_grouped) %&gt;% 
+  separate_cut() %&gt;% 
+  select(-price_grouped) %&gt;% 
+  mutate(expected_coverage = &quot;80%&quot;)
+
+interval_width_80 %&gt;% 
+  mutate(across(c(mean_interval_width_percentage, stdev, stderror), ~.x*100)) %&gt;% 
+  gt::gt() %&gt;% 
+  gt::fmt_number(c(&quot;stdev&quot;, &quot;stderror&quot;), decimals = 2) %&gt;% 
+  gt::fmt_number(&quot;mean_interval_width_percentage&quot;, decimals = 1)</code></pre>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#irymdofxki .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#irymdofxki .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#irymdofxki .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#irymdofxki .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#irymdofxki .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#irymdofxki .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#irymdofxki .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#irymdofxki .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#irymdofxki .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#irymdofxki .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#irymdofxki .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#irymdofxki .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#irymdofxki .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#irymdofxki .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#irymdofxki .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#irymdofxki .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#irymdofxki .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#irymdofxki .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#irymdofxki .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#irymdofxki .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#irymdofxki .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#irymdofxki .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#irymdofxki .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#irymdofxki .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#irymdofxki .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#irymdofxki .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#irymdofxki .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#irymdofxki .gt_left {
+  text-align: left;
+}
+
+#irymdofxki .gt_center {
+  text-align: center;
+}
+
+#irymdofxki .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#irymdofxki .gt_font_normal {
+  font-weight: normal;
+}
+
+#irymdofxki .gt_font_bold {
+  font-weight: bold;
+}
+
+#irymdofxki .gt_font_italic {
+  font-style: italic;
+}
+
+#irymdofxki .gt_super {
+  font-size: 65%;
+}
+
+#irymdofxki .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="irymdofxki" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">n</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">mean_interval_width_percentage</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">stdev</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">stderror</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">min</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">max</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">expected_coverage</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_center">148</td>
+      <td class="gt_row gt_right">53.3</td>
+      <td class="gt_row gt_right">19.86</td>
+      <td class="gt_row gt_right">1.63</td>
+      <td class="gt_row gt_right">63900</td>
+      <td class="gt_row gt_right">128000</td>
+      <td class="gt_row gt_left">80%</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">151</td>
+      <td class="gt_row gt_right">40.8</td>
+      <td class="gt_row gt_right">18.30</td>
+      <td class="gt_row gt_right">1.49</td>
+      <td class="gt_row gt_right">128000</td>
+      <td class="gt_row gt_right">145000</td>
+      <td class="gt_row gt_left">80%</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">143</td>
+      <td class="gt_row gt_right">42.4</td>
+      <td class="gt_row gt_right">17.31</td>
+      <td class="gt_row gt_right">1.45</td>
+      <td class="gt_row gt_right">145000</td>
+      <td class="gt_row gt_right">174000</td>
+      <td class="gt_row gt_left">80%</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">143</td>
+      <td class="gt_row gt_right">37.1</td>
+      <td class="gt_row gt_right">17.35</td>
+      <td class="gt_row gt_right">1.45</td>
+      <td class="gt_row gt_right">174000</td>
+      <td class="gt_row gt_right">217000</td>
+      <td class="gt_row gt_left">80%</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">146</td>
+      <td class="gt_row gt_right">46.7</td>
+      <td class="gt_row gt_right">19.04</td>
+      <td class="gt_row gt_right">1.58</td>
+      <td class="gt_row gt_right">217000</td>
+      <td class="gt_row gt_right">479000</td>
+      <td class="gt_row gt_left">80%</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+<p>Comparing these against the intervals created with linear regression analytically in <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#interval-width">Part 1, Interval Width</a> and with simulation in <a href="https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/#interval-width">Part 2, Interval Width</a>:</p>
+<ul>
+<li>Our prediction intervals are a bit more narrow (44% of prediction compared to &gt;50% of predictions in prior methods).</li>
+<li>There is a great deal more variability in interval widths in general (see <code>stdev</code> metrics)</li>
+<li>There is a great deal more variability across quintiles (e.g. with low and high priced houses showing-up with greater variability). There is a range of roughly 3x what was seen in Part 2.</li>
+</ul>
+<p>This suggests that the quantile regression forests are far better able to differentiate measures of uncertainty by observation compared to the linear models built in the previous posts.</p>
+</div>
+<div id="wrap-up-on-quantile-regression" class="section level2">
+<h2>Wrap-up on Quantile Regression</h2>
+<p>IN PROGRESS</p>
+<p>Upsides:</p>
+<ul>
+<li>Quantile regression methods are generally more robust to model assumptions (e.g. normality of errors).</li>
+<li>For random forest, estimation technique takes advantage of out-of-bag observations to produce prediction intervals (for such models have lower risk of over-fitting)<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a></li>
+<li>While higher computation costs than [Analytic Method with Linear Regression], computation costs are still low compared to [Simulation Based Approach] as still are just building one model<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a></li>
+</ul>
+<p>Downsides:</p>
+<ul>
+<li>Similar to previous sub-section, still does not consider variability in model specification and is not immune to overfitting and related issues.</li>
+<li>Generally more model types are designed to produce the ‘mean’ value rather than a specific quantile, so there may be fewer model classes available for this approach (or may require over-riding default optimization methods in many ‘ready-to-use’ software packages for fitting models).</li>
+</ul>
+</div>
+</div>
+<div id="appendix" class="section level1">
+<h1>Appendix</h1>
+<div id="misc" class="section level2">
+<h2>Misc</h2>
+</div>
+<div id="other-charts" class="section level2">
+<h2>Other Charts</h2>
+<p><strong>Sample of observations, but now using 80% Prediction Intervals:</strong></p>
+<pre class="r"><code>set.seed(1234)
+rf_preds_test_80 %&gt;% 
+  mutate(pred_interval = ggplot2::cut_number(Sale_Price, 10)) %&gt;% 
+  group_by(pred_interval) %&gt;% 
+  sample_n(2) %&gt;% 
+  ggplot(aes(x = .pred))+
+  geom_point(aes(y = .pred, color = &quot;prediction interval&quot;))+
+  geom_errorbar(aes(ymin = .pred_lower, ymax = .pred_upper, color = &quot;prediction interval&quot;))+
+  geom_point(aes(y = Sale_Price, color = &quot;actuals&quot;))+
+  scale_x_log10(labels = scales::dollar)+
+  scale_y_log10(labels = scales::dollar)+
+  labs(title = &quot;80% Prediction intervals on a holdout dataset (90% empirical)&quot;,
+       subtitle = &quot;Random Forest Model&quot;,
+         y = &quot;Sale_Price prediction intervals and actuals&quot;)+
+  theme_bw()+
+  coord_fixed()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><strong>Coverage rates across quintiles for expected coverage of 80% and 90%:</strong></p>
+<pre class="r"><code>coverage_90 &lt;- rf_preds_test %&gt;%
+  mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %&gt;% 
+  coverage(price_grouped) %&gt;% 
+  separate_cut() %&gt;% 
+  mutate(expected_coverage = &quot;90%&quot;)
+
+bind_rows(coverage_80, coverage_90) %&gt;% 
+  ggplot(aes(x = forcats::fct_reorder(scales::dollar(max, scale = 1/1000), max), y = coverage_prop, colour = expected_coverage))+
+  geom_line(aes(group = expected_coverage))+
+  geom_errorbar(aes(ymin = coverage_prop - 2 * stderror, ymax = ifelse(coverage_prop + 2 * stderror &gt; 1, 1, coverage_prop + 2 * stderror)))+
+  coord_cartesian(ylim = c(0.70, 1))+
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))+
+  facet_wrap(~expected_coverage)+
+  labs(x = &quot;Max Predicted Price for Quintile (in thousands)&quot;,
+       y = &quot;Coverage at Quintile (On a holdout Set)&quot;,
+       title = &quot;Coverage by Quintile of Predictions&quot;,
+       subtitle = &quot;Quantile Regression Forest&quot;,
+       caption = &quot;Error bars represent {coverage} +/- 2 * {coverage standard error}&quot;)+
+  theme_bw()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/coverage-90-1.png" width="672" /></p>
+<p><strong>Interval Widths across quantiles for expected coverage of 80% and 90%:</strong></p>
+<pre class="r"><code>interval_width_90 &lt;- rf_preds_test %&gt;% 
+  mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %&gt;% 
+  get_interval_width(price_grouped) %&gt;% 
+  separate_cut() %&gt;% 
+  select(-price_grouped) %&gt;% 
+  mutate(expected_coverage = &quot;90%&quot;)
+
+
+bind_rows(interval_width_80, interval_width_90) %&gt;% 
+  ggplot(aes(x = forcats::fct_reorder(scales::dollar(max, scale = 1/1000), max), y = mean_interval_width_percentage, colour = expected_coverage))+
+  geom_line(aes(group = expected_coverage))+
+  geom_errorbar(aes(ymin = mean_interval_width_percentage - 2 * stderror, ymax = mean_interval_width_percentage + 2 * stderror))+
+  # coord_cartesian(ylim = c(0.70, 1.01))+
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))+
+  facet_wrap(~expected_coverage)+
+  labs(x = &quot;Max Predicted Price for Quintile (in thousands)&quot;,
+     y = &quot;Average Interval Width as a Percentage of Prediction&quot;,
+     title = &quot;Interval Width by Quintile of Predictions (On a holdout Set)&quot;,
+     subtitle = &quot;Quantile Regression Forest&quot;,
+     caption = &quot;Error bars represent {interval width} +/- 2 * {interval width standard error}&quot;)+
+  theme_bw()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Part 2 and this post are both essentially distinct follow-ups to Part 1. So you don’t really need to have read Part 2. However it may be useful (Part 2’s introductory section offers a more thorough list of things I will not be restating in this post).<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Default is generally 50%, the median.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>Which can make behavior more sensible, particularly at tails.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>Or at least usually not more than two – some quantile regression models require a new model to be built at each quantile.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>I could edit my set-up to incorporate the {quantreg} package but would sacrifice some of the the ease that goes with using tidymodels.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>Which tidymodels is already mostly set-up to handle<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>Quantile regression forest<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>In the main text I stick with the MAPE measure but I also checked the RMSE on the <code>log(Sale_Price, 10)</code> scale that was used to build the models and you also see a pretty decent discrepancy here.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>Specifically the concern that our intervals may be optimistically narrow.<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>A confidence interval of between 95% and 98%.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>Coverage on the training set is even higher:</p>
+<pre class="r"><code>rf_preds_train %&gt;%
+  coverage() %&gt;% 
+  mutate(across(c(coverage_prop, stderror), ~.x * 100))</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##       n n_covered stderror coverage_prop
+##   &lt;int&gt;     &lt;dbl&gt;    &lt;dbl&gt;         &lt;dbl&gt;
+## 1  2199      2159    0.285          98.2</code></pre>
+<a href="#fnref11" class="footnote-back">↩︎</a></li>
+<li id="fn12"><p>3<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>You would typically want to do this on a separate holdout validation dataset from that which you are testing your model against.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p>It could have been the case that the disconnect only occurred at the tails of the distribution, but this does not seem to be the case.<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
+<li id="fn15"><p>Consequences of overfitting may be less as well?<a href="#fnref15" class="footnote-back">↩︎</a></p></li>
+<li id="fn16"><p>Or in some model classes may be building two separate models – one for each end of the desired interval. A downside when this is the case is that you will have multiple models with potentially different parameter estimates.<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>

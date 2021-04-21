@@ -1,0 +1,449 @@
+---
+title: Quantile Regression Forests for Prediction Intervals
+author: Bryan Shalloway
+date: '2021-04-21'
+slug: quantile-regression-forests-for-prediction-intervals
+categories: []
+tags: []
+codefolding_show: hide
+disable_codefolding: false
+thumbnail: /2021/04/21/quantile-regression-forests-for-prediction-intervals/index_files/figure-html/unnamed-chunk-10-1.png
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,  message = FALSE, warning = FALSE)
+```
+
+In this post I will build prediction intervals with quantile regression, more specifically, quantile regression forests. 
+
+This is the third post on prediction intervals. See my prior posts:
+
+* [Understanding Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/) (Part 1)
+* [Simulating Prediction Intervals](https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/) (Part 2)
+
+This post can be read as a continuation on Part 1^[Part 2 and this post are both essentially distinct follow-ups to Part 1. So you don't really need to have read Part 2. However it may be useful (Part 2's introductory section offers a more thorough list of things I will not be restating in this post).]. I do not reintroduce terms, figures, motivations, example dataset, etc. that are initially described in that post. I am also not as thorough in elucidating the procedure's used in this post as I am in [Part 2, Procedure](https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/#procedure), for example. The purpose is to encode an example using the [tidymodels](https://www.tidymodels.org/) suite of packages and briefly review interval quality.  
+
+# Quantile Regression
+
+Rather than making a prediction for the mean and then adding measures of the variance to produce a prediction interval (as described in [Part 1, A Few Things to Know About Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#a-few-things-to-know-about-prediction-intervals)), quantile regression predicts the intervals directly. In quantile regression, predictions don't correspond with the arithmetic mean but instead with a specified quantile^[Default is generally 50%, the median.]. To generate a 90% prediction interval, you just make predictions at the 5th and 95th percentiles. Together, the two predictions constitute your prediction interval.
+
+The chief advantages over the parametric methods used in [Understanding Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/) are that quantile regression has...
+
+* fewer and less stringent model assumptions^[Which can make behavior more sensible, particularly at tails.].
+* well established approaches for fitting more sophisticated model types than linear regression, e.g. using ensembles of trees.
+
+An advantage over the approaches I describe in [Simulating Prediction Intervals](https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/) is you do not need to build many models^[Or at least usually not more than two -- some quantile regression models require a new model to be built at each quantile.], so computation costs do not get out of control with more sophisticated model types.
+
+For these reasons, quantile regression is often a highly practical choice for many modeling scenarios.
+
+# Example: Quantile Regression Forest
+
+The {parsnip} package does not yet have a `parsnip::linear_reg()` method that supports quantile regression^[I could edit my set-up to incorporate the {quantreg} package but would sacrifice some of the the ease that goes with using tidymodels.] (see [tidymodels/parsnip#465](https://github.com/tidymodels/parsnip/issues/465). I will take this as an opportunity to set-up an example for a random forest model using the {ranger} package as the engine in my workflow^[Which tidymodels is already mostly set-up to handle]. 
+
+Note then that when comparing the quality of prediction intervals created in this post in [Review Intervals] against those from [Part 1](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals) or [Part 2](https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/#review), that we will not be able to untangle whether the differences are due to the difference in model type (linear versus random forest) or the difference in interval estimation (parametric or simulated, against quantile regression).
+
+<!-- Random Forest models are relatively robust to overfitting, nonetheless, I am going to be conservative here and tune on the `min_n`^["The minimum number of data points in a node that are required for the node to be split further." -- `parsnip` documentation] parameter to ensure I am not overfitting on a holdout set. I will make another split on my training data using the `rsample::validation_split()` function^[See [Tidy Modeling with R, chapter 11](https://www.tmwr.org/resampling.html#resampling-methods) for example using function] so that I don't have to touch my validation data in order tune on this. -->
+
+## Set-up
+
+Loading packages and data are the same as in the [Providing More Than Point Estimates](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#providing-more-than-point-estimates) section of part 1. The code below is being sourced and printed from that post’s .Rmd file.
+
+```{r source-code, include = FALSE, cache = FALSE}
+devtools::source_gist("https://gist.github.com/brshallo/e963b9dca5e4e1ab12ec6348b135362e")
+
+file <- here::here("content/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals.Rmd")
+temp <- source_rmd_chunks(file, c("load-packages", "load-data"), output_temp = TRUE)
+
+knitr::read_chunk(path = temp)
+```
+
+Load packages:
+```{r load-packages, echo = TRUE, eval = FALSE}
+```
+
+Load data:
+```{r load-data, echo = TRUE, eval = FALSE}
+```
+
+Unlike [Part 2, Example](https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/#example), the pre-processing and model set-up is not the same as in [Part 1](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#providing-more-than-point-estimates).
+
+In setting-up our pre-processing recipe, we removed a few of the transformations that had been important for linear models:
+
+* transformations that don't change the order of regressors generally don't make a difference for tree-based methods so we can remove most of the `step_log()`'s
+* tree based models are also good at capturing dependent relationships on their own hence we can also remove `step_interact()`
+
+```{r specify-recipe}
+#RF models require comparably less pre-processing to linear models
+rf_recipe <- 
+  recipe(
+    Sale_Price ~ Lot_Area + Neighborhood  + Years_Old + Gr_Liv_Area + Overall_Qual + Total_Bsmt_SF + Garage_Area, 
+    data = ames_train
+  ) %>%
+  step_log(Sale_Price, base = 10) %>%
+  step_other(Neighborhood, Overall_Qual, threshold = 50) %>% 
+  step_novel(Neighborhood, Overall_Qual) %>% 
+  step_dummy(Neighborhood, Overall_Qual) 
+```
+
+For our quantile regression example, we are using a random forest model^[Quantile regression forest].  Specifying `quantreg = TRUE` tells {ranger} that we will be estimating quantiles rather than averages.
+
+```{r specify-model}
+rf_mod <- rand_forest() %>% 
+  set_engine("ranger", importance = "impurity", seed = 63233, quantreg = TRUE) %>% 
+  set_mode("regression")
+
+set.seed(63233)
+rf_wf <- workflows::workflow() %>% 
+  add_model(rf_mod) %>% 
+  add_recipe(rf_recipe) %>% 
+  fit(ames_train)
+```
+
+# Review Intervals
+
+Tidymodels does not yet have a `predict()` method for extracting quantiles (see open issue [tidymodels/parsnip#119](https://github.com/tidymodels/parsnip/issues/119)). Hence in the code below I first extract the {ranger} fit object and then use this to make predictions for the quantiles.
+
+```{r}
+preds_bind <- function(data_fit, lower = 0.05, upper = 0.95){
+  predict(
+  rf_wf$fit$fit$fit, 
+  workflows::pull_workflow_prepped_recipe(rf_wf) %>% bake(data_fit),
+  type = "quantiles",
+  quantiles = c(lower, upper, 0.50)
+  ) %>% 
+  with(predictions) %>% 
+  as_tibble() %>% 
+  set_names(paste0(".pred", c("_lower", "_upper",  ""))) %>% 
+  mutate(across(contains(".pred"), ~10^.x)) %>% 
+  bind_cols(data_fit) %>% 
+  select(contains(".pred"), Sale_Price, Lot_Area, Neighborhood, Years_Old, Gr_Liv_Area, Overall_Qual, Total_Bsmt_SF, Garage_Area)
+}
+
+rf_preds_test <- preds_bind(ames_holdout)
+```
+
+Let's review a sample of prediction intervals.
+
+```{r}
+set.seed(1234)
+rf_preds_test %>% 
+  mutate(pred_interval = ggplot2::cut_number(Sale_Price, 10)) %>% 
+  group_by(pred_interval) %>% 
+  sample_n(2) %>% 
+  ggplot(aes(x = .pred))+
+  geom_point(aes(y = .pred, color = "prediction interval"))+
+  geom_errorbar(aes(ymin = .pred_lower, ymax = .pred_upper, color = "prediction interval"))+
+  geom_point(aes(y = Sale_Price, color = "actuals"))+
+  scale_x_log10(labels = scales::dollar)+
+  scale_y_log10(labels = scales::dollar)+
+  labs(title = "90% Prediction intervals on a holdout dataset",
+       subtitle = "Random Forest Model",
+         y = "Sale_Price prediction intervals and actuals")+
+  theme_bw()+
+  coord_fixed()
+```
+
+Let's compare these against the same samples using the [analytic](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals) and [simulation](https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/#review) based approaches for linear regression models.
+
+```{r, out.width = "45%", fig.asp = 1, fig.width = 2, fig.show='hold',, fig.align='default'}
+knitr::include_graphics("https://www.bryanshalloway.com/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/prediction-intervals-sample-1.png")
+
+knitr::include_graphics("https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/index_files/figure-html/unnamed-chunk-5-1.png")
+```
+
+* The width of the intervals from the quantile regression forests vary substantially more than when using either the analytic or simulation based approaches with linear models.
+
+## Performance
+
+As discussed in [Part 1, Cautions With Overfitting](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#cautions-with-overfitting), we can compare performance on train and holdout to provide an indicator for overfitting
+
+```{r}
+rf_preds_train <- preds_bind(ames_train)
+
+bind_rows(
+  yardstick::mape(rf_preds_train, Sale_Price, .pred),
+  yardstick::mape(rf_preds_test, Sale_Price, .pred)
+) %>% 
+  mutate(dataset = c("training", "holdout"))
+```
+
+We do see a substantial discrepancy when comparing performance on the training v. holdout datasets[^10]. This would likely put us on guard regarding the expected coverage of our prediction intervals^[Specifically the concern that our intervals may be optimistically narrow.]...
+
+[^10]: In the main text I stick with the MAPE measure but I also checked the RMSE on the `log(Sale_Price, 10)` scale that was used to build the models and you also see a pretty decent discrepancy here.
+    
+    ```{r include = FALSE}
+    # Check RMSE on log10 scale used to build models
+    bind_rows(
+      yardstick::rmse(rf_preds_train, log(Sale_Price, 10), log(.pred, 10)),
+      yardstick::rmse(rf_preds_test, log(Sale_Price, 10), log(.pred, 10))
+    ) %>%
+      mutate(dataset = c("training", "holdout"))
+    ```
+
+## Coverage
+
+```{r}
+
+coverage <- function(df, ...){
+  df %>%
+    mutate(covered = ifelse(Sale_Price >= .pred_lower & Sale_Price <= .pred_upper, 1, 0)) %>% 
+    group_by(...) %>% 
+    summarise(n = n(),
+              n_covered = sum(
+                covered
+              ),
+              stderror = sd(covered) / sqrt(n),
+              coverage_prop = n_covered / n)
+}
+
+rf_preds_test %>% 
+  coverage() %>% 
+  mutate(across(c(coverage_prop, stderror), ~.x * 100)) %>% 
+  gt::gt() %>% 
+  gt::fmt_number("stderror", decimals = 2) %>% 
+  gt::fmt_number("coverage_prop", decimals = 1) 
+```
+
+Surprisingly, we see a coverage probability for our prediction intervals of ~96%^[A confidence interval of between 95% and 98%.] on our holdout dataset[^2] -- greater than our expected coverage of 90%. This suggests our prediction intervals are, in aggregate, quite conservative^[3]. Typically the coverage on the holdout set would be the same or less than the expected coverage. In the future I may investigate why this occurred more closely, for now I just opened a [question on Cross Validated](https://stackoverflow.com/questions/66666257/prediction-intervals-from-quantile-regression-forests-have-higher-coverage-than). 
+
+In [Part 1, Cautions with overfitting](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#cautions-with-overfitting), I described how to tune prediction intervals using coverage rates on holdout data. The code below applies this approach -- though due to the surprisingly high *empirical coverage* rate for our quantile regression forest example, I will be identifying a more narrow (rather than broader) *expected coverage* range^[You would typically want to do this on a separate holdout validation dataset from that which you are testing your model against.].
+
+[^2]: Coverage on the training set is even higher:
+    
+    ```{r}
+    rf_preds_train %>%
+      coverage() %>% 
+      mutate(across(c(coverage_prop, stderror), ~.x * 100))
+    ```
+
+[^3]: This is surprising, particularly in the context of the discrepancy in performance between the training and holdout sets. It would be better to check coverage using cross-validation, as would get a better sense of the variability of this 'coverage' metric for the data. One possible route for improving this may be outlier analysis. It is possible there are some outliers in the training data which the model is currently not doing a good job of fitting on and that this disproportionately increases the model's estimates for quantile ranges -- however I would not expect this to make such a big impact on random forests. Should read more on this later. As to why the coverage is higher than the expected value of 90%, my guess would be that the method for producing prediction intervals for this Random Forest model is somewhat robust to overfitting this as it uses the out-of-bag (I think...) samples generated when building the decision trees that make-up the random forest ([Meinshausen, 2006](https://www.jmlr.org/papers/v7/meinshausen06a.html)). There may be some adjustment going on that makes quantile estimates somewhat more extreme or conservative than would be typical. Or it may be a random phenomenon specific to this data. In general would just require further analysis...
+
+```{r}
+tune_alpha_coverage <- function(lower, upper){
+  
+  preds <- preds_bind(ames_holdout, lower, upper)
+  
+  preds %>%
+    coverage() %>% 
+    pull(coverage_prop)
+}
+```
+
+If we review the expected coverage against the empirical coverage rates, we see they are in general quite conservative -- a large difference between expected and empirical coverage exists across prediction intervals^[It could have been the case that the disconnect only occurred at the tails of the distribution, but this does not seem to be the case.].
+
+```{r}
+coverages <- tibble(lower = seq(0.025, 0.2, by = 0.005)) %>% 
+  mutate(upper = 1 - lower,
+         expected_coverage = upper - lower) %>% 
+  mutate(hold_out_coverage = map2_dbl(lower, upper, tune_alpha_coverage))
+
+coverages %>% 
+  ggplot()+
+  geom_line(aes(x = expected_coverage, y = hold_out_coverage))+
+  geom_line(aes(x = expected_coverage, y = expected_coverage, colour = "expected = empirical"), alpha = 0.5)+
+  geom_hline(aes(yintercept = 0.90, colour = "90% target coverage"))+
+  coord_fixed()+
+  theme_bw()+
+  labs(title = "Requesting ~80% Prediction Intervals will Produce the Desired Coverage of ~90%",
+       x = "Expected Coverage (i.e. requested prediction interval)",
+       y = "Empirical Coverage (i.e. actual coverage on a holdout datset)")
+
+```
+
+An expected prediction interval of 80% it seems will produce an actual prediction interval of the desired 90% coverage. For the remainder of charts I will display the 80% expected prediction intervals (90% empirical prediction intervals). (See [Other Charts] in the [Appendix] for side-by-side comparisons with the 90% expected prediction intervals.)
+
+**Coverage Across Deciles**
+
+Let's review coverage across deciles for our 80% and 90% expected prediction intervals:
+```{r separate-cut}
+separate_cut <- function(df, group_var = price_grouped){
+  df %>% 
+    mutate(x_tmp = str_sub({{ group_var }}, 2, -2)) %>% 
+    separate(x_tmp, c("min", "max"), sep = ",") %>% 
+    mutate(across(c(min, max), as.double))
+}
+```
+
+```{r coverage-80}
+rf_preds_test_80 <- preds_bind(ames_holdout, lower = 0.10, upper = 0.90)
+
+coverage_80 <- rf_preds_test_80 %>% 
+  mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %>% 
+  coverage(price_grouped) %>% 
+  separate_cut() %>% 
+  mutate(expected_coverage = "80%")
+```
+
+```{r rf-coverage-quintiles}
+coverage_80 %>% 
+  ggplot(aes(x = forcats::fct_reorder(scales::dollar(max, scale = 1/1000), max), y = coverage_prop))+
+  geom_line(aes(group = expected_coverage))+
+  geom_errorbar(aes(ymin = coverage_prop - 2 * stderror, ymax = ifelse(coverage_prop + 2 * stderror > 1, 1, coverage_prop + 2 * stderror)))+
+  coord_cartesian(ylim = c(0.70, 1))+
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))+
+  # facet_wrap(~expected_coverage)+
+  labs(x = "Max Predicted Price for Quintile (in thousands)",
+       y = "Coverage at Quintile (On a holdout Set)",
+       title = "Coverage by Quintile of Predictions",
+       subtitle = "Quantile Regression Forest",
+       caption = "Error bars represent {coverage} +/- 2 * {coverage standard error}")+
+  theme_bw()
+
+```
+
+There *appears* to be slightly lower empirical coverage rates for smaller predicted prices, however a statistical test suggests any difference is not significant: 
+
+*Chi-squared test of association between {covered} ~ {predicted price group}:*
+```{r}
+rf_preds_test_80 %>% 
+  mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %>% 
+  mutate(covered = ifelse(Sale_Price >= .pred_lower & Sale_Price <= .pred_upper, 1, 0)) %>% 
+  with(chisq.test(price_grouped, covered)) %>% 
+  pander::pander() 
+```
+
+## Interval Width
+
+Below I generate the prediction interval width as a percentage of the prediction.
+
+**In aggregate:**
+
+```{r}
+get_interval_width <- function(df, ...){
+  df %>% 
+    mutate(interval_width = .pred_upper - .pred_lower,
+           interval_pred_ratio = interval_width / .pred) %>% 
+    group_by(...) %>% 
+    summarise(n = n(),
+              mean_interval_width_percentage = mean(interval_pred_ratio),
+              stdev = sd(interval_pred_ratio),
+              stderror = sd(interval_pred_ratio) / sqrt(n))
+}
+
+rf_preds_test_80 %>% 
+  get_interval_width() %>% 
+  mutate(across(c(mean_interval_width_percentage, stdev, stderror), ~.x*100)) %>% 
+  gt::gt() %>% 
+  gt::fmt_number(c("stdev", "stderror"), decimals = 2) %>% 
+  gt::fmt_number("mean_interval_width_percentage", decimals = 1)
+```
+
+**By quintiles of predictions:**
+
+```{r}
+interval_width_80 <- rf_preds_test_80 %>% 
+  mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %>% 
+  get_interval_width(price_grouped) %>% 
+  separate_cut() %>% 
+  select(-price_grouped) %>% 
+  mutate(expected_coverage = "80%")
+
+interval_width_80 %>% 
+  mutate(across(c(mean_interval_width_percentage, stdev, stderror), ~.x*100)) %>% 
+  gt::gt() %>% 
+  gt::fmt_number(c("stdev", "stderror"), decimals = 2) %>% 
+  gt::fmt_number("mean_interval_width_percentage", decimals = 1)
+```
+
+Comparing these against the intervals created with linear regression analytically in [Part 1, Interval Width](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#interval-width) and with simulation in [Part 2, Interval Width](https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/#interval-width):
+
+* Our prediction intervals are a bit more narrow (44% of prediction compared to >50% of predictions in prior methods).
+* There is a great deal more variability in interval widths in general (see `stdev` metrics)
+* There is a great deal more variability across quintiles (e.g. with low and high priced houses showing-up with greater variability). There is a range of roughly 3x what was seen in Part 2.
+
+This suggests that the quantile regression forests are far better able to differentiate measures of uncertainty by observation compared to the linear models built in the previous posts.
+
+## Wrap-up on Quantile Regression
+
+IN PROGRESS
+
+Upsides: 
+
+* Quantile regression methods are generally more robust to model assumptions (e.g. normality of errors).
+* For random forest, estimation technique takes advantage of out-of-bag observations to produce prediction intervals (for such models have lower risk of over-fitting)^[Consequences of overfitting may be less as well?]
+* While higher computation costs than [Analytic Method with Linear Regression], computation costs are still low compared to [Simulation Based Approach] as still are just building one model^[Or in some model classes may be building two separate models -- one for each end of the desired interval. A downside when this is the case is that you will have multiple models with potentially different parameter estimates.]
+
+Downsides: 
+
+* Similar to previous sub-section, still does not consider variability in model specification and is not immune to overfitting and related issues.
+* Generally more model types are designed to produce the 'mean' value rather than a specific quantile, so there may be fewer model classes available for this approach (or may require over-riding default optimization methods in many 'ready-to-use' software packages for fitting models).
+
+# Appendix
+
+## Misc
+
+[^4]: The method shown in Part 1 produces an *expected* value (i.e. the 'average' value given the inputs) and then produces an interval around this based on the variance of the observations and in estimating the model. Quantile regression methods predict a specific quantile rather than the overall average. Hence the interval is created just by predicting different quantiles.
+
+## Other Charts
+
+
+**Sample of observations, but now using 80% Prediction Intervals:**
+
+```{r}
+set.seed(1234)
+rf_preds_test_80 %>% 
+  mutate(pred_interval = ggplot2::cut_number(Sale_Price, 10)) %>% 
+  group_by(pred_interval) %>% 
+  sample_n(2) %>% 
+  ggplot(aes(x = .pred))+
+  geom_point(aes(y = .pred, color = "prediction interval"))+
+  geom_errorbar(aes(ymin = .pred_lower, ymax = .pred_upper, color = "prediction interval"))+
+  geom_point(aes(y = Sale_Price, color = "actuals"))+
+  scale_x_log10(labels = scales::dollar)+
+  scale_y_log10(labels = scales::dollar)+
+  labs(title = "80% Prediction intervals on a holdout dataset (90% empirical)",
+       subtitle = "Random Forest Model",
+         y = "Sale_Price prediction intervals and actuals")+
+  theme_bw()+
+  coord_fixed()
+```
+
+**Coverage rates across quintiles for expected coverage of 80% and 90%:**
+
+```{r coverage-90}
+coverage_90 <- rf_preds_test %>%
+  mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %>% 
+  coverage(price_grouped) %>% 
+  separate_cut() %>% 
+  mutate(expected_coverage = "90%")
+
+bind_rows(coverage_80, coverage_90) %>% 
+  ggplot(aes(x = forcats::fct_reorder(scales::dollar(max, scale = 1/1000), max), y = coverage_prop, colour = expected_coverage))+
+  geom_line(aes(group = expected_coverage))+
+  geom_errorbar(aes(ymin = coverage_prop - 2 * stderror, ymax = ifelse(coverage_prop + 2 * stderror > 1, 1, coverage_prop + 2 * stderror)))+
+  coord_cartesian(ylim = c(0.70, 1))+
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))+
+  facet_wrap(~expected_coverage)+
+  labs(x = "Max Predicted Price for Quintile (in thousands)",
+       y = "Coverage at Quintile (On a holdout Set)",
+       title = "Coverage by Quintile of Predictions",
+       subtitle = "Quantile Regression Forest",
+       caption = "Error bars represent {coverage} +/- 2 * {coverage standard error}")+
+  theme_bw()
+```
+
+**Interval Widths across quantiles for expected coverage of 80% and 90%:**
+
+```{r}
+interval_width_90 <- rf_preds_test %>% 
+  mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %>% 
+  get_interval_width(price_grouped) %>% 
+  separate_cut() %>% 
+  select(-price_grouped) %>% 
+  mutate(expected_coverage = "90%")
+
+
+bind_rows(interval_width_80, interval_width_90) %>% 
+  ggplot(aes(x = forcats::fct_reorder(scales::dollar(max, scale = 1/1000), max), y = mean_interval_width_percentage, colour = expected_coverage))+
+  geom_line(aes(group = expected_coverage))+
+  geom_errorbar(aes(ymin = mean_interval_width_percentage - 2 * stderror, ymax = mean_interval_width_percentage + 2 * stderror))+
+  # coord_cartesian(ylim = c(0.70, 1.01))+
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))+
+  facet_wrap(~expected_coverage)+
+  labs(x = "Max Predicted Price for Quintile (in thousands)",
+     y = "Average Interval Width as a Percentage of Prediction",
+     title = "Interval Width by Quintile of Predictions (On a holdout Set)",
+     subtitle = "Quantile Regression Forest",
+     caption = "Error bars represent {interval width} +/- 2 * {interval width standard error}")+
+  theme_bw()
+```

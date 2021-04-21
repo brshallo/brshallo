@@ -21,7 +21,7 @@ thumbnail: /2021/04/05/simulating-prediction-intervals/index_files/figure-html/u
 ---
 
 ```{r, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,  message = FALSE, warning = FALSE, cache = FALSE)
+knitr::opts_chunk$set(echo = TRUE,  message = FALSE, warning = FALSE)
 ```
 
 [Part 1](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/) of my series of posts on building prediction intervals used data held-out from model training to *evaluate* the characteristics of prediction intervals. In this post I will use hold-out data to *estimate* the width of the prediction intervals directly. Doing such can provide more reasonable and flexible intervals compared to analytic approaches^[For example when the model assumptions associated with analytic methods are broken.]. 
