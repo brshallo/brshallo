@@ -21,7 +21,7 @@ thumbnail: /2021/04/05/simulating-prediction-intervals/index_files/figure-html/u
 ---
 
 ```{r, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,  message = FALSE, warning = FALSE, cache = TRUE)
+knitr::opts_chunk$set(echo = TRUE,  message = FALSE, warning = FALSE, cache = FALSE)
 ```
 
 [Part 1](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/) of my series of posts on building prediction intervals used data held-out from model training to *evaluate* the characteristics of prediction intervals. In this post I will use hold-out data to *estimate* the width of the prediction intervals directly. Doing such can provide more reasonable and flexible intervals compared to analytic approaches^[For example when the model assumptions associated with analytic methods are broken.]. 
@@ -133,7 +133,7 @@ prepped_for_interval
 `predict_interval()` takes in the output from `prep_interval()`, along with the dataset for which we want to produce predictions (as well as the quantiles associated with our confidence level of interest), and returns a dataframe containing the specified prediction intervals. 
 
 ```{r}
-pred_interval <- predict_interval(prepped_for_interval, ames_holdout, probs = c(0.05, 0.50, 0.95)) 
+pred_interval <- predict_interval(prepped_for_interval, ames_holdout, probs = c(0.05, 0.50, 0.95))
 
 lm_sim_intervals <- pred_interval %>% 
   mutate(across(contains("probs"), ~10^.x)) %>% 
@@ -156,7 +156,7 @@ lm_sim_intervals %>%
   select(contains(".pred")) %>% 
   slice(1) %>% 
   gt::gt() %>% 
-  gt::fmt_number(c(".pred", ".pred_lower", ".pred_upper"), decimals = 0) 
+  gt::fmt_number(c(".pred", ".pred_lower", ".pred_upper"), decimals = 0)
 ```
 
 Though when reviewing a sample of observations, we notice an important contrast:
@@ -176,7 +176,7 @@ lm_sim_intervals %>%
   theme_bw()+
   coord_fixed()+
   scale_x_log10(labels = scales::dollar)+
-  scale_y_log10(labels = scales::dollar) 
+  scale_y_log10(labels = scales::dollar)
 ```
 
 Simulation produced intervals show more differences in relative interval widths compared to those outputted with analytic methods (see [Part 1, Review Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals) where the relative interval widths were nearly constant across predictions).
@@ -185,11 +185,11 @@ Simulation produced intervals show more differences in relative interval widths 
 
 The relative widths of prediction intervals from the simulation based approach vary between observations by more than 10x what we saw in the [Interval Widths](http://localhost:4321/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#interval-width) using analytic methods[^differences] (where interval width had a standard deviation of less than half a percentage point). 
 
-We also see greater differences in interval width between buckets of predictions (a range of about 5.8 percentage points vs 0.4). 
+We also see greater differences in interval width between buckets of predictions (a range of about 5 to 6 percentage points vs 0.4). 
 
 This suggests the simulation based approach allows for greater differentiation in estimated levels of uncertainty by attributes^[E.g. based on the attributes of an observation. Remember that the analytic method only allowed for *slight* variability in prediction intervals across observations. Based on a constrained definition of the distance of an observation from the centroid of the data.].
 
-[^differences]: This is a rough calculation, but I'm just looking at the standard deviations in the two respective tables. For the lowest bucket for example, the analytic method had a standard deviation of 0.46 percentage points, for the simulation based technique it is 8.45 percentage points, 8.45 / 0.46 which is closer to 20x, but the difference is not quite so big in other groups.
+[^differences]: This is a rough calculation, but I'm just looking at the standard deviations in the two respective tables. For the lowest bucket for example, the analytic method had a standard deviation of 0.46 percentage points, for the simulation based technique it is 8.44 percentage points, 8.44 / 0.46 which is closer to 20x, but the difference is not quite so big in other groups.
 
 ```{r}
 lm_sim_widths <- lm_sim_intervals %>% 
@@ -210,7 +210,7 @@ lm_sim_widths %>%
   mutate(across(c(mean_interval_width_percentage, stdev, stderror), ~.x*100)) %>% 
   gt::gt() %>% 
   gt::fmt_number(c("stdev", "stderror"), decimals = 2) %>% 
-  gt::fmt_number("mean_interval_width_percentage", decimals = 1) 
+  gt::fmt_number("mean_interval_width_percentage", decimals = 1)
 ```
 
 
@@ -226,12 +226,12 @@ lm_sim_intervals %>%
   mutate(across(c(mean_interval_width_percentage, stderror), ~.x * 100)) %>% 
   gt::gt() %>% 
   gt::fmt_number(c("mean_interval_width_percentage", "stderror"), decimals = 2) %>% 
-  gt::fmt_number("mean_interval_width_percentage", decimals = 1) 
+  gt::fmt_number("mean_interval_width_percentage", decimals = 1)
 ```
 
 ## Coverage
 
-Coverage is essentially the same: 92.3% (vs 92.7% for [Coverage with the analytic method](http://localhost:4321/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#coverage))^[+/- ~2 percentage points].
+Coverage is essentially the same: 92.2% (vs 92.7% for [Coverage with the analytic method](http://localhost:4321/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#coverage))^[+/- ~2 percentage points].
 ```{r}
 lm_sim_intervals %>%
   mutate(covered = ifelse(Sale_Price >= .pred_lower & Sale_Price <= .pred_upper, 1, 0)) %>% 
@@ -244,7 +244,7 @@ lm_sim_intervals %>%
   mutate(across(c(coverage_prop, stderror), ~.x * 100)) %>% 
   gt::gt() %>% 
   gt::fmt_number("stderror", decimals = 2) %>% 
-  gt::fmt_number("coverage_prop", decimals = 1) 
+  gt::fmt_number("coverage_prop", decimals = 1)
 ```
 
 Coverage rates across quintiles:
@@ -272,7 +272,7 @@ lm_sim_intervals %>%
        title = "Coverage by Quintile of Predictions",
        subtitle = "On a holdout Set",
        caption = "Error bars represent {coverage} +/- 2 * {coverage standard error}")+
-  theme_bw() 
+  theme_bw()
 ```
 
 The overall pattern appears broadly similar to that seen in the [analytic method](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#coverage). However coverage rates seem to be slightly more consistent across quintiles in the simulation based approach -- an improvement over the analytic method (where coverage levels had appeared to be slightly more dependent upon quintile of predicted `Sale_Price`)^[The reason you want consistent coverage rates is because then you can trust your interval captures your data at the rate you would expect across observations and not just in aggregate. The difference is related to conditional vs marginal coverage.]. 
@@ -284,7 +284,7 @@ lm_sim_intervals %>%
   mutate(price_grouped = ggplot2::cut_number(.pred, 5)) %>% 
   mutate(covered = ifelse(Sale_Price >= .pred_lower & Sale_Price <= .pred_upper, 1, 0)) %>% 
   with(chisq.test(price_grouped, covered)) %>% 
-  pander::pander() 
+  pander::pander()
 ```
 
 Keep in mind we are looking at just one model specification on one set of data^[Further examples would be needed to make more general statements on the qualities of simulation versus parametric based approaches to building prediction intervals.]. 
