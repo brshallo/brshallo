@@ -204,7 +204,7 @@ rf_preds_test %>%
 
 Surprisingly, we see a coverage probability for our prediction intervals of >96%^[A confidence interval of between 95% and 98%.] on our holdout dataset[^2] -- greater than our expected coverage of 90%. This suggests our prediction intervals are, in aggregate, quite conservative[^3]. Typically the coverage on the holdout dataset would be the same or *less* than the expected coverage. 
 
-This is even more surprising in the context of the [Performance] indicator of our model for overfitting. See [Residual Plots] in the [Appendix] for a few additional figures and notes. In the future I may investigate the reason for this more closely, for now I simply opened a [question on Cross Validated](https://stackoverflow.com/questions/66666257/prediction-intervals-from-quantile-regression-forests-have-higher-coverage-than).
+This is even more surprising in the context of the [Performance] indicator of our model for overfitting. See [Residual Plots] in the [Appendix] for a few additional figures and notes. In the future I may investigate the reason for this more closely, for now I simply opened a [question on Stack Overflow](https://stackoverflow.com/questions/66666257/prediction-intervals-from-quantile-regression-forests-have-higher-coverage-than).
 
 In [Part 1, Cautions with overfitting](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#cautions-with-overfitting), I described how to tune prediction intervals using coverage rates on holdout data. The code below applies this approach, though due to the surprising finding of a *higher empirical coverage* rate (which is opposite of what we typically observe) I will be identifying a more narrow (rather than broader) *expected coverage*, i.e. prediction interval^[You would typically want to do this on a separate holdout validation dataset from that which you are testing your model against.].
 
@@ -395,7 +395,7 @@ rf_preds_train %>%
 * The several points with residuals of zero on the training data made me think that {ranger} might be set-up such that if there are many residuals of 0, it may assume there is overfitting going on and then default to some kind of conservative or alternative approach to computing the prediction intervals. However this proved false as when I tried higher values of `min_n` -- which would reduce any overfitting -- I still had similar results regarding a higher than expected coverage rate.
 * I also wondered whether some of the extreme points (e.g. the one with a residual of -0.5) may be contributing to the highly conservative intervals. When I removed outliers I found a *slight* narrowing of the prediction intervals, but not much... so that also didn't seem to explain things.
 
-Hopefully people on [Cross Validated]((https://stackoverflow.com/questions/66666257/prediction-intervals-from-quantile-regression-forests-have-higher-coverage-than)) know more...
+Hopefully people on [Stack Overflow]((https://stackoverflow.com/questions/66666257/prediction-intervals-from-quantile-regression-forests-have-higher-coverage-than)) know more...
 
 *Residual plot on holdout data:*
 ```{r}
