@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE,  message = FALSE, warning = FALSE)
 
 [Part 1](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/) of my series of posts on building prediction intervals used data held-out from model training to *evaluate* the characteristics of prediction intervals. In this post I will use hold-out data to *estimate* the width of the prediction intervals directly. Doing such can provide more reasonable and flexible intervals compared to analytic approaches^[For example when the model assumptions associated with analytic methods are broken.]. 
 
-This post assumes you have already read [Part 1, Understanding Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/)[^self-contained]:
+This post is not required for understanding part three of the series: [Quantile Regression Forests for Prediction Intervals](https://www.bryanshalloway.com/2021/04/21/quantile-regression-forests-for-prediction-intervals/). However this post assumes you have already read [Part 1, Understanding Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/)[^self-contained]:
 
 * I do not re-explain terms such as *coverage* and *interval width* (or relative measures) -- which are discussed thoroughly in the section on [Reviewing Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals).
 * I do not reintroduce measures, figures, or chart types that were shown in the prior post.
@@ -34,7 +34,7 @@ This post assumes you have already read [Part 1, Understanding Prediction Interv
 
 [^self-contained]: This post should be viewed as simply another section of [Understanding Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/) rather than as entirely self-contained. It is essentially a "How To" for simulating prediction intervals with tidymodels. 
 
-This post was largely inspired by topics discussed in the [Prediction intervals with tidymodels, best practices?](https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594) Rstudio Community thread.
+This post was largely inspired by topics discussed in the [Prediction intervals with tidymodels, best practices?](https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594) Rstudio Community thread. 
 
 # Rough Idea
 
@@ -293,7 +293,7 @@ See [Adjusting Procedure] in the [Appendix] for a couple examples of circumstanc
 
 # Closing Notes
 
-This post walked through a rough implementation for simulating prediction intervals for arbitrary model types + preprocessing steps in a way that is loosely in the style of tidymodels. It represents a continuation on [Understanding Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/) and is the second of three posts I am writing on prediction intervals. The **third post** will cover quantile regression.
+This post walked through a rough implementation for simulating prediction intervals for arbitrary model types + preprocessing steps in a way that is loosely in the style of tidymodels. It represents a continuation on [Understanding Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/) and is the second of three posts I am writing on prediction intervals. The [third post](https://www.bryanshalloway.com/2021/04/21/quantile-regression-forests-for-prediction-intervals/) will cover quantile regression.
 
 *Advantages of simulation based techniques for building prediction intervals:*
 

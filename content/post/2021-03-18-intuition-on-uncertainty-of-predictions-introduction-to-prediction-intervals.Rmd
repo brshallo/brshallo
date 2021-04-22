@@ -29,7 +29,7 @@ Prediction intervals provide a measure of uncertainty for predictions on individ
 * describes factors that influence prediction intervals
 * shows examples of how to build and review prediction intervals
 
-This is the first of three posts on prediction intervals (__part 2__ employs simulation techniques and __part 3__ quantile regression). I use the R programming language and the [tidyverse](https://www.tidyverse.org/) + [tidymodels](https://www.tidymodels.org/) suite of packages to create all models and figures.
+This is the first of three posts on prediction intervals ([Part 2](https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/) employs simulation techniques and [Part 3](https://www.bryanshalloway.com/2021/04/21/quantile-regression-forests-for-prediction-intervals/) quantile regression). I use the R programming language and the [tidyverse](https://www.tidyverse.org/) + [tidymodels](https://www.tidymodels.org/) suite of packages to create all models and figures.
 
 
 ```{r load-packages}
@@ -375,6 +375,8 @@ preds_intervals <- predict(
   bind_cols(data_preds) %>% 
   select(contains(".pred"), Sale_Price, Lot_Area, Neighborhood, Years_Old, Gr_Liv_Area, Overall_Qual, Total_Bsmt_SF, Garage_Area)
 
+# attr(preds_intervals, "level") <- NULL
+
 preds_intervals %>% 
   select(-Sale_Price) %>% 
   slice(1) %>% 
@@ -403,7 +405,7 @@ p <- preds_intervals %>%
 
 p +
   scale_x_log10(labels = scales::dollar)+
-  scale_y_log10(labels = scales::dollar) 
+  scale_y_log10(labels = scales::dollar)
 ```
 
 Log transformations are applied on the x and y axis. Remember the model was built to predict $\log_{10}{(Sale\:Price)}$ (as opposed to raw `Sale_Price`)^[See [Prediction Intervals on Raw Sale_Price] in the [Appendix] for a chart that does not apply log transformations.].
@@ -515,7 +517,7 @@ Recall from [Analytic Method of Calculating Prediction Intervals] that the only 
 
 Prediction intervals provide an indicator for the uncertainty of individual predictions. They have advantages over point estimates in that they take into account the variability in the data to provide a "reasonable" range of values for an observation.
 
-Measures like *coverage* and *interval width* are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on __Simulating Prediction Intervals__ and __Quantile Regression for Prediction Intervals__, where I walk through more sophisticated and flexible methods for building prediction intervals.
+Measures like *coverage* and *interval width* are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on [Simulating Prediction Intervals](https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/) and [Quantile Regression for Prediction Intervals](https://www.bryanshalloway.com/2021/04/21/quantile-regression-forests-for-prediction-intervals/), where I walk through more sophisticated and flexible methods for building prediction intervals.
 
 # Appendix
 

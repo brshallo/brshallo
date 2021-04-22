@@ -59,7 +59,7 @@ thumbnail: /post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction
 <li>describes factors that influence prediction intervals</li>
 <li>shows examples of how to build and review prediction intervals</li>
 </ul>
-<p>This is the first of three posts on prediction intervals (<strong>part 2</strong> employs simulation techniques and <strong>part 3</strong> quantile regression). I use the R programming language and the <a href="https://www.tidyverse.org/">tidyverse</a> + <a href="https://www.tidymodels.org/">tidymodels</a> suite of packages to create all models and figures.</p>
+<p>This is the first of three posts on prediction intervals (<a href="https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/">Part 2</a> employs simulation techniques and <a href="https://www.bryanshalloway.com/2021/04/21/quantile-regression-forests-for-prediction-intervals/">Part 3</a> quantile regression). I use the R programming language and the <a href="https://www.tidyverse.org/">tidyverse</a> + <a href="https://www.tidymodels.org/">tidymodels</a> suite of packages to create all models and figures.</p>
 <pre class="r"><code>library(tidyverse)
 library(tidymodels)
 library(AmesHousing)
@@ -1763,6 +1763,8 @@ bind_rows(
   bind_cols(data_preds) %&gt;% 
   select(contains(&quot;.pred&quot;), Sale_Price, Lot_Area, Neighborhood, Years_Old, Gr_Liv_Area, Overall_Qual, Total_Bsmt_SF, Garage_Area)
 
+# attr(preds_intervals, &quot;level&quot;) &lt;- NULL
+
 preds_intervals %&gt;% 
   select(-Sale_Price) %&gt;% 
   slice(1) %&gt;% 
@@ -2156,7 +2158,7 @@ p &lt;- preds_intervals %&gt;%
 
 p +
   scale_x_log10(labels = scales::dollar)+
-  scale_y_log10(labels = scales::dollar) </code></pre>
+  scale_y_log10(labels = scales::dollar)</code></pre>
 <p><img src="/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/prediction-intervals-sample-1.png" width="672" /></p>
 <p>Log transformations are applied on the x and y axis. Remember the model was built to predict <span class="math inline">\(\log_{10}{(Sale\:Price)}\)</span> (as opposed to raw <code>Sale_Price</code>)<a href="#fn46" class="footnote-ref" id="fnref46"><sup>46</sup></a>.</p>
 <p>We would expect ~9 out of 10 observations to fall within their bands – which a cursory glance appears to be just about what we see.</p>
@@ -3014,7 +3016,7 @@ lm_interval_widths %&gt;%
 <div id="closing-notes" class="section level1">
 <h1>Closing Notes</h1>
 <p>Prediction intervals provide an indicator for the uncertainty of individual predictions. They have advantages over point estimates in that they take into account the variability in the data to provide a “reasonable” range of values for an observation.</p>
-<p>Measures like <em>coverage</em> and <em>interval width</em> are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on <strong>Simulating Prediction Intervals</strong> and <strong>Quantile Regression for Prediction Intervals</strong>, where I walk through more sophisticated and flexible methods for building prediction intervals.</p>
+<p>Measures like <em>coverage</em> and <em>interval width</em> are helpful for evaluating prediction intervals. These metrics will be used in follow-up posts on <a href="https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/">Simulating Prediction Intervals</a> and <a href="https://www.bryanshalloway.com/2021/04/21/quantile-regression-forests-for-prediction-intervals/">Quantile Regression for Prediction Intervals</a>, where I walk through more sophisticated and flexible methods for building prediction intervals.</p>
 </div>
 <div id="appendix" class="section level1">
 <h1>Appendix</h1>
