@@ -35,9 +35,9 @@ Advantages over the approach I describe in [Simulating Prediction Intervals](htt
 * computation costs do not get out of control with more sophisticated model types^[... where even building a single model can take a long time. As rather than building *many* models, you are only building one or maybe two models. Some quantile regression models, such as the one I go through in this post, can predict any quantile from a single model, other model types require a separate model for each quantile -- so for a prediction interval with a lower and upper bound, that means two models (and attempting to tune these based on empirical coverage rates can mean more).].
 * can more easily handle heteroskedasticity of errors^[The simulation based approach from Part 2 took random samples of residuals to generate the distribution for uncertainty due to sample. To adjust for heteroskedasticity, the sampling of these residuals would in some way needed to have been conditional on the observation or prediction.]. This advantage and others are described in Dan Saatrup Nielsen's post on [Quantile regression](https://saattrupdan.github.io/2020-03-09-quantile-regression/).
 
-I also recommend Dan's post on [Quantile regression forests](https://saattrupdan.github.io/2020-04-05-quantile-regression-forests/) for a description of *how* tree-based methods may be used to generate predictions for quantiles (which is rather intuitive).
+I also recommend Dan's post on [Quantile regression forests](https://saattrupdan.github.io/2020-04-05-quantile-regression-forests/) for a description of *how* tree-based methods generate predictions for quantiles (which it turns out is rather intuitive).
 
-For these reasons, quantile regression is often a highly practical choice for many modeling scenarios.
+For these reasons, quantile regression is often a highly practical choice for many modeling scenarios that require prediction intervals.
 
 # Example
 
@@ -86,7 +86,7 @@ rf_recipe <-
   step_dummy(Neighborhood, Overall_Qual) 
 ```
 
-For our quantile regression example, we are using a random forest model rather than a linear model.  Specifying `quantreg = TRUE` tells {ranger} that we will be estimating quantiles rather than averages.
+For our quantile regression example, we are using a random forest model rather than a linear model.  Specifying `quantreg = TRUE` tells {ranger} that we will be estimating quantiles rather than averages^[When `quantreg = TRUE` {ranger} should be using {quantregForest} for underlying implementation (see [imbs-hl/ranger#207](https://github.com/imbs-hl/ranger/issues/207#issuecomment-352742806)) {parsnip} should then be passing this through (I am copying code shown in [tidymodels/parsnip#119](https://github.com/tidymodels/parsnip/issues/119).].
 
 ```{r specify-model}
 rf_mod <- rand_forest() %>%

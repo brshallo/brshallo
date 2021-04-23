@@ -53,8 +53,8 @@ thumbnail: /2021/04/21/quantile-regression-forests-for-prediction-intervals/inde
 <li>computation costs do not get out of control with more sophisticated model types<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</li>
 <li>can more easily handle heteroskedasticity of errors<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. This advantage and others are described in Dan Saatrup Nielsen’s post on <a href="https://saattrupdan.github.io/2020-03-09-quantile-regression/">Quantile regression</a>.</li>
 </ul>
-<p>I also recommend Dan’s post on <a href="https://saattrupdan.github.io/2020-04-05-quantile-regression-forests/">Quantile regression forests</a> for a description of <em>how</em> tree-based methods may be used to generate predictions for quantiles (which is rather intuitive).</p>
-<p>For these reasons, quantile regression is often a highly practical choice for many modeling scenarios.</p>
+<p>I also recommend Dan’s post on <a href="https://saattrupdan.github.io/2020-04-05-quantile-regression-forests/">Quantile regression forests</a> for a description of <em>how</em> tree-based methods generate predictions for quantiles (which it turns out is rather intuitive).</p>
+<p>For these reasons, quantile regression is often a highly practical choice for many modeling scenarios that require prediction intervals.</p>
 </div>
 <div id="example" class="section level1">
 <h1>Example</h1>
@@ -104,7 +104,7 @@ rf_recipe &lt;-
   step_other(Neighborhood, Overall_Qual, threshold = 50) %&gt;% 
   step_novel(Neighborhood, Overall_Qual) %&gt;% 
   step_dummy(Neighborhood, Overall_Qual) </code></pre>
-<p>For our quantile regression example, we are using a random forest model rather than a linear model. Specifying <code>quantreg = TRUE</code> tells {ranger} that we will be estimating quantiles rather than averages.</p>
+<p>For our quantile regression example, we are using a random forest model rather than a linear model. Specifying <code>quantreg = TRUE</code> tells {ranger} that we will be estimating quantiles rather than averages<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
 <pre class="r"><code>rf_mod &lt;- rand_forest() %&gt;%
   set_engine(&quot;ranger&quot;, importance = &quot;impurity&quot;, seed = 63233, quantreg = TRUE) %&gt;%
   set_mode(&quot;regression&quot;)
@@ -156,7 +156,7 @@ rf_preds_test %&gt;%
 <p>If we compare these against similar samples when using the <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#review-prediction-intervals">analytic</a> and <a href="https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/#review">simulation</a> based approaches for linear regression models, we find that the width of the intervals vary substantially more when built using quantile regression forests.</p>
 <div id="performance" class="section level2">
 <h2>Performance</h2>
-<p>Overall model performance on a holdout dataset is similar (maybe slightly better) for an (untuned) Quantile Regression Forest<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> compared to the linear model (MAPE on holdout dataset of 11% vs. 11.8% with linear model)<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>.</p>
+<p>Overall model performance on a holdout dataset is similar (maybe slightly better) for an (untuned) Quantile Regression Forest<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> compared to the linear model (MAPE on holdout dataset of 11% vs. 11.8% with linear model)<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
 <p>As discussed in <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#cautions-with-overfitting">Part 1, Cautions With Overfitting</a>, we can compare performance on train and holdout datasets to provide an indicator of overfitting:</p>
 <pre class="r"><code>rf_preds_train &lt;- preds_bind(ames_train)
 
@@ -530,7 +530,7 @@ bind_rows(
   
   
 </table></div>
-<p>We see a substantial discrepancy in performance<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>. This puts the validity of the expected coverage of our prediction intervals in question<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>…</p>
+<p>We see a substantial discrepancy in performance<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>. This puts the validity of the expected coverage of our prediction intervals in question<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>…</p>
 </div>
 <div id="coverage" class="section level2">
 <h2>Coverage</h2>
@@ -910,9 +910,9 @@ rf_preds_test %&gt;%
   
   
 </table></div>
-<p>Surprisingly, we see a coverage probability for our prediction intervals of &gt;96%<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a> on our holdout dataset<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a> – greater than our expected coverage of 90%. This suggests our prediction intervals are, in aggregate, quite conservative<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>. Typically the coverage on the holdout dataset would be the same or <em>less</em> than the expected coverage.</p>
+<p>Surprisingly, we see a coverage probability for our prediction intervals of &gt;96%<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a> on our holdout dataset<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a> – greater than our expected coverage of 90%. This suggests our prediction intervals are, in aggregate, quite conservative<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>. Typically the coverage on the holdout dataset would be the same or <em>less</em> than the expected coverage.</p>
 <p>This is even more surprising in the context of the <a href="#performance">Performance</a> indicator of our model for overfitting. See <a href="#residual-plots">Residual Plots</a> in the <a href="#appendix">Appendix</a> for a few additional figures and notes. In the future I may investigate the reason for this more closely, for now I simply opened a <a href="https://stackoverflow.com/questions/66666257/prediction-intervals-from-quantile-regression-forests-have-higher-coverage-than">question on Stack Overflow</a>.</p>
-<p>In <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#cautions-with-overfitting">Part 1, Cautions with overfitting</a>, I described how to tune prediction intervals using coverage rates on holdout data. The code below applies this approach, though due to the surprising finding of a <em>higher empirical coverage</em> rate (which is opposite of what we typically observe) I will be identifying a more narrow (rather than broader) <em>expected coverage</em>, i.e. prediction interval<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>.</p>
+<p>In <a href="https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#cautions-with-overfitting">Part 1, Cautions with overfitting</a>, I described how to tune prediction intervals using coverage rates on holdout data. The code below applies this approach, though due to the surprising finding of a <em>higher empirical coverage</em> rate (which is opposite of what we typically observe) I will be identifying a more narrow (rather than broader) <em>expected coverage</em>, i.e. prediction interval<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
 <pre class="r"><code>tune_alpha_coverage &lt;- function(lower, upper){
   
   preds &lt;- preds_bind(ames_holdout, lower, upper)
@@ -921,7 +921,7 @@ rf_preds_test %&gt;%
     coverage() %&gt;% 
     pull(coverage_prop)
 }</code></pre>
-<p>If we review the expected coverage against the empirical coverage rates, we see the coverage of this model seems, across prediction intervals, to be underestimated<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
+<p>If we review the expected coverage against the empirical coverage rates, we see the coverage of this model seems, across prediction intervals, to be underestimated<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>.</p>
 <pre class="r"><code>coverages &lt;- tibble(lower = seq(0.025, 0.2, by = 0.005)) %&gt;% 
   mutate(upper = 1 - lower,
          expected_coverage = upper - lower) %&gt;% 
@@ -1790,9 +1790,9 @@ interval_width_80 %&gt;%
 <ul>
 <li>a bit more narrow (~44% of <code>.pred</code> compared to &gt;51% with prior methods)</li>
 <li>vary more in interval widths between observations (see <code>stdev</code>)</li>
-<li>more variable across quintiles<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a> – there is a range of more than 16 percentage points in mean interval widths between deciles, roughly 3x what was seen even in Part 2<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>.</li>
+<li>more variable across quintiles<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a> – there is a range of more than 16 percentage points in mean interval widths between deciles, roughly 3x what was seen even in Part 2<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>.</li>
 </ul>
-<p>This suggests that quantile regression forests are better able to differentiate measures of uncertainty by observations compared to the linear models from the previous posts<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>.</p>
+<p>This suggests that quantile regression forests are better able to differentiate measures of uncertainty by observations compared to the linear models from the previous posts<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>.</p>
 </div>
 </div>
 <div id="closing-notes" class="section level1">
@@ -1801,13 +1801,13 @@ interval_width_80 %&gt;%
 <p><em>Advantages of Quantile Regression for Building Prediction Intervals:</em></p>
 <ul>
 <li>Quantile regression methods are generally more robust to model assumptions (e.g. heteroskedasticity of errors).</li>
-<li>For random forests and other tree-based methods, estimation techniques allow a single model to produce predictions at all quantiles<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>.</li>
-<li>While higher in computation costs than analytic methods, costs are still low compared to simulation based approaches<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a>.</li>
+<li>For random forests and other tree-based methods, estimation techniques allow a single model to produce predictions at all quantiles<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a>.</li>
+<li>While higher in computation costs than analytic methods, costs are still low compared to simulation based approaches<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a>.</li>
 </ul>
 <p><em>Downsides:</em></p>
 <ul>
 <li>Are not immune to overfitting and related issues (though these also plague parametric methods and can sometimes be improved by tuning).</li>
-<li>Models are more commonly designed to predict the mean rather than a quantile, so there may be fewer model classes or packages available that are ready to use out-of-the-box. These may require editing the objective function so that the model is optimized on the quantile loss, for example<a href="#fn22" class="footnote-ref" id="fnref22"><sup>22</sup></a>.</li>
+<li>Models are more commonly designed to predict the mean rather than a quantile, so there may be fewer model classes or packages available that are ready to use out-of-the-box. These may require editing the objective function so that the model is optimized on the quantile loss, for example<a href="#fn23" class="footnote-ref" id="fnref23"><sup>23</sup></a>.</li>
 </ul>
 </div>
 <div id="appendix" class="section level1">
@@ -1935,12 +1935,13 @@ bind_rows(interval_width_80, interval_width_90) %&gt;%
 <li id="fn5"><p>The simulation based approach from Part 2 took random samples of residuals to generate the distribution for uncertainty due to sample. To adjust for heteroskedasticity, the sampling of these residuals would in some way needed to have been conditional on the observation or prediction.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
 <li id="fn6"><p>I could edit my set-up to incorporate the {quantreg} package but would sacrifice some of the the ease that goes with using tidymodels.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
 <li id="fn7"><p>Which tidymodels is already mostly set-up to handle<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
-<li id="fn8"><p>Did not do any hyper parameter tuning or other investigation in producing model.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
-<li id="fn9"><p>To compare these, I should have used cross-validation and then could have applied any of a number of methods described in <a href="https://www.tmwr.org/compare.html">Tidy Models with R, ch. 11</a>.<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
-<li id="fn10"><p>In the main text I stick with the MAPE measure but I also checked the RMSE on the <code>log(Sale_Price, 10)</code> scale that was used to build the models and you also see a pretty decent discrepancy here.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
-<li id="fn11"><p>Specifically the concern that our intervals may be optimistically narrow.<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
-<li id="fn12"><p>A confidence interval of between 95% and 98%.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
-<li id="fn13"><p>Coverage on the training set is even higher:</p>
+<li id="fn8"><p>When <code>quantreg = TRUE</code> {ranger} should be using {quantregForest} for underlying implementation (see <a href="https://github.com/imbs-hl/ranger/issues/207#issuecomment-352742806">imbs-hl/ranger#207</a>) {parsnip} should then be passing this through (I am copying code shown in <a href="https://github.com/tidymodels/parsnip/issues/119">tidymodels/parsnip#119</a>.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>Did not do any hyper parameter tuning or other investigation in producing model.<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>To compare these, I should have used cross-validation and then could have applied any of a number of methods described in <a href="https://www.tmwr.org/compare.html">Tidy Models with R, ch. 11</a>.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>In the main text I stick with the MAPE measure but I also checked the RMSE on the <code>log(Sale_Price, 10)</code> scale that was used to build the models and you also see a pretty decent discrepancy here.<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>Specifically the concern that our intervals may be optimistically narrow.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>A confidence interval of between 95% and 98%.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p>Coverage on the training set is even higher:</p>
 <pre class="r"><code>rf_preds_train %&gt;%
   coverage() %&gt;% 
   mutate(across(c(coverage_prop, stderror), ~.x * 100))</code></pre>
@@ -1948,15 +1949,15 @@ bind_rows(interval_width_80, interval_width_90) %&gt;%
 ##       n n_covered stderror coverage_prop
 ##   &lt;int&gt;     &lt;dbl&gt;    &lt;dbl&gt;         &lt;dbl&gt;
 ## 1  2199      2159    0.285          98.2</code></pre>
-<a href="#fnref13" class="footnote-back">↩︎</a></li>
-<li id="fn14"><p>This is surprising, particularly in the context of the discrepancy in performance between the training and holdout sets. It would be better to check coverage using cross-validation, as would get a better sense of the variability of this ‘coverage’ metric for the data. One possible route for improving this may be outlier analysis. It is possible there are some outliers in the training data which the model is currently not doing a good job of fitting on and that this disproportionately increases the model’s estimates for quantile ranges – however I would not expect this to make such a big impact on random forests. Should read more on this later. . There may be some adjustment going on that makes quantile estimates somewhat more extreme or conservative than would be typical. Or it may be a random phenomenon specific to this data. In general would just require further analysis… perhaps read (<a href="https://www.jmlr.org/papers/v7/meinshausen06a.html">Meinshausen, 2006</a>).<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
-<li id="fn15"><p>You would typically want to do this on a separate holdout validation dataset from that which you are testing your model against.<a href="#fnref15" class="footnote-back">↩︎</a></p></li>
-<li id="fn16"><p>A large difference between expected and empirical coverage exists across prediction intervals. It could have been the case that the disconnect only occurred at the tails of the distribution, but this does not seem to be the case.<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
-<li id="fn17"><p>E.g. with low and high priced houses showing-up with greater variability compared to home prices nearer to the middle<a href="#fnref17" class="footnote-back">↩︎</a></p></li>
-<li id="fn18"><p>And astronomically greater than what was seen with the analytic method, where relative interval widths were nearly constant.<a href="#fnref18" class="footnote-back">↩︎</a></p></li>
-<li id="fn19"><p>This difference goes beyond differences that can be explained by improvements in general performance. 1. As demonstrated by the note that <a href="#performance">Performance</a> was similar or only slightly improved and 2. that the measures of variability between observations is so much higher in this case.<a href="#fnref19" class="footnote-back">↩︎</a></p></li>
-<li id="fn20"><p>For {quantreg} (I believe) you need to produce a new model for each quantile. This also has the drawback that quantiles models may not be perfectly consistent with one another.<a href="#fnref20" class="footnote-back">↩︎</a></p></li>
-<li id="fn21"><p>As still are just building one model – or in some model classes may be building two separate models, one for each end of the desired interval. A downside when this is the case is that you will have multiple models with potentially different parameter estimates.<a href="#fnref21" class="footnote-back">↩︎</a></p></li>
-<li id="fn22"><p>See Dan’s post <a href="https://saattrupdan.github.io/2020-03-09-quantile-regression/">Quantile regression</a> for an example in python.<a href="#fnref22" class="footnote-back">↩︎</a></p></li>
+<a href="#fnref14" class="footnote-back">↩︎</a></li>
+<li id="fn15"><p>This is surprising, particularly in the context of the discrepancy in performance between the training and holdout sets. It would be better to check coverage using cross-validation, as would get a better sense of the variability of this ‘coverage’ metric for the data. One possible route for improving this may be outlier analysis. It is possible there are some outliers in the training data which the model is currently not doing a good job of fitting on and that this disproportionately increases the model’s estimates for quantile ranges – however I would not expect this to make such a big impact on random forests. Should read more on this later. . There may be some adjustment going on that makes quantile estimates somewhat more extreme or conservative than would be typical. Or it may be a random phenomenon specific to this data. In general would just require further analysis… perhaps read (<a href="https://www.jmlr.org/papers/v7/meinshausen06a.html">Meinshausen, 2006</a>).<a href="#fnref15" class="footnote-back">↩︎</a></p></li>
+<li id="fn16"><p>You would typically want to do this on a separate holdout validation dataset from that which you are testing your model against.<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
+<li id="fn17"><p>A large difference between expected and empirical coverage exists across prediction intervals. It could have been the case that the disconnect only occurred at the tails of the distribution, but this does not seem to be the case.<a href="#fnref17" class="footnote-back">↩︎</a></p></li>
+<li id="fn18"><p>E.g. with low and high priced houses showing-up with greater variability compared to home prices nearer to the middle<a href="#fnref18" class="footnote-back">↩︎</a></p></li>
+<li id="fn19"><p>And astronomically greater than what was seen with the analytic method, where relative interval widths were nearly constant.<a href="#fnref19" class="footnote-back">↩︎</a></p></li>
+<li id="fn20"><p>This difference goes beyond differences that can be explained by improvements in general performance. 1. As demonstrated by the note that <a href="#performance">Performance</a> was similar or only slightly improved and 2. that the measures of variability between observations is so much higher in this case.<a href="#fnref20" class="footnote-back">↩︎</a></p></li>
+<li id="fn21"><p>For {quantreg} (I believe) you need to produce a new model for each quantile. This also has the drawback that quantiles models may not be perfectly consistent with one another.<a href="#fnref21" class="footnote-back">↩︎</a></p></li>
+<li id="fn22"><p>As still are just building one model – or in some model classes may be building two separate models, one for each end of the desired interval. A downside when this is the case is that you will have multiple models with potentially different parameter estimates.<a href="#fnref22" class="footnote-back">↩︎</a></p></li>
+<li id="fn23"><p>See Dan’s post <a href="https://saattrupdan.github.io/2020-03-09-quantile-regression/">Quantile regression</a> for an example in python.<a href="#fnref23" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

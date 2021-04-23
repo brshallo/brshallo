@@ -415,6 +415,7 @@ We would expect ~9 out of 10 observations to fall within their bands -- which a 
 ## Coverage
 
 Let's review what proportion of our holdout observations are actually "covered" by their 90% prediction intervals^[I.e. the rate at which the *actual* value fall within the range of the prediction interval (coverage is essentially checking whether the range you expect from your prediction intervals is actually what is achieved). For our 90% prediction intervals, we will expect coverage on a holdout dataset to be 90%.].
+
 ```{r}
 preds_intervals %>%
   mutate(covered = ifelse(Sale_Price >= .pred_lower & Sale_Price <= .pred_upper, 1, 0)) %>% 
