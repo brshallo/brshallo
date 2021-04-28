@@ -84,8 +84,24 @@ This suggests that my assertions throughout later parts of this post regarding r
 
 It remains possible that multiple gains may represent greater value than a single larger loss. The chart below shows a typical example of the asymmetric S-shaped value function associated with gains/losses in Prospect Theory. Even with its asymmetry (whereby losses are felt more intensely than gains) it is clear that three gains (i.e. wins) of \$0.05 would more than offset a single loss of \$0.15 (assuming the value derived from individual gains can be aggregated linearly). Hence the types of games I describe may still be worth exploring in gambling contexts.
 
-![](https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Loss_Aversion.png/1024px-Loss_Aversion.png)
-*(Image from Wikipedia page on [Prospect Theory](https://en.wikipedia.org/wiki/Prospect_theory))*
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+if (!requireNamespace("econocharts")) devtools::install_github('R-CoderDotCom/econocharts')
+library(econocharts)
+
+ptvalue(sigma = 0.3,             
+        lambda = -2.25,          
+        col = 2,                  # Color of the curve
+        xint = 25,    # Intersections
+        xintcol = 4,              # Color of the intersection segments
+        ticks = TRUE,             # Display ticks on the axes
+        xlabels = FALSE,           # Display the X-axis tick labels
+        ylabels = FALSE,           # Display the Y-axis tick labels
+        by_x = 25, by_y = 50,     # Axis steps
+        main = "Value Function From Prospect Theory",
+        xlab = "Loss / Gain (in $'s)")
+```
+
+*(Note that a previous version of this post had linked to a [figure](https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Loss_Aversion.png/1024px-Loss_Aversion.png) from [Wikipedia](https://en.wikipedia.org/wiki/Prospect_theory). The current version was created using the `ptvalue()` function for the "Prospect Theory Value Function" from the [econocharts](https://github.com/R-CoderDotCom/econocharts) package in R.^[Of which I helped [contribute](https://github.com/R-CoderDotCom/econocharts/pull/10) to the development.])*
 
 One explanation for why people gamble at all is people's tendency to overweight the likelihood of rare events^[I.e. they *think* they have a better chance of winning that they do.]. While this explains participation in lotteries and sweepstakes it does not explain all forms of gambling. These other forms of gambling present additional challenges for Prospect Theory^[As well as other behavioral economic theories] to explain. Nick Barberis explains why a Prospect Theory agent may choose to gamble in [A Model of Casino Gambling](http://www.econ.yale.edu/~shiller/behfin/2009_03/barberis.pdf), where he writes: 
 

@@ -38,7 +38,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_cache$", "\\.knit\\.md$", "\\.utf8\
 
 [params]
     summary_length = 200
-    description = "Bryan Shalloway's website built through Hugo and blogdown."
+    description = "Bryan Shalloway's blog on data science and other topics."
 
     # options for highlight.js (version, additional languages, and theme)
     highlightjsVersion = "9.12.0"
