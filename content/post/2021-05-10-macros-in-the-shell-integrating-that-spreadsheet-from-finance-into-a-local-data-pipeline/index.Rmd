@@ -19,7 +19,7 @@ There is many a data science meme degrading excel:
 
 ![](images/excel-meme-dr-evil.jpg){width=60%}
 
-While I no longer use it regularly for the purposes of anlaysis, I will always have a soft spot in my heart for excel[^soft-spot]. Furthermore, using a "correct" set of data science tools often requires a bridge^[For me the bridge came from a friend in my Master's program who inspired me to embrace R -- before that, I'd had the moniker of "excel wizard" from my classmates in graduate school.]. Integrating a rigorous component into a messy spreadsheet based pipeline can be an initial step towards the pipeline or team or organization starting on a path of continuous improvement in their processes^[Or it may simply add another layer of complexity.]. Also, spreadsheets are foundational to many (probably most) BizOps teams and therefore are sometimes unavoidable...
+While I no longer use it regularly for the purposes of analysis, I will always have a soft spot in my heart for excel[^soft-spot]. Furthermore, using a "correct" set of data science tools often requires a bridge^[For me the bridge came from a friend in my Master's program who inspired me to embrace R -- before that, I'd had the moniker of "excel wizard" from my classmates in graduate school.]. Integrating a rigorous component into a messy spreadsheet based pipeline can be an initial step towards the pipeline or team or organization starting on a path of continuous improvement in their processes^[Or it may simply add another layer of complexity.]. Also, spreadsheets are foundational to many (probably most) BizOps teams and therefore are sometimes unavoidable...
 
 In this post I will walk through a short example and some considerations for when you might decide (perhaps against your preferences) to integrate your work with extant spreadsheets or shadow "pipelines" within your organization. 
 
@@ -33,7 +33,7 @@ Say your finance organization has some workbook that contains fancy accounting t
 
 Often the VBA from finance will live in a macro enabled workbook (.xlsm file). To trigger it programatically, you generally want to write a wrapper VBscript that can then be run through the shell (Stack Overflow [thread](https://stackoverflow.com/questions/2050505/way-to-run-excel-macros-from-command-line-or-batch-file))^[You can run shell commands through R by running `system()` or `shell()` functions, SO [thread](https://stackoverflow.com/questions/19404270/run-vba-script-from-r) -- see [Related Alternative] in the [Appendix].]. The VBscript will open the workbook and trigger the macro(s) of interest^[Finance might have a VB wizard that can set this up for you.].
 
-Note that saying "Use a shell script" is, in a way, almost always an answer for how to incorporate another technology into a pipeline. This is more just a reminder that many tools that are designed more for interactive use often also have a batch mode^[You could even say this about {dplyr} and tidyverse tools which are largely designed with the intent of making interacton and fast iteration easy at the expense of making programming and functional programming and automation slightly more difficult.]. Here I'm writing about triggering VBA macros, but integrating GUI based data piplining tools like [Orange](https://orangedatamining.com/) or [Knime](https://www.knime.com/) into your pipeline can be set-up [similarly](https://forum.knime.com/t/execute-workflow-in-batch-mode-windows-10/13986).
+Note that saying "Use a shell script" is, in a way, almost always an answer for how to incorporate another technology into a pipeline. This is more just a reminder that many tools that are designed more for interactive use often also have a batch mode^[You could even say this about {dplyr} and tidyverse tools which are largely designed with the intent of making interaction and fast iteration easy at the expense of making programming and functional programming and automation slightly more difficult.]. Here I'm writing about triggering VBA macros, but integrating GUI based data piplining tools like [Orange](https://orangedatamining.com/) or [Knime](https://www.knime.com/) into your pipeline can be set-up [similarly](https://forum.knime.com/t/execute-workflow-in-batch-mode-windows-10/13986).
 
 **Passing in arguments**
 
@@ -53,7 +53,7 @@ These steps are orchestrated via a "[run-all.R](https://github.com/brshallo/macr
 
 # Setting-up Gaurd Rails
 
-There are many unavoidable limitations to any spreadsheet dependant data pipeline. But here are a few things you can do to keep things sane:
+There are many unavoidable limitations to any spreadsheet dependent data pipeline. But here are a few things you can do to keep things sane:
 
 1. Think of your relationship with the workbook/macro/document in a somewhat similar way to how you might consider your relationship with an API or database you depend on. Get the owner of the document to think similarly -- that is, as the owner of a standardized interface.
 
@@ -69,11 +69,11 @@ These are not much different from the kinds of considerations that happen when c
 
 Particularly if the pipeline is used in the wild^[I.e. being used in some way by people other than yourself or your immediate team.], make it easy to get notifications for when things *do* break^[For informal pipelines such as the ones you are likely looking at in regards to this post, this can be as simple as including an email that people should reach if things break, or triggering an auto-generated email populating an error message, e.g. via the [blastula](https://github.com/rstudio/blastula) package in R.].
 
-3. Basic optimizations
+3. Basic optimization
 
 If you are using spreadsheets or VBA macros in your data pipeline you probably aren't worried *too* much about performance, but there may be a few things you can do to be more efficient. 
 
-For example, for the [macro-shell-example](https://github.com/brshallo/macro-shell-example), the VB script has as (headless) steps opening and closing the excel document after processing each deal. Therefore, proccessing five deals entails compute time spent on four unnecessary opens and closes. This wasted processing could be corrected with small changes to the VB Script.
+For example, for the [macro-shell-example](https://github.com/brshallo/macro-shell-example), the VB script has as (headless) steps opening and closing the excel document after processing each deal. Therefore, processing five deals entails compute time spent on four unnecessary opens and closes. This wasted processing could be corrected with small changes to the VB Script.
 
 # Closing
 
