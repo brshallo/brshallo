@@ -1,0 +1,124 @@
+---
+title: 'Macros in the Shell: Integrating That Spreadsheet From Finance Into a Data
+  Pipeline'
+author: Bryan Shalloway
+date: '2021-05-10'
+slug: macros-in-the-shell-integrating-that-spreadsheet-from-finance-into-a-local-data-pipeline
+thumbnail: /2021/05/10/macros-in-the-shell-integrating-that-spreadsheet-from-finance-into-a-local-data-pipeline/images/macros-in-the-shell-capture.PNG
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+<div id="TOC">
+<ul>
+<li><a href="#macro-in-the-shell">Macro in the Shell</a>
+<ul>
+<li><a href="#example">Example</a></li>
+</ul></li>
+<li><a href="#setting-up-gaurd-rails">Setting-up Gaurd Rails</a></li>
+<li><a href="#closing">Closing</a></li>
+<li><a href="#appendix">Appendix</a>
+<ul>
+<li><a href="#related-alternative">Related Alternative</a></li>
+<li><a href="#other-resources">Other Resources</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p>There is many a data science meme degrading excel:</p>
+<p><img src="images/excel-meme.jfif" style="width:60.0%" /></p>
+<p>(Google Sheets seems to have escaped most of the memes here.)</p>
+<p><img src="images/excel-meme-dr-evil.jpg" style="width:60.0%" /></p>
+<p>While I no longer use it regularly for the purposes of anlaysis, I will always have a soft spot in my heart for excel<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. Furthermore, using a “correct” set of data science tools often requires a bridge<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. Integrating a rigorous component into a messy spreadsheet based pipeline can be an initial step towards the pipeline or team or organization starting on a path of continuous improvement in their processes<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. Also, spreadsheets are foundational to many (probably most) BizOps teams and therefore are sometimes unavoidable…</p>
+<p>In this post I will walk through a short example and some considerations for when you might decide (perhaps against your preferences) to integrate your work with extant spreadsheets or shadow “pipelines” within your organization.</p>
+<div id="macro-in-the-shell" class="section level1">
+<h1>Macro in the Shell</h1>
+<p><img src="images/macros-in-the-shell-capture.PNG" style="width:60.0%" /></p>
+<p>Say your finance organization has some workbook that contains fancy accounting triggered by a VBA macro, the calculation of which you need in your own <em>script based</em> data pipeline (but which also may not be in <em>perfect</em> order<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>…). You don’t want to go through the effort of reproducing (or worse, be responsible for maintaining) the complicated (and potentially changing) logic that lives within the spreadsheets / macros<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. You’ve resolved instead to simply “call” finances spreadsheet / macro / logic in some way.</p>
+<p>Often the VBA from finance will live in a macro enabled workbook (.xlsm file). To trigger it programatically, you generally want to write a wrapper VBscript that can then be run through the shell (Stack Overflow <a href="https://stackoverflow.com/questions/2050505/way-to-run-excel-macros-from-command-line-or-batch-file">thread</a>)<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. The VBscript will open the workbook and trigger the macro(s) of interest<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
+<p>Note that saying “Use a shell script” is, in a way, almost always an answer for how to incorporate another technology into a pipeline. This is more just a reminder that many tools that are designed more for interactive use often also have a batch mode<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>. Here I’m writing about triggering VBA macros, but integrating GUI based data piplining tools like <a href="https://orangedatamining.com/">Orange</a> or <a href="https://www.knime.com/">Knime</a> into your pipeline can be set-up <a href="https://forum.knime.com/t/execute-workflow-in-batch-mode-windows-10/13986">similarly</a>.</p>
+<p><strong>Passing in arguments</strong></p>
+<p>You can pass arguments to a VBScript through the shell (<a href="https://stackoverflow.com/questions/45622497/how-to-run-a-vbs-script-from-r-while-passing-arguments-from-r-to-vbs">SO thread</a>). Though given that you are already using spreadsheets, it’s also sometimes easier to write data to pre-determined locations or cells (this is often how the workbook was set-up to be used anyways).</p>
+<div id="example" class="section level2">
+<h2>Example</h2>
+<p>See <a href="https://github.com/brshallo/macro-shell-example">brshallo/macros-shell-examle</a> for a walk-through involving evaluating the present values of predicted deals.</p>
+<p>In the example I…</p>
+<ol style="list-style-type: decimal">
+<li><em>pass predictions programatically through an excel workbook</em> –&gt;<br />
+</li>
+<li><em>that calculates present value via macros and excel formulas</em> –&gt;<br />
+</li>
+<li><em>which is then read back in from the spreadsheet programatically.</em></li>
+</ol>
+<p>These steps are orchestrated via a “<a href="https://github.com/brshallo/macro-shell-example/blob/master/R/run-all.R">run-all.R</a>” script. With a little more effort these could be formalized via <a href="https://github.com/ropensci/targets">targets</a> (or your pipeline toolkit of choice).</p>
+</div>
+</div>
+<div id="setting-up-gaurd-rails" class="section level1">
+<h1>Setting-up Gaurd Rails</h1>
+<p>There are many unavoidable limitations to any spreadsheet dependant data pipeline. But here are a few things you can do to keep things sane:</p>
+<ol style="list-style-type: decimal">
+<li>Think of your relationship with the workbook/macro/document in a somewhat similar way to how you might consider your relationship with an API or database you depend on. Get the owner of the document to think similarly – that is, as the owner of a standardized interface.</li>
+</ol>
+<p>Identify which parts of the document need to stay consistent for your pipeline to keep working<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>, e.g. </p>
+<ul>
+<li>Location(s) where new data is to be inputted (e.g. a database, folder of .csv files, arguments passed through the shell script)</li>
+<li>Location(s) where you expect to retrieve data</li>
+<li>Names, data types, and possible values<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a></li>
+</ul>
+<p>These are not much different from the kinds of considerations that happen when collaborating on any data pipeline<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>. The responsible party at each step has to adhere to certain structures about the form of the data as they expect it to come-in and the form with which it will proceed to the next step. Lines of communication should be open so that as changes occur to the tool, everyone (who needs to be) is made aware<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Set-up notifications / methods of contact.</li>
+</ol>
+<p>Particularly if the pipeline is used in the wild<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>, make it easy to get notifications for when things <em>do</em> break<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Basic optimizations</li>
+</ol>
+<p>If you are using spreadsheets or VBA macros in your data pipeline you probably aren’t worried <em>too</em> much about performance, but there may be a few things you can do to be more efficient.</p>
+<p>For example, for the <a href="https://github.com/brshallo/macro-shell-example">macro-shell-example</a>, the VB script has as (headless) steps opening and closing the excel document after processing each deal. Therefore, proccessing five deals entails compute time spent on four unnecessary opens and closes. This wasted processing could be corrected with small changes to the VB Script.</p>
+</div>
+<div id="closing" class="section level1">
+<h1>Closing</h1>
+<p>Data Scientists should still consider their work in a context of growth &amp; development. I am reminded of the Alan Watts quote:</p>
+<blockquote>
+<p>“People who are responsible for technical development [must] be well-imbued with an ecological philosophy and see the direction of things so they will not keep perpetuating anachronisms.”</p>
+</blockquote>
+<p>For further reading on how data scientists should think about integrating their knowledge into sometimes lower-tech organizational contexts, see the excellent post by <a href="https://twitter.com/allison_horst">Allison Horst</a> and <a href="https://twitter.com/skyetetra">Jacqueline Nolis</a>:</p>
+<p>"<a href="https://jnolis.com/blog/training_ds_for_teams/">Merge conflicts</a>: helping data science students merge their advanced skills into existing teams…<br />
+<em>What do we do about students trained in R and Python for jobs with Excel, Google Sheets and Access?"</em></p>
+</div>
+<div id="appendix" class="section level1">
+<h1>Appendix</h1>
+<div id="related-alternative" class="section level2">
+<h2>Related Alternative</h2>
+<p>You can also use the <a href="https://github.com/omegahat/RDCOMClient">RDCOMClient</a> or <a href="https://cran.r-project.org/web/packages/excel.link/excel.link.pdf">excel.link</a> package. These essentially do the same thing but allow you to circumvent the need to write a separate VBscript. They do require a Windows operating system though. These tools are also helpful if you need to read or write to open workbooks for some reason.</p>
+</div>
+<div id="other-resources" class="section level2">
+<h2>Other Resources</h2>
+<p>A few other tools worth being aware of if you regularly interface with office products from R.</p>
+<ul>
+<li><a href="https://github.com/Azure/Microsoft365R">Microsoft365R</a></li>
+<li><a href="https://ardata-fr.github.io/officeverse/index.html">officeverse</a></li>
+<li><a href="https://bookdown.org/yihui/rmarkdown/">R markdown</a> etc.</li>
+</ul>
+<p>For integrating with google sheets there is <a href="https://github.com/tidyverse/googlesheets4">googlesheets4</a>.</p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>For those without CS backgrounds, excel, or BI tools are typically the first analytics tools you get exposed to. Excel’s “Record Macro” feature (which enables watching VBA commands be generated while clicking through excel’s GUI / clicking through spreadsheets) was a helpful step towards me feeling comfortable with scripting. I also believe in the saying that <em>it doesn’t matter so much what you have, but how you use it</em> (this applies broadly to analytics technologies) and have seen many people make impressive things happen with it.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>For me the bridge came from a friend in my Master’s program who inspired me to embrace R – before that, I’d had the moniker of “excel wizard” from my classmates in graduate school.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>Or it may simply add another layer of complexity.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>e.g. it is being run on a local machine, it is not updated on a fully automated basis, some parts have to be inputted manually, etc. EVERY DATA SCIENTIST HAS THEIR SKELETONS!<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>It may not be possible anyways if there is already an established user base for the existing tool… or may require a whole change management process which you can’t commit to.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>You can run shell commands through R by running <code>system()</code> or <code>shell()</code> functions, SO <a href="https://stackoverflow.com/questions/19404270/run-vba-script-from-r">thread</a> – see <a href="#related-alternative">Related Alternative</a> in the <a href="#appendix">Appendix</a>.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>Finance might have a VB wizard that can set this up for you.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>You could even say this about {dplyr} and tidyverse tools which are largely designed with the intent of making interacton and fast iteration easy at the expense of making programming and functional programming and automation slightly more difficult.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>While ensuring that whatever understanding you have allows flexibility for the owner to adjust the tool (but in a way that keeps in mind dependencies).<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>Nothing is more frustrating than when a data source changes arbitrarily and without notice.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>Even those handled entirely programatically.<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>These guidelines/requirements are pretty similar to those you would have on any collaborative project.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>I.e. being used in some way by people other than yourself or your immediate team.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p>For informal pipelines such as the ones you are likely looking at in regards to this post, this can be as simple as including an email that people should reach if things break, or triggering an auto-generated email populating an error message, e.g. via the <a href="https://github.com/rstudio/blastula">blastula</a> package in R.<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
