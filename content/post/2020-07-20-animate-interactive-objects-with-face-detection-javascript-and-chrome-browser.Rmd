@@ -33,7 +33,7 @@ Poster for a new Lord of the Rings movie that has an Eye of Sauron that follows 
 </center>
 An army recruiter with an "I want you" Uncle Sam  poster behind him whose finger points at you as you walk by.
 <center>
-![Uncle Sam](https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Unclesamwantyou.jpg/440px-Unclesamwantyou.jpg){width="50%"}
+![Uncle Sam](/post/2020-07-20-animate-interactive-objects-with-face-detection-javascript-and-chrome-browser_files/uncle-sam.jpg){width="50%"}
 </center>
 Someone at the grocery store (during COVID19) whose shirt beeps and flashes red if you get within 6 feet of them.
 
