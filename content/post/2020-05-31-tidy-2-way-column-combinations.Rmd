@@ -18,6 +18,10 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
+# UPDATE
+
+In May of 2021 I co-wrote [pwiser](https://github.com/brshallo/pwiser) a package for doing pairwise operations in {dplyr} that provides a much smoother approach than the one I build-up to in this post.
+
 # Overview 
 
 Say you want to map an operation or list of operations across all two-way[^twoway] combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc^[Though this "throw everything and the kitchen-sink" approach may not always be a good idea.]. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables[^1]. In some cases there may be a pairwise implementation already available, e.g. R's `cor()` function for computing correlations^[Or the tidymodels implementation `corrr::correlate()` in the [corrr](https://corrr.tidymodels.org/) package.]. In other cases one may not exist or is not easy to use^[or is not in a style you prefer]. In this post I'll walk through an example[^examples] explaining code and steps for setting-up arbitrary pairwise operations across sets of variables. 

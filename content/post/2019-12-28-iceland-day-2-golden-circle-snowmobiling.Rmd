@@ -4,7 +4,7 @@ author: Bryan Shalloway
 date: '2019-12-28'
 slug: iceland-day-2-golden-circle-snowmobiling
 categories:
-  - trave
+  - travel
 tags:
   - iceland
   - travel

@@ -18,6 +18,7 @@ output:
 
 <div id="TOC">
 <ul>
+<li><a href="#update">UPDATE</a></li>
 <li><a href="#overview">Overview</a>
 <ul>
 <li><a href="#i.-nest-and-pivot">I. Nest and pivot</a></li>
@@ -42,6 +43,10 @@ output:
 </ul>
 </div>
 
+<div id="update" class="section level1">
+<h1>UPDATE</h1>
+<p>In May of 2021 I co-wrote <a href="https://github.com/brshallo/pwiser">pwiser</a> a package for doing pairwise operations in {dplyr} that provides a much smoother approach than the one I build-up to in this post.</p>
+</div>
 <div id="overview" class="section level1">
 <h1>Overview</h1>
 <p>Say you want to map an operation or list of operations across all two-way<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. In some cases there may be a pairwise implementation already available, e.g. R’s <code>cor()</code> function for computing correlations<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. In other cases one may not exist or is not easy to use<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. In this post I’ll walk through an example<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> explaining code and steps for setting-up arbitrary pairwise operations across sets of variables.</p>
@@ -163,18 +168,18 @@ ames_subset &lt;- select(ames, ames_cols) %&gt;%
   select(contains(&quot;var&quot;), everything()) %&gt;% 
   print()</code></pre>
 <pre><code>## # A tibble: 90 x 5
-##    var          var2           vars                    vector       vector2     
-##    &lt;chr&gt;        &lt;chr&gt;          &lt;chr&gt;                   &lt;list&gt;       &lt;list&gt;      
-##  1 Fireplaces   First_Flr_SF   Fireplaces.First_Flr_SF &lt;dbl [2,930~ &lt;dbl [2,930~
-##  2 Fireplaces   Full_Bath      Fireplaces.Full_Bath    &lt;dbl [2,930~ &lt;dbl [2,930~
-##  3 Fireplaces   Garage_Area    Fireplaces.Garage_Area  &lt;dbl [2,930~ &lt;dbl [2,930~
-##  4 Fireplaces   Garage_Cars    Fireplaces.Garage_Cars  &lt;dbl [2,930~ &lt;dbl [2,930~
-##  5 Fireplaces   Gr_Liv_Area    Fireplaces.Gr_Liv_Area  &lt;dbl [2,930~ &lt;dbl [2,930~
-##  6 Fireplaces   Total_Bsmt_SF  Fireplaces.Total_Bsmt_~ &lt;dbl [2,930~ &lt;dbl [2,930~
-##  7 Fireplaces   TotRms_AbvGrd  Fireplaces.TotRms_AbvG~ &lt;dbl [2,930~ &lt;dbl [2,930~
-##  8 Fireplaces   Year_Built     Fireplaces.Year_Built   &lt;dbl [2,930~ &lt;dbl [2,930~
-##  9 Fireplaces   Year_Remod_Add Fireplaces.Year_Remod_~ &lt;dbl [2,930~ &lt;dbl [2,930~
-## 10 First_Flr_SF Fireplaces     First_Flr_SF.Fireplaces &lt;dbl [2,930~ &lt;dbl [2,930~
+##    var          var2           vars                      vector        vector2  
+##    &lt;chr&gt;        &lt;chr&gt;          &lt;chr&gt;                     &lt;list&gt;        &lt;list&gt;   
+##  1 Fireplaces   First_Flr_SF   Fireplaces.First_Flr_SF   &lt;dbl [2,930]&gt; &lt;dbl [2,~
+##  2 Fireplaces   Full_Bath      Fireplaces.Full_Bath      &lt;dbl [2,930]&gt; &lt;dbl [2,~
+##  3 Fireplaces   Garage_Area    Fireplaces.Garage_Area    &lt;dbl [2,930]&gt; &lt;dbl [2,~
+##  4 Fireplaces   Garage_Cars    Fireplaces.Garage_Cars    &lt;dbl [2,930]&gt; &lt;dbl [2,~
+##  5 Fireplaces   Gr_Liv_Area    Fireplaces.Gr_Liv_Area    &lt;dbl [2,930]&gt; &lt;dbl [2,~
+##  6 Fireplaces   Total_Bsmt_SF  Fireplaces.Total_Bsmt_SF  &lt;dbl [2,930]&gt; &lt;dbl [2,~
+##  7 Fireplaces   TotRms_AbvGrd  Fireplaces.TotRms_AbvGrd  &lt;dbl [2,930]&gt; &lt;dbl [2,~
+##  8 Fireplaces   Year_Built     Fireplaces.Year_Built     &lt;dbl [2,930]&gt; &lt;dbl [2,~
+##  9 Fireplaces   Year_Remod_Add Fireplaces.Year_Remod_Add &lt;dbl [2,930]&gt; &lt;dbl [2,~
+## 10 First_Flr_SF Fireplaces     First_Flr_SF.Fireplaces   &lt;dbl [2,930]&gt; &lt;dbl [2,~
 ## # ... with 80 more rows</code></pre>
 <p>If your operation of interest is associative<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>, apply a filter to remove additional redundant combinations.</p>
 <pre class="r"><code>c_sort_collapse &lt;- function(...){
@@ -200,18 +205,18 @@ df_lists_comb_as &lt;- df_lists_comb %&gt;%
   arrange(cor_pvalue) %&gt;% 
   print()</code></pre>
 <pre><code>## # A tibble: 45 x 6
-##    var        var2         vars                vector     vector2     cor_pvalue
-##    &lt;chr&gt;      &lt;chr&gt;        &lt;fct&gt;               &lt;list&gt;     &lt;list&gt;           &lt;dbl&gt;
-##  1 First_Flr~ Total_Bsmt_~ First_Flr_SF.Total~ &lt;dbl [2,9~ &lt;dbl [2,93~  0.       
-##  2 Full_Bath  Gr_Liv_Area  Full_Bath.Gr_Liv_A~ &lt;dbl [2,9~ &lt;dbl [2,93~  0.       
-##  3 Garage_Ar~ Garage_Cars  Garage_Area.Garage~ &lt;dbl [2,9~ &lt;dbl [2,93~  0.       
-##  4 Gr_Liv_Ar~ TotRms_AbvG~ Gr_Liv_Area.TotRms~ &lt;dbl [2,9~ &lt;dbl [2,93~  0.       
-##  5 Year_Built Year_Remod_~ Year_Built.Year_Re~ &lt;dbl [2,9~ &lt;dbl [2,93~  7.85e-301
-##  6 First_Flr~ Gr_Liv_Area  First_Flr_SF.Gr_Li~ &lt;dbl [2,9~ &lt;dbl [2,93~  8.17e-244
-##  7 Garage_Ca~ Year_Built   Garage_Cars.Year_B~ &lt;dbl [2,9~ &lt;dbl [2,93~  1.57e-219
-##  8 Full_Bath  TotRms_AbvG~ Full_Bath.TotRms_A~ &lt;dbl [2,9~ &lt;dbl [2,93~  1.24e-210
-##  9 First_Flr~ Garage_Area  First_Flr_SF.Garag~ &lt;dbl [2,9~ &lt;dbl [2,93~  8.16e-178
-## 10 Garage_Ca~ Gr_Liv_Area  Garage_Cars.Gr_Liv~ &lt;dbl [2,9~ &lt;dbl [2,93~  4.80e-175
+##    var          var2           vars              vector    vector2    cor_pvalue
+##    &lt;chr&gt;        &lt;chr&gt;          &lt;fct&gt;             &lt;list&gt;    &lt;list&gt;          &lt;dbl&gt;
+##  1 First_Flr_SF Total_Bsmt_SF  First_Flr_SF.Tot~ &lt;dbl [2,~ &lt;dbl [2,9~  0        
+##  2 Full_Bath    Gr_Liv_Area    Full_Bath.Gr_Liv~ &lt;dbl [2,~ &lt;dbl [2,9~  0        
+##  3 Garage_Area  Garage_Cars    Garage_Area.Gara~ &lt;dbl [2,~ &lt;dbl [2,9~  0        
+##  4 Gr_Liv_Area  TotRms_AbvGrd  Gr_Liv_Area.TotR~ &lt;dbl [2,~ &lt;dbl [2,9~  0        
+##  5 Year_Built   Year_Remod_Add Year_Built.Year_~ &lt;dbl [2,~ &lt;dbl [2,9~  7.85e-301
+##  6 First_Flr_SF Gr_Liv_Area    First_Flr_SF.Gr_~ &lt;dbl [2,~ &lt;dbl [2,9~  8.17e-244
+##  7 Garage_Cars  Year_Built     Garage_Cars.Year~ &lt;dbl [2,~ &lt;dbl [2,9~  1.57e-219
+##  8 Full_Bath    TotRms_AbvGrd  Full_Bath.TotRms~ &lt;dbl [2,~ &lt;dbl [2,9~  1.24e-210
+##  9 First_Flr_SF Garage_Area    First_Flr_SF.Gar~ &lt;dbl [2,~ &lt;dbl [2,9~  8.16e-178
+## 10 Garage_Cars  Gr_Liv_Area    Garage_Cars.Gr_L~ &lt;dbl [2,~ &lt;dbl [2,9~  4.80e-175
 ## # ... with 35 more rows</code></pre>
 <p>For fun, let’s plot the most significant associations onto a bar graph.</p>
 <pre class="r"><code>pairs_cor_pvalues %&gt;% 
