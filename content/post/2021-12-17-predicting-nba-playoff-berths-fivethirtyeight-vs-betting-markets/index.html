@@ -11,6 +11,7 @@ tags:
   - tidyverse
   - rvest
 codefolding_show: hide
+thumbnail: /2021/05/10/predicting-nba-playoff-berths-fivethirtyeight-vs-betting-markets/images/lakers-eliminated.PNG
 ---
 
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
@@ -28,8 +29,9 @@ codefolding_show: hide
 </ul></li>
 <li><a href="#analysis">Analysis</a>
 <ul>
-<li><a href="#how-much-does-fivethirtyeight-differ-from-markets">How much does FiveThirtyEight differ from markets?</a></li>
+<li><a href="#how-much-does-fivethirtyeight-differ-from-markets">How much does FiveThirtyEight <em>differ</em> from markets?</a></li>
 </ul></li>
+<li><a href="#closing-thought">Closing Thought</a></li>
 <li><a href="#appendix">Appendix</a>
 <ul>
 <li><a href="#potential-reasons-for-the-difference">Potential Reasons for the Difference</a></li>
@@ -38,61 +40,51 @@ codefolding_show: hide
 </ul>
 </div>
 
-<p><strong>TLDR:</strong> <em>FiveThirtyEight forecasts of NBA playoff berths seem to hold-up OK against betting markets.</em></p>
+<p><strong>TLDR:</strong> <em>FiveThirtyEight’s forecasts of NBA playoff berths seem to hold-up OK against betting markets. If you trust them, you should consider betting against the Lakers right now.</em></p>
 <p>In <a href="https://fivethirtyeight.com/features/oct-23-the-virtues-and-vices-of-election-prediction-markets/">The Virtues and Vices of Election Prediction Markets</a> Nate Silver explains why <a href="https://fivethirtyeight.com/">FiveThirtyEight</a> generally should <em>not</em> beat the market:</p>
 <blockquote>
 <p>“The general question of whether FiveThirtyEight ought to be better than prediction and betting markets is an interesting one. I am far from an efficient-market hypothesis purist, but markets are tough to beat in most circumstances. Furthermore, the FiveThirtyEight forecasts are public information, and bettors can use our forecasts along with those of our competitors to calibrate their estimates of the outcomes.”</p>
 </blockquote>
-<p>However FiveThirtyEight is doing a lot more with their forecasts than <em>just</em> predicting outcomes. Their forecasts provide the foundation of their data journalism covering interesting trends in sports and politics.</p>
-<p>We should expect FiveThirtyEight’s forecasts to have some tradeoffs between optimizing for performance and achieving their other goals of having explainabile, constructabile, and consistent forecasts. Their NBA model is based on a blend of team and individual player performance and is designed with various linear constraints in place that make it explainable to the public (see: <a href="https://fivethirtyeight.com/methodology/how-our-nba-predictions-work/#:~:text=Game%20predictions&amp;text=For%20a%20given%20lineup%2C%20we,the%20court%20at%20all%20times">How Our NBA Predictions Work</a>. However performance costs shouldn’t be <em>too</em> high – afterall our trust in FiveThirtyEight’s explanations is in large part dependent on their models’ predictive power.</p>
+<p>FiveThirtyEight does more with their forecasts than <em>just</em> predict outcomes. Their forecasts provide the foundation of their data journalism on trends in sports and politics. We should expect FiveThirtyEight’s forecasts to have some tradeoffs between optimizing for performance and being interpretable<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. Their NBA model is based on a blend of team and individual player performance and is designed with various linear constraints in place that make it explainable to the public (see: <a href="https://fivethirtyeight.com/methodology/how-our-nba-predictions-work/#:~:text=Game%20predictions&amp;text=For%20a%20given%20lineup%2C%20we,the%20court%20at%20all%20times">How Our NBA Predictions Work</a>).</p>
+<p>However performance costs shouldn’t be <em>too</em> high. Afterall, trust in FiveThirtyEight’s explanations is in large part dependent on their models’ predictive power.</p>
 <p><strong>The public <em>should</em> root for forecasters like FiveThirtyEight</strong></p>
-<p>Where betting markets exist, public forecasts like FiveThirtyEight’s add information into the system and can help markets reach more efficient prices. Where markets don’t exist, we are limited to the power of such forecasting processes – be it government impact assessments, weather forecasts, disease modeling… society gains as predictive power improves<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+<p>Where betting markets exist, public forecasts like FiveThirtyEight’s add information into the system and can help markets reach more efficient prices. Where markets don’t exist, we are limited to the power of such forecasting processes – be it government impact assessments, weather forecasts, disease modeling, … – society gains as predictive power improves<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
 <div id="nba-playoffs-and-the-lakers" class="section level1">
 <h1>NBA Playoffs and the Lakers</h1>
-<p>I was struck the other day by how big of a difference FiveThirtyEight’s forecast of whether the Lakers would make the playoffs was from that of the betting markets. This one-off observation made me wonder about their comparative performance and I remarked that they should add an additional reference to their documentation of <a href="https://projects.fivethirtyeight.com/checking-our-work/nba-playoffs/">How Good are FiveThirtyEight Forecasts</a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>:</p>
+<p>I was struck the other day by a substantial difference between FiveThirtyEight and the betting markets in their outlook on the Lakers. I remarked that FiveThirtyEight should add an additional point of comparison to their documentation of <a href="https://projects.fivethirtyeight.com/checking-our-work/nba-playoffs/">How Good are FiveThirtyEight Forecasts</a><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
 <blockquote class="twitter-tweet">
 <p lang="en" dir="ltr">
-Can <a href="https://twitter.com/FiveThirtyEight?ref_src=twsrc%5Etfw"><span class="citation">@FiveThirtyEight</span></a> please add the brier score of betting markets to their performance comparison charts?<br><br>(Perhaps just convert +/- payouts to implied probabilities.) <a href="https://t.co/5TkE2XE48D">pic.twitter.com/5TkE2XE48D</a>
+I get betting markets will be better but by how much?<br><br>For NBA predictions I feel like I'll see stuff wildly out-of-touch with betting markets (eg lakers 27% to make playoffs on 538 but -460 on betting markets) and I don't know what to think.
 </p>
-— Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1467868595258548232?ref_src=twsrc%5Etfw">December 6, 2021</a>
+— Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1467868597280251905?ref_src=twsrc%5Etfw">December 6, 2021</a>
 </blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<p>I could not (immediately) find performance comparisons beween betting markets and FiveThirtyEight forecasts of <em>NBA playoffs</em>, so decided to pull the data and write this post<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
-<p><a href="#analysis">Analysis</a> Spoiler: Turns out, FiveThirtyEight holds-up pretty well.</p>
+<p>I could not (immediately) find any performance comparisons beween betting markets and FiveThirtyEight forecasts of <em>NBA playoffs</em>, so pulled the data and wrote this post<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
+<p>Spoiler on <a href="#analysis">Analysis</a>: Turns out, FiveThirtyEight holds-up pretty well.</p>
 </div>
 <div id="data-prep" class="section level1">
 <h1>Data Prep</h1>
 <div id="scraping-betting-markets" class="section level2">
 <h2>Scraping Betting Markets</h2>
-<p>I scraped the data of historical betting markets and which teams actually made the playoffs each season from the “Archived NBA Futures Odds” section of <a href="https://www.sportsoddshistory.com/nba-odds/">Sports Odds History</a> using the <a href="https://github.com/tidyverse/rvest">rvest</a> package. The Sports Odds History website is constructed in a way that makes it relatively straight-forward to scrape the requisite information.</p>
-<div class="figure">
-<img src="images/archive-overall.PNG" alt="" />
-<p class="caption">Image of sports odds history URL with available Playoff years circled</p>
-</div>
+<p>I scraped historical betting lines and which teams actually made the playoffs each season from the “Archived NBA Futures Odds” section of <a href="https://www.sportsoddshistory.com/nba-odds/">Sports Odds History</a><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. The Sports Odds History website is constructed in a way that makes it relatively straight-forward to scrape the requisite information.</p>
+<p><img src="images/archive-overall.PNG" /></p>
 <p>The webpage for each season had a (mostly) consistent table structure and associated date of archive.</p>
-<div class="figure">
-<img src="images/example-table.PNG" alt="" />
-<p class="caption">Image of odds and archive date highlighted for an individual table</p>
-</div>
+<p><img src="images/example-table.PNG" /></p>
 <p>Each season had a consistent URL (with only the season year changing).</p>
-<div class="figure">
-<img src="images/example-url.PNG" alt="" />
-<p class="caption">Image of URL</p>
-</div>
+<p><img src="images/example-url.PNG" /></p>
 <div id="steps" class="section level3">
 <h3>Steps</h3>
 <ol style="list-style-type: decimal">
 <li>Create table with URL’s to scrape</li>
 <li>For each URL repeat steps 3 to 6</li>
-<li>Scrape table containing Teams, betting odds, and outcomes (whether team actually made it to playoffs that season)</li>
-<li>Convert from betting lines to odds (e.g. +400 becomes 0.25)</li>
-<li>Tables contain the betting odds for both “making the playoffs” and “missing the playoffs” you might expect these to be inverses of one another, but they actually are slightly different – the difference provides room for The House to make a profit. (This might be generous to the betting markets) I took the average of the implied odds of making the playoffs between both columns (“make” and “miss”) to get at what is likely a closer estimate of where the betting markets actually expect the line to be.</li>
-<li>Scrape associated date and join to table</li>
-<li>Bind data from all seasons together</li>
+<li>Scrape table containing Teams, betting odds, and outcomes<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></li>
+<li>Convert from payouts to odds (e.g. +400 becomes 0.25)</li>
+<li>Tables contain the betting odds of both “making the playoffs” and “missing the playoffs”<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>. I took the average of the implied odds of making the playoffs between both columns (“make” and “miss”). This might be generous to the betting markets but likely gets at a closer estimate of where the markets actually expect the odds to be.</li>
+<li>Scrape <em>date</em> archived and join to table</li>
+<li>Bind data from all scraped pages / seasons together</li>
 <li>Convert from odds to probability</li>
 </ol>
-<p>I’ve labeled each respective <code># step</code> in the code.</p>
-<p><strong>Packages and helper functions</strong></p>
+<p><em>Load packages and helper functions</em></p>
 <pre class="r"><code># Load packages
 library(tidyverse)
 library(rvest)
@@ -122,6 +114,7 @@ line_to_odds &lt;- function(x){
 odds_to_prob &lt;- function(odds){
   odds / (1 + odds)
 }</code></pre>
+<p>I’ve labeled each respective <code># step</code> in the code sections below.</p>
 <p><strong>Step 1</strong></p>
 <pre class="r"><code># step 1
 scrape_urls &lt;- tibble(start_yr = 2014:2020, end_yr = 2015:2021) %&gt;% 
@@ -138,7 +131,7 @@ scrape_urls %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#zruceqgpkb .gt_table {
+#gszmbijzye .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -163,7 +156,7 @@ scrape_urls %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#zruceqgpkb .gt_heading {
+#gszmbijzye .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -175,7 +168,7 @@ scrape_urls %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#zruceqgpkb .gt_title {
+#gszmbijzye .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -185,7 +178,7 @@ scrape_urls %&gt;%
   border-bottom-width: 0;
 }
 
-#zruceqgpkb .gt_subtitle {
+#gszmbijzye .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -195,13 +188,13 @@ scrape_urls %&gt;%
   border-top-width: 0;
 }
 
-#zruceqgpkb .gt_bottom_border {
+#gszmbijzye .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#zruceqgpkb .gt_col_headings {
+#gszmbijzye .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -216,7 +209,7 @@ scrape_urls %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#zruceqgpkb .gt_col_heading {
+#gszmbijzye .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -236,7 +229,7 @@ scrape_urls %&gt;%
   overflow-x: hidden;
 }
 
-#zruceqgpkb .gt_column_spanner_outer {
+#gszmbijzye .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -248,15 +241,15 @@ scrape_urls %&gt;%
   padding-right: 4px;
 }
 
-#zruceqgpkb .gt_column_spanner_outer:first-child {
+#gszmbijzye .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#zruceqgpkb .gt_column_spanner_outer:last-child {
+#gszmbijzye .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#zruceqgpkb .gt_column_spanner {
+#gszmbijzye .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -268,7 +261,7 @@ scrape_urls %&gt;%
   width: 100%;
 }
 
-#zruceqgpkb .gt_group_heading {
+#gszmbijzye .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -290,7 +283,7 @@ scrape_urls %&gt;%
   vertical-align: middle;
 }
 
-#zruceqgpkb .gt_empty_group_heading {
+#gszmbijzye .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -305,15 +298,15 @@ scrape_urls %&gt;%
   vertical-align: middle;
 }
 
-#zruceqgpkb .gt_from_md > :first-child {
+#gszmbijzye .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#zruceqgpkb .gt_from_md > :last-child {
+#gszmbijzye .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#zruceqgpkb .gt_row {
+#gszmbijzye .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -332,7 +325,7 @@ scrape_urls %&gt;%
   overflow-x: hidden;
 }
 
-#zruceqgpkb .gt_stub {
+#gszmbijzye .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -344,7 +337,7 @@ scrape_urls %&gt;%
   padding-left: 12px;
 }
 
-#zruceqgpkb .gt_summary_row {
+#gszmbijzye .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -354,7 +347,7 @@ scrape_urls %&gt;%
   padding-right: 5px;
 }
 
-#zruceqgpkb .gt_first_summary_row {
+#gszmbijzye .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -364,7 +357,7 @@ scrape_urls %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#zruceqgpkb .gt_grand_summary_row {
+#gszmbijzye .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -374,7 +367,7 @@ scrape_urls %&gt;%
   padding-right: 5px;
 }
 
-#zruceqgpkb .gt_first_grand_summary_row {
+#gszmbijzye .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -384,11 +377,11 @@ scrape_urls %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#zruceqgpkb .gt_striped {
+#gszmbijzye .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#zruceqgpkb .gt_table_body {
+#gszmbijzye .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -397,7 +390,7 @@ scrape_urls %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#zruceqgpkb .gt_footnotes {
+#gszmbijzye .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -411,13 +404,13 @@ scrape_urls %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#zruceqgpkb .gt_footnote {
+#gszmbijzye .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#zruceqgpkb .gt_sourcenotes {
+#gszmbijzye .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -431,46 +424,46 @@ scrape_urls %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#zruceqgpkb .gt_sourcenote {
+#gszmbijzye .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#zruceqgpkb .gt_left {
+#gszmbijzye .gt_left {
   text-align: left;
 }
 
-#zruceqgpkb .gt_center {
+#gszmbijzye .gt_center {
   text-align: center;
 }
 
-#zruceqgpkb .gt_right {
+#gszmbijzye .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#zruceqgpkb .gt_font_normal {
+#gszmbijzye .gt_font_normal {
   font-weight: normal;
 }
 
-#zruceqgpkb .gt_font_bold {
+#gszmbijzye .gt_font_bold {
   font-weight: bold;
 }
 
-#zruceqgpkb .gt_font_italic {
+#gszmbijzye .gt_font_italic {
   font-style: italic;
 }
 
-#zruceqgpkb .gt_super {
+#gszmbijzye .gt_super {
   font-size: 65%;
 }
 
-#zruceqgpkb .gt_footnote_marks {
+#gszmbijzye .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="zruceqgpkb" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="gszmbijzye" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -589,10 +582,10 @@ scraped_urls &lt;- scrape_urls %&gt;%
 <div id="joining-with-fivethirtyeight-data" class="section level2">
 <h2>Joining with FiveThirtyEight data</h2>
 <ol start="9" style="list-style-type: decimal">
-<li>All FiveThirtyEight forecasts were available in a .csv on github <a href="https://github.com/fivethirtyeight/checking-our-work-data/blob/master/nba_playoffs.csv">here</a>.</li>
-<li>FiveThirtyEight updates their forecasts <em>every</em> day but for the betting markets I only have <em>one</em> day of forecasts for each season. I filtered FiveThirtyEight forecasts to <em>just</em> those days that I had market data (so that the forecasts and betting markets being compared were created the same day)</li>
-<li>Joined FiveThirtyEight forecasts with betting market and outcome data.</li>
-<li>Betting market data was not available for a few teams in some seasons – these records were removed.</li>
+<li>All FiveThirtyEight NBA playoff forecasts were available in a .csv on github <a href="https://github.com/fivethirtyeight/checking-our-work-data/blob/master/nba_playoffs.csv">here</a>.</li>
+<li>FiveThirtyEight updates their forecasts <em>every</em> day. For the archived betting market payouts there is only <em>one</em> day of odds for each season. I filtered FiveThirtyEight forecasts to <em>just</em> those days where I also had market data<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</li>
+<li>Joined FiveThirtyEight forecasts with market and outcome data.</li>
+<li>In a few instances market data was not available, in which case I also filtered out the corresponding FiveThirtyEight records.</li>
 </ol>
 <p><strong>Steps 9 to 12</strong></p>
 <pre class="r"><code># step 9
@@ -608,7 +601,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   na.omit() %&gt;% 
   # mutate(make_playoffs_avg = (make_playoffs_538 + make_playoffs_bookies) / 2) %&gt;% 
   relocate(result, .after = team)</code></pre>
-<p><em>Resulting table, ready for analysis (first 5 rows of)</em></p>
+<p><em>Resulting table for analysis (preview of 5 rows)</em></p>
 <pre class="r"><code>bookies_538_joined %&gt;% 
   head(5) %&gt;% 
   gt::gt() %&gt;% 
@@ -617,7 +610,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#nfiazemmie .gt_table {
+#gvfgapchej .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -642,7 +635,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#nfiazemmie .gt_heading {
+#gvfgapchej .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -654,7 +647,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#nfiazemmie .gt_title {
+#gvfgapchej .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -664,7 +657,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-bottom-width: 0;
 }
 
-#nfiazemmie .gt_subtitle {
+#gvfgapchej .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -674,13 +667,13 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-top-width: 0;
 }
 
-#nfiazemmie .gt_bottom_border {
+#gvfgapchej .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#nfiazemmie .gt_col_headings {
+#gvfgapchej .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -695,7 +688,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#nfiazemmie .gt_col_heading {
+#gvfgapchej .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -715,7 +708,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   overflow-x: hidden;
 }
 
-#nfiazemmie .gt_column_spanner_outer {
+#gvfgapchej .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -727,15 +720,15 @@ bookies_538_joined &lt;- data_538 %&gt;%
   padding-right: 4px;
 }
 
-#nfiazemmie .gt_column_spanner_outer:first-child {
+#gvfgapchej .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#nfiazemmie .gt_column_spanner_outer:last-child {
+#gvfgapchej .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#nfiazemmie .gt_column_spanner {
+#gvfgapchej .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -747,7 +740,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   width: 100%;
 }
 
-#nfiazemmie .gt_group_heading {
+#gvfgapchej .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -769,7 +762,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   vertical-align: middle;
 }
 
-#nfiazemmie .gt_empty_group_heading {
+#gvfgapchej .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -784,15 +777,15 @@ bookies_538_joined &lt;- data_538 %&gt;%
   vertical-align: middle;
 }
 
-#nfiazemmie .gt_from_md > :first-child {
+#gvfgapchej .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#nfiazemmie .gt_from_md > :last-child {
+#gvfgapchej .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#nfiazemmie .gt_row {
+#gvfgapchej .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -811,7 +804,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   overflow-x: hidden;
 }
 
-#nfiazemmie .gt_stub {
+#gvfgapchej .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -823,7 +816,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   padding-left: 12px;
 }
 
-#nfiazemmie .gt_summary_row {
+#gvfgapchej .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -833,7 +826,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   padding-right: 5px;
 }
 
-#nfiazemmie .gt_first_summary_row {
+#gvfgapchej .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -843,7 +836,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#nfiazemmie .gt_grand_summary_row {
+#gvfgapchej .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -853,7 +846,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   padding-right: 5px;
 }
 
-#nfiazemmie .gt_first_grand_summary_row {
+#gvfgapchej .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -863,11 +856,11 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#nfiazemmie .gt_striped {
+#gvfgapchej .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#nfiazemmie .gt_table_body {
+#gvfgapchej .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -876,7 +869,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#nfiazemmie .gt_footnotes {
+#gvfgapchej .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -890,13 +883,13 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#nfiazemmie .gt_footnote {
+#gvfgapchej .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#nfiazemmie .gt_sourcenotes {
+#gvfgapchej .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -910,46 +903,46 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#nfiazemmie .gt_sourcenote {
+#gvfgapchej .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#nfiazemmie .gt_left {
+#gvfgapchej .gt_left {
   text-align: left;
 }
 
-#nfiazemmie .gt_center {
+#gvfgapchej .gt_center {
   text-align: center;
 }
 
-#nfiazemmie .gt_right {
+#gvfgapchej .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#nfiazemmie .gt_font_normal {
+#gvfgapchej .gt_font_normal {
   font-weight: normal;
 }
 
-#nfiazemmie .gt_font_bold {
+#gvfgapchej .gt_font_bold {
   font-weight: bold;
 }
 
-#nfiazemmie .gt_font_italic {
+#gvfgapchej .gt_font_italic {
   font-style: italic;
 }
 
-#nfiazemmie .gt_super {
+#gvfgapchej .gt_super {
   font-size: 65%;
 }
 
-#nfiazemmie .gt_footnote_marks {
+#gvfgapchej .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="nfiazemmie" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="gvfgapchej" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -1010,9 +1003,8 @@ bookies_538_joined &lt;- data_538 %&gt;%
 </div>
 <div id="analysis" class="section level1">
 <h1>Analysis</h1>
-<p>FiveThirtyEight tends to use the <a href="https://en.wikipedia.org/wiki/Brier_score">Brier Score</a> (essentially the root mean squared error of the classification) in their performance evaluations<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
-<p>A quick t-test suggests no significant difference in performance between betting markets and FiveThirtyEight.</p>
-<p><em>Overall</em></p>
+<p>FiveThirtyEight uses the <a href="https://en.wikipedia.org/wiki/Brier_score">Brier Score</a><a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> in their evaluations of model performance (see <a href="https://fivethirtyeight.com/features/some-dos-and-donts-for-evaluating-senate-forecasts/">Some Do’s and Don’t’s For Evaluating Senate Forecasts</a>)<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
+<p><em>Overall performance</em></p>
 <pre class="r"><code>### helper functions
 t_test_playoffs &lt;- function(df){
   df %&gt;% 
@@ -1046,7 +1038,7 @@ bookies_538_joined %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#llcqecbefa .gt_table {
+#maiadlrgza .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1071,7 +1063,7 @@ bookies_538_joined %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#llcqecbefa .gt_heading {
+#maiadlrgza .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1083,7 +1075,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#llcqecbefa .gt_title {
+#maiadlrgza .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1093,7 +1085,7 @@ bookies_538_joined %&gt;%
   border-bottom-width: 0;
 }
 
-#llcqecbefa .gt_subtitle {
+#maiadlrgza .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1103,13 +1095,13 @@ bookies_538_joined %&gt;%
   border-top-width: 0;
 }
 
-#llcqecbefa .gt_bottom_border {
+#maiadlrgza .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#llcqecbefa .gt_col_headings {
+#maiadlrgza .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1124,7 +1116,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#llcqecbefa .gt_col_heading {
+#maiadlrgza .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1144,7 +1136,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#llcqecbefa .gt_column_spanner_outer {
+#maiadlrgza .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1156,15 +1148,15 @@ bookies_538_joined %&gt;%
   padding-right: 4px;
 }
 
-#llcqecbefa .gt_column_spanner_outer:first-child {
+#maiadlrgza .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#llcqecbefa .gt_column_spanner_outer:last-child {
+#maiadlrgza .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#llcqecbefa .gt_column_spanner {
+#maiadlrgza .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1176,7 +1168,7 @@ bookies_538_joined %&gt;%
   width: 100%;
 }
 
-#llcqecbefa .gt_group_heading {
+#maiadlrgza .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1198,7 +1190,7 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#llcqecbefa .gt_empty_group_heading {
+#maiadlrgza .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1213,15 +1205,15 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#llcqecbefa .gt_from_md > :first-child {
+#maiadlrgza .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#llcqecbefa .gt_from_md > :last-child {
+#maiadlrgza .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#llcqecbefa .gt_row {
+#maiadlrgza .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1240,7 +1232,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#llcqecbefa .gt_stub {
+#maiadlrgza .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1252,7 +1244,7 @@ bookies_538_joined %&gt;%
   padding-left: 12px;
 }
 
-#llcqecbefa .gt_summary_row {
+#maiadlrgza .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1262,7 +1254,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#llcqecbefa .gt_first_summary_row {
+#maiadlrgza .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1272,7 +1264,7 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#llcqecbefa .gt_grand_summary_row {
+#maiadlrgza .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1282,7 +1274,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#llcqecbefa .gt_first_grand_summary_row {
+#maiadlrgza .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1292,11 +1284,11 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#llcqecbefa .gt_striped {
+#maiadlrgza .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#llcqecbefa .gt_table_body {
+#maiadlrgza .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1305,7 +1297,7 @@ bookies_538_joined %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#llcqecbefa .gt_footnotes {
+#maiadlrgza .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1319,13 +1311,13 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#llcqecbefa .gt_footnote {
+#maiadlrgza .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#llcqecbefa .gt_sourcenotes {
+#maiadlrgza .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1339,46 +1331,46 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#llcqecbefa .gt_sourcenote {
+#maiadlrgza .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#llcqecbefa .gt_left {
+#maiadlrgza .gt_left {
   text-align: left;
 }
 
-#llcqecbefa .gt_center {
+#maiadlrgza .gt_center {
   text-align: center;
 }
 
-#llcqecbefa .gt_right {
+#maiadlrgza .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#llcqecbefa .gt_font_normal {
+#maiadlrgza .gt_font_normal {
   font-weight: normal;
 }
 
-#llcqecbefa .gt_font_bold {
+#maiadlrgza .gt_font_bold {
   font-weight: bold;
 }
 
-#llcqecbefa .gt_font_italic {
+#maiadlrgza .gt_font_italic {
   font-style: italic;
 }
 
-#llcqecbefa .gt_super {
+#maiadlrgza .gt_super {
   font-size: 65%;
 }
 
-#llcqecbefa .gt_footnote_marks {
+#maiadlrgza .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="llcqecbefa" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="maiadlrgza" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -1403,7 +1395,7 @@ bookies_538_joined %&gt;%
   
   
 </table></div>
-<p><em>By Season</em></p>
+<p><em>Performance by Season</em></p>
 <pre class="r"><code>bookies_538_joined %&gt;% 
   mutate(across(starts_with(&quot;make_playoffs&quot;), ~(result - .x)^2)) %&gt;% 
   group_nest(season) %&gt;% 
@@ -1415,7 +1407,7 @@ bookies_538_joined %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#gdtgpbobpb .gt_table {
+#mfysbormvu .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1440,7 +1432,7 @@ bookies_538_joined %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#gdtgpbobpb .gt_heading {
+#mfysbormvu .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1452,7 +1444,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#gdtgpbobpb .gt_title {
+#mfysbormvu .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1462,7 +1454,7 @@ bookies_538_joined %&gt;%
   border-bottom-width: 0;
 }
 
-#gdtgpbobpb .gt_subtitle {
+#mfysbormvu .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1472,13 +1464,13 @@ bookies_538_joined %&gt;%
   border-top-width: 0;
 }
 
-#gdtgpbobpb .gt_bottom_border {
+#mfysbormvu .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#gdtgpbobpb .gt_col_headings {
+#mfysbormvu .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1493,7 +1485,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#gdtgpbobpb .gt_col_heading {
+#mfysbormvu .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1513,7 +1505,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#gdtgpbobpb .gt_column_spanner_outer {
+#mfysbormvu .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1525,15 +1517,15 @@ bookies_538_joined %&gt;%
   padding-right: 4px;
 }
 
-#gdtgpbobpb .gt_column_spanner_outer:first-child {
+#mfysbormvu .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#gdtgpbobpb .gt_column_spanner_outer:last-child {
+#mfysbormvu .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#gdtgpbobpb .gt_column_spanner {
+#mfysbormvu .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1545,7 +1537,7 @@ bookies_538_joined %&gt;%
   width: 100%;
 }
 
-#gdtgpbobpb .gt_group_heading {
+#mfysbormvu .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1567,7 +1559,7 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#gdtgpbobpb .gt_empty_group_heading {
+#mfysbormvu .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1582,15 +1574,15 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#gdtgpbobpb .gt_from_md > :first-child {
+#mfysbormvu .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#gdtgpbobpb .gt_from_md > :last-child {
+#mfysbormvu .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#gdtgpbobpb .gt_row {
+#mfysbormvu .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1609,7 +1601,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#gdtgpbobpb .gt_stub {
+#mfysbormvu .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1621,7 +1613,7 @@ bookies_538_joined %&gt;%
   padding-left: 12px;
 }
 
-#gdtgpbobpb .gt_summary_row {
+#mfysbormvu .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1631,7 +1623,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#gdtgpbobpb .gt_first_summary_row {
+#mfysbormvu .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1641,7 +1633,7 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#gdtgpbobpb .gt_grand_summary_row {
+#mfysbormvu .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1651,7 +1643,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#gdtgpbobpb .gt_first_grand_summary_row {
+#mfysbormvu .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1661,11 +1653,11 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#gdtgpbobpb .gt_striped {
+#mfysbormvu .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#gdtgpbobpb .gt_table_body {
+#mfysbormvu .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1674,7 +1666,7 @@ bookies_538_joined %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#gdtgpbobpb .gt_footnotes {
+#mfysbormvu .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1688,13 +1680,13 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#gdtgpbobpb .gt_footnote {
+#mfysbormvu .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#gdtgpbobpb .gt_sourcenotes {
+#mfysbormvu .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1708,46 +1700,46 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#gdtgpbobpb .gt_sourcenote {
+#mfysbormvu .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#gdtgpbobpb .gt_left {
+#mfysbormvu .gt_left {
   text-align: left;
 }
 
-#gdtgpbobpb .gt_center {
+#mfysbormvu .gt_center {
   text-align: center;
 }
 
-#gdtgpbobpb .gt_right {
+#mfysbormvu .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#gdtgpbobpb .gt_font_normal {
+#mfysbormvu .gt_font_normal {
   font-weight: normal;
 }
 
-#gdtgpbobpb .gt_font_bold {
+#mfysbormvu .gt_font_bold {
   font-weight: bold;
 }
 
-#gdtgpbobpb .gt_font_italic {
+#mfysbormvu .gt_font_italic {
   font-style: italic;
 }
 
-#gdtgpbobpb .gt_super {
+#mfysbormvu .gt_super {
   font-size: 65%;
 }
 
-#gdtgpbobpb .gt_footnote_marks {
+#mfysbormvu .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="gdtgpbobpb" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="mfysbormvu" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -1810,19 +1802,13 @@ bookies_538_joined %&gt;%
   
   
 </table></div>
-<p>Other ways to segment this could be by make/miss playoffs, high/low forecasted probabilities, reviewing an ensemble of bookies and 538 forecasts… but I don’t really expect any of these to be interesting so I’ll leave it there<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.</p>
+<p>The p-values from the quick t-tests above suggest no statistically significant difference in performance between betting markets and FiveThirtyEight<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>.</p>
 <div id="how-much-does-fivethirtyeight-differ-from-markets" class="section level2">
-<h2>How much does FiveThirtyEight differ from markets?</h2>
-<p>Circling back, what got me writing was noticing a large one-off difference between FiveThirtyEight and betting markets in their view of the Lakers playoff chances:</p>
-<blockquote class="twitter-tweet">
-<p lang="en" dir="ltr">
-When I see big differences i get tempted to write-off 538.<br><br>But maybe it's just different but still meaningful (even if less performative at margins).<br><br>I don't look at it systematically enough to know (so why another comparison point–eg betting markets–would be helpful).
-</p>
-— Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1467868598576328714?ref_src=twsrc%5Etfw">December 6, 2021</a>
-</blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<p>At -460 this would put the implied probability of the Lakers making the playoffs at ~82%<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. This makes the difference between FiveThirtyEight’s forecast (27% chance Lakers make the playoffs) and the betting markets ~55 percentage points (ppt).</p>
-<p>The average difference between FiveThirtyEight and betting markets across five seasons (145 observations) of data was ~10 percentage points.</p>
+<h2>How much does FiveThirtyEight <em>differ</em> from markets?</h2>
+<p>Overall performance may be similar even when individual forecasts are quite different. Circling back to the start of <a href="#nba-playoffs-and-the-lakers">NBA Playoffs and the Lakers</a>, what got me writing was noticing FiveThirtyEight’s divergence from the betting markets in their recent view of the Lakers’ playoff chances.</p>
+<p>At -460 the markets had an implied probability of the Lakers making the playoffs of ~82%<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>. FiveThirtyEight’s forecast of 27% meant a difference of ~55 percentage points (ppt).</p>
+<p><strong>Is this difference atypical?</strong></p>
+<p>Across five seasons of data (145 observations), the average difference between FiveThirtyEight and betting markets was ~10 percentage points.</p>
 <pre class="r"><code>bookies_538_joined %&gt;% 
   mutate(diff = abs(make_playoffs_538 - make_playoffs_bookies)) %&gt;% 
   # summarise(mean_diff = mean(diff)) %&gt;% 
@@ -1836,7 +1822,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#jczfggjqat .gt_table {
+#egpbplfnaf .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1861,7 +1847,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-left-color: #D3D3D3;
 }
 
-#jczfggjqat .gt_heading {
+#egpbplfnaf .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1873,7 +1859,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-right-color: #D3D3D3;
 }
 
-#jczfggjqat .gt_title {
+#egpbplfnaf .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1883,7 +1869,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-bottom-width: 0;
 }
 
-#jczfggjqat .gt_subtitle {
+#egpbplfnaf .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1893,13 +1879,13 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-top-width: 0;
 }
 
-#jczfggjqat .gt_bottom_border {
+#egpbplfnaf .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#jczfggjqat .gt_col_headings {
+#egpbplfnaf .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1914,7 +1900,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-right-color: #D3D3D3;
 }
 
-#jczfggjqat .gt_col_heading {
+#egpbplfnaf .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1934,7 +1920,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   overflow-x: hidden;
 }
 
-#jczfggjqat .gt_column_spanner_outer {
+#egpbplfnaf .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1946,15 +1932,15 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   padding-right: 4px;
 }
 
-#jczfggjqat .gt_column_spanner_outer:first-child {
+#egpbplfnaf .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#jczfggjqat .gt_column_spanner_outer:last-child {
+#egpbplfnaf .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#jczfggjqat .gt_column_spanner {
+#egpbplfnaf .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1966,7 +1952,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   width: 100%;
 }
 
-#jczfggjqat .gt_group_heading {
+#egpbplfnaf .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1988,7 +1974,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   vertical-align: middle;
 }
 
-#jczfggjqat .gt_empty_group_heading {
+#egpbplfnaf .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2003,15 +1989,15 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   vertical-align: middle;
 }
 
-#jczfggjqat .gt_from_md > :first-child {
+#egpbplfnaf .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#jczfggjqat .gt_from_md > :last-child {
+#egpbplfnaf .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#jczfggjqat .gt_row {
+#egpbplfnaf .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2030,7 +2016,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   overflow-x: hidden;
 }
 
-#jczfggjqat .gt_stub {
+#egpbplfnaf .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2042,7 +2028,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   padding-left: 12px;
 }
 
-#jczfggjqat .gt_summary_row {
+#egpbplfnaf .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2052,7 +2038,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   padding-right: 5px;
 }
 
-#jczfggjqat .gt_first_summary_row {
+#egpbplfnaf .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2062,7 +2048,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-top-color: #D3D3D3;
 }
 
-#jczfggjqat .gt_grand_summary_row {
+#egpbplfnaf .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2072,7 +2058,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   padding-right: 5px;
 }
 
-#jczfggjqat .gt_first_grand_summary_row {
+#egpbplfnaf .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2082,11 +2068,11 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-top-color: #D3D3D3;
 }
 
-#jczfggjqat .gt_striped {
+#egpbplfnaf .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#jczfggjqat .gt_table_body {
+#egpbplfnaf .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2095,7 +2081,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-bottom-color: #D3D3D3;
 }
 
-#jczfggjqat .gt_footnotes {
+#egpbplfnaf .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2109,13 +2095,13 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-right-color: #D3D3D3;
 }
 
-#jczfggjqat .gt_footnote {
+#egpbplfnaf .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#jczfggjqat .gt_sourcenotes {
+#egpbplfnaf .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2129,46 +2115,46 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-right-color: #D3D3D3;
 }
 
-#jczfggjqat .gt_sourcenote {
+#egpbplfnaf .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#jczfggjqat .gt_left {
+#egpbplfnaf .gt_left {
   text-align: left;
 }
 
-#jczfggjqat .gt_center {
+#egpbplfnaf .gt_center {
   text-align: center;
 }
 
-#jczfggjqat .gt_right {
+#egpbplfnaf .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#jczfggjqat .gt_font_normal {
+#egpbplfnaf .gt_font_normal {
   font-weight: normal;
 }
 
-#jczfggjqat .gt_font_bold {
+#egpbplfnaf .gt_font_bold {
   font-weight: bold;
 }
 
-#jczfggjqat .gt_font_italic {
+#egpbplfnaf .gt_font_italic {
   font-style: italic;
 }
 
-#jczfggjqat .gt_super {
+#egpbplfnaf .gt_super {
   font-size: 65%;
 }
 
-#jczfggjqat .gt_footnote_marks {
+#egpbplfnaf .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="jczfggjqat" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="egpbplfnaf" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -2187,7 +2173,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   
   
 </table></div>
-<p>A difference of 55 ppt is bigger than any I saw in the historical data. The closest was 48 percentage points:</p>
+<p>A difference of 55 ppt is bigger than any I saw in the historical data. The closest was 48 ppt<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>:</p>
 <pre class="r"><code>bookies_538_joined %&gt;% 
   mutate(make_playoffs_diff = abs(make_playoffs_538 - make_playoffs_bookies)) %&gt;% 
   arrange(desc(make_playoffs_diff)) %&gt;% 
@@ -2199,7 +2185,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#snofbvmvvh .gt_table {
+#cgjwutbkzz .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -2224,7 +2210,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-left-color: #D3D3D3;
 }
 
-#snofbvmvvh .gt_heading {
+#cgjwutbkzz .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2236,7 +2222,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-right-color: #D3D3D3;
 }
 
-#snofbvmvvh .gt_title {
+#cgjwutbkzz .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2246,7 +2232,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-bottom-width: 0;
 }
 
-#snofbvmvvh .gt_subtitle {
+#cgjwutbkzz .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2256,13 +2242,13 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-top-width: 0;
 }
 
-#snofbvmvvh .gt_bottom_border {
+#cgjwutbkzz .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#snofbvmvvh .gt_col_headings {
+#cgjwutbkzz .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2277,7 +2263,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-right-color: #D3D3D3;
 }
 
-#snofbvmvvh .gt_col_heading {
+#cgjwutbkzz .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2297,7 +2283,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   overflow-x: hidden;
 }
 
-#snofbvmvvh .gt_column_spanner_outer {
+#cgjwutbkzz .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2309,15 +2295,15 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   padding-right: 4px;
 }
 
-#snofbvmvvh .gt_column_spanner_outer:first-child {
+#cgjwutbkzz .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#snofbvmvvh .gt_column_spanner_outer:last-child {
+#cgjwutbkzz .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#snofbvmvvh .gt_column_spanner {
+#cgjwutbkzz .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2329,7 +2315,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   width: 100%;
 }
 
-#snofbvmvvh .gt_group_heading {
+#cgjwutbkzz .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2351,7 +2337,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   vertical-align: middle;
 }
 
-#snofbvmvvh .gt_empty_group_heading {
+#cgjwutbkzz .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2366,15 +2352,15 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   vertical-align: middle;
 }
 
-#snofbvmvvh .gt_from_md > :first-child {
+#cgjwutbkzz .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#snofbvmvvh .gt_from_md > :last-child {
+#cgjwutbkzz .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#snofbvmvvh .gt_row {
+#cgjwutbkzz .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2393,7 +2379,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   overflow-x: hidden;
 }
 
-#snofbvmvvh .gt_stub {
+#cgjwutbkzz .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2405,7 +2391,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   padding-left: 12px;
 }
 
-#snofbvmvvh .gt_summary_row {
+#cgjwutbkzz .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2415,7 +2401,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   padding-right: 5px;
 }
 
-#snofbvmvvh .gt_first_summary_row {
+#cgjwutbkzz .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2425,7 +2411,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-top-color: #D3D3D3;
 }
 
-#snofbvmvvh .gt_grand_summary_row {
+#cgjwutbkzz .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2435,7 +2421,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   padding-right: 5px;
 }
 
-#snofbvmvvh .gt_first_grand_summary_row {
+#cgjwutbkzz .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2445,11 +2431,11 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-top-color: #D3D3D3;
 }
 
-#snofbvmvvh .gt_striped {
+#cgjwutbkzz .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#snofbvmvvh .gt_table_body {
+#cgjwutbkzz .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2458,7 +2444,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-bottom-color: #D3D3D3;
 }
 
-#snofbvmvvh .gt_footnotes {
+#cgjwutbkzz .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2472,13 +2458,13 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-right-color: #D3D3D3;
 }
 
-#snofbvmvvh .gt_footnote {
+#cgjwutbkzz .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#snofbvmvvh .gt_sourcenotes {
+#cgjwutbkzz .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2492,46 +2478,46 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   border-right-color: #D3D3D3;
 }
 
-#snofbvmvvh .gt_sourcenote {
+#cgjwutbkzz .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#snofbvmvvh .gt_left {
+#cgjwutbkzz .gt_left {
   text-align: left;
 }
 
-#snofbvmvvh .gt_center {
+#cgjwutbkzz .gt_center {
   text-align: center;
 }
 
-#snofbvmvvh .gt_right {
+#cgjwutbkzz .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#snofbvmvvh .gt_font_normal {
+#cgjwutbkzz .gt_font_normal {
   font-weight: normal;
 }
 
-#snofbvmvvh .gt_font_bold {
+#cgjwutbkzz .gt_font_bold {
   font-weight: bold;
 }
 
-#snofbvmvvh .gt_font_italic {
+#cgjwutbkzz .gt_font_italic {
   font-style: italic;
 }
 
-#snofbvmvvh .gt_super {
+#cgjwutbkzz .gt_super {
   font-size: 65%;
 }
 
-#snofbvmvvh .gt_footnote_marks {
+#cgjwutbkzz .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="snofbvmvvh" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="cgjwutbkzz" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -2558,19 +2544,30 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
   
   
 </table></div>
-<p>In the <a href="#appendix">Appendix</a> I give some <a href="#potential-reasons-for-the-difference">Potential Reasons for the Difference</a> but on its surface 55 ppt does seem like a historically large divergence between FiveThirtyEight and the betting markets.</p>
-<p>Given the (apparent) relative parity in performance between FiveThirtyEight and the betting markets, it may not be clear who you should bet on. For the reasons given in the Introduction, I would lean towards trusting the betting markets – I would be surprised if, after looking at a larger swathe of data, the markets did not come-out significantly better than FiveThirtyEight<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>. But the <a href="https://sportsbook.draftkings.com/nba-finals?category=wins/playoffs&amp;subcategory=to-make-the-playoffs">current line</a> on draft kings of +450 of the Lakers <em>not making</em> the playoffs is perhaps an opportunity that deserves a closer look<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>…</p>
+<p>In the <a href="#appendix">Appendix</a> I give some <a href="#potential-reasons-for-the-difference">Potential Reasons for the Difference</a>, though on its surface 55 ppt does seem like a historically large disagreement between FiveThirtyEight and the betting markets.</p>
 </div>
+</div>
+<div id="closing-thought" class="section level1">
+<h1>Closing Thought</h1>
+<p>Given the (apparent) parity in performance between FiveThirtyEight and the betting markets, the Lakers’ playoff odds are especially unclear. I can’t just write-off FiveThirtyEight as I’d been tempted to do.</p>
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+When I see big differences i get tempted to write-off 538.<br><br>But maybe it's just different but still meaningful (even if less performative at margins).<br><br>I don't look at it systematically enough to know (so why another comparison point–eg betting markets–would be helpful).
+</p>
+— Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1467868598576328714?ref_src=twsrc%5Etfw">December 6, 2021</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>For the reasons given in the Introduction I would still lean towards trusting the betting markets<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a> but the <a href="https://sportsbook.draftkings.com/nba-finals?category=wins/playoffs&amp;subcategory=to-make-the-playoffs">current</a> payout on draft kings of $450 on a $100 bet of the Lakers not making the playoffs is an intriguing opportunity that perhaps deserves a closer look<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>.</p>
 </div>
 <div id="appendix" class="section level1">
 <h1>Appendix</h1>
 <div id="potential-reasons-for-the-difference" class="section level2">
 <h2>Potential Reasons for the Difference</h2>
-<p>Some reasons why the 55 ppt difference between FiveThirtyEight and betting markets (in regards to their projection of making the playoffs) may not be as extreme as it seems:</p>
+<p>Some reasons why the observed 55 ppt difference in expectations between FiveThirtyEight and betting markets may not be as extreme as it seems:</p>
 <ul>
 <li>My historical data is looking at individual time-point comparisons at just one point for each season – perhaps betting markets and FiveThirtyEight vary more from one another at different points in the year than those at the points I have..</li>
 <li>Lines (according to Sports Odds History) come from BetMGM, each betting market is different</li>
-<li>I was looking at just the odds of “making the playoffs” not the average of that with the inverse of “odds to miss” as I did in step 5 of <a href="#steps">Steps</a>.</li>
+<li>I was looking at just the “odds of making the playoffs” not the average of that with the inverse of “odds to miss the playoffs” as I did in step 5 of <a href="#steps">Steps</a><a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</li>
 <li>Changes in methodology of more recent forecasts may have made it depart more from betting markets compared to in prior years</li>
 </ul>
 </div>
@@ -2594,10 +2591,16 @@ ecdf_diffs(one_off_diff)</code></pre>
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Public forecasting organizations like FiveThirtyEight also help promote data literacy and inspire improved predictive practices<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>While I think betting markets would be an ideal comparison point, a comparison against something simple like, “the teams with the best record will at this point will make the playoffs” or “the teams that made it to the playoffs last year will make it this year” would also represent improved comparison points.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
-<li id="fn3"><p>I did found some <a href="https://www.sportstradingnetwork.com/article/pinnacle-versus-fivethirtyeight-a-comparison-of-predictive-success/">writeups</a> reviewing other FiveThirtyEight forecasts.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
-<li id="fn4"><p>Their article on <a href="https://fivethirtyeight.com/features/some-dos-and-donts-for-evaluating-senate-forecasts/">Some Do’s and Don’t’s For Evaluating Senate Forecasts</a> is a good read. I’ve remarked in the past on the differences in their performance evaluation from methods used by more pure ML and kaggle people:</p>
+<li id="fn1"><p>Model based forecasts are also reproducible – compared to a market based prices which are produced collectively and can’t be <em>reproduced</em> per se by an individual building a model. FiveThirtyEight’s model also has the challenge of trying to be consistent/coherent e.g. make player ratings meaningful and useful in aggregating up to give team ratings.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Public forecasting organizations like FiveThirtyEight also help promote data literacy and inspire improved predictive practices<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>While I think betting markets would be an ideal comparison point, a comparison against something simple like, “the teams with the best record will at this point will make the playoffs” or “the teams that made it to the playoffs last year will make it this year” would also represent improved comparison points.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>I did found some <a href="https://www.sportstradingnetwork.com/article/pinnacle-versus-fivethirtyeight-a-comparison-of-predictive-success/">writeups</a> reviewing other FiveThirtyEight forecasts.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>Using the <a href="https://github.com/tidyverse/rvest">rvest</a> package.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>Whether team actually made it to playoffs that season<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>You might expect these to be inverses of one another, but they actually are slightly different – the difference provides room for The House to make a profit.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>So that the forecasts and betting markets being compared were created the same day.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>Essentially the root mean squared error of the classification.<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>I’ve remarked in the past on the differences in their performance evaluation from methods used by more pure ML and kaggle people:</p>
 <blockquote>
 <blockquote class="twitter-tweet">
 <p lang="en" dir="ltr">
@@ -2607,10 +2610,12 @@ Why do <a href="https://twitter.com/kaggle?ref_src=twsrc%5Etfw"><span class="cit
 </blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </blockquote>
-<a href="#fnref4" class="footnote-back">↩︎</a></li>
-<li id="fn5"><p>And give a hat-tip to FiveThirtyEight for not getting creamed by the betting markets.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
-<li id="fn6"><p>Note that I’m just using the line for “make playoffs” in the above analysis I’d taken the average of the odds of “making the playoffs” and the inverse of “missing the playoffs”…<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
-<li id="fn7"><p>Though perhaps the magnitude of the difference may be small.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
-<li id="fn8"><p>Maybe at some point in the future I’ll review hypothetical outcomes of various strategies.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<a href="#fnref10" class="footnote-back">↩︎</a></li>
+<li id="fn11"><p>Other ways to segment this could be by make/miss playoffs, high/low forecasted probabilities, reviewing an ensemble of bookies and 538 forecasts… but I don’t really expect any of these to be interesting so I’ll leave it there… and give a hat-tip to FiveThirtyEight for not getting creamed by the betting markets.<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>Note that I’m just using the line for “make playoffs” in the above analysis I’d taken the average of the odds of “making the playoffs” and the inverse of “missing the playoffs”…<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>In that case in the favor of FiveThirtyEight.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p>I would be surprised if, after looking at a larger swathe of data, the markets did not come-out significantly better than FiveThirtyEight. Though perhaps the magnitude of the difference may be small.<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
+<li id="fn15"><p>Maybe at some point in the future I’ll review hypothetical outcomes of various strategies, e.g. ensembling, or betting in cases of high-levels of divergence between forecasts.<a href="#fnref15" class="footnote-back">↩︎</a></p></li>
+<li id="fn16"><p>This would make the betting market odds seem more aggressive.<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
