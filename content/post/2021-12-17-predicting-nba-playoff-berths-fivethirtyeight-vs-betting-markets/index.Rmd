@@ -11,7 +11,7 @@ tags:
   - tidyverse
   - rvest
 codefolding_show: hide
-thumbnail: /2021/05/10/predicting-nba-playoff-berths-fivethirtyeight-vs-betting-markets/images/lakers-eliminated.PNG
+thumbnail: /2021/12/17/predicting-nba-playoff-berths-fivethirtyeight-vs-betting-markets/images/lakers-eliminated.PNG
 ---
 
 ```{r setup, include=FALSE}
