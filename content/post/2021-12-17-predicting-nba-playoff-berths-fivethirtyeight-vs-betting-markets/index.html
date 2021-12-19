@@ -6,10 +6,12 @@ slug: predicting-nba-playoff-berths-fivethirtyeight-vs-betting-markets
 categories:
   - business
   - statistics
+  - rstats
 tags:
   - probability
   - tidyverse
   - rvest
+  - rstats
 codefolding_show: hide
 thumbnail: /2021/12/17/predicting-nba-playoff-berths-fivethirtyeight-vs-betting-markets/images/lakers-eliminated.PNG
 ---
@@ -45,9 +47,9 @@ thumbnail: /2021/12/17/predicting-nba-playoff-berths-fivethirtyeight-vs-betting-
 <blockquote>
 <p>“The general question of whether FiveThirtyEight ought to be better than prediction and betting markets is an interesting one. I am far from an efficient-market hypothesis purist, but markets are tough to beat in most circumstances. Furthermore, the FiveThirtyEight forecasts are public information, and bettors can use our forecasts along with those of our competitors to calibrate their estimates of the outcomes.”</p>
 </blockquote>
-<p>FiveThirtyEight does more with their forecasts than <em>just</em> predict outcomes. Their forecasts provide the foundation of their data journalism covering trends in sports and politics. We should expect FiveThirtyEight’s forecasts to have some tradeoffs between optimizing for performance and being interpretable<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. Their NBA model is based on a blend of team and individual player performance and is designed with various linear constraints in place that make it explainable to the public (see: <a href="https://fivethirtyeight.com/methodology/how-our-nba-predictions-work/#:~:text=Game%20predictions&amp;text=For%20a%20given%20lineup%2C%20we,the%20court%20at%20all%20times">How Our NBA Predictions Work</a>).</p>
+<p>FiveThirtyEight does more with their forecasts than <em>just</em> predict outcomes. Their forecasts provide the foundation of their data journalism covering trends in sports and politics. We should expect FiveThirtyEight’s forecasts to make some tradeoffs between optimizing for performance and being interpretable<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. Their NBA model is based on a blend of team and individual player performance and is designed with various linear constraints in place that make it explainable to the public (see: <a href="https://fivethirtyeight.com/methodology/how-our-nba-predictions-work/#:~:text=Game%20predictions&amp;text=For%20a%20given%20lineup%2C%20we,the%20court%20at%20all%20times">How Our NBA Predictions Work</a>).</p>
 <p>However performance costs shouldn’t be <em>too</em> high. Afterall, trust in FiveThirtyEight’s explanations is in large part dependent on their models’ predictive power.</p>
-<p><strong>The public <em>should</em> root for forecasters like FiveThirtyEight</strong></p>
+<p><strong>The public should root for forecasters like FiveThirtyEight</strong></p>
 <p>Where betting markets exist, public forecasts like FiveThirtyEight’s add information into the system and can help markets reach more efficient prices. Where markets don’t exist, we are limited to the power of such forecasting processes – be it government impact assessments, weather forecasts, disease modeling, … – society gains as predictive power improves<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
 <div id="nba-playoffs-and-the-lakers" class="section level1">
 <h1>NBA Playoffs and the Lakers</h1>
@@ -68,9 +70,9 @@ I get betting markets will be better but by how much?<br><br>For NBA predictions
 <h2>Scraping Betting Markets</h2>
 <p>I scraped historical betting lines and which teams actually made the playoffs each season from the “Archived NBA Futures Odds” section of <a href="https://www.sportsoddshistory.com/nba-odds/">Sports Odds History</a><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. The Sports Odds History website is constructed in a way that makes it relatively straight-forward to scrape the requisite information.</p>
 <p><img src="images/archive-overall.PNG" /></p>
-<p>The webpage for each season had a (mostly) consistent table structure and associated date of archive.</p>
+<p>The webpage for each season has a (mostly) consistent table structure and associated date of archive.</p>
 <p><img src="images/example-table.PNG" /></p>
-<p>Each season had a consistent URL (with only the season year changing).</p>
+<p>Each season has a consistent URL (with only the season year changing).</p>
 <p><img src="images/example-url.PNG" /></p>
 <div id="steps" class="section level3">
 <h3>Steps</h3>
@@ -82,7 +84,7 @@ I get betting markets will be better but by how much?<br><br>For NBA predictions
 <li>Tables contain the betting odds of both “making the playoffs” and “missing the playoffs”<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>. I took the average of the implied odds of making the playoffs between both columns (“make” and inverse of “miss”). This might be generous to the betting markets but likely gets at a closer estimate of where they actually expect the odds to be.</li>
 <li>Scrape <em>date</em> archived and join to table</li>
 <li>Bind data from all scraped pages / seasons together</li>
-<li>Convert from odds to probability</li>
+<li>Convert from odds to probability (e.g. 4:1 becomes 80%)</li>
 </ol>
 <p><em>Load packages and helper functions</em></p>
 <pre class="r"><code># Load packages
@@ -131,7 +133,7 @@ scrape_urls %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#mdxrdoqwsq .gt_table {
+#bbnwstnkdb .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -156,7 +158,7 @@ scrape_urls %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#mdxrdoqwsq .gt_heading {
+#bbnwstnkdb .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -168,7 +170,7 @@ scrape_urls %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#mdxrdoqwsq .gt_title {
+#bbnwstnkdb .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -178,7 +180,7 @@ scrape_urls %&gt;%
   border-bottom-width: 0;
 }
 
-#mdxrdoqwsq .gt_subtitle {
+#bbnwstnkdb .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -188,13 +190,13 @@ scrape_urls %&gt;%
   border-top-width: 0;
 }
 
-#mdxrdoqwsq .gt_bottom_border {
+#bbnwstnkdb .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#mdxrdoqwsq .gt_col_headings {
+#bbnwstnkdb .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -209,7 +211,7 @@ scrape_urls %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#mdxrdoqwsq .gt_col_heading {
+#bbnwstnkdb .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -229,7 +231,7 @@ scrape_urls %&gt;%
   overflow-x: hidden;
 }
 
-#mdxrdoqwsq .gt_column_spanner_outer {
+#bbnwstnkdb .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -241,15 +243,15 @@ scrape_urls %&gt;%
   padding-right: 4px;
 }
 
-#mdxrdoqwsq .gt_column_spanner_outer:first-child {
+#bbnwstnkdb .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#mdxrdoqwsq .gt_column_spanner_outer:last-child {
+#bbnwstnkdb .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#mdxrdoqwsq .gt_column_spanner {
+#bbnwstnkdb .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -261,7 +263,7 @@ scrape_urls %&gt;%
   width: 100%;
 }
 
-#mdxrdoqwsq .gt_group_heading {
+#bbnwstnkdb .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -283,7 +285,7 @@ scrape_urls %&gt;%
   vertical-align: middle;
 }
 
-#mdxrdoqwsq .gt_empty_group_heading {
+#bbnwstnkdb .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -298,15 +300,15 @@ scrape_urls %&gt;%
   vertical-align: middle;
 }
 
-#mdxrdoqwsq .gt_from_md > :first-child {
+#bbnwstnkdb .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#mdxrdoqwsq .gt_from_md > :last-child {
+#bbnwstnkdb .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#mdxrdoqwsq .gt_row {
+#bbnwstnkdb .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -325,7 +327,7 @@ scrape_urls %&gt;%
   overflow-x: hidden;
 }
 
-#mdxrdoqwsq .gt_stub {
+#bbnwstnkdb .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -337,7 +339,7 @@ scrape_urls %&gt;%
   padding-left: 12px;
 }
 
-#mdxrdoqwsq .gt_summary_row {
+#bbnwstnkdb .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -347,7 +349,7 @@ scrape_urls %&gt;%
   padding-right: 5px;
 }
 
-#mdxrdoqwsq .gt_first_summary_row {
+#bbnwstnkdb .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -357,7 +359,7 @@ scrape_urls %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#mdxrdoqwsq .gt_grand_summary_row {
+#bbnwstnkdb .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -367,7 +369,7 @@ scrape_urls %&gt;%
   padding-right: 5px;
 }
 
-#mdxrdoqwsq .gt_first_grand_summary_row {
+#bbnwstnkdb .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -377,11 +379,11 @@ scrape_urls %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#mdxrdoqwsq .gt_striped {
+#bbnwstnkdb .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#mdxrdoqwsq .gt_table_body {
+#bbnwstnkdb .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -390,7 +392,7 @@ scrape_urls %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#mdxrdoqwsq .gt_footnotes {
+#bbnwstnkdb .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -404,13 +406,13 @@ scrape_urls %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#mdxrdoqwsq .gt_footnote {
+#bbnwstnkdb .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#mdxrdoqwsq .gt_sourcenotes {
+#bbnwstnkdb .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -424,46 +426,46 @@ scrape_urls %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#mdxrdoqwsq .gt_sourcenote {
+#bbnwstnkdb .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#mdxrdoqwsq .gt_left {
+#bbnwstnkdb .gt_left {
   text-align: left;
 }
 
-#mdxrdoqwsq .gt_center {
+#bbnwstnkdb .gt_center {
   text-align: center;
 }
 
-#mdxrdoqwsq .gt_right {
+#bbnwstnkdb .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#mdxrdoqwsq .gt_font_normal {
+#bbnwstnkdb .gt_font_normal {
   font-weight: normal;
 }
 
-#mdxrdoqwsq .gt_font_bold {
+#bbnwstnkdb .gt_font_bold {
   font-weight: bold;
 }
 
-#mdxrdoqwsq .gt_font_italic {
+#bbnwstnkdb .gt_font_italic {
   font-style: italic;
 }
 
-#mdxrdoqwsq .gt_super {
+#bbnwstnkdb .gt_super {
   font-size: 65%;
 }
 
-#mdxrdoqwsq .gt_footnote_marks {
+#bbnwstnkdb .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="mdxrdoqwsq" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="bbnwstnkdb" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -610,7 +612,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#bbzxpbnudt .gt_table {
+#mugtiyiwjq .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -635,7 +637,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#bbzxpbnudt .gt_heading {
+#mugtiyiwjq .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -647,7 +649,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#bbzxpbnudt .gt_title {
+#mugtiyiwjq .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -657,7 +659,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-bottom-width: 0;
 }
 
-#bbzxpbnudt .gt_subtitle {
+#mugtiyiwjq .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -667,13 +669,13 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-top-width: 0;
 }
 
-#bbzxpbnudt .gt_bottom_border {
+#mugtiyiwjq .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#bbzxpbnudt .gt_col_headings {
+#mugtiyiwjq .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -688,7 +690,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#bbzxpbnudt .gt_col_heading {
+#mugtiyiwjq .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -708,7 +710,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   overflow-x: hidden;
 }
 
-#bbzxpbnudt .gt_column_spanner_outer {
+#mugtiyiwjq .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -720,15 +722,15 @@ bookies_538_joined &lt;- data_538 %&gt;%
   padding-right: 4px;
 }
 
-#bbzxpbnudt .gt_column_spanner_outer:first-child {
+#mugtiyiwjq .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#bbzxpbnudt .gt_column_spanner_outer:last-child {
+#mugtiyiwjq .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#bbzxpbnudt .gt_column_spanner {
+#mugtiyiwjq .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -740,7 +742,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   width: 100%;
 }
 
-#bbzxpbnudt .gt_group_heading {
+#mugtiyiwjq .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -762,7 +764,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   vertical-align: middle;
 }
 
-#bbzxpbnudt .gt_empty_group_heading {
+#mugtiyiwjq .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -777,15 +779,15 @@ bookies_538_joined &lt;- data_538 %&gt;%
   vertical-align: middle;
 }
 
-#bbzxpbnudt .gt_from_md > :first-child {
+#mugtiyiwjq .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#bbzxpbnudt .gt_from_md > :last-child {
+#mugtiyiwjq .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#bbzxpbnudt .gt_row {
+#mugtiyiwjq .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -804,7 +806,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   overflow-x: hidden;
 }
 
-#bbzxpbnudt .gt_stub {
+#mugtiyiwjq .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -816,7 +818,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   padding-left: 12px;
 }
 
-#bbzxpbnudt .gt_summary_row {
+#mugtiyiwjq .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -826,7 +828,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   padding-right: 5px;
 }
 
-#bbzxpbnudt .gt_first_summary_row {
+#mugtiyiwjq .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -836,7 +838,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#bbzxpbnudt .gt_grand_summary_row {
+#mugtiyiwjq .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -846,7 +848,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   padding-right: 5px;
 }
 
-#bbzxpbnudt .gt_first_grand_summary_row {
+#mugtiyiwjq .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -856,11 +858,11 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#bbzxpbnudt .gt_striped {
+#mugtiyiwjq .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#bbzxpbnudt .gt_table_body {
+#mugtiyiwjq .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -869,7 +871,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#bbzxpbnudt .gt_footnotes {
+#mugtiyiwjq .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -883,13 +885,13 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#bbzxpbnudt .gt_footnote {
+#mugtiyiwjq .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#bbzxpbnudt .gt_sourcenotes {
+#mugtiyiwjq .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -903,46 +905,46 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#bbzxpbnudt .gt_sourcenote {
+#mugtiyiwjq .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#bbzxpbnudt .gt_left {
+#mugtiyiwjq .gt_left {
   text-align: left;
 }
 
-#bbzxpbnudt .gt_center {
+#mugtiyiwjq .gt_center {
   text-align: center;
 }
 
-#bbzxpbnudt .gt_right {
+#mugtiyiwjq .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#bbzxpbnudt .gt_font_normal {
+#mugtiyiwjq .gt_font_normal {
   font-weight: normal;
 }
 
-#bbzxpbnudt .gt_font_bold {
+#mugtiyiwjq .gt_font_bold {
   font-weight: bold;
 }
 
-#bbzxpbnudt .gt_font_italic {
+#mugtiyiwjq .gt_font_italic {
   font-style: italic;
 }
 
-#bbzxpbnudt .gt_super {
+#mugtiyiwjq .gt_super {
   font-size: 65%;
 }
 
-#bbzxpbnudt .gt_footnote_marks {
+#mugtiyiwjq .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="bbzxpbnudt" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="mugtiyiwjq" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -1003,7 +1005,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
 </div>
 <div id="analysis" class="section level1">
 <h1>Analysis</h1>
-<p>FiveThirtyEight uses the <a href="https://en.wikipedia.org/wiki/Brier_score">Brier Score</a><a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> in their evaluations of model performance (see <a href="https://fivethirtyeight.com/features/some-dos-and-donts-for-evaluating-senate-forecasts/">Some Do’s and Don’t’s For Evaluating Senate Forecasts</a>)<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
+<p>FiveThirtyEight uses the <a href="https://en.wikipedia.org/wiki/Brier_score">Brier Score</a><a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> in their evaluations of model performance (see <a href="https://fivethirtyeight.com/features/some-dos-and-donts-for-evaluating-senate-forecasts/">Some Do’s and Don’t’s For Evaluating Senate Forecasts</a>)<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>. I mirrored this below.</p>
 <p><em>Overall performance</em></p>
 <pre class="r"><code>### helper functions
 t_test_playoffs &lt;- function(df){
@@ -1012,9 +1014,9 @@ t_test_playoffs &lt;- function(df){
     broom::tidy() %&gt;% 
     select(
       estimate_diff = estimate,
+      p.value,
       estimate_538 = estimate1,
       estimate_bookies = estimate2,
-      p.value,
       starts_with(&quot;conf&quot;)
     )
 }
@@ -1038,7 +1040,7 @@ bookies_538_joined %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ejvccrkika .gt_table {
+#dagjbbkykk .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1063,7 +1065,7 @@ bookies_538_joined %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#ejvccrkika .gt_heading {
+#dagjbbkykk .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1075,7 +1077,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#ejvccrkika .gt_title {
+#dagjbbkykk .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1085,7 +1087,7 @@ bookies_538_joined %&gt;%
   border-bottom-width: 0;
 }
 
-#ejvccrkika .gt_subtitle {
+#dagjbbkykk .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1095,13 +1097,13 @@ bookies_538_joined %&gt;%
   border-top-width: 0;
 }
 
-#ejvccrkika .gt_bottom_border {
+#dagjbbkykk .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ejvccrkika .gt_col_headings {
+#dagjbbkykk .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1116,7 +1118,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#ejvccrkika .gt_col_heading {
+#dagjbbkykk .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1136,7 +1138,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#ejvccrkika .gt_column_spanner_outer {
+#dagjbbkykk .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1148,15 +1150,15 @@ bookies_538_joined %&gt;%
   padding-right: 4px;
 }
 
-#ejvccrkika .gt_column_spanner_outer:first-child {
+#dagjbbkykk .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ejvccrkika .gt_column_spanner_outer:last-child {
+#dagjbbkykk .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ejvccrkika .gt_column_spanner {
+#dagjbbkykk .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1168,7 +1170,7 @@ bookies_538_joined %&gt;%
   width: 100%;
 }
 
-#ejvccrkika .gt_group_heading {
+#dagjbbkykk .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1190,7 +1192,7 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#ejvccrkika .gt_empty_group_heading {
+#dagjbbkykk .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1205,15 +1207,15 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#ejvccrkika .gt_from_md > :first-child {
+#dagjbbkykk .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ejvccrkika .gt_from_md > :last-child {
+#dagjbbkykk .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ejvccrkika .gt_row {
+#dagjbbkykk .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1232,7 +1234,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#ejvccrkika .gt_stub {
+#dagjbbkykk .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1244,7 +1246,7 @@ bookies_538_joined %&gt;%
   padding-left: 12px;
 }
 
-#ejvccrkika .gt_summary_row {
+#dagjbbkykk .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1254,7 +1256,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#ejvccrkika .gt_first_summary_row {
+#dagjbbkykk .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1264,7 +1266,7 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#ejvccrkika .gt_grand_summary_row {
+#dagjbbkykk .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1274,7 +1276,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#ejvccrkika .gt_first_grand_summary_row {
+#dagjbbkykk .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1284,11 +1286,11 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#ejvccrkika .gt_striped {
+#dagjbbkykk .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ejvccrkika .gt_table_body {
+#dagjbbkykk .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1297,7 +1299,7 @@ bookies_538_joined %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#ejvccrkika .gt_footnotes {
+#dagjbbkykk .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1311,13 +1313,13 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#ejvccrkika .gt_footnote {
+#dagjbbkykk .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#ejvccrkika .gt_sourcenotes {
+#dagjbbkykk .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1331,53 +1333,53 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#ejvccrkika .gt_sourcenote {
+#dagjbbkykk .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#ejvccrkika .gt_left {
+#dagjbbkykk .gt_left {
   text-align: left;
 }
 
-#ejvccrkika .gt_center {
+#dagjbbkykk .gt_center {
   text-align: center;
 }
 
-#ejvccrkika .gt_right {
+#dagjbbkykk .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ejvccrkika .gt_font_normal {
+#dagjbbkykk .gt_font_normal {
   font-weight: normal;
 }
 
-#ejvccrkika .gt_font_bold {
+#dagjbbkykk .gt_font_bold {
   font-weight: bold;
 }
 
-#ejvccrkika .gt_font_italic {
+#dagjbbkykk .gt_font_italic {
   font-style: italic;
 }
 
-#ejvccrkika .gt_super {
+#dagjbbkykk .gt_super {
   font-size: 65%;
 }
 
-#ejvccrkika .gt_footnote_marks {
+#dagjbbkykk .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="ejvccrkika" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="dagjbbkykk" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Brier.score.diff</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">p.value</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Brier.score.538</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Brier.score.bookies</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">p.value</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">conf.low</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">conf.high</th>
     </tr>
@@ -1385,9 +1387,9 @@ bookies_538_joined %&gt;%
   <tbody class="gt_table_body">
     <tr>
       <td class="gt_row gt_right">0.004</td>
+      <td class="gt_row gt_right" style="font-weight: bold;">0.881</td>
       <td class="gt_row gt_right">0.143</td>
       <td class="gt_row gt_right">0.139</td>
-      <td class="gt_row gt_right" style="font-weight: bold;">0.881</td>
       <td class="gt_row gt_right">&minus;0.045</td>
       <td class="gt_row gt_right">0.053</td>
     </tr>
@@ -1407,7 +1409,7 @@ bookies_538_joined %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#lmcrezscjp .gt_table {
+#kkuemmrcre .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1432,7 +1434,7 @@ bookies_538_joined %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#lmcrezscjp .gt_heading {
+#kkuemmrcre .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1444,7 +1446,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#lmcrezscjp .gt_title {
+#kkuemmrcre .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1454,7 +1456,7 @@ bookies_538_joined %&gt;%
   border-bottom-width: 0;
 }
 
-#lmcrezscjp .gt_subtitle {
+#kkuemmrcre .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1464,13 +1466,13 @@ bookies_538_joined %&gt;%
   border-top-width: 0;
 }
 
-#lmcrezscjp .gt_bottom_border {
+#kkuemmrcre .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#lmcrezscjp .gt_col_headings {
+#kkuemmrcre .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1485,7 +1487,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#lmcrezscjp .gt_col_heading {
+#kkuemmrcre .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1505,7 +1507,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#lmcrezscjp .gt_column_spanner_outer {
+#kkuemmrcre .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1517,15 +1519,15 @@ bookies_538_joined %&gt;%
   padding-right: 4px;
 }
 
-#lmcrezscjp .gt_column_spanner_outer:first-child {
+#kkuemmrcre .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#lmcrezscjp .gt_column_spanner_outer:last-child {
+#kkuemmrcre .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#lmcrezscjp .gt_column_spanner {
+#kkuemmrcre .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1537,7 +1539,7 @@ bookies_538_joined %&gt;%
   width: 100%;
 }
 
-#lmcrezscjp .gt_group_heading {
+#kkuemmrcre .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1559,7 +1561,7 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#lmcrezscjp .gt_empty_group_heading {
+#kkuemmrcre .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1574,15 +1576,15 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#lmcrezscjp .gt_from_md > :first-child {
+#kkuemmrcre .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#lmcrezscjp .gt_from_md > :last-child {
+#kkuemmrcre .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#lmcrezscjp .gt_row {
+#kkuemmrcre .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1601,7 +1603,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#lmcrezscjp .gt_stub {
+#kkuemmrcre .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1613,7 +1615,7 @@ bookies_538_joined %&gt;%
   padding-left: 12px;
 }
 
-#lmcrezscjp .gt_summary_row {
+#kkuemmrcre .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1623,7 +1625,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#lmcrezscjp .gt_first_summary_row {
+#kkuemmrcre .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1633,7 +1635,7 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#lmcrezscjp .gt_grand_summary_row {
+#kkuemmrcre .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1643,7 +1645,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#lmcrezscjp .gt_first_grand_summary_row {
+#kkuemmrcre .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1653,11 +1655,11 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#lmcrezscjp .gt_striped {
+#kkuemmrcre .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#lmcrezscjp .gt_table_body {
+#kkuemmrcre .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1666,7 +1668,7 @@ bookies_538_joined %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#lmcrezscjp .gt_footnotes {
+#kkuemmrcre .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1680,13 +1682,13 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#lmcrezscjp .gt_footnote {
+#kkuemmrcre .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#lmcrezscjp .gt_sourcenotes {
+#kkuemmrcre .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1700,54 +1702,54 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#lmcrezscjp .gt_sourcenote {
+#kkuemmrcre .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#lmcrezscjp .gt_left {
+#kkuemmrcre .gt_left {
   text-align: left;
 }
 
-#lmcrezscjp .gt_center {
+#kkuemmrcre .gt_center {
   text-align: center;
 }
 
-#lmcrezscjp .gt_right {
+#kkuemmrcre .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#lmcrezscjp .gt_font_normal {
+#kkuemmrcre .gt_font_normal {
   font-weight: normal;
 }
 
-#lmcrezscjp .gt_font_bold {
+#kkuemmrcre .gt_font_bold {
   font-weight: bold;
 }
 
-#lmcrezscjp .gt_font_italic {
+#kkuemmrcre .gt_font_italic {
   font-style: italic;
 }
 
-#lmcrezscjp .gt_super {
+#kkuemmrcre .gt_super {
   font-size: 65%;
 }
 
-#lmcrezscjp .gt_footnote_marks {
+#kkuemmrcre .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="lmcrezscjp" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="kkuemmrcre" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">season</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Brier.score.diff</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">p.value</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Brier.score.538</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Brier.score.bookies</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">p.value</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">conf.low</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">conf.high</th>
     </tr>
@@ -1756,45 +1758,45 @@ bookies_538_joined %&gt;%
     <tr>
       <td class="gt_row gt_right">2016</td>
       <td class="gt_row gt_right">&minus;0.029</td>
+      <td class="gt_row gt_right" style="font-weight: bold;">0.635</td>
       <td class="gt_row gt_right">0.142</td>
       <td class="gt_row gt_right">0.172</td>
-      <td class="gt_row gt_right" style="font-weight: bold;">0.635</td>
       <td class="gt_row gt_right">&minus;0.153</td>
       <td class="gt_row gt_right">0.094</td>
     </tr>
     <tr>
       <td class="gt_row gt_right">2017</td>
       <td class="gt_row gt_right">0.050</td>
+      <td class="gt_row gt_right" style="font-weight: bold;">0.268</td>
       <td class="gt_row gt_right">0.159</td>
       <td class="gt_row gt_right">0.109</td>
-      <td class="gt_row gt_right" style="font-weight: bold;">0.268</td>
       <td class="gt_row gt_right">&minus;0.040</td>
       <td class="gt_row gt_right">0.140</td>
     </tr>
     <tr>
       <td class="gt_row gt_right">2018</td>
       <td class="gt_row gt_right">0.007</td>
+      <td class="gt_row gt_right" style="font-weight: bold;">0.887</td>
       <td class="gt_row gt_right">0.127</td>
       <td class="gt_row gt_right">0.120</td>
-      <td class="gt_row gt_right" style="font-weight: bold;">0.887</td>
       <td class="gt_row gt_right">&minus;0.095</td>
       <td class="gt_row gt_right">0.109</td>
     </tr>
     <tr>
       <td class="gt_row gt_right">2019</td>
       <td class="gt_row gt_right">0.019</td>
+      <td class="gt_row gt_right" style="font-weight: bold;">0.793</td>
       <td class="gt_row gt_right">0.204</td>
       <td class="gt_row gt_right">0.185</td>
-      <td class="gt_row gt_right" style="font-weight: bold;">0.793</td>
       <td class="gt_row gt_right">&minus;0.127</td>
       <td class="gt_row gt_right">0.166</td>
     </tr>
     <tr>
       <td class="gt_row gt_right">2020</td>
       <td class="gt_row gt_right">&minus;0.029</td>
+      <td class="gt_row gt_right" style="font-weight: bold;">0.502</td>
       <td class="gt_row gt_right">0.082</td>
       <td class="gt_row gt_right">0.111</td>
-      <td class="gt_row gt_right" style="font-weight: bold;">0.502</td>
       <td class="gt_row gt_right">&minus;0.114</td>
       <td class="gt_row gt_right">0.057</td>
     </tr>
@@ -1808,7 +1810,7 @@ bookies_538_joined %&gt;%
 <p>Overall performance may be similar even when individual forecasts are quite different. Circling back to the start of <a href="#nba-playoffs-and-the-lakers">NBA Playoffs and the Lakers</a>, what got me writing was noticing FiveThirtyEight’s divergence from the betting markets in their recent view of the Lakers’ playoff chances.</p>
 <p>At -460 the markets had an implied probability of the Lakers making the playoffs of ~82%<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>. FiveThirtyEight’s forecast of 27% means a difference of ~55 percentage points (ppt)<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>.</p>
 <p><strong>Is this difference atypical?</strong></p>
-<p>Across five seasons of data (145 observations), the average difference between FiveThirtyEight and betting markets was ~10 percentage points.</p>
+<p>Across five seasons of data (145 observations), the correlation coefficient was 0.92 (strong correlation). The average difference between FiveThirtyEight and betting markets was ~10 percentage points.</p>
 <pre class="r"><code>bookies_538_joined %&gt;% 
   mutate(diff = abs(make_playoffs_538 - make_playoffs_bookies)) %&gt;% 
   # summarise(mean_diff = mean(diff)) %&gt;% 
@@ -1822,7 +1824,7 @@ bookies_538_joined %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#okgwlajwoh .gt_table {
+#koqnodusfg .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1847,7 +1849,7 @@ bookies_538_joined %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#okgwlajwoh .gt_heading {
+#koqnodusfg .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1859,7 +1861,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#okgwlajwoh .gt_title {
+#koqnodusfg .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1869,7 +1871,7 @@ bookies_538_joined %&gt;%
   border-bottom-width: 0;
 }
 
-#okgwlajwoh .gt_subtitle {
+#koqnodusfg .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1879,13 +1881,13 @@ bookies_538_joined %&gt;%
   border-top-width: 0;
 }
 
-#okgwlajwoh .gt_bottom_border {
+#koqnodusfg .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#okgwlajwoh .gt_col_headings {
+#koqnodusfg .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1900,7 +1902,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#okgwlajwoh .gt_col_heading {
+#koqnodusfg .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1920,7 +1922,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#okgwlajwoh .gt_column_spanner_outer {
+#koqnodusfg .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1932,15 +1934,15 @@ bookies_538_joined %&gt;%
   padding-right: 4px;
 }
 
-#okgwlajwoh .gt_column_spanner_outer:first-child {
+#koqnodusfg .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#okgwlajwoh .gt_column_spanner_outer:last-child {
+#koqnodusfg .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#okgwlajwoh .gt_column_spanner {
+#koqnodusfg .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1952,7 +1954,7 @@ bookies_538_joined %&gt;%
   width: 100%;
 }
 
-#okgwlajwoh .gt_group_heading {
+#koqnodusfg .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1974,7 +1976,7 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#okgwlajwoh .gt_empty_group_heading {
+#koqnodusfg .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1989,15 +1991,15 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#okgwlajwoh .gt_from_md > :first-child {
+#koqnodusfg .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#okgwlajwoh .gt_from_md > :last-child {
+#koqnodusfg .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#okgwlajwoh .gt_row {
+#koqnodusfg .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2016,7 +2018,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#okgwlajwoh .gt_stub {
+#koqnodusfg .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2028,7 +2030,7 @@ bookies_538_joined %&gt;%
   padding-left: 12px;
 }
 
-#okgwlajwoh .gt_summary_row {
+#koqnodusfg .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2038,7 +2040,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#okgwlajwoh .gt_first_summary_row {
+#koqnodusfg .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2048,7 +2050,7 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#okgwlajwoh .gt_grand_summary_row {
+#koqnodusfg .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2058,7 +2060,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#okgwlajwoh .gt_first_grand_summary_row {
+#koqnodusfg .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2068,11 +2070,11 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#okgwlajwoh .gt_striped {
+#koqnodusfg .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#okgwlajwoh .gt_table_body {
+#koqnodusfg .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2081,7 +2083,7 @@ bookies_538_joined %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#okgwlajwoh .gt_footnotes {
+#koqnodusfg .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2095,13 +2097,13 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#okgwlajwoh .gt_footnote {
+#koqnodusfg .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#okgwlajwoh .gt_sourcenotes {
+#koqnodusfg .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2115,46 +2117,46 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#okgwlajwoh .gt_sourcenote {
+#koqnodusfg .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#okgwlajwoh .gt_left {
+#koqnodusfg .gt_left {
   text-align: left;
 }
 
-#okgwlajwoh .gt_center {
+#koqnodusfg .gt_center {
   text-align: center;
 }
 
-#okgwlajwoh .gt_right {
+#koqnodusfg .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#okgwlajwoh .gt_font_normal {
+#koqnodusfg .gt_font_normal {
   font-weight: normal;
 }
 
-#okgwlajwoh .gt_font_bold {
+#koqnodusfg .gt_font_bold {
   font-weight: bold;
 }
 
-#okgwlajwoh .gt_font_italic {
+#koqnodusfg .gt_font_italic {
   font-style: italic;
 }
 
-#okgwlajwoh .gt_super {
+#koqnodusfg .gt_super {
   font-size: 65%;
 }
 
-#okgwlajwoh .gt_footnote_marks {
+#koqnodusfg .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="okgwlajwoh" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="koqnodusfg" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -2185,7 +2187,7 @@ bookies_538_joined %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#jxalrthwpd .gt_table {
+#dfoufozxbw .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -2210,7 +2212,7 @@ bookies_538_joined %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#jxalrthwpd .gt_heading {
+#dfoufozxbw .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2222,7 +2224,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#jxalrthwpd .gt_title {
+#dfoufozxbw .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2232,7 +2234,7 @@ bookies_538_joined %&gt;%
   border-bottom-width: 0;
 }
 
-#jxalrthwpd .gt_subtitle {
+#dfoufozxbw .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2242,13 +2244,13 @@ bookies_538_joined %&gt;%
   border-top-width: 0;
 }
 
-#jxalrthwpd .gt_bottom_border {
+#dfoufozxbw .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#jxalrthwpd .gt_col_headings {
+#dfoufozxbw .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2263,7 +2265,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#jxalrthwpd .gt_col_heading {
+#dfoufozxbw .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2283,7 +2285,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#jxalrthwpd .gt_column_spanner_outer {
+#dfoufozxbw .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2295,15 +2297,15 @@ bookies_538_joined %&gt;%
   padding-right: 4px;
 }
 
-#jxalrthwpd .gt_column_spanner_outer:first-child {
+#dfoufozxbw .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#jxalrthwpd .gt_column_spanner_outer:last-child {
+#dfoufozxbw .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#jxalrthwpd .gt_column_spanner {
+#dfoufozxbw .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2315,7 +2317,7 @@ bookies_538_joined %&gt;%
   width: 100%;
 }
 
-#jxalrthwpd .gt_group_heading {
+#dfoufozxbw .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2337,7 +2339,7 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#jxalrthwpd .gt_empty_group_heading {
+#dfoufozxbw .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2352,15 +2354,15 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#jxalrthwpd .gt_from_md > :first-child {
+#dfoufozxbw .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#jxalrthwpd .gt_from_md > :last-child {
+#dfoufozxbw .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#jxalrthwpd .gt_row {
+#dfoufozxbw .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2379,7 +2381,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#jxalrthwpd .gt_stub {
+#dfoufozxbw .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2391,7 +2393,7 @@ bookies_538_joined %&gt;%
   padding-left: 12px;
 }
 
-#jxalrthwpd .gt_summary_row {
+#dfoufozxbw .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2401,7 +2403,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#jxalrthwpd .gt_first_summary_row {
+#dfoufozxbw .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2411,7 +2413,7 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#jxalrthwpd .gt_grand_summary_row {
+#dfoufozxbw .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2421,7 +2423,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#jxalrthwpd .gt_first_grand_summary_row {
+#dfoufozxbw .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2431,11 +2433,11 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#jxalrthwpd .gt_striped {
+#dfoufozxbw .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#jxalrthwpd .gt_table_body {
+#dfoufozxbw .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2444,7 +2446,7 @@ bookies_538_joined %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#jxalrthwpd .gt_footnotes {
+#dfoufozxbw .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2458,13 +2460,13 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#jxalrthwpd .gt_footnote {
+#dfoufozxbw .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#jxalrthwpd .gt_sourcenotes {
+#dfoufozxbw .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2478,46 +2480,46 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#jxalrthwpd .gt_sourcenote {
+#dfoufozxbw .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#jxalrthwpd .gt_left {
+#dfoufozxbw .gt_left {
   text-align: left;
 }
 
-#jxalrthwpd .gt_center {
+#dfoufozxbw .gt_center {
   text-align: center;
 }
 
-#jxalrthwpd .gt_right {
+#dfoufozxbw .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#jxalrthwpd .gt_font_normal {
+#dfoufozxbw .gt_font_normal {
   font-weight: normal;
 }
 
-#jxalrthwpd .gt_font_bold {
+#dfoufozxbw .gt_font_bold {
   font-weight: bold;
 }
 
-#jxalrthwpd .gt_font_italic {
+#dfoufozxbw .gt_font_italic {
   font-style: italic;
 }
 
-#jxalrthwpd .gt_super {
+#dfoufozxbw .gt_super {
   font-size: 65%;
 }
 
-#jxalrthwpd .gt_footnote_marks {
+#dfoufozxbw .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="jxalrthwpd" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="dfoufozxbw" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -2566,7 +2568,7 @@ When I see big differences i get tempted to write-off 538.<br><br>But maybe it's
 <p>Some reasons why the observed 55 ppt difference in expectations between FiveThirtyEight and betting markets may not be as extreme as it seems:</p>
 <ul>
 <li>My historical data is looking at individual time-point comparisons at just one point for each season – perhaps betting markets and FiveThirtyEight vary more from one another at different points in the year than those at the points I have..</li>
-<li>Lines (according to Sports Odds History) come from BetMGM, each betting market is different</li>
+<li>Market odds (according to Sports Odds History) are archived come from BetMGM. I don’t know where I was looking when I saw the -460 odds on the Lakers. Each betting market is different and may have different levels of covariation with FiveThirtyEight’s forecasts.</li>
 <li>I was looking at just the “odds of making the playoffs” not the average of that with the inverse of “odds to miss the playoffs” as I did in step 5 of <a href="#steps">Steps</a><a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>.</li>
 <li>Changes in methodology of more recent forecasts may have made it depart more from betting markets compared to in prior years</li>
 </ul>

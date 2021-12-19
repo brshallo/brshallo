@@ -6,10 +6,12 @@ slug: predicting-nba-playoff-berths-fivethirtyeight-vs-betting-markets
 categories:
   - business
   - statistics
+  - rstats
 tags:
   - probability
   - tidyverse
   - rvest
+  - rstats
 codefolding_show: hide
 thumbnail: /2021/12/17/predicting-nba-playoff-berths-fivethirtyeight-vs-betting-markets/images/lakers-eliminated.PNG
 ---
@@ -24,11 +26,11 @@ In [The Virtues and Vices of Election Prediction Markets](https://fivethirtyeigh
 
 >"The general question of whether FiveThirtyEight ought to be better than prediction and betting markets is an interesting one. I am far from an efficient-market hypothesis purist, but markets are tough to beat in most circumstances. Furthermore, the FiveThirtyEight forecasts are public information, and bettors can use our forecasts along with those of our competitors to calibrate their estimates of the outcomes."
 
-FiveThirtyEight does more with their forecasts than *just* predict outcomes. Their forecasts provide the foundation of their data journalism covering trends in sports and politics. We should expect FiveThirtyEight's forecasts to have some tradeoffs between optimizing for performance and being interpretable^[Model based forecasts are also reproducible -- compared to a market based prices which are produced collectively and can't be *reproduced* per se by an individual building a model. FiveThirtyEight's model also has the challenge of trying to be consistent/coherent e.g. make player ratings meaningful and useful in aggregating up to give team ratings.]. Their NBA model is based on a blend of team and individual player performance and is designed with various linear constraints in place that make it explainable to the public (see: [How Our NBA Predictions Work](https://fivethirtyeight.com/methodology/how-our-nba-predictions-work/#:~:text=Game%20predictions&text=For%20a%20given%20lineup%2C%20we,the%20court%20at%20all%20times)). 
+FiveThirtyEight does more with their forecasts than *just* predict outcomes. Their forecasts provide the foundation of their data journalism covering trends in sports and politics. We should expect FiveThirtyEight's forecasts to make some tradeoffs between optimizing for performance and being interpretable^[Model based forecasts are also reproducible -- compared to a market based prices which are produced collectively and can't be *reproduced* per se by an individual building a model. FiveThirtyEight's model also has the challenge of trying to be consistent/coherent e.g. make player ratings meaningful and useful in aggregating up to give team ratings.]. Their NBA model is based on a blend of team and individual player performance and is designed with various linear constraints in place that make it explainable to the public (see: [How Our NBA Predictions Work](https://fivethirtyeight.com/methodology/how-our-nba-predictions-work/#:~:text=Game%20predictions&text=For%20a%20given%20lineup%2C%20we,the%20court%20at%20all%20times)). 
 
 However performance costs shouldn't be *too* high. Afterall, trust in FiveThirtyEight's explanations is in large part dependent on their models' predictive power.
 
-**The public *should* root for forecasters like FiveThirtyEight**
+**The public should root for forecasters like FiveThirtyEight**
 
 Where betting markets exist, public forecasts like FiveThirtyEight's add information into the system and can help markets reach more efficient prices. Where markets don't exist, we are limited to the power of such forecasting processes -- be it government impact assessments, weather forecasts, disease modeling, ... -- society gains as predictive power improves^[Public forecasting organizations like FiveThirtyEight also help promote data literacy and inspire improved predictive practices]. 
 
@@ -50,11 +52,11 @@ I scraped historical betting lines and which teams actually made the playoffs ea
 
 ![](images/archive-overall.PNG)
 
-The webpage for each season had a (mostly) consistent table structure and associated date of archive.
+The webpage for each season has a (mostly) consistent table structure and associated date of archive.
 
 ![](images/example-table.PNG)
 
-Each season had a consistent URL (with only the season year changing).
+Each season has a consistent URL (with only the season year changing).
 
 ![](images/example-url.PNG)
 
@@ -67,7 +69,7 @@ Each season had a consistent URL (with only the season year changing).
 5. Tables contain the betting odds of both "making the playoffs" and "missing the playoffs"^[You might expect these to be inverses of one another, but they actually are slightly different -- the difference provides room for The House to make a profit.]. I took the average of the implied odds of making the playoffs between both columns ("make" and inverse of "miss"). This might be generous to the betting markets but likely gets at a closer estimate of where they actually expect the odds to be.
 6. Scrape *date* archived and join to table
 7. Bind data from all scraped pages / seasons together
-8. Convert from odds to probability
+8. Convert from odds to probability (e.g. 4:1 becomes 80%)
 
 *Load packages and helper functions*
 
@@ -234,7 +236,7 @@ bookies_538_joined %>%
 
 # Analysis
 
-FiveThirtyEight uses the [Brier Score](https://en.wikipedia.org/wiki/Brier_score)^[Essentially the root mean squared error of the classification.] in their evaluations of model performance (see [Some Do's and Don't's For Evaluating Senate Forecasts](https://fivethirtyeight.com/features/some-dos-and-donts-for-evaluating-senate-forecasts/))[^perf-note].
+FiveThirtyEight uses the [Brier Score](https://en.wikipedia.org/wiki/Brier_score)^[Essentially the root mean squared error of the classification.] in their evaluations of model performance (see [Some Do's and Don't's For Evaluating Senate Forecasts](https://fivethirtyeight.com/features/some-dos-and-donts-for-evaluating-senate-forecasts/))[^perf-note]. I mirrored this below.
 
 [^perf-note]: I've remarked in the past on the differences in their performance evaluation from methods used by more pure ML and kaggle people:
     
@@ -250,9 +252,9 @@ t_test_playoffs <- function(df){
     broom::tidy() %>% 
     select(
       estimate_diff = estimate,
+      p.value,
       estimate_538 = estimate1,
       estimate_bookies = estimate2,
-      p.value,
       starts_with("conf")
     )
 }
@@ -296,7 +298,7 @@ At -460 the markets had an implied probability of the Lakers making the playoffs
 
 **Is this difference atypical?**
 
-Across five seasons of data (145 observations), the average difference between FiveThirtyEight and betting markets  was ~10 percentage points.
+Across five seasons of data (145 observations), the correlation coefficient was 0.92 (strong correlation). The average difference between FiveThirtyEight and betting markets was ~10 percentage points.
 
 ```{r}
 bookies_538_joined %>% 
@@ -339,7 +341,7 @@ For the reasons given in the Introduction I would still lean towards trusting th
 Some reasons why the observed 55 ppt difference in expectations between FiveThirtyEight and betting markets may not be as extreme as it seems:
 
 * My historical data is looking at individual time-point comparisons at just one point for each season -- perhaps betting markets and FiveThirtyEight vary more from one another at different points in the year than those at the points I have..
-* Lines (according to Sports Odds History) come from BetMGM, each betting market is different
+* Market odds (according to Sports Odds History) are archived come from BetMGM. I don't know where I was looking when I saw the -460 odds on the Lakers. Each betting market is different and may have different levels of covariation with FiveThirtyEight's forecasts.
 * I was looking at just the "odds of making the playoffs" not the average of that with the inverse of "odds to miss the playoffs" as I did in step 5 of [Steps]^[This would make the betting market odds seem more aggressive.].
 * Changes in methodology of more recent forecasts may have made it depart more from betting markets compared to in prior years
 
