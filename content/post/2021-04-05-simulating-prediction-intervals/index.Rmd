@@ -84,7 +84,7 @@ See [gist](https://gist.github.com/brshallo/4053df78265ab9d77f753d95f5faaf5b) fo
 
 The initial set-up (load packages, load data, set pre-processing recipe, model specification) is the same as in the [Providing More Than Point Estimates](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#providing-more-than-point-estimates) section of part 1. The code below is being sourced and printed from that post's .Rmd file.
 
-```{r source-code, include = FALSE, cache = FALSE}
+```{r source-code, include = FALSE, cache = FALSE, purl=FALSE}
 devtools::source_gist("https://gist.github.com/brshallo/e963b9dca5e4e1ab12ec6348b135362e")
 
 file <- here::here("content/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals.Rmd")

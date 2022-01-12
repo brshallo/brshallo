@@ -61,7 +61,7 @@ A more apples-to-apples comparison would have been to abandon the {parsnip} fram
 
 Starting libraries and data will be the same as in [Part 1, Providing More Than Point Estimates](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#providing-more-than-point-estimates). The code below is sourced and printed from that post’s .Rmd file.
 
-```{r source-code, include = FALSE, cache = FALSE}
+```{r source-code, include = FALSE, cache = FALSE, purl = FALSE}
 devtools::source_gist("https://gist.github.com/brshallo/e963b9dca5e4e1ab12ec6348b135362e")
 
 file <- here::here("content/post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals.Rmd")
