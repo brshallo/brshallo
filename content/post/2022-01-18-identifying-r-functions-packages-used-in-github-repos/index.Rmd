@@ -1,0 +1,140 @@
+---
+title: Identifying R Functions & Packages Used in GitHub Repos
+author: Bryan Shalloway
+date: '2022-01-18'
+slug: identifying-r-functions-packages-used-in-github-repos
+categories:
+  - data science
+tags:
+  - knitr
+  - dplyr
+  - readr
+  - DT
+  - funspotr
+  - stringr
+codefolding_show: hide
+thumbnail: /2022/01/18/identifying-r-functions-packages-used-in-github-repos/images/indexing.jpg
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+TLDR: [funspotr](https://brshallo.github.io/funspotr/) provides helpers for spotting the functions and packages in R and Rmarkdown files and associated github repositories. See [Examples] for catalogues of the functions/packages used in posts by Julia Silge, David Robinson, and others.
+
+# Documenting #rstats posts
+
+I was inspired by a few tweets I saw documenting the methods used in posts by popular #rstats communicators/developers: 
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">To try and learn <a href="https://twitter.com/hashtag/tidymodels?src=hash&amp;ref_src=twsrc%5Etfw">#tidymodels</a> I made a list of examples of using each engine, etc, by <a href="https://twitter.com/juliasilge?ref_src=twsrc%5Etfw">@juliasilge</a>, <a href="https://twitter.com/topepos?ref_src=twsrc%5Etfw">@topepos</a>, and <a href="https://twitter.com/Emil_Hvitfeldt?ref_src=twsrc%5Etfw">@Emil_Hvitfeldt</a>. It&#39;s far from exhaustive, and in progress, but has helped a ton. <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> <a href="https://t.co/yqecIo7CUS">https://t.co/yqecIo7CUS</a></p>&mdash; Jeff Rothschild (@EatsleepfitJeff) <a href="https://twitter.com/EatsleepfitJeff/status/1450377631296225281?ref_src=twsrc%5Etfw">October 19, 2021</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Anyone other <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> people find <a href="https://twitter.com/drob?ref_src=twsrc%5Etfw">@drob</a>&#39;s <a href="https://twitter.com/hashtag/TidyTuesday?src=hash&amp;ref_src=twsrc%5Etfw">#TidyTuesday</a> screencasts useful?<br><br>I made a spreadsheet with timestamps for hundreds of specific tasks he does: <a href="https://t.co/HvJbLk1chd">https://t.co/HvJbLk1chd</a><br> <br>Useful if, like me, you keep going back and ask, &quot;Where in the video did he do [this thing] again?&quot;</p>&mdash; Alex Cookson (@alexcookson) <a href="https://twitter.com/alexcookson/status/1216798492183670784?ref_src=twsrc%5Etfw">January 13, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+As a complement to these resources, I thought it'd be helpful to see precisely which functions and packages were used in each post. See  [Julia Silge Blog] and [David Robinson Tidy Tuesday] for tables containing the unique functions and associated packages used in each of their posts. I also created tables for functions used in the [R for Data Science Chapters] and [Bryan Shalloway Blog].
+
+These were made using the [funspotr](https://github.com/brshallo/funspotr) package that provides helpers for identifying R functions & packages used in self-contained R files and associated github repositories.  See funspotr [website](https://brshallo.github.io/funspotr/) for documentation on how to apply funspotr to #rstats file(s) or repos^[funspotr could also be used for R code analysis -- e.g. review most frequent functions, changes in trends, etc.] as well as to see how the package works and current limitations. Message me if you use funspotr or feel free to open an issue if you'd be interested in adding additional [funspotr-examples](https://github.com/brshallo/funspotr-examples) that I can link to!
+
+# Examples
+
+The files in the github repos below were parsed and saved in [funspotr-examples](https://github.com/brshallo/funspotr-examples)^[Parsing all the files takes a few minutes, so was easier to split apart from blog and package.] -- specifically to [data/funs](https://github.com/brshallo/funspotr-examples/tree/main/data/funs)^[See [R/save-examples.R](https://github.com/brshallo/funspotr-examples/blob/main/R/save-examples.R) for code used to parse files -- mostly just used `funspotr::github_spot_funs()`].
+
+For the examples below I only show the *unique* functions in each post^[Rather than each instance of them as is posted on funspotr-examples] -- except for [R for Data Science Chapters] where I only show the unique functions across the entire book^[Or at least across the files used for documenting the chapters. Showing unique functins across *all files* makes more sense in this case compared to the others because rather than each file being truly self-contained the files together make-up a collective.].
+
+```{r}
+library(dplyr)
+library(readr)
+library(DT)
+```
+
+```{r, echo = FALSE}
+
+spot_unavailable_pkgs <- function(url){
+  pkgs_available <-
+    readr::read_csv(url) %>%
+    filter(pkgs != "(unknown)") %>%
+    with(unique(pkgs)) %>%
+    funspotr::check_pkgs_availability()
+  
+  unavailble_pkgs <- names(pkgs_available[!pkgs_available]) %>%
+    stringr::str_flatten("; ")
+  
+  unavailble_pkgs
+}
+
+drob_unavilable <- spot_unavailable_pkgs("https://raw.githubusercontent.com/brshallo/funspotr-examples/main/data/deps/drob-tidy-tuesdays-deps-20220118.csv")
+
+jsilge_unavilable <- spot_unavailable_pkgs("https://raw.githubusercontent.com/brshallo/funspotr-examples/main/data/deps/jsilge-blog-deps-20220118.csv")
+```
+
+## Julia Silge Blog
+
+Also posted table to google drive **[here](https://docs.google.com/spreadsheets/d/1Cf376NFpVZbkrA7RHGzTR22CvNrvm9mev5rg8OyK-WA/edit?usp=sharing).**
+
+The following package dependencies were not installed locally during parsing. Any function from these packages (along with any custom functions) will most likely be assigned `pkgs = "(unknown)"`:  
+`r jsilge_unavilable`
+
+```{r}
+readr::read_csv("https://raw.githubusercontent.com/brshallo/funspotr-examples/main/data/funs/jsilge-blog-funs-20220114.csv") %>% 
+  distinct() %>% 
+  DT::datatable(rownames = FALSE,
+              class = 'cell-border stripe',
+              filter = 'top',
+              escape = FALSE,
+              options = list(pageLength = 10))
+```
+
+
+## David Robinson Tidy Tuesday
+
+Also posted table to google drive **[here](https://docs.google.com/spreadsheets/d/13TVH3yLE-xfP6Hzxcya86tVzFkVAaTc5NLXIIE7Up78/edit?usp=sharing).**
+
+The following package dependencies were not installed locally during parsing. Any function from these packages (along with any custom functions) will most likely be assigned `pkgs = "(unknown)"`:  
+`r drob_unavilable`
+
+```{r}
+readr::read_csv("https://raw.githubusercontent.com/brshallo/funspotr-examples/main/data/funs/drob-tidy-tuesdays-funs-20220114.csv") %>% 
+  distinct() %>% 
+  DT::datatable(rownames = FALSE,
+              class = 'cell-border stripe',
+              filter = 'top',
+              escape = FALSE,
+              options = list(pageLength = 10))
+```
+
+
+## R for Data Science Chapters
+
+Also posted table to google drive **[here](https://docs.google.com/spreadsheets/d/1jxozMUcXQQ13aVsxgOqqFPBQSpAcsDvQ3APi__oUjm8/edit?usp=sharing).**
+
+Caution that this github repository is currently under an overhaul with R4DS version 2 coming-out -- so the index I use doesn't intuitively line-up with every chapter currently in the book.
+
+The following package dependencies were not installed locally during parsing. Any function from these packages (along with any custom functions) will most likely be assigned `pkgs = "(unknown)"`:  
+writexl
+
+```{r}
+readr::read_csv("https://raw.githubusercontent.com/brshallo/funspotr-examples/main/data/funs/r4ds-chapter-files-funs-20220117.csv") %>% 
+  distinct(funs, .keep_all = TRUE) %>% 
+  select(-in_multiple_pkgs) %>% 
+  DT::datatable(rownames = FALSE,
+              class = 'cell-border stripe',
+              filter = 'top',
+              escape = FALSE,
+              options = list(pageLength = 10))
+```
+
+## Bryan Shalloway Blog
+
+Also posted table to google drive **[here](https://docs.google.com/spreadsheets/d/1BoX8pbwyS32NofEoptJ8juZ-FeKsIRjlpud6aYtOAW0/edit?usp=sharing).**
+
+Any custom functions will most likely be assigned `pkgs = "(unknown)"`:  
+
+```{r}
+readr::read_csv("https://raw.githubusercontent.com/brshallo/funspotr-examples/main/data/funs/brshallo-blog-funs-20220114.csv") %>% 
+  distinct() %>% 
+  DT::datatable(rownames = FALSE,
+              class = 'cell-border stripe',
+              filter = 'top',
+              escape = FALSE,
+              options = list(pageLength = 10))
+```
+
