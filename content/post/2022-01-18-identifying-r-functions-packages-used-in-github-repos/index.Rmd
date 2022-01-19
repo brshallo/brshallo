@@ -106,7 +106,7 @@ readr::read_csv("https://raw.githubusercontent.com/brshallo/funspotr-examples/ma
 
 Also posted table to google drive **[here](https://docs.google.com/spreadsheets/d/1jxozMUcXQQ13aVsxgOqqFPBQSpAcsDvQ3APi__oUjm8/edit?usp=sharing).**
 
-Caution that this github repository is currently under an overhaul with R4DS version 2 coming-out -- so the index I use doesn't intuitively line-up with every chapter currently in the book.
+Pulling these files was slightly more complicated than the other examples (which were just simple calls to `funspotr::github_spot_funs(repo, branch)` ). In this case I first read in an index file so as to limit parsing to only those files that are used directly as chapters -- see [R/save-examples.R](https://github.com/brshallo/funspotr-examples/blob/main/R/save-examples.R) for details. Note too that R4DS is currently under an overhaul with version 2 coming-out, so the index I use doesn't intuitively line-up with *every* chapter currently in the book.
 
 The following package dependencies were not installed locally during parsing. Any function from these packages (along with any custom functions) will most likely be assigned `pkgs = "(unknown)"`:  
 writexl

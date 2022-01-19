@@ -105,7 +105,7 @@ ggflags; ebbr; rKenyaCensus; tidymetrics; shinymetrics; drlib; shinybones; trees
 <div id="r-for-data-science-chapters" class="section level2">
 <h2>R for Data Science Chapters</h2>
 <p>Also posted table to google drive <strong><a href="https://docs.google.com/spreadsheets/d/1jxozMUcXQQ13aVsxgOqqFPBQSpAcsDvQ3APi__oUjm8/edit?usp=sharing">here</a>.</strong></p>
-<p>Caution that this github repository is currently under an overhaul with R4DS version 2 coming-out – so the index I use doesn’t intuitively line-up with every chapter currently in the book.</p>
+<p>Pulling these files was slightly more complicated than the other examples (which were just simple calls to <code>funspotr::github_spot_funs(repo, branch)</code> ). In this case I first read in an index file so as to limit parsing to only those files that are used directly as chapters – see <a href="https://github.com/brshallo/funspotr-examples/blob/main/R/save-examples.R">R/save-examples.R</a> for details. Note too that R4DS is currently under an overhaul with version 2 coming-out, so the index I use doesn’t intuitively line-up with <em>every</em> chapter currently in the book.</p>
 <p>The following package dependencies were not installed locally during parsing. Any function from these packages (along with any custom functions) will most likely be assigned <code>pkgs = "(unknown)"</code>:<br />
 writexl</p>
 <pre class="r"><code>readr::read_csv(&quot;https://raw.githubusercontent.com/brshallo/funspotr-examples/main/data/funs/r4ds-chapter-files-funs-20220117.csv&quot;) %&gt;% 
