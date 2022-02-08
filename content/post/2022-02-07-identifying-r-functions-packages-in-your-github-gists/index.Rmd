@@ -4,6 +4,7 @@ author: Bryan Shalloway
 date: '2022-02-07'
 categories:
   - data science
+  - rstats
 tags:
   - rstats
 slug: identifying-r-functions-packages-in-your-github-gists
@@ -21,14 +22,12 @@ funspotr can also be applied to gists:
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">By functions or packages used...?<a href="https://t.co/kbSLOpQZLF">https://t.co/kbSLOpQZLF</a></p>&mdash; Bryan Shalloway (@brshallo) <a href="https://twitter.com/brshallo/status/1484921548154621953?ref_src=twsrc%5Etfw">January 22, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-A problem I bumped into was that most of Chelsea's gists don't actually have .R or .Rmd extensions so my approach skipped most of her snippets. I wanted to parse my own gists but ran into the similar problem that most of my github gist code snippets are in .md files[^As I often use this output type when creating a [reprex](https://github.com/tidyverse/reprex)).
+A problem I bumped into was that most of Chelsea's gists don't actually have .R or .Rmd extensions so my approach skipped most of her snippets. I wanted to parse my own gists but ran into a related problem that most of my github gist code snippets are saved as .md files^[As I often use this output type when creating a [reprex](https://github.com/tidyverse/reprex).].
 
 In this post I...
 
 1. create a function to extract code chunks from simple .md files
-1. parse the functions and packages in my code using [funspotr](https://github.com/brshallo/funspotr)
-
-In the future I may do a follow-up that passes the parsed functions and packages through a network analysis or some other to better visualize the relationships between code snippets.
+1. parse the functions and packages in my code using [funspotr](https://github.com/brshallo/funspotr)^[In the future I may do a follow-up that passes the parsed functions and packages through a network analysis or some other approach to better visualize the relationships between code snippets.]]
 
 
 # Parsing code
@@ -96,6 +95,8 @@ To parse my .md files, I wrote a function here `extract_code_md()` that...
 * saves it to a temporary file
 * returns the file path of the temporary file
 
+Kind of like `knitr::purl()` but for .md files^[Also posted function on [SO question](https://stackoverflow.com/a/71025744/9059865).].
+
 ```{r}
 subset_even <- function(x) x[!seq_along(x) %% 2]
 
@@ -116,6 +117,8 @@ extract_code_md <- function(file_path){
 I map `extract_code_md()` on all the .md gists and then parse the files using funspotr.
 
 ```{r, include = FALSE, eval = FALSE}
+#### More detailed notes ####
+
 #### md_gists_local step ####
 # I keep the column name `urls` (even though these are now local) becuase that
 # is what unnest_github_results() expects even though it can handle urls or
@@ -136,6 +139,7 @@ md_gists <- brshallo_gists %>%
   filter(!funspotr:::str_detect_r_rmd(contents))
 
 md_gists_local <- md_gists %>% 
+  # name urls because that's what funspotr::githup_spot_funs() expects
   mutate(urls = map_chr(urls, extract_code_md))
 
 md_gists_parsed <- funspotr::github_spot_funs(custom_urls = md_gists_local)
@@ -161,7 +165,7 @@ md_gists_unnested <- md_gists_parsed %>%
 md_gists_unnested
 ```
 
-Note that I'm assuming all the code snippets are R code otherwise the R code parsing steps in funspotr will fail.
+Note that I'm assuming all the code snippets are R code^[Otherwise the R code parsing steps in funspotr will fail.].
 
 ## Binding files together
 
@@ -191,8 +195,8 @@ gists_unnested %>%
 
 # Organizing snippets
 
-Perhaps I'll do a follow-up and show some ways the relationships between the resulting parsed code snippets may be visualized or organized. 
+Perhaps I'll do a follow-up and show some ways the relationships between the resulting parsed code snippets may be visualized in a network or organized in some other way. 
 
-Mentioned in the initial thread, Obsidian seems to be a product that does some things along the lines of what I was thinking:
+Mentioned in the initial thread, Obsidian seems to be a product that does some things along these lines:
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">I’ve found this useful (<a href="https://t.co/OYzwfTltLG">https://t.co/OYzwfTltLG</a>) I is a tool for writing, organizing, linking markdown files.</p>&mdash; John Lee (@Jdlee888) <a href="https://twitter.com/Jdlee888/status/1484332889609170946?ref_src=twsrc%5Etfw">January 21, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>

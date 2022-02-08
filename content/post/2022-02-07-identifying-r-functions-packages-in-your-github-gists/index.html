@@ -4,6 +4,7 @@ author: Bryan Shalloway
 date: '2022-02-07'
 categories:
   - data science
+  - rstats
 tags:
   - rstats
 slug: identifying-r-functions-packages-in-your-github-gists
@@ -47,13 +48,12 @@ By functions or packages used…?<a href="https://t.co/kbSLOpQZLF">https://t.co/
 — Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1484921548154621953?ref_src=twsrc%5Etfw">January 22, 2022</a>
 </blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<p>A problem I bumped into was that most of Chelsea’s gists don’t actually have .R or .Rmd extensions so my approach skipped most of her snippets. I wanted to parse my own gists but ran into the similar problem that most of my github gist code snippets are in .md files[^As I often use this output type when creating a <a href="https://github.com/tidyverse/reprex">reprex</a>).</p>
+<p>A problem I bumped into was that most of Chelsea’s gists don’t actually have .R or .Rmd extensions so my approach skipped most of her snippets. I wanted to parse my own gists but ran into a related problem that most of my github gist code snippets are saved as .md files<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
 <p>In this post I…</p>
 <ol style="list-style-type: decimal">
 <li>create a function to extract code chunks from simple .md files</li>
-<li>parse the functions and packages in my code using <a href="https://github.com/brshallo/funspotr">funspotr</a></li>
+<li>parse the functions and packages in my code using <a href="https://github.com/brshallo/funspotr">funspotr</a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>]</li>
 </ol>
-<p>In the future I may do a follow-up that passes the parsed functions and packages through a network analysis or some other to better visualize the relationships between code snippets.</p>
 <div id="parsing-code" class="section level1">
 <h1>Parsing code</h1>
 <p>First I used funspotr to get a table with all of my gists.</p>
@@ -114,10 +114,11 @@ r_gists_unnested &lt;- r_gists_parsed %&gt;%
 <p>To parse my .md files, I wrote a function here <code>extract_code_md()</code> that…</p>
 <ul>
 <li>reads in a file</li>
-<li>extracts the text in code chunks<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></li>
+<li>extracts the text in code chunks<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></li>
 <li>saves it to a temporary file</li>
 <li>returns the file path of the temporary file</li>
 </ul>
+<p>Kind of like <code>knitr::purl()</code> but for .md files<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
 <pre class="r"><code>subset_even &lt;- function(x) x[!seq_along(x) %% 2]
 
 extract_code_md &lt;- function(file_path){
@@ -158,11 +159,11 @@ md_gists_unnested &lt;- md_gists_parsed %&gt;%
 ##  9 summarise      dplyr   FALSE            grouped-nested-t-test.md &quot;C:\\Users\~
 ## 10 list           base    FALSE            grouped-nested-t-test.md &quot;C:\\Users\~
 ## # ... with 1,051 more rows</code></pre>
-<p>Note that I’m assuming all the code snippets are R code otherwise the R code parsing steps in funspotr will fail.</p>
+<p>Note that I’m assuming all the code snippets are R code<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.</p>
 </div>
 <div id="binding-files-together" class="section level2">
 <h2>Binding files together</h2>
-<p>I bind these files together and then arrange them based on the initial order in <code>brshallo_gists</code><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
+<p>I bind these files together and then arrange them based on the initial order in <code>brshallo_gists</code><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>.</p>
 <pre class="r"><code>gists_unnested &lt;- bind_rows(
   r_gists_unnested,
   md_gists_unnested
@@ -187,8 +188,8 @@ gists_unnested %&gt;%
 </div>
 <div id="organizing-snippets" class="section level1">
 <h1>Organizing snippets</h1>
-<p>Perhaps I’ll do a follow-up and show some ways the relationships between the resulting parsed code snippets may be visualized or organized.</p>
-<p>Mentioned in the initial thread, Obsidian seems to be a product that does some things along the lines of what I was thinking:</p>
+<p>Perhaps I’ll do a follow-up and show some ways the relationships between the resulting parsed code snippets may be visualized in a network or organized in some other way.</p>
+<p>Mentioned in the initial thread, Obsidian seems to be a product that does some things along these lines:</p>
 <blockquote class="twitter-tweet">
 <p lang="en" dir="ltr">
 I’ve found this useful (<a href="https://t.co/OYzwfTltLG">https://t.co/OYzwfTltLG</a>) I is a tool for writing, organizing, linking markdown files.
@@ -200,7 +201,11 @@ I’ve found this useful (<a href="https://t.co/OYzwfTltLG">https://t.co/OYzwfTl
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>based on what exists between ticks.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>Note that this will just return the <em>unique</em> functions in each file, if I want to see every time I used a function I would have passed in <code>show_each_use = FALSE</code> to <code>github_spot_funs()</code>.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn1"><p>As I often use this output type when creating a <a href="https://github.com/tidyverse/reprex">reprex</a>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>In the future I may do a follow-up that passes the parsed functions and packages through a network analysis or some other approach to better visualize the relationships between code snippets.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>based on what exists between ticks.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>Also posted function on <a href="https://stackoverflow.com/a/71025744/9059865">SO question</a>.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>Otherwise the R code parsing steps in funspotr will fail.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>Note that this will just return the <em>unique</em> functions in each file, if I want to see every time I used a function I would have passed in <code>show_each_use = FALSE</code> to <code>github_spot_funs()</code>.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

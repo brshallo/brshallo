@@ -21,7 +21,7 @@ thumbnail: /2022/01/18/identifying-r-functions-packages-used-in-github-repos/ima
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-TLDR: [funspotr](https://brshallo.github.io/funspotr/) provides helpers for spotting the functions and packages in R and Rmarkdown files and associated github repositories. See [Examples] for catalogues of the functions/packages used in posts by Julia Silge, David Robinson, and others.
+TLDR: [funspotr](https://brshallo.github.io/funspotr/) provides helpers for spotting the functions and packages in R and Rmarkdown files and associated github repositories. See [Examples] for catalogues of the functions/packages used in posts by Julia Silge, David Robinson, and others. See [followup post](https://www.bryanshalloway.com/2022/02/07/identifying-r-functions-packages-in-your-github-gists/) for example with github gists.
 
 # Documenting #rstats posts
 
