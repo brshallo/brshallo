@@ -27,7 +27,7 @@ A problem I bumped into was that most of Chelsea's gists don't actually have .R 
 In this post I...
 
 1. create a function to extract code chunks from simple .md files
-1. parse the functions and packages in my code using [funspotr](https://github.com/brshallo/funspotr)^[In the future I may do a follow-up that passes the parsed functions and packages through a network analysis or some other approach to better visualize the relationships between code snippets.]]
+1. parse the functions and packages in my code using [funspotr](https://github.com/brshallo/funspotr)^[In the future I may do a follow-up that passes the parsed functions and packages through a network analysis or some other approach to better visualize the relationships between code snippets.].
 
 
 # Parsing code
@@ -110,7 +110,6 @@ extract_code_md <- function(file_path){
   file_output <- tempfile(fileext = ".R")
   writeLines(lines, file_output)
   file_output
-  
 }
 ```
 
@@ -149,10 +148,12 @@ md_gists_unnested <- md_gists_parsed %>%
 ```
 
 ```{r, eval = FALSE}
+# display output was weird here so just copied code and set eval = FALSE
 md_gists <- brshallo_gists %>% 
   filter(!funspotr:::str_detect_r_rmd(contents))
 
 md_gists_local <- md_gists %>% 
+# name urls because that's what funspotr::githup_spot_funs() expects
   mutate(urls = map_chr(urls, extract_code_md))
 
 md_gists_parsed <- funspotr::github_spot_funs(custom_urls = md_gists_local)
@@ -179,8 +180,8 @@ gists_unnested <- bind_rows(
   # got this arranging by a vector trick from SO:
   # https://stackoverflow.com/questions/52216341/how-to-sort-rows-of-a-data-frame-based-on-a-vector-using-dplyr-pipe
   arrange(match(contents, brshallo_gists$contents)) %>% 
-  # add back-in links to url's where files are rather than urls equalling local
-  # paths for .md snippets
+  # add back-in links to url's where files are rather than urls column being
+  # local paths for .md snippets
   select(-urls) %>% 
   left_join(brshallo_gists, by = "contents")
 

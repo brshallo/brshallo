@@ -7,11 +7,11 @@ disable_comments: true
 
 *Schooling & Early Career:*
 
-Bryan graduated with honors in Cognitive Neuroscience from Washington University in St. Louis where he also studied American Culture Studies and Political Science. He spent the majority of his high school and undergraduate summers in a Neuropathology research lab studying Alzheimer's disease. After graduating, he started his career as a high school math teacher in Durham Public Schools, North Carolina, through [Teach for America](https://www.teachforamerica.org/). Bryan moved into analytics through an [Education Pioneers](https://www.educationpioneers.org/) fellowship as a School Performance Analyst in Colorado and then returned to North Carolina where he completed a [Master's in Advanced Analytics](https://analytics.ncsu.edu/) from NC State University. 
+Bryan graduated with honors in Cognitive Neuroscience from Washington University in St. Louis where he also studied American Culture Studies and Political Science. He spent the majority of his high school and undergraduate summers in a Neuropathology research lab studying Alzheimer's disease. After graduating, he started his career as a high school math teacher in Durham Public Schools, North Carolina, through [Teach for America](https://www.teachforamerica.org/). Bryan moved into analytics through an [Education Pioneers](https://www.educationpioneers.org/) fellowship as a School Performance Analyst in Colorado. He then returned to North Carolina where he completed an MS at [The Institute for Advanced Analytics](https://analytics.ncsu.edu/) at NC State University. 
 
 *Career in Data Science:*
 
-Bryan has been a Data Scientist at [NetApp](https://www.netapp.com/) in the Raleigh-Durham area since July of 2017. He has worked on a wide range of problems in customer support, sales, and pricing. Examples of his projects:
+Bryan has been a Data Scientist at [NetApp](https://www.netapp.com/) since July of 2017. He has worked as the lead data scientists on a wide range of problems with different teams in customer support, sales, and pricing. Examples of his projects:
 
 * Support ticket prioritization: Rate open customer support tickets according to risk of escalation.
 * Forecasting: Produce automated sales forecasts across product lines and geographies.
@@ -19,7 +19,7 @@ Bryan has been a Data Scientist at [NetApp](https://www.netapp.com/) in the Rale
 
 Outside of his direct responsibilities, Bryan is active in fostering internal and local Data Science communities. Examples of his engagements:
 
-* Co-lead NetApp Data Science study group on topics including *Feature Engineering*, *Statistical Learning*, *Pricing Optimization*, and internal prediction competitions.
+* Co-lead NetApp Data Science study group on topics including *Feature Engineering*, *Pricing Optimization*, and *Interpretable Machine Learning*.
 * Promote adoption of improved practices in areas such as hiring Data Scientists and workflows for predictive modeling.
 * Regular presenter to NetApp Data Science community and local technical communities. 
 * Mentor emerging NetApp talent and supported local university students completing their cap-stone projects in data analytics.
