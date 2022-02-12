@@ -58,11 +58,11 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_cache$", "\\.knit\\.md$", "\\.utf8\
     codefolding_show = "show"
     # Set to true to exclude the "Show/hide all" button
     codefolding_nobutton = false
-    custom_css = ["codefolding.css"]
+    custom_css = ["custom.css"]
 
     [params.logo]
     url = "bryan_edit.jpg"
     width = 60
     height = 60
-    alt = "Logo"
+    alt = "Home"
     

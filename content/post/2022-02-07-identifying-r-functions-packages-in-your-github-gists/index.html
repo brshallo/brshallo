@@ -9,6 +9,7 @@ tags:
   - rstats
 slug: identifying-r-functions-packages-in-your-github-gists
 codefolding_show: show
+disable_codefolding: false
 thumbnail: /2022/02/07/identifying-r-functions-packages-in-your-github-gists/images/filing-cabinets.jpg
 ---
 
@@ -48,11 +49,11 @@ By functions or packages used…?<a href="https://t.co/kbSLOpQZLF">https://t.co/
 — Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1484921548154621953?ref_src=twsrc%5Etfw">January 22, 2022</a>
 </blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<p>A problem I bumped into was that most of Chelsea’s gists don’t actually have .R or .Rmd extensions so my approach skipped most of her snippets. I wanted to parse my own gists but ran into a related problem that most of my github gist code snippets are saved as .md files<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+<p>A problem I bumped into was that most of Chelsea’s gists don’t actually have .R or .Rmd extensions so my approach skipped most of her snippets. I wanted to parse my own gists but ran into a related problem that most of my github gist code snippets are saved as .md files<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> so <code>knitr::purl()</code> won’t work<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
 <p>In this post I…</p>
 <ol style="list-style-type: decimal">
 <li>create a function to extract code chunks from simple .md files</li>
-<li>parse the functions and packages in my code using <a href="https://github.com/brshallo/funspotr">funspotr</a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</li>
+<li>parse the functions and packages in my code using <a href="https://github.com/brshallo/funspotr">funspotr</a><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</li>
 </ol>
 <div id="parsing-code" class="section level1">
 <h1>Parsing code</h1>
@@ -114,11 +115,10 @@ r_gists_unnested &lt;- r_gists_parsed %&gt;%
 <p>To parse my .md files, I wrote a function here <code>extract_code_md()</code> that…</p>
 <ul>
 <li>reads in a file</li>
-<li>extracts the text in code chunks<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></li>
+<li>extracts the text in code chunks<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></li>
 <li>saves it to a temporary file</li>
 <li>returns the file path of the temporary file</li>
 </ul>
-<p>Kind of like <code>knitr::purl()</code> but for .md files<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
 <pre class="r"><code>subset_even &lt;- function(x) x[!seq_along(x) %% 2]
 
 extract_code_md &lt;- function(file_path){
@@ -131,13 +131,14 @@ extract_code_md &lt;- function(file_path){
   file_output &lt;- tempfile(fileext = &quot;.R&quot;)
   writeLines(lines, file_output)
   file_output
-  
 }</code></pre>
 <p>I map <code>extract_code_md()</code> on all the .md gists and then parse the files using funspotr.</p>
-<pre class="r"><code>md_gists &lt;- brshallo_gists %&gt;% 
+<pre class="r"><code># display output was weird here so just copied code and set eval = FALSE
+md_gists &lt;- brshallo_gists %&gt;% 
   filter(!funspotr:::str_detect_r_rmd(contents))
 
 md_gists_local &lt;- md_gists %&gt;% 
+# name urls because that&#39;s what funspotr::githup_spot_funs() expects
   mutate(urls = map_chr(urls, extract_code_md))
 
 md_gists_parsed &lt;- funspotr::github_spot_funs(custom_urls = md_gists_local)
@@ -171,8 +172,8 @@ md_gists_unnested &lt;- md_gists_parsed %&gt;%
   # got this arranging by a vector trick from SO:
   # https://stackoverflow.com/questions/52216341/how-to-sort-rows-of-a-data-frame-based-on-a-vector-using-dplyr-pipe
   arrange(match(contents, brshallo_gists$contents)) %&gt;% 
-  # add back-in links to url&#39;s where files are rather than urls equalling local
-  # paths for .md snippets
+  # add back-in links to url&#39;s where files are rather than urls column being
+  # local paths for .md snippets
   select(-urls) %&gt;% 
   left_join(brshallo_gists, by = &quot;contents&quot;)
 
@@ -202,9 +203,9 @@ I’ve found this useful (<a href="https://t.co/OYzwfTltLG">https://t.co/OYzwfTl
 <hr />
 <ol>
 <li id="fn1"><p>As I often use this output type when creating a <a href="https://github.com/tidyverse/reprex">reprex</a>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>In the future I may do a follow-up that passes the parsed functions and packages through a network analysis or some other approach to better visualize the relationships between code snippets.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
-<li id="fn3"><p>based on what exists between ticks.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
-<li id="fn4"><p>Also posted function on <a href="https://stackoverflow.com/a/71025744/9059865">SO question</a>.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p><code>knitr::purl()</code> is used in functions within funspotr to parse R markdown files.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>In the future I may do a follow-up that passes the parsed functions and packages through a network analysis or some other approach to better visualize the relationships between code snippets.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>based on what exists between ticks. Kind of like a less reliable version of <code>knitr::purl()</code> but for .md files. Also posted function on <a href="https://stackoverflow.com/a/71025744/9059865">SO question</a>.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
 <li id="fn5"><p>Otherwise the R code parsing steps in funspotr will fail.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
 <li id="fn6"><p>Note that this will just return the <em>unique</em> functions in each file, if I want to see every time I used a function I would have passed in <code>show_each_use = FALSE</code> to <code>github_spot_funs()</code>.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
 </ol>

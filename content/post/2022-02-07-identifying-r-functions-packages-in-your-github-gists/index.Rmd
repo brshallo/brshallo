@@ -9,11 +9,12 @@ tags:
   - rstats
 slug: identifying-r-functions-packages-in-your-github-gists
 codefolding_show: show
+disable_codefolding: false
 thumbnail: /2022/02/07/identifying-r-functions-packages-in-your-github-gists/images/filing-cabinets.jpg
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = TRUE)
 ```
 
 This post is a follow-up to my previous post [Identifying R Functions & Packages Used in GitHub Repos](https://www.bryanshalloway.com/2022/01/18/identifying-r-functions-packages-used-in-github-repos/) that introduced [funspotr](https://github.com/brshallo/funspotr).
@@ -22,7 +23,7 @@ funspotr can also be applied to gists:
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">By functions or packages used...?<a href="https://t.co/kbSLOpQZLF">https://t.co/kbSLOpQZLF</a></p>&mdash; Bryan Shalloway (@brshallo) <a href="https://twitter.com/brshallo/status/1484921548154621953?ref_src=twsrc%5Etfw">January 22, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-A problem I bumped into was that most of Chelsea's gists don't actually have .R or .Rmd extensions so my approach skipped most of her snippets. I wanted to parse my own gists but ran into a related problem that most of my github gist code snippets are saved as .md files^[As I often use this output type when creating a [reprex](https://github.com/tidyverse/reprex).].
+A problem I bumped into was that most of Chelsea's gists don't actually have .R or .Rmd extensions so my approach skipped most of her snippets. I wanted to parse my own gists but ran into a related problem that most of my github gist code snippets are saved as .md files^[As I often use this output type when creating a [reprex](https://github.com/tidyverse/reprex).] so `knitr::purl()` won't work^[`knitr::purl()` is used in functions within funspotr to parse R markdown files.].
 
 In this post I...
 
@@ -91,11 +92,11 @@ r_gists_unnested
 To parse my .md files, I wrote a function here `extract_code_md()` that...
 
 * reads in a file
-* extracts the text in code chunks^[based on what exists between ticks.]
+* extracts the text in code chunks^[based on what exists between ticks. Kind of like a less reliable version of `knitr::purl()` but for .md files. Also posted function on [SO question](https://stackoverflow.com/a/71025744/9059865).]
 * saves it to a temporary file
 * returns the file path of the temporary file
 
-Kind of like `knitr::purl()` but for .md files^[Also posted function on [SO question](https://stackoverflow.com/a/71025744/9059865).].
+
 
 ```{r}
 subset_even <- function(x) x[!seq_along(x) %% 2]

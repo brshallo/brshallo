@@ -66,3 +66,9 @@
     margin: 2px 0 0;
     font-size: 14px;
 }
+
+/* Custom color for terms */
+.terms {
+  color: #ccc;
+}
+

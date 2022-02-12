@@ -6,24 +6,30 @@ categories:
   - business
   - data science
   - pricing
+  - rstats
 tags:
   - business
   - distributions
+codefolding_show: hide
 slug: influencing-distributions
 thumbnail: /post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-6-1.png
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 <div id="TOC">
 <ul>
-<li><a href="#simple-example">Simple Example</a><ul>
-<li><a href="#applying-incentives">Applying Incentives</a><ul>
+<li><a href="#simple-example">Simple Example</a>
+<ul>
+<li><a href="#applying-incentives">Applying Incentives</a>
+<ul>
 <li><a href="#takeaways-of-resulting-distribution">Takeaways of Resulting Distribution</a></li>
 <li><a href="#think-carefully-about-assumptions">Think Carefully About Assumptions</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#how-to-set-assumptions">How to Set Assumptions</a></li>
-<li><a href="#appendix">Appendix</a><ul>
+<li><a href="#appendix">Appendix</a>
+<ul>
 <li><a href="#simple-assumptions">Simple Assumptions</a></li>
 <li><a href="#trade-offs">Trade-offs</a></li>
 </ul></li>
@@ -36,12 +42,34 @@ thumbnail: /post/2020-11-02-influencing-distributions_files/figure-html/unnamed-
 <div id="simple-example" class="section level1">
 <h1>Simple Example</h1>
 <p>Imagine you have a product that can be sold anywhere from $100 to $150. Sales reps want to sell for as high of a price as possible and customers want to purchase for as low of a price as possible. In this tension your product ends-up selling, on average, for $125 and follows a truncated normal distribution with standard deviation of $10<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+<pre class="r"><code>library(tidyverse)
+
+theme_set(theme_bw())</code></pre>
+<pre class="r"><code>data_distribution &lt;- tibble(price = 100:150,
+       dens = dnorm(price, mean = 125, sd = 10)) %&gt;% 
+  mutate(dens_scaled = dens / sum(dens))
+
+data_distribution %&gt;% 
+  ggplot(aes(x = price, y = dens_scaled))+
+  geom_col()+
+  ylim(c(0, 0.15))+
+  labs(y = &quot;density&quot;)</code></pre>
 <p><img src="/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <div id="applying-incentives" class="section level2">
 <h2>Applying Incentives</h2>
 <p>Executive leadership wants to apply additional incentives on sales reps to keep prices high<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. They task you with setting-up a tiered compensation scheme whereby deals at the top-end of the distribution get a higher compensation rate compared to deals at the bottom end of the distribution.</p>
 <p>Applying such an additional incentive on sales teams has the potential advantage of pushing some proportion of deals to a higher price<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. There are also <a href="#trade-offs">Trade-offs</a> associated with such an initiative (indicated in the <a href="#appendix">Appendix</a>), these will be ignored for the purposes of this exercise.</p>
 <p>Say you decide to set cut-points to split the distribution into quartiles such that sales reps get larger bonuses if their deals fall into higher quartiles.</p>
+<pre class="r"><code>data_distribution %&gt;% 
+  mutate(cum_dens = cumsum(dens_scaled),
+         quartile = (cum_dens) %/% 0.2500001 + 1,
+         quartile = as.factor(quartile)) %&gt;% 
+  rename(initial_quartile = quartile) %&gt;% 
+  ggplot(aes(x = price, y = dens_scaled, fill = initial_quartile))+
+  geom_col()+
+  scale_fill_discrete(type = c(&quot;deeppink&quot;, &quot;orange&quot;, &quot;yellow2&quot;, &quot;royalblue&quot;))+
+  ylim(c(0, 0.15))+
+  labs(y = &quot;density&quot;)</code></pre>
 <p><img src="/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Applying incentives is likely to lead to a different distribution for future deals.</p>
 <ul>
@@ -55,12 +83,92 @@ thumbnail: /post/2020-11-02-influencing-distributions_files/figure-html/unnamed-
 <li>How this influence degrades the farther away the starting position of a deal is from the next tier up in incentives.</li>
 </ol>
 <p>You could paramaterize this problem and model the expected distribution. Making some <a href="#simple-assumptions">Simple Assumptions</a> (described in the <a href="#appendix">Appendix</a>), the chart below shows a (potential) resulting distribution after applying the incentives.</p>
+<pre class="r"><code>data_distribution &lt;- data_distribution %&gt;% 
+  mutate(cum_dens = cumsum(dens_scaled),
+         incentive = ((cum_dens) %/% 0.2500001) * 5,
+         incentive_delta = ifelse(incentive == 15, 0, 5)) # hard coded</code></pre>
+<pre class="r"><code># very inefficient approach computationally
+get_row_bump &lt;- function(price_current){
+  current_incentive &lt;- data_distribution %&gt;% 
+    filter(price == {{price_current}}) %&gt;% 
+    pull(incentive)
+
+  output &lt;- data_distribution %&gt;% 
+    filter(price &gt; {{price_current}}, incentive &gt; current_incentive) %&gt;% 
+    head(1) %&gt;% 
+    pull(price)
+  
+  if(length(output) == 0) output &lt;- NA
+  
+  output
+}
+
+proportion_raised &lt;- function(density, incentive_delta, distance){
+  decay &lt;- 0.75^(distance - 1)
+  incentive &lt;- incentive_delta * 0.15
+  # incentive &lt;- ifelse(incentive &gt; 1, 1, incentive)
+  
+  density * decay * incentive
+}</code></pre>
+<pre class="r"><code>data_distribution %&gt;% 
+  mutate(quartile = (cum_dens) %/% 0.2500001 + 1,
+         quartile = as.factor(quartile)) %&gt;% 
+  mutate(price_next = map_int(price, get_row_bump),
+         price_dist = price_next - price) %&gt;% 
+  mutate(density_convert = proportion_raised(dens_scaled, incentive_delta, price_dist)) %&gt;% 
+  select(-dens) %&gt;% 
+  # add converted density to nearest point
+  group_by(incentive) %&gt;% 
+  mutate(dens_convert_total = sum(density_convert),
+         price_switch = price == min(price)) %&gt;% 
+  ungroup() %&gt;% 
+  mutate(dens_convert_total = lag(dens_convert_total),
+         dens_convert_total = ifelse(price_switch, dens_convert_total, 0)) %&gt;%
+  # na&#39;s to 0&#39;s
+  mutate(across(c(density_convert, dens_convert_total), ~ifelse(is.na(.x), 0, .x))) %&gt;% 
+  # adjust percentages
+  mutate(dens_adj = dens_scaled - density_convert + dens_convert_total) %&gt;%
+  rename(initial_quartile = quartile) %&gt;% 
+  # graph
+  ggplot(aes(x = price))+
+  geom_col(aes(y = dens_adj, fill = initial_quartile))+
+  scale_fill_discrete(type = c(&quot;deeppink&quot;, &quot;orange&quot;, &quot;yellow2&quot;, &quot;royalblue&quot;))+
+  ylim(c(0, 0.15))+
+  labs(y = &quot;density&quot;)</code></pre>
 <p><img src="/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>Gray bars in the chart below indicate where (on the original distribution) movement to a higher tier will occur.
-<img src="/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Gray bars in the chart below indicate where (on the original distribution) movement to a higher tier will occur.</p>
+<pre class="r"><code>data_distribution %&gt;% 
+  mutate(quartile = (cum_dens) %/% 0.2500001 + 1,
+         quartile = as.factor(quartile)) %&gt;% 
+  mutate(price_next = map_int(price, get_row_bump),
+         price_dist = price_next - price) %&gt;% 
+  mutate(density_convert = proportion_raised(dens_scaled, incentive_delta, price_dist)) %&gt;% 
+  select(-dens) %&gt;% 
+  rename(initial_quartile = quartile) %&gt;% 
+  ggplot(aes(x = price))+
+  geom_col(aes(y = dens_scaled, fill = initial_quartile))+
+  geom_col(aes(y = density_convert), fill = &quot;gray&quot;)+
+  scale_fill_discrete(type = c(&quot;deeppink&quot;, &quot;orange&quot;, &quot;yellow2&quot;, &quot;royalblue&quot;))+
+  ylim(c(0, 0.15))+
+  labs(y = &quot;density&quot;)</code></pre>
+<p><img src="/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <div id="takeaways-of-resulting-distribution" class="section level3">
 <h3>Takeaways of Resulting Distribution</h3>
 <p>The greatest proportion of deals were moved from orange to yellow and from yellow to blue. Pink to orange had the least amount of movement (due to the first quartile being spread across a wider range).</p>
+<pre class="r"><code>data_distribution %&gt;% 
+  mutate(quartile = (cum_dens) %/% 0.2500001 + 1,
+         quartile = as.factor(quartile)) %&gt;% 
+  mutate(price_next = map_int(price, get_row_bump),
+         price_dist = price_next - price) %&gt;% 
+  mutate(density_convert = proportion_raised(dens_scaled, incentive_delta, price_dist)) %&gt;% 
+  select(-dens) %&gt;% 
+  mutate(incentive = case_when(incentive == 0 ~ &quot;pink to orange&quot;,
+                               incentive == 5 ~ &quot;orange to yellow&quot;,
+                               incentive == 10 ~ &quot;yellow to blue&quot;,
+                               TRUE ~ &quot;stayed blue&quot;) %&gt;% fct_inorder()) %&gt;% 
+  group_by(incentive) %&gt;% 
+  summarise(density_converted = sum(density_convert) %&gt;% round(3)) %&gt;% 
+  knitr::kable()</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -148,16 +256,16 @@ thumbnail: /post/2020-11-02-influencing-distributions_files/figure-html/unnamed-
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Limits for Y axis appear too large for this chart but are set from 0 to 0.15 so as to be consistent with similar figures later in post.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>E.g. to prevent brand erosion, improve margins, etc.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>This assumes that there is some slack in the existing deals and that representatives are in a position to impact this and will do so if provided higher incentives.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>or potentially a ‘natural’ distribution that would exist in the absence of incentives<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>Key to this assumption is how incentives degrade as you move farther from a cut-point.<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>These do not consider potential psychological impacts or difficulty of implementation.<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>Similar to in a market.<a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>Research into psychological biases suggests the former may be true.<a href="#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p>You could also construct this such that lower quartiles have negative incentives and higher quartiles have positive incentives.<a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p>The functions governing these behaviors are almost certainly more sophisticated.<a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p>Factoring this possibility in would likely lead to incentives at the higher quartiles making a slightly larger impact.<a href="#fnref11" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>Limits for Y axis appear too large for this chart but are set from 0 to 0.15 so as to be consistent with similar figures later in post.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>E.g. to prevent brand erosion, improve margins, etc.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>This assumes that there is some slack in the existing deals and that representatives are in a position to impact this and will do so if provided higher incentives.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>or potentially a ‘natural’ distribution that would exist in the absence of incentives<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>Key to this assumption is how incentives degrade as you move farther from a cut-point.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>These do not consider potential psychological impacts or difficulty of implementation.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>Similar to in a market.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>Research into psychological biases suggests the former may be true.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>You could also construct this such that lower quartiles have negative incentives and higher quartiles have positive incentives.<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>The functions governing these behaviors are almost certainly more sophisticated.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>Factoring this possibility in would likely lead to incentives at the higher quartiles making a slightly larger impact.<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

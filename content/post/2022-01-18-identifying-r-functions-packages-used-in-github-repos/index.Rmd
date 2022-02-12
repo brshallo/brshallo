@@ -5,15 +5,16 @@ date: '2022-01-18'
 categories:
   - data science
   - rstats
-tags:
+tags: 
+  - knitr
   - dplyr
+  - readr
   - DT
   - funspotr
-  - knitr
-  - readr
   - stringr
 slug: identifying-r-functions-packages-used-in-github-repos
 codefolding_show: hide
+disable_codefolding: false
 thumbnail: /2022/01/18/identifying-r-functions-packages-used-in-github-repos/images/indexing.jpg
 ---
 
@@ -23,11 +24,12 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 TLDR: [funspotr](https://brshallo.github.io/funspotr/) provides helpers for spotting the functions and packages in R and Rmarkdown files and associated github repositories. See [Examples] for catalogues of the functions/packages used in posts by Julia Silge, David Robinson, and others. See [followup post](https://www.bryanshalloway.com/2022/02/07/identifying-r-functions-packages-in-your-github-gists/) for example with github gists.
 
-# Documenting #rstats posts
+# Documenting rstats posts
 
 I was inspired by a few tweets I saw documenting the methods used in posts by popular #rstats communicators/developers: 
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">To try and learn <a href="https://twitter.com/hashtag/tidymodels?src=hash&amp;ref_src=twsrc%5Etfw">#tidymodels</a> I made a list of examples of using each engine, etc, by <a href="https://twitter.com/juliasilge?ref_src=twsrc%5Etfw">@juliasilge</a>, <a href="https://twitter.com/topepos?ref_src=twsrc%5Etfw">@topepos</a>, and <a href="https://twitter.com/Emil_Hvitfeldt?ref_src=twsrc%5Etfw">@Emil_Hvitfeldt</a>. It&#39;s far from exhaustive, and in progress, but has helped a ton. <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> <a href="https://t.co/yqecIo7CUS">https://t.co/yqecIo7CUS</a></p>&mdash; Jeff Rothschild (@EatsleepfitJeff) <a href="https://twitter.com/EatsleepfitJeff/status/1450377631296225281?ref_src=twsrc%5Etfw">October 19, 2021</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Anyone other <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> people find <a href="https://twitter.com/drob?ref_src=twsrc%5Etfw">@drob</a>&#39;s <a href="https://twitter.com/hashtag/TidyTuesday?src=hash&amp;ref_src=twsrc%5Etfw">#TidyTuesday</a> screencasts useful?<br><br>I made a spreadsheet with timestamps for hundreds of specific tasks he does: <a href="https://t.co/HvJbLk1chd">https://t.co/HvJbLk1chd</a><br> <br>Useful if, like me, you keep going back and ask, &quot;Where in the video did he do [this thing] again?&quot;</p>&mdash; Alex Cookson (@alexcookson) <a href="https://twitter.com/alexcookson/status/1216798492183670784?ref_src=twsrc%5Etfw">January 13, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 

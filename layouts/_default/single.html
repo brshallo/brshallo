@@ -10,9 +10,21 @@
     <h1 class="article-title">{{ .Title }}</h1>
 
     {{ if eq .Section "post" }}
+    <p class="terms">
+      {{ range $i := (slice "tags") }}
+      {{ with ($.Param $i) }}
+      {{ $i | title }}:
+      {{ range $k := . }}
+      <a href='{{ relURL (print "/" $i "/" $k | urlize) }}'>{{$k}}</a>
+      {{ end }}
+      {{ end }}
+      {{ end }}
+    </p>
+    
     <span class="article-date">{{ .Date.Format "2006-01-02" }}</span>
     
     {{ partial "header_maincodefolding" . }}
+
     {{ end }}
     
     <div class="article-content">

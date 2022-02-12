@@ -6,15 +6,17 @@ categories:
   - business
   - data science
   - pricing
+  - rstats
 tags:
   - business
   - distributions
+codefolding_show: hide
 slug: influencing-distributions
 thumbnail: /post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-6-1.png
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
 In this post I will use incentives for sales representatives in pricing to provide examples of factors to consider when attempting to influence an existing distribution. 
