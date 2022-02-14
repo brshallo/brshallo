@@ -8,14 +8,18 @@ categories:
   - statistics
   - rstats
 tags:
-  - tidyverse
-  - rvest
-  - gt
-  - broom
+  - stringr
+  - dplyr
   - glue
+  - gt
+  - rvest
   - janitor
   - lubridate
+  - purrr
+  - tidyr
+  - readr
   - fs
+  - broom
 codefolding_show: hide
 thumbnail: /2021/12/17/predicting-nba-playoff-berths-fivethirtyeight-vs-betting-markets/images/lakers-eliminated.PNG
 ---

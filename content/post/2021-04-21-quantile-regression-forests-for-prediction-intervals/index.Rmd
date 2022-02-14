@@ -11,11 +11,11 @@ categories:
   - data science
 tags:
   - workflows
-  - ggplot2
-  - scales
+  - ggplot
   - yardstick
   - gt
   - forcats
+  - scales
   - pander
 codefolding_show: hide
 disable_codefolding: false
@@ -23,7 +23,7 @@ thumbnail: /2021/04/21/quantile-regression-forests-for-prediction-intervals/inde
 ---
 
 ```{r, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,  message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE,  message = FALSE, warning = FALSE, cache = TRUE)
 ```
 
 In this post I will build prediction intervals using quantile regression, more specifically, quantile regression forests. This is my third post on prediction intervals. Prior posts:
