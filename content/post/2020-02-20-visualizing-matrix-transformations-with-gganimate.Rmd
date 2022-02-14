@@ -7,10 +7,16 @@ categories:
   - math
   - rstats
   - visualization
-tags:
-  - math
-  - riddles
   - linear algebra
+  - math
+tags:
+  - dplyr
+  - tidyr
+  - ggplot
+  - ggforce
+  - purrr
+  - knitr
+  - gganimate
 output:
   blogdown::html_page:
     toc: false

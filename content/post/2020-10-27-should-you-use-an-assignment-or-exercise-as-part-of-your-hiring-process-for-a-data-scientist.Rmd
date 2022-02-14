@@ -5,8 +5,6 @@ date: '2020-10-27'
 categories:
   - business
   - hiring
-tags:
-  - business
 slug: should-you-use-an-assignment-or-exercise-as-part-of-your-hiring-process-for-a-data-scientist
 thumbnail: https://images.unsplash.com/photo-1543286386-713bdd548da4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80
 output:

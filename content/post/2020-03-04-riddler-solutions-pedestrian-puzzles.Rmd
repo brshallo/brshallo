@@ -7,12 +7,17 @@ categories:
   - math
   - visualization
   - rstats
-  - r
-tags:
-  - geometry
-  - math
-  - r
   - riddles
+  - geometry
+tags:
+  - tidyr
+  - dplyr
+  - animatrixr
+  - knitr
+  - ggplot
+  - ggforce
+  - purrr
+  - forcats
 thumbnail: https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif
 ---
 

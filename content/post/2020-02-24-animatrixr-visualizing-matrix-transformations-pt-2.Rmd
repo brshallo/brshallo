@@ -6,11 +6,12 @@ categories:
   - programming
   - rstats
   - visualization
-tags:
-  - gganimate
   - linear algebra
   - math
-  - rstats
+tags:
+  - devtools
+  - dplyr
+  - animatrixr
 slug: animatrixr-visualizing-matrix-transformations-pt-2
 output:
   blogdown::html_page:

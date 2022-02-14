@@ -6,16 +6,29 @@ categories:
   - programming
   - rstats
 tags:
-  - animation
-  - reproducibility
-  - rstats
-  - tidyverse
+  - dplyr
+  - tidyr
+  - purrr
+  - ggplot
+  - ggbeeswarm
+  - animatrixr
+  - emo
+  - rlang
+  - fs
+  - pagedown
+  - magick
+  - here
+  - pdftools
+  - officer
+  - flair
+  - flipbookr
 slug: use-flipbooks-to-explain-your-code-and-thought-process
 output:
   blogdown::html_page:
     toc: no
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <div id="learning-rs" class="section level1">
@@ -50,7 +63,7 @@ What is your <a href="https://twitter.com/hashtag/tidyverse?src=hash&amp;ref_src
 <p>When I started writing this post, I planned to call this type of output a “<strong>LEXPREX</strong>” for “<strong>L</strong>ine-by-line <strong>EX</strong>ecution with <strong>PR</strong>inted <strong>EX</strong>amples” (and a name evocative of the inspiring <a href="https://github.com/tidyverse/reprex">reprex</a> package by <a href="https://twitter.com/JennyBryan%5D">Jenny Bryan</a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>). But, thankfully, an excellent solution containing thorough explanations (and a much better name) already existed, <em>flipbooks</em>.</p>
 <p>As described in the <a href="https://evamaerey.github.io/flipbooks/about">flipbookr documentation</a>, “flipbooks are tools that present side-by-side, aligned, incremental code-output.”</p>
 <div class="figure">
-<img src="https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-r4ds.gif?raw=true" alt="(Example inspired by ‘Many Models’ chapter of ‘R For Data Science’ by Grolemund &amp; Wickham.)" />
+<img src="https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-r4ds.gif?raw=true" alt="" />
 <p class="caption">(Example inspired by ‘Many Models’ chapter of ‘R For Data Science’ by Grolemund &amp; Wickham.)</p>
 </div>
 <p>At this point you should stop reading this blog and instead go learn about <a href="https://github.com/EvaMaeRey/flipbookr">flipbookr</a>. My post was largely written before I learned about this package. Hence, starting at <a href="https://rstudio.com/resources/rstudioconf-2020/flipbooks-evangeline-reynolds/">this presentation</a> by <a href="https://twitter.com/EvaMaeRey">Gina Reynolds</a> or <code>flipbookr</code>’s <a href="https://evamaerey.github.io/flipbooks/about">about page</a> will generally be a more productive use of your time. The remainder of this post discusses either tools adjacent to flipbooks or describes workflows that can also be found within <code>flipbookr</code> documentation.</p>
@@ -71,7 +84,7 @@ What is your <a href="https://twitter.com/hashtag/tidyverse?src=hash&amp;ref_src
 <h1>Animating a flipbook</h1>
 <p>I sometimes want to convert a flipbook into a gif, e.g. when sharing an example in a README or a snippet of a concept on social media. If you ignored my prior entreaty, this is a second reminder to stop and go read about <code>flipbookr</code>. The <a href="https://evamaerey.github.io/flipbooks/about">template file</a> now shows how to create gifs using <code>flipbookr</code> (html) –&gt; <code>pagedown</code> (pdf) –&gt; <code>magick</code> (gif). I also describe this workflow and provide examples <a href="https://github.com/brshallo/flipbookr-gifs-examples">here</a>, e.g.</p>
 <div class="figure">
-<img src="https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-riddler-solution.gif" alt="(Example from a prior blog post, “Riddler Solutions: Pedestrian Puzzles”)" />
+<img src="https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-riddler-solution.gif" alt="" />
 <p class="caption">(Example from a prior blog post, “Riddler Solutions: Pedestrian Puzzles”)</p>
 </div>
 </div>
@@ -130,8 +143,8 @@ Big thanks to <a href="https://twitter.com/grrrck?ref_src=twsrc%5Etfw"><span cla
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>See my notes and solutions <a href="https://brshallo.github.io/r4ds_solutions/">here</a>.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>I also considered names such as <code>pexprex</code>, <code>sexprex</code>, <code>pripex</code>, … I’ll let the reader guess at the acronyms.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>Which I prefer over the alternatives of using the leading <code>*</code> or wrapping the message in<code>{{}}</code>.<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>See my notes and solutions <a href="https://brshallo.github.io/r4ds_solutions/">here</a>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>I also considered names such as <code>pexprex</code>, <code>sexprex</code>, <code>pripex</code>, … I’ll let the reader guess at the acronyms.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>Which I prefer over the alternatives of using the leading <code>*</code> or wrapping the message in<code>{{}}</code>.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

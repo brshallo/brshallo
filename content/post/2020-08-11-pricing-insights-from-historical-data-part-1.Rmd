@@ -5,11 +5,12 @@ date: '2020-08-17'
 categories:
   - business
   - pricing
-tags:
-  - pricing
-  - business
   - rstats
-  - hedonic modeling
+tags:
+  - AmesHousing
+  - dplyr
+  - equatiomatic
+  - broom
 slug: pricing-insights-from-historical-data-part-1
 ---
 

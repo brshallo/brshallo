@@ -7,11 +7,22 @@ categories:
   - programming
   - data science
 tags:
-  - rstats
-  - tidyverse
-  - tidymodels
   - httr
   - jsonlite
+  - dplyr
+  - lubridate
+  - rsample
+  - slider
+  - devtools
+  - recipes
+  - parsnip
+  - workflows
+  - tune
+  - purrr
+  - tidyr
+  - forcats
+  - ggplot
+  - broom
 slug: window-functions-for-resampling
 ---
 

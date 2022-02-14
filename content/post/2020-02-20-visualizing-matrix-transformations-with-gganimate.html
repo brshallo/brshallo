@@ -7,15 +7,22 @@ categories:
   - math
   - rstats
   - visualization
-tags:
-  - math
-  - riddles
   - linear algebra
+  - math
+tags:
+  - dplyr
+  - tidyr
+  - ggplot
+  - ggforce
+  - purrr
+  - knitr
+  - gganimate
 output:
   blogdown::html_page:
     toc: false
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p>I highly recommend the fantastic video series <a href="https://www.youtube.com/watch?v=fNk_zzaMoSs&amp;list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab">Essence of Linear Algebra</a> by <a href="https://twitter.com/3blue1brown">Grant Sanderson</a>. In this post I’ll walk through how you can use <code>gganimate</code> and the <code>tidyverse</code> to (very loosely) recreate some of the visualizations shown in that series. Specifically those on matrix transformations and changing the basis vectors<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
@@ -451,19 +458,19 @@ y_breaks &lt;-
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Which are shown throughout the series and most notably in chapters 3 and 13.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>See section [Problems and potential improvements] for notes on a couple potential updates I’ll make… not positive I’ll keep the gist code updated.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>And may not care about understanding how to do multiple transformations, adding additional layers, etc.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>/ vectors<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>I’m guessing there is a better / more elegant function already out there for ‘tidy matrix multiplication’ or something… but couldn’t immediately think of anything.<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>You could add additional objects to the image – just need to ensure you create <em>start</em> and <em>transformed</em> versions of each object.<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>Creating these is not needed if you just wanted to create static images for the below examples.<a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>No real reason for choosing this transformation, just thought it looked cool.<a href="#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p>If wrap = TRUE (default) the reverse looping of the image is inaccurate as the transformation back to the original basis actually represents a transformation by the inverse of the <code>transformation matrix</code>. Though leaving it in would look cooler.<a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p>Could functionalize more… or make a shiny app, or do more with, see [Problems and potential improvements] for notes…<a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p>Can largely skim over<a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>Though this gets into decomposing the rotation, etc. components of the matrix transformation of interest for each frame.<a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p>Seems issue has to do with <code>group</code> needing to apply both to the polygon at a given time as well as points on the polygon across time.<a href="#fnref13" class="footnote-back">↩</a></p></li>
-<li id="fn14"><p>Would require latex title which I don’t know if is supported by <code>gganimate</code><a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>Which are shown throughout the series and most notably in chapters 3 and 13.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>See section [Problems and potential improvements] for notes on a couple potential updates I’ll make… not positive I’ll keep the gist code updated.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>And may not care about understanding how to do multiple transformations, adding additional layers, etc.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>/ vectors<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>I’m guessing there is a better / more elegant function already out there for ‘tidy matrix multiplication’ or something… but couldn’t immediately think of anything.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>You could add additional objects to the image – just need to ensure you create <em>start</em> and <em>transformed</em> versions of each object.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>Creating these is not needed if you just wanted to create static images for the below examples.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>No real reason for choosing this transformation, just thought it looked cool.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>If wrap = TRUE (default) the reverse looping of the image is inaccurate as the transformation back to the original basis actually represents a transformation by the inverse of the <code>transformation matrix</code>. Though leaving it in would look cooler.<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>Could functionalize more… or make a shiny app, or do more with, see [Problems and potential improvements] for notes…<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>Can largely skim over<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>Though this gets into decomposing the rotation, etc. components of the matrix transformation of interest for each frame.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>Seems issue has to do with <code>group</code> needing to apply both to the polygon at a given time as well as points on the polygon across time.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p>Would require latex title which I don’t know if is supported by <code>gganimate</code><a href="#fnref14" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

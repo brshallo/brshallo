@@ -4,11 +4,12 @@ author: Bryan Shalloway
 date: '2020-02-06'
 categories:
   - math
-tags:
-  - math
   - geometry
   - riddles
-  - rstats
+tags:
+  - dplyr
+  - ggplot
+  - ggforce
 slug: maximizing-magnetic-volume-the-perfect-bowl
 output:
   blogdown::html_page:
@@ -60,7 +61,7 @@ Connecting these lines will create a right triangle with side length of 1 and hy
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
 
-```{r, libraries}
+```{r libraries}
 library(tidyverse) 
 
 ```

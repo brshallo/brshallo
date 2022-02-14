@@ -5,27 +5,32 @@ date: '2020-08-17'
 categories:
   - business
   - pricing
-tags:
-  - pricing
-  - business
   - rstats
-  - hedonic modeling
+tags:
+  - AmesHousing
+  - dplyr
+  - equatiomatic
+  - broom
 slug: pricing-insights-from-historical-data-part-1
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 <div id="TOC">
 <ul>
-<li><a href="#what-influences-price">What influences price?</a><ul>
+<li><a href="#what-influences-price">What influences price?</a>
+<ul>
 <li><a href="#simple-linear-regression-model">Simple linear regression model</a></li>
-<li><a href="#inference-and-challenges">Inference and challenges</a><ul>
+<li><a href="#inference-and-challenges">Inference and challenges</a>
+<ul>
 <li><a href="#violation-of-model-assumptions">Violation of model assumptions</a></li>
 <li><a href="#the-tug-of-war-between-colinear-inputs">The tug-of-war between colinear inputs</a></li>
 </ul></li>
 <li><a href="#improving-model-fit-considerations">Improving model fit, considerations</a></li>
 </ul></li>
 <li><a href="#closing-notes-and-tips">Closing notes and tips</a></li>
-<li><a href="#appendix">Appendix</a><ul>
+<li><a href="#appendix">Appendix</a>
+<ul>
 <li><a href="#pricing-challenges">Pricing challenges</a></li>
 <li><a href="#future-pricing-posts">Future pricing posts</a></li>
 <li><a href="#dataset-considerations">Dataset considerations</a></li>
@@ -38,7 +43,7 @@ slug: pricing-insights-from-historical-data-part-1
 
 <p><strong>Pricing is hard.</strong></p>
 <div class="figure">
-<img src="https://media2.giphy.com/media/SG0KKFtwUpqJW/giphy.gif" alt="Price is Right Contestant… struggling" />
+<img src="https://media2.giphy.com/media/SG0KKFtwUpqJW/giphy.gif" alt="" />
 <p class="caption">Price is Right Contestant… struggling</p>
 </div>
 <p>This is particularly true with large complicated products, common in Business to Business sales (B2B). B2B sellers may lack important information (e.g. accurate estimates of customer budget or ‘street’ prices for the various configurations of their products – the <a href="#pricing-challenges">Pricing challenges</a> section discusses other internal and external limitations in setting prices). However organizations typically <em>do have</em> historical data on internal sales transactions as well as leadership with a strong desire for <em>insights</em> into pricing behavior. For now I’ll put aside the question of how to use econometric approaches to set ideal prices. Instead, I’ll walk through some statistical methods that rely only on historical sales information and that can be used for analyzing differences, trends, and abnormalities in your organizations pricing.</p>
@@ -56,7 +61,7 @@ slug: pricing-insights-from-historical-data-part-1
 <h2>Simple linear regression model</h2>
 <p>Let’s build a model for home price that uses <em>just</em> house square footage, represented by <code>Gr_Liv_Area</code><a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>, as a feature for predicting home price.</p>
 <p><span class="math display">\[
-\operatorname{Sale\_Price} = 13290 + 112(\operatorname{Gr\_Liv\_Area}) + \epsilon
+\operatorname{\widehat{Sale\_Price}} = 13290 + 112(\operatorname{Gr\_Liv\_Area})
 \]</span></p>
 <p>The coefficient on sale price of <em>112</em> is a measure of expected dollars per unit change in square foot. If you build the model without an intercept<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>, the coefficient more directly equates to dollars per square foot<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>. However it’s <em>typically</em> more appropriate to <a href="https://stats.stackexchange.com/questions/7948/when-is-it-ok-to-remove-the-intercept-in-a-linear-regression-model">leave the intercept in the model</a><a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
 </div>
@@ -93,7 +98,7 @@ slug: pricing-insights-from-historical-data-part-1
 <h3>The tug-of-war between colinear inputs</h3>
 <p>Let’s add to our regression model another variable, number of bathrooms represented by the <code>bathrooms</code> variable.</p>
 <p><span class="math display">\[
-\operatorname{Sale\_Price} = 5491 + 94(\operatorname{Gr\_Liv\_Area}) + 19555(\operatorname{bathrooms}) + \epsilon
+\operatorname{\widehat{Sale\_Price}} = 5491 + 94(\operatorname{Gr\_Liv\_Area}) + 19555(\operatorname{bathrooms})
 \]</span></p>
 <table>
 <thead>
@@ -125,9 +130,8 @@ slug: pricing-insights-from-historical-data-part-1
 <p>Let’s consider a model with another variable added: <code>TotRms_AbvGrd</code>, the total number of rooms (above ground and excluding bathrooms) in the home. This variable is also correlated with <code>Gr_Liv_Area</code> and number of <code>bathrooms</code> (correlation of ~0.8 and ~0.6 respectively).</p>
 <p><span class="math display">\[
 \begin{aligned}
-\operatorname{Sale\_Price} &amp;= 35600 + 122(\operatorname{Gr\_Liv\_Area})\ + \\
-&amp;\quad 20411(\operatorname{bathrooms}) - 11389(\operatorname{TotRms\_AbvGrd})\ + \\
-&amp;\quad \epsilon
+\operatorname{\widehat{Sale\_Price}} &amp;= 35600 + 122(\operatorname{Gr\_Liv\_Area})\ + \\
+&amp;\quad 20411(\operatorname{bathrooms}) - 11389(\operatorname{TotRms\_AbvGrd})
 \end{aligned}
 \]</span></p>
 <table>
@@ -281,49 +285,49 @@ slug: pricing-insights-from-historical-data-part-1
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Internal sales data alone is limited in that its focused on only a component of sales, rather than considering the full picture – this puts the analyst in a familiar position of one with incomplete information, and a constrained scope of influence.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>Dataset should be structured such that each feature is a column and each row an observation, e.g. a sale.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>Sort of, and under certain contexts…<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p><a href="https://en.wikipedia.org/wiki/Hedonic_regression" class="uri">https://en.wikipedia.org/wiki/Hedonic_regression</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>Missing important components or misattributing influence of price can cause bias in the model (omitted variable bias).<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>and how it can also be used for things like creating price indices<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>Does not including basement.<a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>I.e. make it zero so that the expected value of a house of 0 square foot is $0<a href="#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p>In this case, the coefficient for the model becomes 119.7 if the intercept is set to zero.<a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p>Hedonic modeling also has a variety of approaches associated with evaluating changes in the intercept term between models that (again) can be read in the the <a href="https://www.oecd-ilibrary.org/docserver/9789264197183-7-en.pdf?expires=1597241573&amp;id=id&amp;accname=guest&amp;checksum=0FA9E2EB249B3EB5DBA108E3AC44CCA3">Handbook on Residential Property Prices Indices</a>.<a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p>Note there are more modern approaches to estimating this range using Bayesian or simulation based methods.<a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>At least to the extent that satisfying them doesn’t improve your predictions, or suggest a different model type may be more appropriate.<a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p>Although some would argue that you don’t need to worry too much about any of your assumptions except that your observations are independent of one another.<a href="#fnref13" class="footnote-back">↩</a></p></li>
-<li id="fn14"><p>Model assumptions of linear regression by Ordinary Least Squares is already covered extensively in essentially every tutorial and Introduction to Statistics textbook on regression.<a href="#fnref14" class="footnote-back">↩</a></p></li>
-<li id="fn15"><p>Perhaps representing a preference for larger rooms or open space among buyers or a confounding effect with some other variable. For the purposes of this post i simply want to point out how coefficient values can vary under conditions of colinearity.<a href="#fnref15" class="footnote-back">↩</a></p></li>
-<li id="fn16"><p>(though not perfect colinearity)<a href="#fnref16" class="footnote-back">↩</a></p></li>
-<li id="fn17"><p>Hence the importance of being particularly thoughtful of the variables you input into the model and avoiding variables that roughly duplicate one another.<a href="#fnref17" class="footnote-back">↩</a></p></li>
-<li id="fn18"><p>A common rule of thumb for when variables are ‘too correlated’ is 0.90 – at least in regression contexts and cases where you are focused on inference. In other contexts (e.g. those that appear in <a href="https://www.kaggle.com/">Kaggle</a> prediction competitions) this threshold can be much higher. However, as discussed, lower levels of correlation can still contribute to instability in your coefficient estimates<a href="#fnref18" class="footnote-back">↩</a></p></li>
-<li id="fn19"><p>Where you care about the individual parameter estimates and want them to be meaningful.<a href="#fnref19" class="footnote-back">↩</a></p></li>
-<li id="fn20"><p>This is what “variance” means in the bias-variance trade-off common in model development. This may also be referred to as instability in the model or parameter estimates.<a href="#fnref20" class="footnote-back">↩</a></p></li>
-<li id="fn21"><p>An example of this may be standardizing the underlying data so that the coefficient estimates may be more directly compared to one another (as the underlying data is all on the same scale).<a href="#fnref21" class="footnote-back">↩</a></p></li>
-<li id="fn22"><p>Standardizing the data is also important for many fitting methods, e.g. regularization.<a href="#fnref22" class="footnote-back">↩</a></p></li>
-<li id="fn23"><p>E.g. a log transform on an input alters the interpretation of the coefficient to be something closer to dollars per percentage point change of input. Log on target means percentage change in price per unit change in input. If you take the log of both your inputs and your target, the coefficient represents percent change in x related to percent change in y, also known as an ‘elasticity’ model in econometrics.<a href="#fnref23" class="footnote-back">↩</a></p></li>
-<li id="fn24"><p>There may be a preference to speak in the simplest terms: change in price as a function of unit change in component – which may put pressure on the analyst to limit data transformations. It is the analysts job then to strike the correct balance between producing a model that fits the data and one that can be understood by stakeholders.<a href="#fnref24" class="footnote-back">↩</a></p></li>
-<li id="fn25"><p>Neural networks in particular.<a href="#fnref25" class="footnote-back">↩</a></p></li>
-<li id="fn26"><p>Many non-linear methods still have sophisticated preprocessing requirements. Though these are sometimes more generic – meaning less work to customize between problems to reach at least some minimum level of fit between problems (again, in some contexts).<a href="#fnref26" class="footnote-back">↩</a></p></li>
-<li id="fn27"><p>Some of what I read on hedonic modeling seemed to discourage the use of methods other than Ordinary Least Squares (e.g. Weighted Least Squares) but I’ve found other methods to be helpful.<a href="#fnref27" class="footnote-back">↩</a></p></li>
-<li id="fn28"><p>Regularization with an L1 penalty provides the added bonus of also doing variable selection.<a href="#fnref28" class="footnote-back">↩</a></p></li>
-<li id="fn29"><p>For robust methods and regularization, there are less established methods for producing confidence intervals. You may need to use simulation methods (which are more computationally intensive).<a href="#fnref29" class="footnote-back">↩</a></p></li>
-<li id="fn30"><p>Generally it is a good idea to describe the mean error or some other measure, so that they can get a sense of how close the model you are describing is fitting the data, or whether the effects you are talking about are general, but not particularly useful for predictions.<a href="#fnref30" class="footnote-back">↩</a></p></li>
-<li id="fn31"><p>And a preference for transformations that retain an intuitive interpretability for the model.<a href="#fnref31" class="footnote-back">↩</a></p></li>
-<li id="fn32"><p>Then review the coefficient estimates across them.<a href="#fnref32" class="footnote-back">↩</a></p></li>
-<li id="fn33"><p>I tend to rely heavily on regularization techniques.<a href="#fnref33" class="footnote-back">↩</a></p></li>
-<li id="fn34"><p>A variety of factors though push organizations to simplify their products and this process – for the purposes of this post though, I’ll assume a complicated product portfolio.<a href="#fnref34" class="footnote-back">↩</a></p></li>
-<li id="fn35"><p>For a more full discussion on these concepts see UVA coursera specialization on <a href="https://www.coursera.org/learn/uva-darden-bcg-pricing-strategy-cost-economics?utm_source=gg&amp;utm_medium=sem&amp;utm_content=01-CourseraCatalog-DSA-US&amp;campaignid=9918777773&amp;adgroupid=102058276958&amp;device=c&amp;keyword=&amp;matchtype=b&amp;network=g&amp;devicemodel=&amp;adpostion=&amp;creativeid=434544785640&amp;hide_mobile_promo=&amp;gclid=CjwKCAjwsan5BRAOEiwALzomXyDwos6rlUmAwFrv9BjJFUPnyvzPRedArpRD2iRkocMemgtsZrfihxoCjfUQAvD_BwE">Cost and Economics in Pricing Strategy</a>.<a href="#fnref35" class="footnote-back">↩</a></p></li>
-<li id="fn36"><p>Organizations may lack the money or the will.<a href="#fnref36" class="footnote-back">↩</a></p></li>
-<li id="fn37"><p>Maybe your company doesn’t want to pay the expensive prices that data vendors set for this information (this may especially be a problem if you are a small organization with a small budget).<a href="#fnref37" class="footnote-back">↩</a></p></li>
-<li id="fn38"><p>While a home seller may be more sympathetic to some buyers over others (E.g. a newly wedded couple looking to start a family over a real-estate mogul looking for investment properties), such preferences likely impact price less than the analogue in the B2B contexts where sellers seek to strike details with popular brands as means of establishing product relevance and enabling further marketing and potentially collaboration opportunities. It is important to note though that the ‘Clayton Act’ and ‘Robinson Patman Act’ make price discrimination in B2B contexts illegal (except in certain circumstances).<a href="#fnref38" class="footnote-back">↩</a></p></li>
-<li id="fn39"><p>PCA or factor analysis seems like a potentially useful approach in pricing contexts in cases where the variables you have do not clearly represent discrete components of the product – hopefully PCA would help to identify these implicit components.<a href="#fnref39" class="footnote-back">↩</a></p></li>
-<li id="fn40"><p>Due to the lack of transparency into how they produce predictions.<a href="#fnref40" class="footnote-back">↩</a></p></li>
-<li id="fn41"><p>Or at least in places where a price seems unfair, it may be easier to quickly identify where the issue lies.<a href="#fnref41" class="footnote-back">↩</a></p></li>
-<li id="fn42"><p>There is a book <em>Weapons of Math Destruction</em> by Cathy O’Neil that points to a lack of interpretability as one of the chief concerns with modern learning algorithms.<a href="#fnref42" class="footnote-back">↩</a></p></li>
-<li id="fn43"><p>May as well use a Machine Learning method at this point.<a href="#fnref43" class="footnote-back">↩</a></p></li>
-<li id="fn44"><p>In both cases non-informative regressors will tend towards zero (in the case of ridge regression, they will never <em>quite</em> reach zero). These approaches typically require tuning to identify the ideal weight (i.e. pressure) assigned to the penalty.<a href="#fnref44" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>Internal sales data alone is limited in that its focused on only a component of sales, rather than considering the full picture – this puts the analyst in a familiar position of one with incomplete information, and a constrained scope of influence.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Dataset should be structured such that each feature is a column and each row an observation, e.g. a sale.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>Sort of, and under certain contexts…<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p><a href="https://en.wikipedia.org/wiki/Hedonic_regression" class="uri">https://en.wikipedia.org/wiki/Hedonic_regression</a><a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>Missing important components or misattributing influence of price can cause bias in the model (omitted variable bias).<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>and how it can also be used for things like creating price indices<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>Does not including basement.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>I.e. make it zero so that the expected value of a house of 0 square foot is $0<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>In this case, the coefficient for the model becomes 119.7 if the intercept is set to zero.<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>Hedonic modeling also has a variety of approaches associated with evaluating changes in the intercept term between models that (again) can be read in the the <a href="https://www.oecd-ilibrary.org/docserver/9789264197183-7-en.pdf?expires=1597241573&amp;id=id&amp;accname=guest&amp;checksum=0FA9E2EB249B3EB5DBA108E3AC44CCA3">Handbook on Residential Property Prices Indices</a>.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>Note there are more modern approaches to estimating this range using Bayesian or simulation based methods.<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>At least to the extent that satisfying them doesn’t improve your predictions, or suggest a different model type may be more appropriate.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>Although some would argue that you don’t need to worry too much about any of your assumptions except that your observations are independent of one another.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p>Model assumptions of linear regression by Ordinary Least Squares is already covered extensively in essentially every tutorial and Introduction to Statistics textbook on regression.<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
+<li id="fn15"><p>Perhaps representing a preference for larger rooms or open space among buyers or a confounding effect with some other variable. For the purposes of this post i simply want to point out how coefficient values can vary under conditions of colinearity.<a href="#fnref15" class="footnote-back">↩︎</a></p></li>
+<li id="fn16"><p>(though not perfect colinearity)<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
+<li id="fn17"><p>Hence the importance of being particularly thoughtful of the variables you input into the model and avoiding variables that roughly duplicate one another.<a href="#fnref17" class="footnote-back">↩︎</a></p></li>
+<li id="fn18"><p>A common rule of thumb for when variables are ‘too correlated’ is 0.90 – at least in regression contexts and cases where you are focused on inference. In other contexts (e.g. those that appear in <a href="https://www.kaggle.com/">Kaggle</a> prediction competitions) this threshold can be much higher. However, as discussed, lower levels of correlation can still contribute to instability in your coefficient estimates<a href="#fnref18" class="footnote-back">↩︎</a></p></li>
+<li id="fn19"><p>Where you care about the individual parameter estimates and want them to be meaningful.<a href="#fnref19" class="footnote-back">↩︎</a></p></li>
+<li id="fn20"><p>This is what “variance” means in the bias-variance trade-off common in model development. This may also be referred to as instability in the model or parameter estimates.<a href="#fnref20" class="footnote-back">↩︎</a></p></li>
+<li id="fn21"><p>An example of this may be standardizing the underlying data so that the coefficient estimates may be more directly compared to one another (as the underlying data is all on the same scale).<a href="#fnref21" class="footnote-back">↩︎</a></p></li>
+<li id="fn22"><p>Standardizing the data is also important for many fitting methods, e.g. regularization.<a href="#fnref22" class="footnote-back">↩︎</a></p></li>
+<li id="fn23"><p>E.g. a log transform on an input alters the interpretation of the coefficient to be something closer to dollars per percentage point change of input. Log on target means percentage change in price per unit change in input. If you take the log of both your inputs and your target, the coefficient represents percent change in x related to percent change in y, also known as an ‘elasticity’ model in econometrics.<a href="#fnref23" class="footnote-back">↩︎</a></p></li>
+<li id="fn24"><p>There may be a preference to speak in the simplest terms: change in price as a function of unit change in component – which may put pressure on the analyst to limit data transformations. It is the analysts job then to strike the correct balance between producing a model that fits the data and one that can be understood by stakeholders.<a href="#fnref24" class="footnote-back">↩︎</a></p></li>
+<li id="fn25"><p>Neural networks in particular.<a href="#fnref25" class="footnote-back">↩︎</a></p></li>
+<li id="fn26"><p>Many non-linear methods still have sophisticated preprocessing requirements. Though these are sometimes more generic – meaning less work to customize between problems to reach at least some minimum level of fit between problems (again, in some contexts).<a href="#fnref26" class="footnote-back">↩︎</a></p></li>
+<li id="fn27"><p>Some of what I read on hedonic modeling seemed to discourage the use of methods other than Ordinary Least Squares (e.g. Weighted Least Squares) but I’ve found other methods to be helpful.<a href="#fnref27" class="footnote-back">↩︎</a></p></li>
+<li id="fn28"><p>Regularization with an L1 penalty provides the added bonus of also doing variable selection.<a href="#fnref28" class="footnote-back">↩︎</a></p></li>
+<li id="fn29"><p>For robust methods and regularization, there are less established methods for producing confidence intervals. You may need to use simulation methods (which are more computationally intensive).<a href="#fnref29" class="footnote-back">↩︎</a></p></li>
+<li id="fn30"><p>Generally it is a good idea to describe the mean error or some other measure, so that they can get a sense of how close the model you are describing is fitting the data, or whether the effects you are talking about are general, but not particularly useful for predictions.<a href="#fnref30" class="footnote-back">↩︎</a></p></li>
+<li id="fn31"><p>And a preference for transformations that retain an intuitive interpretability for the model.<a href="#fnref31" class="footnote-back">↩︎</a></p></li>
+<li id="fn32"><p>Then review the coefficient estimates across them.<a href="#fnref32" class="footnote-back">↩︎</a></p></li>
+<li id="fn33"><p>I tend to rely heavily on regularization techniques.<a href="#fnref33" class="footnote-back">↩︎</a></p></li>
+<li id="fn34"><p>A variety of factors though push organizations to simplify their products and this process – for the purposes of this post though, I’ll assume a complicated product portfolio.<a href="#fnref34" class="footnote-back">↩︎</a></p></li>
+<li id="fn35"><p>For a more full discussion on these concepts see UVA coursera specialization on <a href="https://www.coursera.org/learn/uva-darden-bcg-pricing-strategy-cost-economics?utm_source=gg&amp;utm_medium=sem&amp;utm_content=01-CourseraCatalog-DSA-US&amp;campaignid=9918777773&amp;adgroupid=102058276958&amp;device=c&amp;keyword=&amp;matchtype=b&amp;network=g&amp;devicemodel=&amp;adpostion=&amp;creativeid=434544785640&amp;hide_mobile_promo=&amp;gclid=CjwKCAjwsan5BRAOEiwALzomXyDwos6rlUmAwFrv9BjJFUPnyvzPRedArpRD2iRkocMemgtsZrfihxoCjfUQAvD_BwE">Cost and Economics in Pricing Strategy</a>.<a href="#fnref35" class="footnote-back">↩︎</a></p></li>
+<li id="fn36"><p>Organizations may lack the money or the will.<a href="#fnref36" class="footnote-back">↩︎</a></p></li>
+<li id="fn37"><p>Maybe your company doesn’t want to pay the expensive prices that data vendors set for this information (this may especially be a problem if you are a small organization with a small budget).<a href="#fnref37" class="footnote-back">↩︎</a></p></li>
+<li id="fn38"><p>While a home seller may be more sympathetic to some buyers over others (E.g. a newly wedded couple looking to start a family over a real-estate mogul looking for investment properties), such preferences likely impact price less than the analogue in the B2B contexts where sellers seek to strike details with popular brands as means of establishing product relevance and enabling further marketing and potentially collaboration opportunities. It is important to note though that the ‘Clayton Act’ and ‘Robinson Patman Act’ make price discrimination in B2B contexts illegal (except in certain circumstances).<a href="#fnref38" class="footnote-back">↩︎</a></p></li>
+<li id="fn39"><p>PCA or factor analysis seems like a potentially useful approach in pricing contexts in cases where the variables you have do not clearly represent discrete components of the product – hopefully PCA would help to identify these implicit components.<a href="#fnref39" class="footnote-back">↩︎</a></p></li>
+<li id="fn40"><p>Due to the lack of transparency into how they produce predictions.<a href="#fnref40" class="footnote-back">↩︎</a></p></li>
+<li id="fn41"><p>Or at least in places where a price seems unfair, it may be easier to quickly identify where the issue lies.<a href="#fnref41" class="footnote-back">↩︎</a></p></li>
+<li id="fn42"><p>There is a book <em>Weapons of Math Destruction</em> by Cathy O’Neil that points to a lack of interpretability as one of the chief concerns with modern learning algorithms.<a href="#fnref42" class="footnote-back">↩︎</a></p></li>
+<li id="fn43"><p>May as well use a Machine Learning method at this point.<a href="#fnref43" class="footnote-back">↩︎</a></p></li>
+<li id="fn44"><p>In both cases non-informative regressors will tend towards zero (in the case of ridge regression, they will never <em>quite</em> reach zero). These approaches typically require tuning to identify the ideal weight (i.e. pressure) assigned to the penalty.<a href="#fnref44" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

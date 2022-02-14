@@ -6,8 +6,16 @@ categories:
   - programming
   - rstats
 tags:
-  - rstats
-  - tidyverse
+  - AmesHousing
+  - dplyr
+  - corrr
+  - tidyr
+  - stringr
+  - purrr
+  - forcats
+  - ggplot
+  - devtools
+  - weights
 slug: tidy-2-way-column-combinations
 output:
   blogdown::html_page:

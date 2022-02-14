@@ -9,11 +9,13 @@ categories:
   - business
   - data science
 tags:
-  - business
-  - distributions
-  - tidymodels
-  - pricing
-  - ml
+  - workflows
+  - devtools
+  - gt
+  - ggplot
+  - forcats
+  - scales
+  - pander
 codefolding_show: hide
 disable_codefolding: false
 slug: simulating-prediction-intervals

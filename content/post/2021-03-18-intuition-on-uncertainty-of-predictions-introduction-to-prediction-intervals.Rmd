@@ -9,11 +9,20 @@ categories:
   - business
   - data science
 tags:
-  - business
-  - distributions
-  - tidymodels
-  - pricing
-  - ml
+  - AmesHousing
+  - dplyr
+  - rsample
+  - recipes
+  - gt
+  - parsnip
+  - workflows
+  - ggplot
+  - yardstick
+  - stringr
+  - tidyr
+  - forcats
+  - scales
+  - pander
 codefolding_show: hide
 slug: intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals
 thumbnail: /post/2021-03-18-intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals_files/figure-html/prediction-intervals-sample-1.png

@@ -8,27 +8,37 @@ categories:
   - statistics
   - machine learning
 tags:
-  - rstats
-  - business
-  - expected value
-  - ml
+  - ggplot
+  - dplyr
+  - rsample
+  - parsnip
+  - probably
+  - yardstick
+  - devtools
+  - purrr
+  - knitr
+  - tidyr
 slug: weighting-classification-outcomes
 thumbnail: /post/2020-12-08-weighting-classification-outcomes_files/figure-html/confusion-matrix-unweighted-weighted-1.png
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 <div id="TOC">
 <ul>
 <li><a href="#model-performance-metrics">Model Performance Metrics</a></li>
-<li><a href="#lending-data-example">Lending Data Example</a><ul>
+<li><a href="#lending-data-example">Lending Data Example</a>
+<ul>
 <li><a href="#starter-code">Starter Code</a></li>
-<li><a href="#weighting-by-classification-outcomes">Weighting by Classification Outcomes</a><ul>
+<li><a href="#weighting-by-classification-outcomes">Weighting by Classification Outcomes</a>
+<ul>
 <li><a href="#metrics-across-decision-thresholds">Metrics Across Decision Thresholds</a></li>
 </ul></li>
 <li><a href="#weighting-by-observations">Weighting by Observations</a></li>
 </ul></li>
 <li><a href="#closing-note">Closing note</a></li>
-<li><a href="#appendix">Appendix</a><ul>
+<li><a href="#appendix">Appendix</a>
+<ul>
 <li><a href="#weights-of-observations-during-and-prior-to-modeling">Weights of Observations During and Prior to Modeling</a></li>
 <li><a href="#notes-on-cost-sensitive-classification">Notes on Cost Sensitive Classification</a></li>
 <li><a href="#weighted-classification-metrics">Weighted Classification Metrics</a></li>
@@ -61,7 +71,7 @@ thumbnail: /post/2020-12-08-weighting-classification-outcomes_files/figure-html/
 <p><strong>Every Cut-Point Has an Associated Confusion Matrix</strong></p>
 <p>The frequency of classification outcomes (TP, TN, FP, FN) at a specific decision threshold are often represented by a confusion matrix.</p>
 <div class="figure">
-<img src="https://miro.medium.com/max/2102/1*fxiTNIgOyvAombPJx5KGeA.png" alt="Confusion Matrix for Classification" />
+<img src="https://miro.medium.com/max/2102/1*fxiTNIgOyvAombPJx5KGeA.png" alt="" />
 <p class="caption"><a href="https://towardsdatascience.com/confusion-matrix-for-your-multi-class-machine-learning-model-ff9aa3bf7826">Confusion Matrix for Classification</a></p>
 </div>
 <p>Each cell of a confusion matrix may represent a more or less valuable outcome depending on the particular problem. In the case of giving out loans, a <em>false positive</em> may be more costly than a <em>false negative</em><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> while in problems concerning security threats the reverse may be true<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>. When you have a sense of the value associated with the classification outcomes, you can use this information to weight the confusion matrices, calculate the expected value of each, identify which maximizes expected value and select the associated decision threshold for use when deploying your model.</p>
@@ -426,7 +436,7 @@ conf_mats_df_obs_weights &lt;- thresholds_unique_df %&gt;%
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>I am including <em>decision point threshold selection</em> as falling into the bucket of approaches under the umbrella of ‘After model training during evaluation.’ You could argue it deserves a separate sub-step ‘Figuring out how to use your selected model,’ that could be distinguished from model evaluation intended for ‘Selecting your model.’ The approaches I describe could be used in either/both of these hypothetical sub-sections, I will focus in this post on threshold selection.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>I am including <em>decision point threshold selection</em> as falling into the bucket of approaches under the umbrella of ‘After model training during evaluation.’ You could argue it deserves a separate sub-step ‘Figuring out how to use your selected model,’ that could be distinguished from model evaluation intended for ‘Selecting your model.’ The approaches I describe could be used in either/both of these hypothetical sub-sections, I will focus in this post on threshold selection.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 <li id="fn2"><p>While the AUC score can be thought of in terms of area under the curve when x-axis: 1 - specificity and y-axis: sensitivity at all possible decision thresholds, I actually prefer conceptualizing AUC as being more about whether your observations are properly ordered and therefore prefer this way of thinking about the metric:</p>
 <blockquote class="twitter-tweet">
 <p lang="en" dir="ltr">
@@ -435,42 +445,42 @@ Intuitive way to think of AUC:<br><br>-Imagine taking a random point from both t
 — Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1293979319308558336?ref_src=twsrc%5Etfw">August 13, 2020</a>
 </blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<a href="#fnref2" class="footnote-back">↩</a></li>
-<li id="fn3"><p>I.e. if probability of event is greater than 0.50, predict TRUE, else FALSE.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>Some metrics are often helpful for focusing on particular aspects of your predictions (e.g. precision, recall, F-score all focus more on the model’s capacity to identify TRUE events).<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>Other approaches could be to investigate the ROC or precision-recall curves or to maximize the J-index.<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>(A default on a loan may cost more than profits lost from interest payments).<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>A terrorist attack is more costly than the an unnecessary deployment of resources.<a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>I’ve <a href="https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/">written previously</a> on this topic (though somewhat tangentially).<a href="#fnref8" class="footnote-back">↩</a></p></li>
+<a href="#fnref2" class="footnote-back">↩︎</a></li>
+<li id="fn3"><p>I.e. if probability of event is greater than 0.50, predict TRUE, else FALSE.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>Some metrics are often helpful for focusing on particular aspects of your predictions (e.g. precision, recall, F-score all focus more on the model’s capacity to identify TRUE events).<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>Other approaches could be to investigate the ROC or precision-recall curves or to maximize the J-index.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>(A default on a loan may cost more than profits lost from interest payments).<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>A terrorist attack is more costly than the an unnecessary deployment of resources.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>I’ve <a href="https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/">written previously</a> on this topic (though somewhat tangentially).<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
 <li id="fn9"><p><a href="https://probably.tidymodels.org/index.html">probably</a> is a new package in the <a href="https://www.tidymodels.org/">tidymodels</a> suite in R that is helpful for evaluation steps that occur after model building. <a href="https://twitter.com/dvaughan32?lang=en">Davis Vaughan</a> describes its purpose:</p>
 <blockquote>
 <p>“Regarding placement in the modeling workflow, <code>probably</code> best fits in as a post processing step after the model has been fit, but before the model performance has been calculated” -<a href="https://probably.tidymodels.org/articles/where-to-use.html">Where does probably fit in?</a></p>
 </blockquote>
-<p>As <a href="https://probably.tidymodels.org/index.html">probably</a> and <a href="https://yardstick.tidymodels.org/">yardstick</a> continue to develop I imagine that functionality from those packages will replace much of the code I write in this post.<a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p>From this point on, code is no longer being copied directly from the <code>probably</code> vignette. Again, I would recommend exploring the <code>probably</code> package which goes on to discuss performance metrics on classification problems more generally.<a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p>The remainder of the post is about weighting classification outcomes or observations during model evaluation, and primarily uses methods that review performance across all decision thresholds (not just at 0.5).<a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>For the purposes of this post I am unconcerned how realistic these weights are.<a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p>I am choosing the element positions based on the defaults in the output from a “conf_mat” object that gets created by <code>yardstick::conf_mat()</code>.<a href="#fnref13" class="footnote-back">↩</a></p></li>
-<li id="fn14"><p>For example in the case of True Positives, corresponding to interest payments.<a href="#fnref14" class="footnote-back">↩</a></p></li>
-<li id="fn15"><p>For example in the case of a False Negative this represents the loan being lost due to default of the recipient.<a href="#fnref15" class="footnote-back">↩</a></p></li>
-<li id="fn16"><p>I could convert this to the <em>average value</em> by dividing by the number of observations.<a href="#fnref16" class="footnote-back">↩</a></p></li>
-<li id="fn17"><p>The function <code>probably::threshold_perf()</code> is designed for this type of task. However this function only supports a few types of metrics currently. <a href="https://github.com/tidymodels/probably/issues/25">#25</a> suggests that in the future these may be more customizable. Neither <code>probably</code> nor <code>yardstick</code> can yet handle observation or classification outcome weights. Hence why I don’t just use functions from those packages directly. <a href="https://github.com/tidymodels/yardstick/issues/30">#30</a> suggests that <code>yardstick</code> will get support for weights in the future however this issue is referring to observation weights, not classification outcome weights. <a href="https://github.com/tidymodels/yardstick/issues/3">#3</a> however suggests <code>yardstick</code> will also get options for handling different weights in classification outcomes.<a href="#fnref17" class="footnote-back">↩</a></p></li>
-<li id="fn18"><p>I made this function such that it can also take in observation weights which will be used in <a href="#weighting-by-observations">Weighting by Observations</a>.<a href="#fnref18" class="footnote-back">↩</a></p></li>
-<li id="fn19"><p>AUC and precision-recall curves may also be worth looking at.<a href="#fnref19" class="footnote-back">↩</a></p></li>
-<li id="fn20"><p>I.e. not having a lending business.<a href="#fnref20" class="footnote-back">↩</a></p></li>
-<li id="fn21"><p>It should be noted though that if you are using observation weights there is a decent chance you will want to apply them <em>during</em> the model building process (rather than after).<a href="#fnref21" class="footnote-back">↩</a></p></li>
-<li id="fn22"><p>This is likely a case where the costs and gains would likely be case dependent (i.e. depending on how big of a loan the client is asking for). There is a tutorial on <a href="https://mlr.mlr-org.com/articles/tutorial/cost_sensitive_classif.html#example-dependent-misclassification-costs">Example-dependent misclassification costs</a> from the <code>mlr</code> package that provides descriptions of this more complicated case. One may also be interested in weighting the observations in the steps prior to evaluation but in those steps described in <a href="#weights-of-observations-during-and-prior-to-modeling">Weights of Observations During and Prior to Modeling</a>.<a href="#fnref22" class="footnote-back">↩</a></p></li>
-<li id="fn23"><p>It is important to note that when using these procedures, your model no longer returns predicted probabilities but measures of whether or not you <em>should</em> predict a particular outcome given your weights and costs.<a href="#fnref23" class="footnote-back">↩</a></p></li>
-<li id="fn24"><p>He includes a simple example of doing this with keras in python.<a href="#fnref24" class="footnote-back">↩</a></p></li>
-<li id="fn25"><p>Or set of observations that are difficult to classify for other reason<a href="#fnref25" class="footnote-back">↩</a></p></li>
-<li id="fn26"><p>The implications of this are sometimes not recognized by beginners as I write about in <a href="https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/">Undersampling Will Change the Base Rates of Your Model’s Predictions</a>.<a href="#fnref26" class="footnote-back">↩</a></p></li>
-<li id="fn27"><p>For example gradient boosting techniques bias successive resamples such that observations where the model performs poorly are more likely to be selected in subsequent rounds of model training.<a href="#fnref27" class="footnote-back">↩</a></p></li>
-<li id="fn28"><p>This is described in <a href="https://mlr.mlr-org.com/articles/tutorial/cost_sensitive_classif.html#i--weighting">Rebalancing, i. Weighting</a> in the <a href="https://mlr.mlr-org.com/">mlr</a> vignette.<a href="#fnref28" class="footnote-back">↩</a></p></li>
-<li id="fn29"><p>As well as documentation for how to approach these scenarios using <code>mlr</code><a href="#fnref29" class="footnote-back">↩</a></p></li>
-<li id="fn30"><p>Some classification metrics cannot be calculated if you weight the cells to zero – although I do not believe them to be appropriate I wanted to preserve the examples below as mental bookmarks.<a href="#fnref30" class="footnote-back">↩</a></p></li>
-<li id="fn31"><p>My concern was that there may be mathematical or contextual reasons why this should generally be the case. For example that not doing so in some ways ‘double counts’ things somehow.<a href="#fnref31" class="footnote-back">↩</a></p></li>
-<li id="fn32"><p>Allowing them as weights on the existing confusion matrix means that other metrics (other than cost) may also be calculated… many of these are in ratio form and either can’t be calculated or don’t make sense if some of the cells are negative (or zero).<a href="#fnref32" class="footnote-back">↩</a></p></li>
-<li id="fn33"><p>e.g looking at the AUC or the precision recall curve.<a href="#fnref33" class="footnote-back">↩</a></p></li>
-<li id="fn34"><p>E.g. accuracy is pointless to calculate if weighting the diagonals to zero. Sensitivity pointless when weighting TP to 0… etc.<a href="#fnref34" class="footnote-back">↩</a></p></li>
+<p>As <a href="https://probably.tidymodels.org/index.html">probably</a> and <a href="https://yardstick.tidymodels.org/">yardstick</a> continue to develop I imagine that functionality from those packages will replace much of the code I write in this post.<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>From this point on, code is no longer being copied directly from the <code>probably</code> vignette. Again, I would recommend exploring the <code>probably</code> package which goes on to discuss performance metrics on classification problems more generally.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>The remainder of the post is about weighting classification outcomes or observations during model evaluation, and primarily uses methods that review performance across all decision thresholds (not just at 0.5).<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>For the purposes of this post I am unconcerned how realistic these weights are.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>I am choosing the element positions based on the defaults in the output from a “conf_mat” object that gets created by <code>yardstick::conf_mat()</code>.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p>For example in the case of True Positives, corresponding to interest payments.<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
+<li id="fn15"><p>For example in the case of a False Negative this represents the loan being lost due to default of the recipient.<a href="#fnref15" class="footnote-back">↩︎</a></p></li>
+<li id="fn16"><p>I could convert this to the <em>average value</em> by dividing by the number of observations.<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
+<li id="fn17"><p>The function <code>probably::threshold_perf()</code> is designed for this type of task. However this function only supports a few types of metrics currently. <a href="https://github.com/tidymodels/probably/issues/25">#25</a> suggests that in the future these may be more customizable. Neither <code>probably</code> nor <code>yardstick</code> can yet handle observation or classification outcome weights. Hence why I don’t just use functions from those packages directly. <a href="https://github.com/tidymodels/yardstick/issues/30">#30</a> suggests that <code>yardstick</code> will get support for weights in the future however this issue is referring to observation weights, not classification outcome weights. <a href="https://github.com/tidymodels/yardstick/issues/3">#3</a> however suggests <code>yardstick</code> will also get options for handling different weights in classification outcomes.<a href="#fnref17" class="footnote-back">↩︎</a></p></li>
+<li id="fn18"><p>I made this function such that it can also take in observation weights which will be used in <a href="#weighting-by-observations">Weighting by Observations</a>.<a href="#fnref18" class="footnote-back">↩︎</a></p></li>
+<li id="fn19"><p>AUC and precision-recall curves may also be worth looking at.<a href="#fnref19" class="footnote-back">↩︎</a></p></li>
+<li id="fn20"><p>I.e. not having a lending business.<a href="#fnref20" class="footnote-back">↩︎</a></p></li>
+<li id="fn21"><p>It should be noted though that if you are using observation weights there is a decent chance you will want to apply them <em>during</em> the model building process (rather than after).<a href="#fnref21" class="footnote-back">↩︎</a></p></li>
+<li id="fn22"><p>This is likely a case where the costs and gains would likely be case dependent (i.e. depending on how big of a loan the client is asking for). There is a tutorial on <a href="https://mlr.mlr-org.com/articles/tutorial/cost_sensitive_classif.html#example-dependent-misclassification-costs">Example-dependent misclassification costs</a> from the <code>mlr</code> package that provides descriptions of this more complicated case. One may also be interested in weighting the observations in the steps prior to evaluation but in those steps described in <a href="#weights-of-observations-during-and-prior-to-modeling">Weights of Observations During and Prior to Modeling</a>.<a href="#fnref22" class="footnote-back">↩︎</a></p></li>
+<li id="fn23"><p>It is important to note that when using these procedures, your model no longer returns predicted probabilities but measures of whether or not you <em>should</em> predict a particular outcome given your weights and costs.<a href="#fnref23" class="footnote-back">↩︎</a></p></li>
+<li id="fn24"><p>He includes a simple example of doing this with keras in python.<a href="#fnref24" class="footnote-back">↩︎</a></p></li>
+<li id="fn25"><p>Or set of observations that are difficult to classify for other reason<a href="#fnref25" class="footnote-back">↩︎</a></p></li>
+<li id="fn26"><p>The implications of this are sometimes not recognized by beginners as I write about in <a href="https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/">Undersampling Will Change the Base Rates of Your Model’s Predictions</a>.<a href="#fnref26" class="footnote-back">↩︎</a></p></li>
+<li id="fn27"><p>For example gradient boosting techniques bias successive resamples such that observations where the model performs poorly are more likely to be selected in subsequent rounds of model training.<a href="#fnref27" class="footnote-back">↩︎</a></p></li>
+<li id="fn28"><p>This is described in <a href="https://mlr.mlr-org.com/articles/tutorial/cost_sensitive_classif.html#i--weighting">Rebalancing, i. Weighting</a> in the <a href="https://mlr.mlr-org.com/">mlr</a> vignette.<a href="#fnref28" class="footnote-back">↩︎</a></p></li>
+<li id="fn29"><p>As well as documentation for how to approach these scenarios using <code>mlr</code><a href="#fnref29" class="footnote-back">↩︎</a></p></li>
+<li id="fn30"><p>Some classification metrics cannot be calculated if you weight the cells to zero – although I do not believe them to be appropriate I wanted to preserve the examples below as mental bookmarks.<a href="#fnref30" class="footnote-back">↩︎</a></p></li>
+<li id="fn31"><p>My concern was that there may be mathematical or contextual reasons why this should generally be the case. For example that not doing so in some ways ‘double counts’ things somehow.<a href="#fnref31" class="footnote-back">↩︎</a></p></li>
+<li id="fn32"><p>Allowing them as weights on the existing confusion matrix means that other metrics (other than cost) may also be calculated… many of these are in ratio form and either can’t be calculated or don’t make sense if some of the cells are negative (or zero).<a href="#fnref32" class="footnote-back">↩︎</a></p></li>
+<li id="fn33"><p>e.g looking at the AUC or the precision recall curve.<a href="#fnref33" class="footnote-back">↩︎</a></p></li>
+<li id="fn34"><p>E.g. accuracy is pointless to calculate if weighting the diagonals to zero. Sensitivity pointless when weighting TP to 0… etc.<a href="#fnref34" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

@@ -8,10 +8,16 @@ categories:
   - statistics
   - machine learning
 tags:
-  - rstats
-  - business
-  - expected value
-  - ml
+  - ggplot
+  - dplyr
+  - rsample
+  - parsnip
+  - probably
+  - yardstick
+  - devtools
+  - purrr
+  - knitr
+  - tidyr
 slug: weighting-classification-outcomes
 thumbnail: /post/2020-12-08-weighting-classification-outcomes_files/figure-html/confusion-matrix-unweighted-weighted-1.png
 ---

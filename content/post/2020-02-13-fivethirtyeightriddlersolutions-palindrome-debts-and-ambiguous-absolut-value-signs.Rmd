@@ -6,10 +6,16 @@ date: '2020-02-13'
 slug: fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs
 categories:
   - math
-tags:
   - combinatorics
-  - math
-  - rstats
+tags:
+  - dplyr
+  - lubridate
+  - stringi
+  - knitr
+  - purrr
+  - stringr
+  - tidyr
+  - ggplot
 output:
   blogdown::html_page:
     toc: true

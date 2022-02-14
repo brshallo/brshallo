@@ -6,10 +6,22 @@ categories:
   - programming
   - rstats
 tags:
-  - animation
-  - reproducibility
-  - rstats
-  - tidyverse
+  - dplyr
+  - tidyr
+  - purrr
+  - ggplot
+  - ggbeeswarm
+  - animatrixr
+  - emo
+  - rlang
+  - fs
+  - pagedown
+  - magick
+  - here
+  - pdftools
+  - officer
+  - flair
+  - flipbookr
 slug: use-flipbooks-to-explain-your-code-and-thought-process
 output:
   blogdown::html_page:

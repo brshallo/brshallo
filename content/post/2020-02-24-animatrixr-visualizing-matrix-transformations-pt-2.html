@@ -6,17 +6,19 @@ categories:
   - programming
   - rstats
   - visualization
-tags:
-  - gganimate
   - linear algebra
   - math
-  - rstats
+tags:
+  - devtools
+  - dplyr
+  - animatrixr
 slug: animatrixr-visualizing-matrix-transformations-pt-2
 output:
   blogdown::html_page:
     toc: no
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p>This post is a continuation on my post from last week on <a href="https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/">Visualizing Matrix Transformations with gganimate</a>. Both posts are largely inspired by <a href="https://twitter.com/3blue1brown">Grant Sanderson’s</a> beautiful video series <a href="https://www.youtube.com/watch?v=kYB8IZa5AuE&amp;list=PL_w8oSr1JpVCZ5pKXHKz6PkjGCbPbSBYv&amp;index=4">The Essence of Linear Algebra</a> and wanting to continue messing around with <a href="https://github.com/thomasp85/gganimate">Thomas Lin Peterson’s</a> fantastic <a href="https://github.com/thomasp85/gganimate">gganimate</a> package in R.</p>
@@ -156,14 +158,14 @@ E.g. if M = {rotation}{vertical sheer} vs. M = {rotation}{horizontal sheer} –
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Provides a cleaner approach for doing this compared to the clunky method I walked through in my post last week.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>All visualizations from last week used this linear interpolation method.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>I discuss this at more length in my previous post – see the sub-section in the “Appendix”, “Problem of squeezing during rotation”.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>However I also hadn’t planned on writing a follow-up post… so who knows…<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>See <a href="https://computergraphics.stackexchange.com/questions/3932/animating-a-smooth-linear-transformation">post</a> referencing this.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>Provides a cleaner approach for doing this compared to the clunky method I walked through in my post last week.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>All visualizations from last week used this linear interpolation method.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>I discuss this at more length in my previous post – see the sub-section in the “Appendix”, “Problem of squeezing during rotation”.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>However I also hadn’t planned on writing a follow-up post… so who knows…<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>See <a href="https://computergraphics.stackexchange.com/questions/3932/animating-a-smooth-linear-transformation">post</a> referencing this.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
 <li id="fn6"><p>To find the ‘other’ component of a matrix transformation… say <em>M</em> represents the overall matrix transformation, in <a href="#showing-rotations">Showing rotations</a> I described how to calculate <em>R</em> (the rotation component), hence to calculate <em>A</em>, ‘other’, I do:</p>
 <p><span class="math display">\[AR = M\]</span>
 <span class="math display">\[ARR^{-1} = MR^{-1}\]</span>
-<span class="math display">\[A = MR^{-1}\]</span><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<span class="math display">\[A = MR^{-1}\]</span><a href="#fnref6" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

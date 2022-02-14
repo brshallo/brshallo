@@ -8,8 +8,10 @@ categories:
   - pricing
   - rstats
 tags:
-  - business
-  - distributions
+  - ggplot
+  - dplyr
+  - purrr
+  - forcats
 codefolding_show: hide
 slug: influencing-distributions
 thumbnail: /post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-6-1.png

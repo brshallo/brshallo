@@ -7,21 +7,28 @@ categories:
   - math
   - visualization
   - rstats
-  - r
-tags:
-  - geometry
-  - math
-  - r
   - riddles
+  - geometry
+tags:
+  - tidyr
+  - dplyr
+  - animatrixr
+  - knitr
+  - ggplot
+  - ggforce
+  - purrr
+  - forcats
 thumbnail: https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 <div id="TOC">
 <ul>
 <li><a href="#riddler-express">Riddler express</a></li>
 <li><a href="#riddler-classic">Riddler classic</a></li>
-<li><a href="#appendix">Appendix</a><ul>
+<li><a href="#appendix">Appendix</a>
+<ul>
 <li><a href="#time-to-center">Time to center</a></li>
 <li><a href="#transform-grid-rotate-first">Transform grid, rotate first</a></li>
 <li><a href="#transform-city-pretty">Transform city, pretty</a></li>
@@ -312,18 +319,18 @@ p_pretty +
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>And wrote a couple preliminary posts on animating matrix transformations that can be found <a href="https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/">here</a> and <a href="https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/">here</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>Is large enough to get a reasonable approximation for the answer.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>I.e. straight line distance.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>The Manhattan Length is just the shortest number of city blocks between points.<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>I highly recommend the Essence of Linear Algebra video series, particularly chapter 3 (on Matrix Transformations) and <a href="https://www.youtube.com/watch?v=P2LTAUO1TdA">13</a> (on Change of basis).<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>In R, you can use the <code>solve()</code> function to give you the inverse of a matrix.<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>We have already done most of the computations we’ll need and can follow similar steps to those taken in the <a href="#riddler-express">Riddler Express</a> solution.<a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>I.e. length of an individual city block, or in this case, component of a city block.<a href="#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p>In the diagram below, we will actually have it be a function of one-half of the inverse of the proportion – this is because there are two diagonals adjoining each horizontal component.<a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p>This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, <em>x</em>, of a triangle created by a diagonal.<a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p>Note that if we were to set x = 0, the distance from each location would be equivalent to the distances in our starting (horizontal) grid, and if we set x = 0.5, the distances would be equal to those in our transformed (diagonal) grid.<a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>Note that we are not taking into account the tiny differences that emerge regarding starting location for each resident (i.e. which point within a Barcelona square should they start). If we make the grid arbitrarily large, these differences become inconsequential – hence we can ignore them.<a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p>The origin of our coordinate systems.<a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>And wrote a couple preliminary posts on animating matrix transformations that can be found <a href="https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/">here</a> and <a href="https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/">here</a><a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Is large enough to get a reasonable approximation for the answer.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>I.e. straight line distance.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>The Manhattan Length is just the shortest number of city blocks between points.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>I highly recommend the Essence of Linear Algebra video series, particularly chapter 3 (on Matrix Transformations) and <a href="https://www.youtube.com/watch?v=P2LTAUO1TdA">13</a> (on Change of basis).<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>In R, you can use the <code>solve()</code> function to give you the inverse of a matrix.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>We have already done most of the computations we’ll need and can follow similar steps to those taken in the <a href="#riddler-express">Riddler Express</a> solution.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>I.e. length of an individual city block, or in this case, component of a city block.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>In the diagram below, we will actually have it be a function of one-half of the inverse of the proportion – this is because there are two diagonals adjoining each horizontal component.<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, <em>x</em>, of a triangle created by a diagonal.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>Note that if we were to set x = 0, the distance from each location would be equivalent to the distances in our starting (horizontal) grid, and if we set x = 0.5, the distances would be equal to those in our transformed (diagonal) grid.<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>Note that we are not taking into account the tiny differences that emerge regarding starting location for each resident (i.e. which point within a Barcelona square should they start). If we make the grid arbitrarily large, these differences become inconsequential – hence we can ignore them.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>The origin of our coordinate systems.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

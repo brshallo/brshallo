@@ -8,10 +8,14 @@ categories:
   - statistics
   - rstats
 tags:
-  - probability
   - tidyverse
   - rvest
-  - rstats
+  - gt
+  - broom
+  - glue
+  - janitor
+  - lubridate
+  - fs
 codefolding_show: hide
 thumbnail: /2021/12/17/predicting-nba-playoff-berths-fivethirtyeight-vs-betting-markets/images/lakers-eliminated.PNG
 ---
@@ -133,7 +137,7 @@ scrape_urls %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#bbnwstnkdb .gt_table {
+#pvvimbfqtg .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -158,7 +162,7 @@ scrape_urls %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#bbnwstnkdb .gt_heading {
+#pvvimbfqtg .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -170,7 +174,7 @@ scrape_urls %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#bbnwstnkdb .gt_title {
+#pvvimbfqtg .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -180,7 +184,7 @@ scrape_urls %&gt;%
   border-bottom-width: 0;
 }
 
-#bbnwstnkdb .gt_subtitle {
+#pvvimbfqtg .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -190,13 +194,13 @@ scrape_urls %&gt;%
   border-top-width: 0;
 }
 
-#bbnwstnkdb .gt_bottom_border {
+#pvvimbfqtg .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#bbnwstnkdb .gt_col_headings {
+#pvvimbfqtg .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -211,7 +215,7 @@ scrape_urls %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#bbnwstnkdb .gt_col_heading {
+#pvvimbfqtg .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -231,7 +235,7 @@ scrape_urls %&gt;%
   overflow-x: hidden;
 }
 
-#bbnwstnkdb .gt_column_spanner_outer {
+#pvvimbfqtg .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -243,15 +247,15 @@ scrape_urls %&gt;%
   padding-right: 4px;
 }
 
-#bbnwstnkdb .gt_column_spanner_outer:first-child {
+#pvvimbfqtg .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#bbnwstnkdb .gt_column_spanner_outer:last-child {
+#pvvimbfqtg .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#bbnwstnkdb .gt_column_spanner {
+#pvvimbfqtg .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -263,7 +267,7 @@ scrape_urls %&gt;%
   width: 100%;
 }
 
-#bbnwstnkdb .gt_group_heading {
+#pvvimbfqtg .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -285,7 +289,7 @@ scrape_urls %&gt;%
   vertical-align: middle;
 }
 
-#bbnwstnkdb .gt_empty_group_heading {
+#pvvimbfqtg .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -300,15 +304,15 @@ scrape_urls %&gt;%
   vertical-align: middle;
 }
 
-#bbnwstnkdb .gt_from_md > :first-child {
+#pvvimbfqtg .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#bbnwstnkdb .gt_from_md > :last-child {
+#pvvimbfqtg .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#bbnwstnkdb .gt_row {
+#pvvimbfqtg .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -327,7 +331,7 @@ scrape_urls %&gt;%
   overflow-x: hidden;
 }
 
-#bbnwstnkdb .gt_stub {
+#pvvimbfqtg .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -339,7 +343,7 @@ scrape_urls %&gt;%
   padding-left: 12px;
 }
 
-#bbnwstnkdb .gt_summary_row {
+#pvvimbfqtg .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -349,7 +353,7 @@ scrape_urls %&gt;%
   padding-right: 5px;
 }
 
-#bbnwstnkdb .gt_first_summary_row {
+#pvvimbfqtg .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -359,7 +363,7 @@ scrape_urls %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#bbnwstnkdb .gt_grand_summary_row {
+#pvvimbfqtg .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -369,7 +373,7 @@ scrape_urls %&gt;%
   padding-right: 5px;
 }
 
-#bbnwstnkdb .gt_first_grand_summary_row {
+#pvvimbfqtg .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -379,11 +383,11 @@ scrape_urls %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#bbnwstnkdb .gt_striped {
+#pvvimbfqtg .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#bbnwstnkdb .gt_table_body {
+#pvvimbfqtg .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -392,7 +396,7 @@ scrape_urls %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#bbnwstnkdb .gt_footnotes {
+#pvvimbfqtg .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -406,13 +410,13 @@ scrape_urls %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#bbnwstnkdb .gt_footnote {
+#pvvimbfqtg .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#bbnwstnkdb .gt_sourcenotes {
+#pvvimbfqtg .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -426,46 +430,46 @@ scrape_urls %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#bbnwstnkdb .gt_sourcenote {
+#pvvimbfqtg .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#bbnwstnkdb .gt_left {
+#pvvimbfqtg .gt_left {
   text-align: left;
 }
 
-#bbnwstnkdb .gt_center {
+#pvvimbfqtg .gt_center {
   text-align: center;
 }
 
-#bbnwstnkdb .gt_right {
+#pvvimbfqtg .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#bbnwstnkdb .gt_font_normal {
+#pvvimbfqtg .gt_font_normal {
   font-weight: normal;
 }
 
-#bbnwstnkdb .gt_font_bold {
+#pvvimbfqtg .gt_font_bold {
   font-weight: bold;
 }
 
-#bbnwstnkdb .gt_font_italic {
+#pvvimbfqtg .gt_font_italic {
   font-style: italic;
 }
 
-#bbnwstnkdb .gt_super {
+#pvvimbfqtg .gt_super {
   font-size: 65%;
 }
 
-#bbnwstnkdb .gt_footnote_marks {
+#pvvimbfqtg .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="bbnwstnkdb" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="pvvimbfqtg" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -612,7 +616,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#mugtiyiwjq .gt_table {
+#kdzasrlfus .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -637,7 +641,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#mugtiyiwjq .gt_heading {
+#kdzasrlfus .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -649,7 +653,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#mugtiyiwjq .gt_title {
+#kdzasrlfus .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -659,7 +663,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-bottom-width: 0;
 }
 
-#mugtiyiwjq .gt_subtitle {
+#kdzasrlfus .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -669,13 +673,13 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-top-width: 0;
 }
 
-#mugtiyiwjq .gt_bottom_border {
+#kdzasrlfus .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#mugtiyiwjq .gt_col_headings {
+#kdzasrlfus .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -690,7 +694,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#mugtiyiwjq .gt_col_heading {
+#kdzasrlfus .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -710,7 +714,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   overflow-x: hidden;
 }
 
-#mugtiyiwjq .gt_column_spanner_outer {
+#kdzasrlfus .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -722,15 +726,15 @@ bookies_538_joined &lt;- data_538 %&gt;%
   padding-right: 4px;
 }
 
-#mugtiyiwjq .gt_column_spanner_outer:first-child {
+#kdzasrlfus .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#mugtiyiwjq .gt_column_spanner_outer:last-child {
+#kdzasrlfus .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#mugtiyiwjq .gt_column_spanner {
+#kdzasrlfus .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -742,7 +746,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   width: 100%;
 }
 
-#mugtiyiwjq .gt_group_heading {
+#kdzasrlfus .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -764,7 +768,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   vertical-align: middle;
 }
 
-#mugtiyiwjq .gt_empty_group_heading {
+#kdzasrlfus .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -779,15 +783,15 @@ bookies_538_joined &lt;- data_538 %&gt;%
   vertical-align: middle;
 }
 
-#mugtiyiwjq .gt_from_md > :first-child {
+#kdzasrlfus .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#mugtiyiwjq .gt_from_md > :last-child {
+#kdzasrlfus .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#mugtiyiwjq .gt_row {
+#kdzasrlfus .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -806,7 +810,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   overflow-x: hidden;
 }
 
-#mugtiyiwjq .gt_stub {
+#kdzasrlfus .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -818,7 +822,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   padding-left: 12px;
 }
 
-#mugtiyiwjq .gt_summary_row {
+#kdzasrlfus .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -828,7 +832,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   padding-right: 5px;
 }
 
-#mugtiyiwjq .gt_first_summary_row {
+#kdzasrlfus .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -838,7 +842,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#mugtiyiwjq .gt_grand_summary_row {
+#kdzasrlfus .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -848,7 +852,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   padding-right: 5px;
 }
 
-#mugtiyiwjq .gt_first_grand_summary_row {
+#kdzasrlfus .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -858,11 +862,11 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#mugtiyiwjq .gt_striped {
+#kdzasrlfus .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#mugtiyiwjq .gt_table_body {
+#kdzasrlfus .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -871,7 +875,7 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#mugtiyiwjq .gt_footnotes {
+#kdzasrlfus .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -885,13 +889,13 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#mugtiyiwjq .gt_footnote {
+#kdzasrlfus .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#mugtiyiwjq .gt_sourcenotes {
+#kdzasrlfus .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -905,46 +909,46 @@ bookies_538_joined &lt;- data_538 %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#mugtiyiwjq .gt_sourcenote {
+#kdzasrlfus .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#mugtiyiwjq .gt_left {
+#kdzasrlfus .gt_left {
   text-align: left;
 }
 
-#mugtiyiwjq .gt_center {
+#kdzasrlfus .gt_center {
   text-align: center;
 }
 
-#mugtiyiwjq .gt_right {
+#kdzasrlfus .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#mugtiyiwjq .gt_font_normal {
+#kdzasrlfus .gt_font_normal {
   font-weight: normal;
 }
 
-#mugtiyiwjq .gt_font_bold {
+#kdzasrlfus .gt_font_bold {
   font-weight: bold;
 }
 
-#mugtiyiwjq .gt_font_italic {
+#kdzasrlfus .gt_font_italic {
   font-style: italic;
 }
 
-#mugtiyiwjq .gt_super {
+#kdzasrlfus .gt_super {
   font-size: 65%;
 }
 
-#mugtiyiwjq .gt_footnote_marks {
+#kdzasrlfus .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="mugtiyiwjq" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="kdzasrlfus" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -1040,7 +1044,7 @@ bookies_538_joined %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#dagjbbkykk .gt_table {
+#hifsqyhcnp .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1065,7 +1069,7 @@ bookies_538_joined %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#dagjbbkykk .gt_heading {
+#hifsqyhcnp .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1077,7 +1081,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#dagjbbkykk .gt_title {
+#hifsqyhcnp .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1087,7 +1091,7 @@ bookies_538_joined %&gt;%
   border-bottom-width: 0;
 }
 
-#dagjbbkykk .gt_subtitle {
+#hifsqyhcnp .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1097,13 +1101,13 @@ bookies_538_joined %&gt;%
   border-top-width: 0;
 }
 
-#dagjbbkykk .gt_bottom_border {
+#hifsqyhcnp .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#dagjbbkykk .gt_col_headings {
+#hifsqyhcnp .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1118,7 +1122,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#dagjbbkykk .gt_col_heading {
+#hifsqyhcnp .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1138,7 +1142,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#dagjbbkykk .gt_column_spanner_outer {
+#hifsqyhcnp .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1150,15 +1154,15 @@ bookies_538_joined %&gt;%
   padding-right: 4px;
 }
 
-#dagjbbkykk .gt_column_spanner_outer:first-child {
+#hifsqyhcnp .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#dagjbbkykk .gt_column_spanner_outer:last-child {
+#hifsqyhcnp .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#dagjbbkykk .gt_column_spanner {
+#hifsqyhcnp .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1170,7 +1174,7 @@ bookies_538_joined %&gt;%
   width: 100%;
 }
 
-#dagjbbkykk .gt_group_heading {
+#hifsqyhcnp .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1192,7 +1196,7 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#dagjbbkykk .gt_empty_group_heading {
+#hifsqyhcnp .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1207,15 +1211,15 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#dagjbbkykk .gt_from_md > :first-child {
+#hifsqyhcnp .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#dagjbbkykk .gt_from_md > :last-child {
+#hifsqyhcnp .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#dagjbbkykk .gt_row {
+#hifsqyhcnp .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1234,7 +1238,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#dagjbbkykk .gt_stub {
+#hifsqyhcnp .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1246,7 +1250,7 @@ bookies_538_joined %&gt;%
   padding-left: 12px;
 }
 
-#dagjbbkykk .gt_summary_row {
+#hifsqyhcnp .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1256,7 +1260,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#dagjbbkykk .gt_first_summary_row {
+#hifsqyhcnp .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1266,7 +1270,7 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#dagjbbkykk .gt_grand_summary_row {
+#hifsqyhcnp .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1276,7 +1280,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#dagjbbkykk .gt_first_grand_summary_row {
+#hifsqyhcnp .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1286,11 +1290,11 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#dagjbbkykk .gt_striped {
+#hifsqyhcnp .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#dagjbbkykk .gt_table_body {
+#hifsqyhcnp .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1299,7 +1303,7 @@ bookies_538_joined %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#dagjbbkykk .gt_footnotes {
+#hifsqyhcnp .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1313,13 +1317,13 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#dagjbbkykk .gt_footnote {
+#hifsqyhcnp .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#dagjbbkykk .gt_sourcenotes {
+#hifsqyhcnp .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1333,46 +1337,46 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#dagjbbkykk .gt_sourcenote {
+#hifsqyhcnp .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#dagjbbkykk .gt_left {
+#hifsqyhcnp .gt_left {
   text-align: left;
 }
 
-#dagjbbkykk .gt_center {
+#hifsqyhcnp .gt_center {
   text-align: center;
 }
 
-#dagjbbkykk .gt_right {
+#hifsqyhcnp .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#dagjbbkykk .gt_font_normal {
+#hifsqyhcnp .gt_font_normal {
   font-weight: normal;
 }
 
-#dagjbbkykk .gt_font_bold {
+#hifsqyhcnp .gt_font_bold {
   font-weight: bold;
 }
 
-#dagjbbkykk .gt_font_italic {
+#hifsqyhcnp .gt_font_italic {
   font-style: italic;
 }
 
-#dagjbbkykk .gt_super {
+#hifsqyhcnp .gt_super {
   font-size: 65%;
 }
 
-#dagjbbkykk .gt_footnote_marks {
+#hifsqyhcnp .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="dagjbbkykk" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="hifsqyhcnp" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -1409,7 +1413,7 @@ bookies_538_joined %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#kkuemmrcre .gt_table {
+#ipiuzdvgky .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1434,7 +1438,7 @@ bookies_538_joined %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#kkuemmrcre .gt_heading {
+#ipiuzdvgky .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1446,7 +1450,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#kkuemmrcre .gt_title {
+#ipiuzdvgky .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1456,7 +1460,7 @@ bookies_538_joined %&gt;%
   border-bottom-width: 0;
 }
 
-#kkuemmrcre .gt_subtitle {
+#ipiuzdvgky .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1466,13 +1470,13 @@ bookies_538_joined %&gt;%
   border-top-width: 0;
 }
 
-#kkuemmrcre .gt_bottom_border {
+#ipiuzdvgky .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#kkuemmrcre .gt_col_headings {
+#ipiuzdvgky .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1487,7 +1491,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#kkuemmrcre .gt_col_heading {
+#ipiuzdvgky .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1507,7 +1511,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#kkuemmrcre .gt_column_spanner_outer {
+#ipiuzdvgky .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1519,15 +1523,15 @@ bookies_538_joined %&gt;%
   padding-right: 4px;
 }
 
-#kkuemmrcre .gt_column_spanner_outer:first-child {
+#ipiuzdvgky .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#kkuemmrcre .gt_column_spanner_outer:last-child {
+#ipiuzdvgky .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#kkuemmrcre .gt_column_spanner {
+#ipiuzdvgky .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1539,7 +1543,7 @@ bookies_538_joined %&gt;%
   width: 100%;
 }
 
-#kkuemmrcre .gt_group_heading {
+#ipiuzdvgky .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1561,7 +1565,7 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#kkuemmrcre .gt_empty_group_heading {
+#ipiuzdvgky .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1576,15 +1580,15 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#kkuemmrcre .gt_from_md > :first-child {
+#ipiuzdvgky .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#kkuemmrcre .gt_from_md > :last-child {
+#ipiuzdvgky .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#kkuemmrcre .gt_row {
+#ipiuzdvgky .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1603,7 +1607,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#kkuemmrcre .gt_stub {
+#ipiuzdvgky .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1615,7 +1619,7 @@ bookies_538_joined %&gt;%
   padding-left: 12px;
 }
 
-#kkuemmrcre .gt_summary_row {
+#ipiuzdvgky .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1625,7 +1629,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#kkuemmrcre .gt_first_summary_row {
+#ipiuzdvgky .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1635,7 +1639,7 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#kkuemmrcre .gt_grand_summary_row {
+#ipiuzdvgky .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1645,7 +1649,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#kkuemmrcre .gt_first_grand_summary_row {
+#ipiuzdvgky .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1655,11 +1659,11 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#kkuemmrcre .gt_striped {
+#ipiuzdvgky .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#kkuemmrcre .gt_table_body {
+#ipiuzdvgky .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1668,7 +1672,7 @@ bookies_538_joined %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#kkuemmrcre .gt_footnotes {
+#ipiuzdvgky .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1682,13 +1686,13 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#kkuemmrcre .gt_footnote {
+#ipiuzdvgky .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#kkuemmrcre .gt_sourcenotes {
+#ipiuzdvgky .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1702,46 +1706,46 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#kkuemmrcre .gt_sourcenote {
+#ipiuzdvgky .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#kkuemmrcre .gt_left {
+#ipiuzdvgky .gt_left {
   text-align: left;
 }
 
-#kkuemmrcre .gt_center {
+#ipiuzdvgky .gt_center {
   text-align: center;
 }
 
-#kkuemmrcre .gt_right {
+#ipiuzdvgky .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#kkuemmrcre .gt_font_normal {
+#ipiuzdvgky .gt_font_normal {
   font-weight: normal;
 }
 
-#kkuemmrcre .gt_font_bold {
+#ipiuzdvgky .gt_font_bold {
   font-weight: bold;
 }
 
-#kkuemmrcre .gt_font_italic {
+#ipiuzdvgky .gt_font_italic {
   font-style: italic;
 }
 
-#kkuemmrcre .gt_super {
+#ipiuzdvgky .gt_super {
   font-size: 65%;
 }
 
-#kkuemmrcre .gt_footnote_marks {
+#ipiuzdvgky .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="kkuemmrcre" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="ipiuzdvgky" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -1824,7 +1828,7 @@ bookies_538_joined %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#koqnodusfg .gt_table {
+#qbmzqwkotw .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1849,7 +1853,7 @@ bookies_538_joined %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#koqnodusfg .gt_heading {
+#qbmzqwkotw .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1861,7 +1865,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#koqnodusfg .gt_title {
+#qbmzqwkotw .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1871,7 +1875,7 @@ bookies_538_joined %&gt;%
   border-bottom-width: 0;
 }
 
-#koqnodusfg .gt_subtitle {
+#qbmzqwkotw .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1881,13 +1885,13 @@ bookies_538_joined %&gt;%
   border-top-width: 0;
 }
 
-#koqnodusfg .gt_bottom_border {
+#qbmzqwkotw .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#koqnodusfg .gt_col_headings {
+#qbmzqwkotw .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1902,7 +1906,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#koqnodusfg .gt_col_heading {
+#qbmzqwkotw .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1922,7 +1926,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#koqnodusfg .gt_column_spanner_outer {
+#qbmzqwkotw .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1934,15 +1938,15 @@ bookies_538_joined %&gt;%
   padding-right: 4px;
 }
 
-#koqnodusfg .gt_column_spanner_outer:first-child {
+#qbmzqwkotw .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#koqnodusfg .gt_column_spanner_outer:last-child {
+#qbmzqwkotw .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#koqnodusfg .gt_column_spanner {
+#qbmzqwkotw .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1954,7 +1958,7 @@ bookies_538_joined %&gt;%
   width: 100%;
 }
 
-#koqnodusfg .gt_group_heading {
+#qbmzqwkotw .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1976,7 +1980,7 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#koqnodusfg .gt_empty_group_heading {
+#qbmzqwkotw .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1991,15 +1995,15 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#koqnodusfg .gt_from_md > :first-child {
+#qbmzqwkotw .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#koqnodusfg .gt_from_md > :last-child {
+#qbmzqwkotw .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#koqnodusfg .gt_row {
+#qbmzqwkotw .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2018,7 +2022,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#koqnodusfg .gt_stub {
+#qbmzqwkotw .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2030,7 +2034,7 @@ bookies_538_joined %&gt;%
   padding-left: 12px;
 }
 
-#koqnodusfg .gt_summary_row {
+#qbmzqwkotw .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2040,7 +2044,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#koqnodusfg .gt_first_summary_row {
+#qbmzqwkotw .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2050,7 +2054,7 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#koqnodusfg .gt_grand_summary_row {
+#qbmzqwkotw .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2060,7 +2064,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#koqnodusfg .gt_first_grand_summary_row {
+#qbmzqwkotw .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2070,11 +2074,11 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#koqnodusfg .gt_striped {
+#qbmzqwkotw .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#koqnodusfg .gt_table_body {
+#qbmzqwkotw .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2083,7 +2087,7 @@ bookies_538_joined %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#koqnodusfg .gt_footnotes {
+#qbmzqwkotw .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2097,13 +2101,13 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#koqnodusfg .gt_footnote {
+#qbmzqwkotw .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#koqnodusfg .gt_sourcenotes {
+#qbmzqwkotw .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2117,46 +2121,46 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#koqnodusfg .gt_sourcenote {
+#qbmzqwkotw .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#koqnodusfg .gt_left {
+#qbmzqwkotw .gt_left {
   text-align: left;
 }
 
-#koqnodusfg .gt_center {
+#qbmzqwkotw .gt_center {
   text-align: center;
 }
 
-#koqnodusfg .gt_right {
+#qbmzqwkotw .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#koqnodusfg .gt_font_normal {
+#qbmzqwkotw .gt_font_normal {
   font-weight: normal;
 }
 
-#koqnodusfg .gt_font_bold {
+#qbmzqwkotw .gt_font_bold {
   font-weight: bold;
 }
 
-#koqnodusfg .gt_font_italic {
+#qbmzqwkotw .gt_font_italic {
   font-style: italic;
 }
 
-#koqnodusfg .gt_super {
+#qbmzqwkotw .gt_super {
   font-size: 65%;
 }
 
-#koqnodusfg .gt_footnote_marks {
+#qbmzqwkotw .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="koqnodusfg" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="qbmzqwkotw" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -2187,7 +2191,7 @@ bookies_538_joined %&gt;%
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#dfoufozxbw .gt_table {
+#xgjccecirb .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -2212,7 +2216,7 @@ bookies_538_joined %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#dfoufozxbw .gt_heading {
+#xgjccecirb .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2224,7 +2228,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#dfoufozxbw .gt_title {
+#xgjccecirb .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2234,7 +2238,7 @@ bookies_538_joined %&gt;%
   border-bottom-width: 0;
 }
 
-#dfoufozxbw .gt_subtitle {
+#xgjccecirb .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2244,13 +2248,13 @@ bookies_538_joined %&gt;%
   border-top-width: 0;
 }
 
-#dfoufozxbw .gt_bottom_border {
+#xgjccecirb .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#dfoufozxbw .gt_col_headings {
+#xgjccecirb .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2265,7 +2269,7 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#dfoufozxbw .gt_col_heading {
+#xgjccecirb .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2285,7 +2289,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#dfoufozxbw .gt_column_spanner_outer {
+#xgjccecirb .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2297,15 +2301,15 @@ bookies_538_joined %&gt;%
   padding-right: 4px;
 }
 
-#dfoufozxbw .gt_column_spanner_outer:first-child {
+#xgjccecirb .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#dfoufozxbw .gt_column_spanner_outer:last-child {
+#xgjccecirb .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#dfoufozxbw .gt_column_spanner {
+#xgjccecirb .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2317,7 +2321,7 @@ bookies_538_joined %&gt;%
   width: 100%;
 }
 
-#dfoufozxbw .gt_group_heading {
+#xgjccecirb .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2339,7 +2343,7 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#dfoufozxbw .gt_empty_group_heading {
+#xgjccecirb .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2354,15 +2358,15 @@ bookies_538_joined %&gt;%
   vertical-align: middle;
 }
 
-#dfoufozxbw .gt_from_md > :first-child {
+#xgjccecirb .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#dfoufozxbw .gt_from_md > :last-child {
+#xgjccecirb .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#dfoufozxbw .gt_row {
+#xgjccecirb .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2381,7 +2385,7 @@ bookies_538_joined %&gt;%
   overflow-x: hidden;
 }
 
-#dfoufozxbw .gt_stub {
+#xgjccecirb .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2393,7 +2397,7 @@ bookies_538_joined %&gt;%
   padding-left: 12px;
 }
 
-#dfoufozxbw .gt_summary_row {
+#xgjccecirb .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2403,7 +2407,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#dfoufozxbw .gt_first_summary_row {
+#xgjccecirb .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2413,7 +2417,7 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#dfoufozxbw .gt_grand_summary_row {
+#xgjccecirb .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2423,7 +2427,7 @@ bookies_538_joined %&gt;%
   padding-right: 5px;
 }
 
-#dfoufozxbw .gt_first_grand_summary_row {
+#xgjccecirb .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2433,11 +2437,11 @@ bookies_538_joined %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#dfoufozxbw .gt_striped {
+#xgjccecirb .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#dfoufozxbw .gt_table_body {
+#xgjccecirb .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2446,7 +2450,7 @@ bookies_538_joined %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#dfoufozxbw .gt_footnotes {
+#xgjccecirb .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2460,13 +2464,13 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#dfoufozxbw .gt_footnote {
+#xgjccecirb .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#dfoufozxbw .gt_sourcenotes {
+#xgjccecirb .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2480,46 +2484,46 @@ bookies_538_joined %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#dfoufozxbw .gt_sourcenote {
+#xgjccecirb .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#dfoufozxbw .gt_left {
+#xgjccecirb .gt_left {
   text-align: left;
 }
 
-#dfoufozxbw .gt_center {
+#xgjccecirb .gt_center {
   text-align: center;
 }
 
-#dfoufozxbw .gt_right {
+#xgjccecirb .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#dfoufozxbw .gt_font_normal {
+#xgjccecirb .gt_font_normal {
   font-weight: normal;
 }
 
-#dfoufozxbw .gt_font_bold {
+#xgjccecirb .gt_font_bold {
   font-weight: bold;
 }
 
-#dfoufozxbw .gt_font_italic {
+#xgjccecirb .gt_font_italic {
   font-style: italic;
 }
 
-#dfoufozxbw .gt_super {
+#xgjccecirb .gt_super {
   font-size: 65%;
 }
 
-#dfoufozxbw .gt_footnote_marks {
+#xgjccecirb .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="dfoufozxbw" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="xgjccecirb" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>

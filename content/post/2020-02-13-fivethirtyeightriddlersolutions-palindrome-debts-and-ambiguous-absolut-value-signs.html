@@ -6,15 +6,22 @@ date: '2020-02-13'
 slug: fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs
 categories:
   - math
-tags:
   - combinatorics
-  - math
-  - rstats
+tags:
+  - dplyr
+  - lubridate
+  - stringi
+  - knitr
+  - purrr
+  - stringr
+  - tidyr
+  - ggplot
 output:
   blogdown::html_page:
     toc: true
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 <script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
 <link href="/rmarkdown-libs/str_view/str_view.css" rel="stylesheet" />
 <script src="/rmarkdown-libs/str_view-binding/str_view.js"></script>
@@ -23,7 +30,8 @@ output:
 <ul>
 <li><a href="#riddler-express">Riddler Express</a></li>
 <li><a href="#riddler-classic">Riddler Classic</a></li>
-<li><a href="#appendix">Appendix</a><ul>
+<li><a href="#appendix">Appendix</a>
+<ul>
 <li><a href="#on-duplicates">On duplicates</a></li>
 <li><a href="#more-than-9-numbers">More than 9 numbers</a></li>
 <li><a href="#define-more-rules">Define more rules</a></li>
@@ -120,7 +128,7 @@ Of course, if we gave each pair of bars a different height (as is done in mathem
 <p><strong>My approach:</strong></p>
 <p>The question is how many ways can you interpret the expression above. As hinted at by the author, the ambiguity in the expression becomes resolved based on where the parentheses are placed. Hence the question is how many different ways can we arrange the parentheses?</p>
 <div class="figure">
-<img src="/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs_files/solutions_cropped.gif" alt="Potential parentheses placements" style="width:100.0%" />
+<img src="/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs_files/solutions_cropped.gif" style="width:100.0%" alt="" />
 <p class="caption">Potential parentheses placements</p>
 </div>
 <p><em>Constraints on placing parentheses:</em></p>
@@ -141,7 +149,7 @@ Of course, if we gave each pair of bars a different height (as is done in mathem
 <p>We could use the <code>combn()</code> function in R to generate all these combinations.</p>
 <p><strong>However</strong>, there is a problem; some of the combinations created could result in configurations with open parentheses. For example, even on a shorter version of this problem, the rules above would not safeguard from configurations such as:</p>
 <div id="htmlwidget-1" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1">{"x":{"html":"<ul>\n  <li><span class='match'>(<\/span>|-1|<span class='match'>)<\/span>-2|<span class='match'>)<\/span>-3<span class='match'>(<\/span>|-4<span class='match'>(<\/span>|-5|<span class='match'>)<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"html":"<ul>\n  <li><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <p>that go against the rules of parentheses.</p>
 <p><em>You might take one of these approaches:</em></p>
 <ul>
@@ -151,21 +159,21 @@ Of course, if we gave each pair of bars a different height (as is done in mathem
 <p>I ended-up doing it both ways (was a good way to verify my work). See <a href="#define-more-rules">Define more rules</a> in the <a href="#appendix">Appendix</a> if you want to see how you might take the latter approach. For now, I’ll go the easy route and start computing our expressions.</p>
 <p>One thing I needed to do was make it so our mathematical expressions, i.e.:</p>
 <div id="htmlwidget-2" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-2">{"x":{"html":"<ul>\n  <li><span class='match'>(<\/span>|-1<span class='match'>(<\/span>|-2<span class='match'>(<\/span>|-3<span class='match'>(<\/span>|-4<span class='match'>(<\/span>|-5|<span class='match'>)<\/span>-6|<span class='match'>)<\/span>-7|<span class='match'>)<\/span>-8|<span class='match'>)<\/span>-9|<span class='match'>)<\/span><\/li>\n  <li><span class='match'>(<\/span>|-1<span class='match'>(<\/span>|-2<span class='match'>(<\/span>|-3<span class='match'>(<\/span>|-4|<span class='match'>)<\/span>-5<span class='match'>(<\/span>|-6|<span class='match'>)<\/span>-7|<span class='match'>)<\/span>-8|<span class='match'>)<\/span>-9|<span class='match'>)<\/span><\/li>\n  <li>...<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"html":"<ul>\n  <li><span class='match'>(<\/span>|-1<span class='match'>(<\/span>|-2<span class='match'>(<\/span>|-3<span class='match'>(<\/span>|-4<span class='match'>(<\/span>|-5|<span class='match'>)<\/span>-6|<span class='match'>)<\/span>-7|<span class='match'>)<\/span>-8|<span class='match'>)<\/span>-9|<span class='match'>)<\/span><\/li>\n  <li><span class='match'>(<\/span>|-1<span class='match'>(<\/span>|-2<span class='match'>(<\/span>|-3<span class='match'>(<\/span>|-4<span class='match'>(<\/span>|-6|<span class='match'>)<\/span>-5|<span class='match'>)<\/span>-7|<span class='match'>)<\/span>-8|<span class='match'>)<\/span>-9|<span class='match'>)<\/span><\/li>\n  <li>...<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <p>Could be represented as meaningful expressions within the R programming language, i.e.:</p>
 <div id="htmlwidget-3" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-3">{"x":{"html":"<ul>\n  <li>abs<span class='match'>(<\/span>-1*abs<span class='match'>(<\/span>-2*abs<span class='match'>(<\/span>-3*abs<span class='match'>(<\/span>-4*abs<span class='match'>(<\/span>-5<span class='match'>)<\/span>-6<span class='match'>)<\/span>-7<span class='match'>)<\/span>-8<span class='match'>)<\/span>-9<span class='match'>)<\/span><\/li>\n  <li>abs<span class='match'>(<\/span>-1*abs<span class='match'>(<\/span>-2*abs<span class='match'>(<\/span>-3*abs<span class='match'>(<\/span>-4<span class='match'>)<\/span>-5*abs<span class='match'>(<\/span>-6<span class='match'>)<\/span>-7<span class='match'>)<\/span>-8<span class='match'>)<\/span>-9<span class='match'>)<\/span><\/li>\n  <li>...<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-3">{"x":{"html":"<ul>\n  <li>abs<span class='match'>(<\/span>-1*abs<span class='match'>(<\/span>-2*abs<span class='match'>(<\/span>-3*abs<span class='match'>(<\/span>-4*abs<span class='match'>(<\/span>-5<span class='match'>)<\/span>-6<span class='match'>)<\/span>-7<span class='match'>)<\/span>-8<span class='match'>)<\/span>-9<span class='match'>)<\/span><\/li>\n  <li>abs<span class='match'>(<\/span>-1*abs<span class='match'>(<\/span>-2*abs<span class='match'>(<\/span>-3*abs<span class='match'>(<\/span>-4*abs<span class='match'>(<\/span>-6<span class='match'>)<\/span>-5<span class='match'>)<\/span>-7<span class='match'>)<\/span>-8<span class='match'>)<\/span>-9<span class='match'>)<\/span><\/li>\n  <li>...<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <p>I made an equation <code>create_solve_expr_df()</code> that creates the expressions and computes the solutions. See the <a href="https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs.Rmd">raw Rmd file</a> on my github to see my code<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
 <p>After creating all possible configurations, I need to actually compute each viable expression to check if any of the configurations resulted in duplicate solutions.</p>
 <p><em>Number of different configurations of parentheses:</em></p>
 <pre class="r"><code>solution_9 %&gt;% 
   nrow()</code></pre>
-<pre><code>## [1] 42</code></pre>
+<pre><code>## [1] 70</code></pre>
 <p><strong>There are 42 individual configurations.</strong> However we need to check if all of the evaluated solutions are unique.</p>
 <pre class="r"><code>solution_9 %&gt;% 
   distinct(evaluated) %&gt;% 
   nrow()</code></pre>
-<pre><code>## [1] 39</code></pre>
+<pre><code>## [1] 69</code></pre>
 <p><em>Given these particular inputs, there are only 39 unique solutions</em>, meaning that three configurations of parentheses led to duplicate solutions.</p>
 </div>
 <div id="appendix" class="section level1">
@@ -179,8 +187,8 @@ solution_rand9 &lt;- create_solve_expr_df(-runif(9))
 
 solution_rand9 %&gt;% 
   nrow()</code></pre>
-<pre><code>## [1] 42</code></pre>
-<pre><code>## [1] 42</code></pre>
+<pre><code>## [1] 70</code></pre>
+<pre><code>## [1] 70</code></pre>
 <p>This led to an equal number of expressions and unique solutions – no duplicates. Hence the fact there were duplicates in our problem was specific to the inputs of -1 to -9 not something that would result when inputting any 9 numbers into this expression. I also found this to be the case on longer expressions.</p>
 </div>
 <div id="more-than-9-numbers" class="section level2">
@@ -200,7 +208,7 @@ solution_rand9 %&gt;%
 <pre><code>## # A tibble: 1 x 1
 ##   num_possible_combinations
 ##                       &lt;int&gt;
-## 1                        42</code></pre>
+## 1                        70</code></pre>
 <ul>
 <li>Gives the number of meaningful configurations of parentheses
 <ul>
@@ -231,10 +239,10 @@ gganimate::anim_save(here::here(&quot;static/post/2020-02-13-fivethirtyeightridd
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>vector<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p><a href="khanacademy.org">Khan Academy</a> if you want to brush up on your combinatorics skills.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>The code isn’t <em>the most</em> attractive. The dataframe set-up could be cleaner. Also I’d like to go back and rewrite the expression part of this using <code>rlang</code> and some of the cool things you can do with manipulating environments and expressions in R… but alas… hacked this solution together by just stitching together text…<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>Note that <span class="math inline">\(x_n &lt; 0\)</span>.<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>Note also that this problem requires that there be an odd number of inputs and that they all be negative.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>vector<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p><a href="khanacademy.org">Khan Academy</a> if you want to brush up on your combinatorics skills.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>The code isn’t <em>the most</em> attractive. The dataframe set-up could be cleaner. Also I’d like to go back and rewrite the expression part of this using <code>rlang</code> and some of the cool things you can do with manipulating environments and expressions in R… but alas… hacked this solution together by just stitching together text…<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>Note that <span class="math inline">\(x_n &lt; 0\)</span>.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>Note also that this problem requires that there be an odd number of inputs and that they all be negative.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

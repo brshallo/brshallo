@@ -6,7 +6,6 @@ categories:
   - data science
   - rstats
 tags: 
-  - knitr
   - dplyr
   - readr
   - DT

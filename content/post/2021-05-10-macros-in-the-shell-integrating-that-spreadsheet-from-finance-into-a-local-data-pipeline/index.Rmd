@@ -10,8 +10,15 @@ categories:
   - data science
   - pipelines
 tags:
-  - business
-  - pricing
+  - here
+  - dplyr
+  - digest
+  - mvtnorm
+  - purrr
+  - readr
+  - glue
+  - readxl
+  - here
 thumbnail: /2021/05/10/macros-in-the-shell-integrating-that-spreadsheet-from-finance-into-a-local-data-pipeline/images/macros-in-the-shell-capture.PNG
 ---
 
@@ -49,7 +56,7 @@ You can pass arguments to a VBScript through the shell ([SO thread](https://stac
 
 ## Example
 
-See [brshallo/macros-shell-examle](https://github.com/brshallo/macro-shell-example) for a walk-through involving evaluating the present values of predicted deals. 
+See [brshallo/macro-shell-example](https://github.com/brshallo/macro-shell-example) for a walk-through involving evaluating the present values of predicted deals. 
 
 In the example I...
 
