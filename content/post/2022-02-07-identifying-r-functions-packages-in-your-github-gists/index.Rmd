@@ -207,3 +207,15 @@ Perhaps I'll do a follow-up and show some ways the relationships between the res
 Mentioned in the initial thread, Obsidian seems to be a product that does some things along these lines:
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">I’ve found this useful (<a href="https://t.co/OYzwfTltLG">https://t.co/OYzwfTltLG</a>) I is a tool for writing, organizing, linking markdown files.</p>&mdash; John Lee (@Jdlee888) <a href="https://twitter.com/Jdlee888/status/1484332889609170946?ref_src=twsrc%5Etfw">January 21, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+# Appendix
+
+Interactively save current gists to folder so can read from another file if want to
+```{r, eval = FALSE}
+post_path <- fs::path_dir(rstudioapi::getSourceEditorContext()$path)
+
+fs::dir_create(post_path, "data")
+
+readr::write_csv(gists_unnested, fs::path(post_path, "data", paste0("brshallo-gists-", format(Sys.Date(), "%Y%m%d"), ".csv")))
+```
+
