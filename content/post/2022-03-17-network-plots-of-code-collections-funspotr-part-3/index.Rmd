@@ -1,0 +1,82 @@
+---
+title: Network Plots of Code Collections (funspotr part 3)
+author: brshallo
+date: '2022-03-17'
+slug: network-plots-of-code-collections-funspotr-part-3
+categories:
+  - rstats
+  - data science
+tags: ["`r funspotr::spot_tags(drop_knitr = TRUE)`"]
+thumbnail: /2022/03/17/network-plots-of-code-collections-funspotr-part-3/images/network-plot-code.png
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+In previous posts and threads I've alluded to the potential utility of visualizing the relationships between parsed functions/packages and files as a network plot. 
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">It can be helpful to review the relationship between your <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> code files by looking at a network graph of them by packages loaded.<br><br>Graph of 50+ of my gists (squares) and packages (circles) used.<br><br>That node at the center is {dplyr}. <a href="https://t.co/XmNxOrgDtF">pic.twitter.com/XmNxOrgDtF</a></p>&mdash; Bryan Shalloway (@brshallo) <a href="https://twitter.com/brshallo/status/1503905135692374018?ref_src=twsrc%5Etfw">March 16, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+I added the function `network_plot()` to [funspotr](https://github.com/brshallo/funspotr). In this post I'll simply output the network plots of the parsed-out packages from the code collections discussed in the prior two posts:
+
+- [Identifying R Functions & Packages Used in GitHub Repos (funspotr part 1)](https://www.bryanshalloway.com/2022/01/18/identifying-r-functions-packages-used-in-github-repos/) 
+- [Identifying R Functions & Packages in Github Gists (funspotr part 2)](https://www.bryanshalloway.com/2022/02/07/identifying-r-functions-packages-in-your-github-gists/)
+
+```{r}
+library(dplyr)
+library(funspotr)
+```
+
+# Interactive network plots
+
+The network plots show files as squares and packages as circles, edges represent cases where a package is used in a given file^[With all of these I think more time could go into tailoring the network plot. It would also be interesting to look into measures of network relatedness between the files... maybe in a future post...].
+
+## Julia Silge Blog
+
+```{r}
+readr::read_csv("https://raw.githubusercontent.com/brshallo/funspotr-examples/main/data/funs/jsilge-blog-funs-20220114.csv") %>% 
+  # not including base R or any custom functions or packages I don't have installed
+  filter(!is.na(pkgs), !(pkgs %in% c("base", "(unknown)"))) %>% 
+  network_plot(to = pkgs)
+```
+
+* tidymodels and tidyverse packages are both central to Julia's posts. The cluster of tidymodels packages show-up (for the most part) just to the right of the cluster of core tidyverse packages.
+
+## David Robinson Tidy Tuesday
+
+```{r}
+readr::read_csv("https://raw.githubusercontent.com/brshallo/funspotr-examples/main/data/funs/drob-tidy-tuesdays-funs-20220114.csv") %>% 
+  filter(!is.na(pkgs), !(pkgs %in% c("base", "(unknown)"))) %>% 
+  network_plot(to = pkgs)
+```
+
+* Similar to Julia's posts, tidyverse packages are central to David's Tidy Tuesday files.. However the tidymodels packages are less central and can be seen in a cluster at the bottom of the plot.
+* In both plots we see {broom} not showing-up by the other tidymodels packages. This is unsurprising for while broom is in the tidymodels ecosystem it has many common uses outside of predictive modeling and has a longer legacy than most tidymodels packages.
+
+## R for Data Science Chapters
+
+```{r}
+readr::read_csv("https://raw.githubusercontent.com/brshallo/funspotr-examples/main/data/funs/r4ds-chapter-files-funs-20220117.csv") %>% 
+  filter(!is.na(pkgs), !(pkgs %in% c("base", "(unknown)"))) %>% 
+  network_plot(to = pkgs)
+```
+
+## My blog
+
+```{r}
+readr::read_csv("https://raw.githubusercontent.com/brshallo/funspotr-examples/main/data/funs/brshallo-blog-funs-20220114.csv") %>% 
+  filter(!is.na(pkgs), !(pkgs %in% c("base", "(unknown)"))) %>% 
+  network_plot(to = pkgs)
+```
+
+## My gists
+
+```{r}
+readr::read_csv("https://raw.githubusercontent.com/brshallo/brshallo/master/content/post/2022-02-07-identifying-r-functions-packages-in-your-github-gists/data/brshallo-gists-20220314.csv") %>% 
+  filter(!is.na(pkgs), !(pkgs %in% c("base", "(unknown)"))) %>% 
+  network_plot(to = pkgs)
+```
+
+* This figure is a bit different than the graph shown in my tweet above as it includes more of my gists and uses a different algorithm to construct the network.
+* dplyr, purrr, and tidyr are the three packages at the center

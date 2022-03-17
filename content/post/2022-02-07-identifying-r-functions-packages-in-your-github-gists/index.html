@@ -1,20 +1,14 @@
 ---
-title: Identifying R Functions & Packages in Github Gists
+title: Identifying R Functions & Packages in Github Gists (funspotr part 2)
 author: Bryan Shalloway
 date: '2022-02-07'
 categories:
   - data science
   - rstats
-tags:
-  - dplyr
-  - purrr
-  - stringr
-  - funspotr
-  - readr
-  - DT
+tags: ["dplyr", "purrr", "stringr", "funspotr", "readr", "DT", "fs", "rstudioapi"]
 slug: identifying-r-functions-packages-in-your-github-gists
 codefolding_show: show
-disable_codefolding: false
+disable_codefolding: no
 thumbnail: /2022/02/07/identifying-r-functions-packages-in-your-github-gists/images/filing-cabinets.jpg
 ---
 
@@ -46,8 +40,12 @@ thumbnail: /2022/02/07/identifying-r-functions-packages-in-your-github-gists/ima
 </ul>
 </div>
 
-<p>This post is a follow-up to my previous post <a href="https://www.bryanshalloway.com/2022/01/18/identifying-r-functions-packages-used-in-github-repos/">Identifying R Functions &amp; Packages Used in GitHub Repos</a> that introduced <a href="https://github.com/brshallo/funspotr">funspotr</a>.</p>
-<p>funspotr can also be applied to gists:</p>
+<p>This post is part two in a series of posts introducing <a href="https://github.com/brshallo/funspotr">funspotr</a>. See also:</p>
+<ul>
+<li><a href="https://www.bryanshalloway.com/2022/01/18/identifying-r-functions-packages-used-in-github-repos/">Identifying R Functions &amp; Packages Used in GitHub Repos (funspotr part 2)</a></li>
+<li><a href="/2022/03/17/network-plots-of-code-collections-funspotr-part-3">Network plots of code collections (funspotr part 3)</a></li>
+</ul>
+<p>This post shows how funspotr can also be applied to parse gists:</p>
 <blockquote class="twitter-tweet">
 <p lang="en" dir="ltr">
 By functions or packages used…?<a href="https://t.co/kbSLOpQZLF">https://t.co/kbSLOpQZLF</a>

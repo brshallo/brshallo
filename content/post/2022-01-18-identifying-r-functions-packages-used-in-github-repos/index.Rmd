@@ -1,14 +1,14 @@
 ---
-title: Identifying R Functions & Packages Used in GitHub Repos
+title: Identifying R Functions & Packages Used in GitHub Repos (funspotr part 1)
 author: Bryan Shalloway
 date: '2022-01-18'
-tags: ["`r funspotr::spot_tags(drop_knitr = TRUE)`"]
 categories:
   - data science
   - rstats
+tags: ["`r funspotr::spot_tags('https://raw.githubusercontent.com/brshallo/funspotr-examples/main/R/save-examples.R', drop_knitr = TRUE)`"]
 slug: identifying-r-functions-packages-used-in-github-repos
 codefolding_show: hide
-disable_codefolding: false
+disable_codefolding: no
 thumbnail: /2022/01/18/identifying-r-functions-packages-used-in-github-repos/images/indexing.jpg
 ---
 
@@ -16,7 +16,10 @@ thumbnail: /2022/01/18/identifying-r-functions-packages-used-in-github-repos/ima
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-TLDR: [funspotr](https://brshallo.github.io/funspotr/) provides helpers for spotting the functions and packages in R and Rmarkdown files and associated github repositories. See [Examples] for catalogues of the functions/packages used in posts by Julia Silge, David Robinson, and others. See [followup post](https://www.bryanshalloway.com/2022/02/07/identifying-r-functions-packages-in-your-github-gists/) for example with github gists.
+TLDR: [funspotr](https://brshallo.github.io/funspotr/) provides helpers for spotting the functions and packages in R and Rmarkdown files and associated github repositories. See [Examples] for catalogues of the functions/packages used in posts by Julia Silge, David Robinson, and others. See follow-up posts for examples with github gists and how to pass parsed code collections into a network plot: 
+
+- [Identifying R Functions & Packages in Github Gists (funspotr part 2)](https://www.bryanshalloway.com/2022/02/07/identifying-r-functions-packages-in-your-github-gists/)
+- [Network plots of code collections (funspotr part 3)](/2022/03/17/network-plots-of-code-collections-funspotr-part-3)
 
 # Documenting rstats posts
 

@@ -1,14 +1,14 @@
 ---
-title: Identifying R Functions & Packages Used in GitHub Repos
+title: Identifying R Functions & Packages Used in GitHub Repos (funspotr part 1)
 author: Bryan Shalloway
 date: '2022-01-18'
-tags: ["dplyr", "readr", "DT", "funspotr", "stringr"]
 categories:
   - data science
   - rstats
+tags: ["dplyr", "funspotr", "yaml", "purrr", "fs", "readr", "here"]
 slug: identifying-r-functions-packages-used-in-github-repos
 codefolding_show: hide
-disable_codefolding: false
+disable_codefolding: no
 thumbnail: /2022/01/18/identifying-r-functions-packages-used-in-github-repos/images/indexing.jpg
 ---
 
@@ -40,7 +40,11 @@ thumbnail: /2022/01/18/identifying-r-functions-packages-used-in-github-repos/ima
 </ul>
 </div>
 
-<p>TLDR: <a href="https://brshallo.github.io/funspotr/">funspotr</a> provides helpers for spotting the functions and packages in R and Rmarkdown files and associated github repositories. See <a href="#examples">Examples</a> for catalogues of the functions/packages used in posts by Julia Silge, David Robinson, and others. See <a href="https://www.bryanshalloway.com/2022/02/07/identifying-r-functions-packages-in-your-github-gists/">followup post</a> for example with github gists.</p>
+<p>TLDR: <a href="https://brshallo.github.io/funspotr/">funspotr</a> provides helpers for spotting the functions and packages in R and Rmarkdown files and associated github repositories. See <a href="#examples">Examples</a> for catalogues of the functions/packages used in posts by Julia Silge, David Robinson, and others. See follow-up posts for examples with github gists and how to pass parsed code collections into a network plot:</p>
+<ul>
+<li><a href="https://www.bryanshalloway.com/2022/02/07/identifying-r-functions-packages-in-your-github-gists/">Identifying R Functions &amp; Packages in Github Gists (funspotr part 2)</a></li>
+<li><a href="/2022/03/17/network-plots-of-code-collections-funspotr-part-3">Network plots of code collections (funspotr part 3)</a></li>
+</ul>
 <div id="documenting-rstats-posts" class="section level1">
 <h1>Documenting rstats posts</h1>
 <p>I was inspired by a few tweets I saw documenting the methods used in posts by popular #rstats communicators/developers:</p>
