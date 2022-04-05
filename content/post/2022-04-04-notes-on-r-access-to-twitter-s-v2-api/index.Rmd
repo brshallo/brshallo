@@ -19,13 +19,13 @@ The [rtweet](https://github.com/ropensci/rtweet) package is still the easiest wa
 
 [academictwitteR](https://github.com/cjbarrie/academictwitteR) is probably the most established package that provides a quickstart entry point to the V2 API. However it requires creating an academic account in twitter, i.e. the user must be affiliated with a university. I also stumbled onto [RTwitterV2](https://github.com/MaelKubli/RTwitterV2) and [voson.tcn](https://github.com/vosonlab/voson.tcn) which both also provide quickstarts on the V2 API, but did not explore these.
 
-Instead I followed the tutorial [Getting started with R and v2 of the Twitter API](https://developer.twitter.com/en/docs/tutorials/getting-started-with-r-and-v2-of-the-twitter-api) by Twitter Developer Advocate [Jessica Garson](https://twitter.com/jessicagarson) that uses `{httr}` to interact more directly with the API. I highly recommend reading her tutorial. The code below is mostly just copied from there but changed to provide an example of getting the usernames of those that liked a tweet. (Though I will warn that it took me an embarrassing amount of time to catch a slight [typo in the tutorial](https://github.com/ropensci/rtweet/issues/445#issuecomment-1088084784)^[At least that was there at the time of this writing].)
+Instead I followed the tutorial [Getting started with R and v2 of the Twitter API](https://developer.twitter.com/en/docs/tutorials/getting-started-with-r-and-v2-of-the-twitter-api) by Twitter Developer Advocate [Jessica Garson](https://twitter.com/jessicagarson) that uses `{httr}` to interact more directly with the API. I highly recommend reading her tutorial. The code below is mostly just copied from there but changed to provide an example of getting the usernames of those that liked a tweet^[I will warn that it took me an embarrassing amount of time to catch a slight change in the Twitter API between now and when Jessica wrote her post see [note on `expansions`](https://github.com/ropensci/rtweet/issues/445#issuecomment-1088084784).].
 
 **GETting likers of tweet**
 
 Last year, twitter announced [Likes lookup](https://twittercommunity.com/t/announcing-twitter-api-v2-likes-lookup-and-blocks-lookup/154353) in API v2.
 
-Below is a minimal example of how to find every user who liked my initial announcement of the [pwiser](https://github.com/brshallo/pwiser/) package. 
+Below is a minimal example of how to find every user who liked any tweet, in my case I'll check favoriters of my initial announcement of the [pwiser](https://github.com/brshallo/pwiser/) package. 
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Compute all pairwise ratios, t-tests, distance metrics, or whatever using {pwiser} a new 📦 I&#39;m writing with <a href="https://twitter.com/CarloooMedina?ref_src=twsrc%5Etfw">@CarloooMedina</a> for applying arbitrary functions on pairwise combinations of columns using a `dplyr::across()` style syntax: <a href="https://t.co/DTXElWbuuX">https://t.co/DTXElWbuuX</a> <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> <a href="https://twitter.com/hashtag/tidyverse?src=hash&amp;ref_src=twsrc%5Etfw">#tidyverse</a> <a href="https://t.co/wrMzX5mOYx">pic.twitter.com/wrMzX5mOYx</a></p>&mdash; Bryan Shalloway (@brshallo) <a href="https://twitter.com/brshallo/status/1394072770661822464?ref_src=twsrc%5Etfw">May 16, 2021</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
@@ -66,4 +66,3 @@ x$data %>%
 ```
 
 One thing you may note is that I don't use the `query` argument, I just pull the default parameters -- again see Jessica's posts for a more sophisticated example as well as descriptions of the steps above.
-
