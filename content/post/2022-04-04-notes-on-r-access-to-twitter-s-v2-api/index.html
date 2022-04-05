@@ -1,0 +1,79 @@
+---
+title: R Access to Twitter's V2 API
+author: brshallo
+date: '2022-04-04'
+categories:
+  - rstats
+tags: ["rjson", "httr", "jsonlite", "dplyr", "purrr", "glue"]
+slug: notes-on-r-access-to-twitter-s-v2-api
+toc: no
+thumbnail: /2022/04/04/notes-on-r-access-to-twitter-s-v2-api/images/tweet-tweet-unsplash.jpg
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+<div id="TOC">
+
+</div>
+
+<p>The <a href="https://github.com/ropensci/rtweet">rtweet</a> package is still the easiest way to GET and POST Twitter data from R. However its developers are currently <a href="https://github.com/ropensci/rtweet/issues/445">working on</a> adapting it to the new API. V2 comes with a variety of new features. The one I was interested in was being able to GET the users who liked a tweet.</p>
+<p><a href="https://github.com/cjbarrie/academictwitteR">academictwitteR</a> is probably the most established package that provides a quickstart entry point to the V2 API. However it requires creating an academic account in twitter, i.e. the user must be affiliated with a university. I also stumbled onto <a href="https://github.com/MaelKubli/RTwitterV2">RTwitterV2</a> and <a href="https://github.com/vosonlab/voson.tcn">voson.tcn</a> which both also provide quickstarts on the V2 API, but did not explore these.</p>
+<p>Instead I followed the tutorial <a href="https://developer.twitter.com/en/docs/tutorials/getting-started-with-r-and-v2-of-the-twitter-api">Getting started with R and v2 of the Twitter API</a> by Twitter Developer Advocate <a href="https://twitter.com/jessicagarson">Jessica Garson</a> that uses <code>{httr}</code> to interact more directly with the API. I highly recommend reading her tutorial. The code below is mostly just copied from there but changed to provide an example of getting the usernames of those that liked a tweet. (Though I will warn that it took me an embarrassing amount of time to catch a slight <a href="https://github.com/ropensci/rtweet/issues/445#issuecomment-1088084784">typo in the tutorial</a><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.)</p>
+<p><strong>GETting likers of tweet</strong></p>
+<p>Last year, twitter announced <a href="https://twittercommunity.com/t/announcing-twitter-api-v2-likes-lookup-and-blocks-lookup/154353">Likes lookup</a> in API v2.</p>
+<p>Below is a minimal example of how to find every user who liked my initial announcement of the <a href="https://github.com/brshallo/pwiser/">pwiser</a> package.</p>
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+Compute all pairwise ratios, t-tests, distance metrics, or whatever using {pwiser} a new 📦 I'm writing with <a href="https://twitter.com/CarloooMedina?ref_src=twsrc%5Etfw"><span class="citation">@CarloooMedina</span></a> for applying arbitrary functions on pairwise combinations of columns using a <code>dplyr::across()</code> style syntax: <a href="https://t.co/DTXElWbuuX">https://t.co/DTXElWbuuX</a> <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> <a href="https://twitter.com/hashtag/tidyverse?src=hash&amp;ref_src=twsrc%5Etfw">#tidyverse</a> <a href="https://t.co/wrMzX5mOYx">pic.twitter.com/wrMzX5mOYx</a>
+</p>
+— Bryan Shalloway (<span class="citation">@brshallo</span>) <a href="https://twitter.com/brshallo/status/1394072770661822464?ref_src=twsrc%5Etfw">May 16, 2021</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>First you need to:</p>
+<ol style="list-style-type: decimal">
+<li>Apply for a Twitter developer account.</li>
+<li>Create a project</li>
+<li>Create an app within that project (pretty sure you need the app <em>within</em> a project, not just a standalone app)</li>
+</ol>
+<p>Once you’ve done this, you’ll need to save your BEARER TOKEN somewhere secure, see Hadley’s write-up on <a href="https://cran.r-project.org/web/packages/httr/vignettes/secrets.html">Managing secrets</a> and use your choice of approach. For the write-up below I’ll load the secret from the environment<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
+<pre class="r"><code>library(rjson)
+require(httr)
+require(jsonlite)
+require(dplyr)
+library(purrr)
+
+bearer_token &lt;- Sys.getenv(&quot;TWITTER_BEARER&quot;)
+headers &lt;- c(`Authorization` = sprintf(&#39;Bearer %s&#39;, bearer_token))
+
+tweet_id &lt;- &quot;1394072770661822464&quot;
+url_handle &lt;- glue::glue(&quot;https://api.twitter.com/2/tweets/{status_id}/liking_users&quot;, status_id = tweet_id)
+
+response &lt;- httr::GET(url = url_handle,
+                     httr::add_headers(.headers = headers))
+                     # query = params)
+
+obj &lt;- httr::content(response, as = &quot;text&quot;)
+x &lt;- rjson::fromJSON(obj)</code></pre>
+<p>And then let’s pull out the usernames of the people who liked the tweet:</p>
+<pre class="r"><code>x$data %&gt;% 
+  purrr::map_chr(&quot;username&quot;)</code></pre>
+<pre><code>##  [1] &quot;Rick_Scavetta&quot;   &quot;dikiprawisuda&quot;   &quot;technocrat&quot;      &quot;abuabara&quot;       
+##  [5] &quot;kavenacca4&quot;      &quot;pheeree&quot;         &quot;mattansb&quot;        &quot;AndrewKostandy&quot; 
+##  [9] &quot;1AliG&quot;           &quot;ncypris&quot;         &quot;jkregenstein&quot;    &quot;MarkDruffel&quot;    
+## [13] &quot;pablofbaez&quot;      &quot;JobNmadu&quot;        &quot;LuisDVerde&quot;      &quot;dataleteo&quot;      
+## [17] &quot;FredOnion&quot;       &quot;SebLammers&quot;      &quot;meier_flo&quot;       &quot;tomecicuta&quot;     
+## [21] &quot;ameresv&quot;         &quot;ginanjar_utama&quot;  &quot;jmblanch&quot;        &quot;ThatBenFrost&quot;   
+## [25] &quot;lan24hd&quot;         &quot;henda52&quot;         &quot;Md_Harris&quot;       &quot;EmilyRiederer&quot;  
+## [29] &quot;pvallejomedina&quot;  &quot;thisisdaryn&quot;     &quot;ericarbailey&quot;    &quot;DrMeltemYucel&quot;  
+## [33] &quot;c_welk&quot;          &quot;stewartli3&quot;      &quot;patilindrajeets&quot; &quot;rick_pack2&quot;     
+## [37] &quot;AlainLesaffre&quot;   &quot;Carlos_Espeleta&quot; &quot;ellamkaye&quot;       &quot;pacoramon&quot;      
+## [41] &quot;neslihanky&quot;      &quot;wang_minjie&quot;     &quot;PipingHotData&quot;   &quot;Jack36161714&quot;   
+## [45] &quot;KenButler12&quot;     &quot;xeroluck&quot;        &quot;rstats4ds&quot;       &quot;francisco_yira&quot;</code></pre>
+<p>One thing you may note is that I don’t use the <code>query</code> argument, I just pull the default parameters – again see Jessica’s posts for a more sophisticated example as well as descriptions of the steps above.</p>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>At least that was there at the time of this writing<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Project has a local .Renviron file.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>

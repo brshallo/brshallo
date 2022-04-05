@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 todo.txt
+.Renviron
 
 # knitr and R markdown default cache directories
 *_cache/
