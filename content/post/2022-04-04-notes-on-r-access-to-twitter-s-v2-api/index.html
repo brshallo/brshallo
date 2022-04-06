@@ -33,9 +33,9 @@ Compute all pairwise ratios, t-tests, distance metrics, or whatever using {pwise
 <ol style="list-style-type: decimal">
 <li>Apply for a Twitter developer account.</li>
 <li>Create a project</li>
-<li>Create an app within that project (pretty sure you need the app <em>within</em> a project, not just a standalone app)</li>
+<li>Create an app within that project<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></li>
 </ol>
-<p>Once you’ve done this, you’ll need to save your BEARER TOKEN somewhere secure, see Hadley’s write-up on <a href="https://cran.r-project.org/web/packages/httr/vignettes/secrets.html">Managing secrets</a> and use your choice of approach. For the write-up below I’ll load the secret from the environment<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
+<p>Once you’ve done this, you’ll need to save your BEARER TOKEN somewhere secure, see Hadley’s write-up on <a href="https://cran.r-project.org/web/packages/httr/vignettes/secrets.html">Managing secrets</a> and use your choice of approach. For the write-up below I’ll load the secret from the environment<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
 <pre class="r"><code>library(rjson)
 require(httr)
 require(jsonlite)
@@ -74,6 +74,7 @@ x &lt;- rjson::fromJSON(obj)</code></pre>
 <hr />
 <ol>
 <li id="fn1"><p>I will warn that it took me an embarrassing amount of time to catch a slight change in the Twitter API between now and when Jessica wrote her post see <a href="https://github.com/ropensci/rtweet/issues/445#issuecomment-1088084784">note on <code>expansions</code></a>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>Project has a local .Renviron file.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Think you need the app <em>within</em> a project, not just a standalone app for access to V2. The <strong>Creating a Twitter app</strong> section of <a href="https://docs.ropensci.org/rtweet/articles/auth.html#creating-a-twitter-app">Authentication with rtweet</a> is also a helpful tutorial for getting started here. However the documentation there does not indicate the need to create a project first, however <code>{rtweet}</code> uses V1, not V2.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>Project has a local .Renviron file.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

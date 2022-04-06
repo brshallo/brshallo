@@ -33,7 +33,7 @@ First you need to:
 
 1. Apply for a Twitter developer account.
 2. Create a project
-3. Create an app within that project (pretty sure you need the app *within* a project, not just a standalone app)
+3. Create an app within that project^[Think you need the app *within* a project, not just a standalone app for access to V2. The **Creating a Twitter app** section of [Authentication with rtweet](https://docs.ropensci.org/rtweet/articles/auth.html#creating-a-twitter-app) is also a helpful tutorial for getting started here. However the documentation there does not indicate the need to create a project first, however `{rtweet}` uses V1, not V2.]
 
 Once you've done this, you'll need to save your BEARER TOKEN somewhere secure, see Hadley's write-up on [Managing secrets](https://cran.r-project.org/web/packages/httr/vignettes/secrets.html) and use your choice of approach. For the write-up below I'll load the secret from the environment^[Project has a local .Renviron file.].
 
