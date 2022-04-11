@@ -1,0 +1,286 @@
+---
+title: Pulling Twitter Engagements Using the v2 API as Well as rtweet
+author: brshallo
+date: '2022-04-11'
+categories:
+  - data science
+  - rstats
+tags: ["`r funspotr::spot_tags(drop_knitr = TRUE)`"]
+slug: pulling-twitter-engagements-using-the-v2-api-as-well-as-rtweet
+output:
+  blogdown::html_page:
+    toc: no
+thumbnail: /2022/04/06/pulling-twitter-engagements-using-the-v2-api-as-well-as-rtweet/images/rtweet.png
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, eval = FALSE)
+```
+
+This is a follow-up to a short post I wrote on [R Access to Twitter's v2 API](https://www.bryanshalloway.com/2022/04/04/notes-on-r-access-to-twitter-s-v2-api/). In this post I'll walk through a few more examples of pulling data from twitter using a mix of Twitter's v2 API as well as the `{rtweet}` package^[Which as of this writing uses the 1.1 API.].
+
+I'll pull all Twitter users that I ([@brshallo](https://twitter.com/brshallo)) have recently been engaged by or engaged with. I'll use a mix of `{rtweet}` and `{httr}` to collect recent engagements. For each type of engagement I'll lean towards using `{rtweet}`^[As it takes less code.]. I'll use `{httr}` in cases where it's more convenient to use Twitter's v2 API^[Which is not yet supported by `{rtweet}`. This is actively being [worked on](https://github.com/ropensci/rtweet/issues/445) so this post may have a short shelf-life.]. 
+
+In this post I'm not really worried about optimizing my queries, minimizing API hits, etc. E.g. when using `{rtweet}` I *should* authenticate through my project app which has higher rate limits (see [Authentication options](https://docs.ropensci.org/rtweet/reference/rtweet_user.html)) but instead I just use the default `{rtweet}` user authentication. Note also that the default `{rtweet}` authentication only works when running scripts interactively^[You'll need to authenticate through a Twitter developer portal app keys if you want to run those sections automatically. You'll notice that in creating this script I actually don't evaluate most of the sections and then use some hidden code chunks to return output.]. 
+
+See prior post for links on authentication mechanisms. I'm assuming you have "TWITTER_BEARER" in your .Renviron file (for the sections where I use `{httr}` in this post) as well as the default `{rtweet}` authentication set-up.
+
+```{r}
+library(rjson)
+require(httr)
+require(jsonlite)
+require(dplyr)
+library(purrr)
+library(lubridate)
+library(rtweet)
+library(tidyr)
+
+# bearer_token only used when using httr and twitter v2 API
+bearer_token <- Sys.getenv("TWITTER_BEARER")
+headers <- c(`Authorization` = sprintf('Bearer %s', bearer_token))
+```
+
+# GETting all engagements
+
+In each sub-section I'll pull a different kind of engagement.
+
+1. [GET favorited users]
+2. [GET all tweets from user] -- starting point for most of the following sections
+3. From initial query [GET references] in those tweets
+4. Filter to only tweets with likes, [GET favoriters]
+5. Filter to only tweets with quotes, search URL's to [GET quoters]
+6. Filter to only tweets with retweets, [GET retweeters]
+7. [GET repliers and mentions]
+
+I'll finish by [Putting them together into a function]. Note that not all queries are *perfect* at pulling each engagements^[This seemed to particularly be the case when it came to seeing all quotes and mentions.]. 
+
+## GET favorited users
+
+It's often easiest to just let `{rtweet}` do the work.
+
+```{r}
+# Twitter id for brshallo
+user_id <- "307012324"
+
+favorites <- rtweet::get_favorites(user = user_id)
+```
+
+## GET all tweets from user
+
+Pulls up to 100 of the most recent tweets from a user^[The reason I'm using {httr} and v2 instead of `{rtweet}` for this is that the 1.1 API (that `{rtweet}` currently uses) doesn't pull quote count unless you have a premium or enterprise account [rtweet#640](https://github.com/ropensci/rtweet/issues/640).]. 
+
+```{r}
+url_handle <- glue::glue("https://api.twitter.com/2/users/{user_id}/tweets?max_results=100", user_id = user_id)
+
+params <- list(tweet.fields = "public_metrics,created_at,in_reply_to_user_id,referenced_tweets")
+
+response <- httr::GET(url = url_handle,
+                     httr::add_headers(.headers = headers),
+                     query = params)
+
+obj <- httr::content(response, as = "text")
+
+json_data <- jsonlite::fromJSON(obj, flatten = TRUE)$data %>% 
+  as_tibble()
+```
+
+## GET users references
+
+```{r}
+statuses_referenced <- bind_rows(json_data$referenced_tweets) %>% 
+  rename(status_id = id)
+
+users_referenced <- rtweet::lookup_tweets(statuses_referenced$status_id)
+```
+
+## GET favoriters
+
+Filter initial query of tweets to only those with more than 0 likes.
+
+```{r}
+liked_tweets <- json_data %>% 
+  filter(public_metrics.like_count > 0)
+```
+
+Functionalize approach described in getting favoriters from prior post [R Access to Twitter's v2 API](https://www.bryanshalloway.com/2022/04/04/notes-on-r-access-to-twitter-s-v2-api/) and map tweet-ids through.
+```{r}
+tweet_ids <- liked_tweets$id
+
+get_favoriters <- function(tweet_id){
+  url_handle <- glue::glue("https://api.twitter.com/2/tweets/{status_id}/liking_users", status_id = tweet_id)
+  
+  response <- httr::GET(url = url_handle,
+                       httr::add_headers(.headers = headers))
+                       # query = params)
+  
+  obj <- httr::content(response, as = "text")
+  x <- rjson::fromJSON(obj)
+  
+  x$data %>% 
+    map_dfr(as_tibble)
+}
+
+tweet_favoriters <-
+  map_dfr(tweet_ids, ~ bind_cols(tibble(liked_status_id = .x),
+                                get_favoriters(.x))) %>%
+  rename(user_id = id)
+```
+
+## GET quoters
+
+Filter to only posts with quotes.
+
+```{r}
+tweet_ids_quoters <- json_data %>% 
+  filter(public_metrics.quote_count > 0) %>%
+  pull(id)
+```
+
+Again, if you can use `{rtweet}` it's generally easier to do this. However I am not positive the approach below actually picks up *all* quotes^[Thread [here](https://twittercommunity.com/t/how-to-fetch-retweets-and-quote-tweets-from-the-twitter-v2-search-api/156573) seemed to suggest that just searching the url was the way to go.]. I'd also reviewed some other approaches[^other approaches].
+
+```{r}
+search_tweets_urls <- function(tweet_id){
+  rtweet::search_tweets(
+    glue::glue("url:{tweet_id}", 
+               tweet_id = tweet_id)
+    )
+} 
+
+quoters <- map_dfr(tweet_ids_quoters, search_tweets_urls) %>% 
+  filter(is_quote) %>% 
+  as_tibble()
+```
+
+    [^other approaches]:
+    This also seems to be way to see quoters: https://twittercommunity.com/t/how-we-can-get-list-of-replies-on-a-tweet-or-reply-to-a-tweet-in-twitter-api/144958/7
+    
+    ```{r, eval = FALSE}
+    get_quoters <- function(tweet_id){
+      url_handle <- glue::glue("https://api.twitter.com/2/tweets/search/recent?tweet.fields=author_id&query=url:{status_id}", status_id = tweet_id)
+      
+      response <- httr::GET(url = url_handle,
+                           httr::add_headers(.headers = headers))
+                           # query = params)
+      
+      obj <- httr::content(response, as = "text")
+      x <- rjson::fromJSON(obj)
+      
+      x$data %>% 
+        map_dfr(as_tibble)
+    }
+    
+    quoters <- map(tweet_ids_quoters, get_quoters)
+    ```
+
+## GET retweeters
+
+Filter to only posts that were retweeted. 
+
+```{r}
+tweet_ids_rt <- json_data %>% 
+  filter(public_metrics.retweet_count > 0) %>%
+  select(status_id = id)
+```
+
+I use a slightly different approach in this section than in other similar sections^[`rtweet::get_retweeters()` has a lot fewer columns returned compared to that from `rtweet::search_tweets()`, which is why I use `select()` above and a different method than the section before and after this  where I instead use `pull()` and then pass the ideas directly to `purrr::map*()` statements rather than wrapping them in a `mutate()` verb -- which would have worked just as well. The structures of the manipulation are nearly the same... maybe should have stayed consistent here and written a function to make clear the pattern here is the same, c'est la vie.].
+
+```{r}
+retweeters <- tweet_ids_rt %>% 
+  mutate(retweeters = map(status_id, get_retweeters)) %>% 
+  unnest(retweeters)
+```
+
+## GET repliers and mentions
+
+Alternatively you might just use `rtweet::`get_mentions()` but this only pulls mentions of the currently authenticated user. I also tried some other approaches here[^reply-approaches].
+
+```{r}
+get_mentions_v2 <- function(user_id){
+  url_handle <- glue::glue("https://api.twitter.com/2/users/{user_id}/mentions", user_id = user_id)
+  
+  response <- httr::GET(url = url_handle,
+                        httr::add_headers(.headers = headers))
+  
+  obj <- httr::content(response, as = "text")
+  x <- rjson::fromJSON(obj)
+  
+  x$data %>% 
+    map_dfr(as_tibble)
+}
+
+tweets_mentions <- get_mentions_v2(gorthon_id)
+
+repliers_mentions <- lookup_tweets(mentions$id)
+```
+
+    [^reply-approaches]: 
+    Another simple approach would be to just try: `rtweet::search_tweets("@brshallo")` . I tried the approach below, but really didnt' seem to work quite as expected...
+    ```{r}
+    tweet_ids_repliers <- json_data %>% 
+      filter(public_metrics.reply_count > 0) %>%
+      pull(id)
+    
+    # pulled from here: https://twittercommunity.com/t/how-to-fetch-retweets-and-quote-tweets-from-the-twitter-v2-search-api/156573 but didn't really work as expected...
+    get_replies <- function(tweet_id){
+    url_handle <- glue::glue("https://api.twitter.com/2/tweets/search/recent?tweet.fields=author_id&query=conversation_id:{status_id}", status_id = tweet_id)
+    
+    response <- httr::GET(url = url_handle,
+                         httr::add_headers(.headers = headers))
+                         # query = params)
+    
+    obj <- httr::content(response, as = "text")
+    x <- rjson::fromJSON(obj)
+    
+    x$data %>% 
+      map_dfr(as_tibble)
+    }
+    
+    repliers <- map(tweet_ids_repliers, get_replies)
+    filter(is_quote)
+    
+    repliers <- bind_rows(repliers)
+    ```
+
+## Putting them together into a function
+
+The function at [this gist](https://gist.github.com/brshallo/119d6a1f858e0e5c20d77212dee8891a) returns the output from each of the above sections as a list.
+
+```{r, include = FALSE}
+### RUN THIS SECTION INTERACTIVELY BEFORE KNITTING ###
+
+# Twitter id for brshallo
+user_id <- "307012324"
+
+# load function get_engagements()
+source("https://gist.githubusercontent.com/brshallo/119d6a1f858e0e5c20d77212dee8891a/raw/751d022c7bc2e2148292bb78a5178737d9914024/get-engagements.R")
+
+brshallo_engagements <- get_engagements(user_id)
+
+data_path <- rstudioapi::getSourceEditorContext()$path %>% 
+  fs::path_dir() %>% 
+  fs::path("data")
+
+fs::dir_create(data_path)
+
+readr::write_rds(brshallo_engagements, fs::path(data_path, "brshallo-engagment-20220411.rds"))
+```
+
+```{r}
+# Twitter id for brshallo
+user_id <- "307012324"
+
+# load function get_engagements()
+source("https://gist.githubusercontent.com/brshallo/119d6a1f858e0e5c20d77212dee8891a/raw/751d022c7bc2e2148292bb78a5178737d9914024/get-engagements.R")
+
+brshallo_engagements <- get_engagements(user_id)
+
+brshallo_engagements
+```
+
+
+```{r, eval = TRUE, echo = FALSE}
+library(tidyverse)
+brshallo_engagements <- read_rds("data/brshallo-engagment-20220411.rds")
+
+brshallo_engagements
+```

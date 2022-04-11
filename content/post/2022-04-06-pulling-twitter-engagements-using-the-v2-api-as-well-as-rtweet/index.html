@@ -1,0 +1,332 @@
+---
+title: Pulling Twitter Engagements Using the v2 API as Well as rtweet
+author: brshallo
+date: '2022-04-11'
+categories:
+  - data science
+  - rstats
+tags: ["rjson", "httr", "jsonlite", "dplyr", "purrr", "lubridate", "rtweet", "tidyr", "glue", "rstudioapi", "fs", "readr", "tidyverse"]
+slug: pulling-twitter-engagements-using-the-v2-api-as-well-as-rtweet
+output:
+  blogdown::html_page:
+    toc: no
+thumbnail: /2022/04/06/pulling-twitter-engagements-using-the-v2-api-as-well-as-rtweet/images/rtweet.png
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>This is a follow-up to a short post I wrote on <a href="https://www.bryanshalloway.com/2022/04/04/notes-on-r-access-to-twitter-s-v2-api/">R Access to Twitter’s v2 API</a>. In this post I’ll walk through a few more examples of pulling data from twitter using a mix of Twitter’s v2 API as well as the <code>{rtweet}</code> package<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+<p>I’ll pull all Twitter users that I (<span class="citation">[@brshallo]</span>(<a href="https://twitter.com/brshallo" class="uri">https://twitter.com/brshallo</a>)) have recently been engaged by or engaged with. I’ll use a mix of <code>{rtweet}</code> and <code>{httr}</code> to collect recent engagements. For each type of engagement I’ll lean towards using <code>{rtweet}</code><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. I’ll use <code>{httr}</code> in cases where it’s more convenient to use Twitter’s v2 API<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
+<p>In this post I’m not really worried about optimizing my queries, minimizing API hits, etc. E.g. when using <code>{rtweet}</code> I <em>should</em> authenticate through my project app which has higher rate limits (see <a href="https://docs.ropensci.org/rtweet/reference/rtweet_user.html">Authentication options</a>) but instead I just use the default <code>{rtweet}</code> user authentication. Note also that the default <code>{rtweet}</code> authentication only works when running scripts interactively<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
+<p>See prior post for links on authentication mechanisms. I’m assuming you have “TWITTER_BEARER” in your .Renviron file (for the sections where I use <code>{httr}</code> in this post) as well as the default <code>{rtweet}</code> authentication set-up.</p>
+<pre class="r"><code>library(rjson)
+require(httr)
+require(jsonlite)
+require(dplyr)
+library(purrr)
+library(lubridate)
+library(rtweet)
+library(tidyr)
+
+# bearer_token only used when using httr and twitter v2 API
+bearer_token &lt;- Sys.getenv(&quot;TWITTER_BEARER&quot;)
+headers &lt;- c(`Authorization` = sprintf(&#39;Bearer %s&#39;, bearer_token))</code></pre>
+<div id="getting-all-engagements" class="section level1">
+<h1>GETting all engagements</h1>
+<p>In each sub-section I’ll pull a different kind of engagement.</p>
+<ol style="list-style-type: decimal">
+<li><a href="#get-favorited-users">GET favorited users</a></li>
+<li><a href="#get-all-tweets-from-user">GET all tweets from user</a> – starting point for most of the following sections</li>
+<li>From initial query [GET references] in those tweets</li>
+<li>Filter to only tweets with likes, <a href="#get-favoriters">GET favoriters</a></li>
+<li>Filter to only tweets with quotes, search URL’s to <a href="#get-quoters">GET quoters</a></li>
+<li>Filter to only tweets with retweets, <a href="#get-retweeters">GET retweeters</a></li>
+<li><a href="#get-repliers-and-mentions">GET repliers and mentions</a></li>
+</ol>
+<p>I’ll finish by <a href="#putting-them-together-into-a-function">Putting them together into a function</a>. Note that not all queries are <em>perfect</em> at pulling each engagements<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.</p>
+<div id="get-favorited-users" class="section level2">
+<h2>GET favorited users</h2>
+<p>It’s often easiest to just let <code>{rtweet}</code> do the work.</p>
+<pre class="r"><code># Twitter id for brshallo
+user_id &lt;- &quot;307012324&quot;
+
+favorites &lt;- rtweet::get_favorites(user = user_id)</code></pre>
+</div>
+<div id="get-all-tweets-from-user" class="section level2">
+<h2>GET all tweets from user</h2>
+<p>Pulls up to 100 of the most recent tweets from a user<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>.</p>
+<pre class="r"><code>url_handle &lt;- glue::glue(&quot;https://api.twitter.com/2/users/{user_id}/tweets?max_results=100&quot;, user_id = user_id)
+
+params &lt;- list(tweet.fields = &quot;public_metrics,created_at,in_reply_to_user_id,referenced_tweets&quot;)
+
+response &lt;- httr::GET(url = url_handle,
+                     httr::add_headers(.headers = headers),
+                     query = params)
+
+obj &lt;- httr::content(response, as = &quot;text&quot;)
+
+json_data &lt;- jsonlite::fromJSON(obj, flatten = TRUE)$data %&gt;% 
+  as_tibble()</code></pre>
+</div>
+<div id="get-users-references" class="section level2">
+<h2>GET users references</h2>
+<pre class="r"><code>statuses_referenced &lt;- bind_rows(json_data$referenced_tweets) %&gt;% 
+  rename(status_id = id)
+
+users_referenced &lt;- rtweet::lookup_tweets(statuses_referenced$status_id)</code></pre>
+</div>
+<div id="get-favoriters" class="section level2">
+<h2>GET favoriters</h2>
+<p>Filter initial query of tweets to only those with more than 0 likes.</p>
+<pre class="r"><code>liked_tweets &lt;- json_data %&gt;% 
+  filter(public_metrics.like_count &gt; 0)</code></pre>
+<p>Functionalize approach described in getting favoriters from prior post <a href="https://www.bryanshalloway.com/2022/04/04/notes-on-r-access-to-twitter-s-v2-api/">R Access to Twitter’s v2 API</a> and map tweet-ids through.</p>
+<pre class="r"><code>tweet_ids &lt;- liked_tweets$id
+
+get_favoriters &lt;- function(tweet_id){
+  url_handle &lt;- glue::glue(&quot;https://api.twitter.com/2/tweets/{status_id}/liking_users&quot;, status_id = tweet_id)
+  
+  response &lt;- httr::GET(url = url_handle,
+                       httr::add_headers(.headers = headers))
+                       # query = params)
+  
+  obj &lt;- httr::content(response, as = &quot;text&quot;)
+  x &lt;- rjson::fromJSON(obj)
+  
+  x$data %&gt;% 
+    map_dfr(as_tibble)
+}
+
+tweet_favoriters &lt;-
+  map_dfr(tweet_ids, ~ bind_cols(tibble(liked_status_id = .x),
+                                get_favoriters(.x))) %&gt;%
+  rename(user_id = id)</code></pre>
+</div>
+<div id="get-quoters" class="section level2">
+<h2>GET quoters</h2>
+<p>Filter to only posts with quotes.</p>
+<pre class="r"><code>tweet_ids_quoters &lt;- json_data %&gt;% 
+  filter(public_metrics.quote_count &gt; 0) %&gt;%
+  pull(id)</code></pre>
+<p>Again, if you can use <code>{rtweet}</code> it’s generally easier to do this. However I am not positive the approach below actually picks up <em>all</em> quotes<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>. I’d also reviewed some other approaches[^other approaches].</p>
+<pre class="r"><code>search_tweets_urls &lt;- function(tweet_id){
+  rtweet::search_tweets(
+    glue::glue(&quot;url:{tweet_id}&quot;, 
+               tweet_id = tweet_id)
+    )
+} 
+
+quoters &lt;- map_dfr(tweet_ids_quoters, search_tweets_urls) %&gt;% 
+  filter(is_quote) %&gt;% 
+  as_tibble()</code></pre>
+<pre><code>[^other approaches]:
+This also seems to be way to see quoters: https://twittercommunity.com/t/how-we-can-get-list-of-replies-on-a-tweet-or-reply-to-a-tweet-in-twitter-api/144958/7
+
+
+```r
+get_quoters &lt;- function(tweet_id){
+  url_handle &lt;- glue::glue(&quot;https://api.twitter.com/2/tweets/search/recent?tweet.fields=author_id&amp;query=url:{status_id}&quot;, status_id = tweet_id)
+  
+  response &lt;- httr::GET(url = url_handle,
+                       httr::add_headers(.headers = headers))
+                       # query = params)
+  
+  obj &lt;- httr::content(response, as = &quot;text&quot;)
+  x &lt;- rjson::fromJSON(obj)
+  
+  x$data %&gt;% 
+    map_dfr(as_tibble)
+}
+
+quoters &lt;- map(tweet_ids_quoters, get_quoters)
+```</code></pre>
+</div>
+<div id="get-retweeters" class="section level2">
+<h2>GET retweeters</h2>
+<p>Filter to only posts that were retweeted.</p>
+<pre class="r"><code>tweet_ids_rt &lt;- json_data %&gt;% 
+  filter(public_metrics.retweet_count &gt; 0) %&gt;%
+  select(status_id = id)</code></pre>
+<p>I use a slightly different approach in this section than in other similar sections<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
+<pre class="r"><code>retweeters &lt;- tweet_ids_rt %&gt;% 
+  mutate(retweeters = map(status_id, get_retweeters)) %&gt;% 
+  unnest(retweeters)</code></pre>
+</div>
+<div id="get-repliers-and-mentions" class="section level2">
+<h2>GET repliers and mentions</h2>
+<p>Alternatively you might just use <code>rtweet::</code>get_mentions()` but this only pulls mentions of the currently authenticated user. I also tried some other approaches here[^reply-approaches].</p>
+<pre class="r"><code>get_mentions_v2 &lt;- function(user_id){
+  url_handle &lt;- glue::glue(&quot;https://api.twitter.com/2/users/{user_id}/mentions&quot;, user_id = user_id)
+  
+  response &lt;- httr::GET(url = url_handle,
+                        httr::add_headers(.headers = headers))
+  
+  obj &lt;- httr::content(response, as = &quot;text&quot;)
+  x &lt;- rjson::fromJSON(obj)
+  
+  x$data %&gt;% 
+    map_dfr(as_tibble)
+}
+
+tweets_mentions &lt;- get_mentions_v2(gorthon_id)
+
+repliers_mentions &lt;- lookup_tweets(mentions$id)</code></pre>
+<pre><code>[^reply-approaches]: 
+Another simple approach would be to just try: `rtweet::search_tweets(&quot;@brshallo&quot;)` . I tried the approach below, but really didnt&#39; seem to work quite as expected...
+
+```r
+tweet_ids_repliers &lt;- json_data %&gt;% 
+  filter(public_metrics.reply_count &gt; 0) %&gt;%
+  pull(id)
+
+# pulled from here: https://twittercommunity.com/t/how-to-fetch-retweets-and-quote-tweets-from-the-twitter-v2-search-api/156573 but didn&#39;t really work as expected...
+get_replies &lt;- function(tweet_id){
+url_handle &lt;- glue::glue(&quot;https://api.twitter.com/2/tweets/search/recent?tweet.fields=author_id&amp;query=conversation_id:{status_id}&quot;, status_id = tweet_id)
+
+response &lt;- httr::GET(url = url_handle,
+                     httr::add_headers(.headers = headers))
+                     # query = params)
+
+obj &lt;- httr::content(response, as = &quot;text&quot;)
+x &lt;- rjson::fromJSON(obj)
+
+x$data %&gt;% 
+  map_dfr(as_tibble)
+}
+
+repliers &lt;- map(tweet_ids_repliers, get_replies)
+filter(is_quote)
+
+repliers &lt;- bind_rows(repliers)
+```</code></pre>
+</div>
+<div id="putting-them-together-into-a-function" class="section level2">
+<h2>Putting them together into a function</h2>
+<p>The function at <a href="https://gist.github.com/brshallo/119d6a1f858e0e5c20d77212dee8891a">this gist</a> returns the output from each of the above sections as a list.</p>
+<pre class="r"><code># Twitter id for brshallo
+user_id &lt;- &quot;307012324&quot;
+
+# load function get_engagements()
+source(&quot;https://gist.githubusercontent.com/brshallo/119d6a1f858e0e5c20d77212dee8891a/raw/751d022c7bc2e2148292bb78a5178737d9914024/get-engagements.R&quot;)
+
+brshallo_engagements &lt;- get_engagements(user_id)
+
+brshallo_engagements</code></pre>
+<pre><code>## $favorites
+## # A tibble: 10 x 91
+##    user_id             status_id  created_at          screen_name text    source
+##  * &lt;chr&gt;               &lt;chr&gt;      &lt;dttm&gt;              &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt; 
+##  1 248350998           151302361~ 2022-04-10 05:18:34 BuildABarr  &quot;Drop ~ Twitt~
+##  2 368551889           151263551~ 2022-04-09 03:36:23 IsabellaGh~ &quot;@elli~ Twitt~
+##  3 1469531055736590337 151242047~ 2022-04-08 13:21:54 emkayco     &quot;Have ~ Twitt~
+##  4 35794978            151196918~ 2022-04-07 07:28:38 _lionelhen~ &quot;@brsh~ Twitt~
+##  5 29916355            151194957~ 2022-04-07 06:10:44 jimjam_slam &quot;@brsh~ Twitt~
+##  6 29916355            151195192~ 2022-04-07 06:20:03 jimjam_slam &quot;@brsh~ Twitt~
+##  7 29916355            151189984~ 2022-04-07 02:53:06 jimjam_slam &quot;@mdne~ Twitt~
+##  8 3089027769          151189179~ 2022-04-07 02:21:09 gyp_casino  &quot;@mdne~ Twitt~
+##  9 15772978            151132777~ 2022-04-05 12:59:55 jessicagar~ &quot;@brsh~ Twitt~
+## 10 144592995           151129000~ 2022-04-05 10:29:49 Rbloggers   &quot;R Acc~ r-blo~
+## # ... with 85 more variables: display_text_width &lt;dbl&gt;,
+## #   reply_to_status_id &lt;chr&gt;, reply_to_user_id &lt;chr&gt;,
+## #   reply_to_screen_name &lt;chr&gt;, is_quote &lt;lgl&gt;, is_retweet &lt;lgl&gt;,
+## #   favorite_count &lt;int&gt;, retweet_count &lt;int&gt;, quote_count &lt;int&gt;,
+## #   reply_count &lt;int&gt;, hashtags &lt;list&gt;, symbols &lt;list&gt;, urls_url &lt;list&gt;,
+## #   urls_t.co &lt;list&gt;, urls_expanded_url &lt;list&gt;, media_url &lt;list&gt;,
+## #   media_t.co &lt;list&gt;, media_expanded_url &lt;list&gt;, media_type &lt;list&gt;, ...
+## 
+## $favoriters
+## # A tibble: 90 x 4
+##    liked_status_id     user_id            name           username       
+##    &lt;chr&gt;               &lt;chr&gt;              &lt;chr&gt;          &lt;chr&gt;          
+##  1 1512295676004093955 117241741          Brett J. Gall  brettjgall     
+##  2 1512295676004093955 2724597409         Peter Ellis    ellis2013nz    
+##  3 1512294950905409543 274123666          Kristen Downs  KristenDDowns  
+##  4 1512293864517750790 3656879234         &lt;U+5F20&gt;&lt;U+4EAE&gt;           psychelzh      
+##  5 1512293864517750790 703843771419484160 Ayush Patel    ayushbipinpatel
+##  6 1512293864517750790 419185498          Kevin Gilds    Kevin_Gilds    
+##  7 1512293864517750790 127357236          Juan LB        Juan_FLB       
+##  8 1512293864517750790 49451947           Luis Remiro    LuisMRemiro    
+##  9 1512293864517750790 253175044          Nicholas Viau  nicholasviau   
+## 10 1512293864517750790 2202983986         Stefania Klayn Ettti_20       
+## # ... with 80 more rows
+## 
+## $references
+## # A tibble: 12 x 90
+##    user_id            status_id  created_at          screen_name  text    source
+##    &lt;chr&gt;              &lt;chr&gt;      &lt;dttm&gt;              &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt; 
+##  1 307012324          151115943~ 2022-04-05 01:50:59 brshallo     &quot;As an~ Twitt~
+##  2 307012324          151229344~ 2022-04-08 04:57:09 brshallo     &quot;@mdne~ Twitt~
+##  3 307012324          150969487~ 2022-04-01 00:51:20 brshallo     &quot;It al~ Twitt~
+##  4 307012324          151229386~ 2022-04-08 04:58:49 brshallo     &quot;@mdne~ Twitt~
+##  5 307012324          147233714~ 2021-12-18 22:45:04 brshallo     &quot;First~ Twitt~
+##  6 29916355           151189984~ 2022-04-07 02:53:06 jimjam_slam  &quot;@mdne~ Twitt~
+##  7 29916355           151194957~ 2022-04-07 06:10:44 jimjam_slam  &quot;@brsh~ Twitt~
+##  8 144592995          151129000~ 2022-04-05 10:29:49 Rbloggers    &quot;R Acc~ r-blo~
+##  9 248350998          151302361~ 2022-04-10 05:18:34 BuildABarr   &quot;Drop ~ Twitt~
+## 10 3146735425         151226195~ 2022-04-08 02:52:00 mdneuzerling &quot;Lovel~ Twitt~
+## 11 983470194982088704 151182189~ 2022-04-06 21:43:22 R4DScommuni~ &quot;The n~ Zapie~
+## 12 2724597409         151226515~ 2022-04-08 03:04:44 ellis2013nz  &quot;@mdne~ Twitt~
+## # ... with 84 more variables: display_text_width &lt;dbl&gt;,
+## #   reply_to_status_id &lt;chr&gt;, reply_to_user_id &lt;chr&gt;,
+## #   reply_to_screen_name &lt;chr&gt;, is_quote &lt;lgl&gt;, is_retweet &lt;lgl&gt;,
+## #   favorite_count &lt;int&gt;, retweet_count &lt;int&gt;, quote_count &lt;int&gt;,
+## #   reply_count &lt;int&gt;, hashtags &lt;list&gt;, symbols &lt;list&gt;, urls_url &lt;list&gt;,
+## #   urls_t.co &lt;list&gt;, urls_expanded_url &lt;list&gt;, media_url &lt;list&gt;,
+## #   media_t.co &lt;list&gt;, media_expanded_url &lt;list&gt;, media_type &lt;list&gt;, ...
+## 
+## $quoters
+## NULL
+## 
+## $retweeters
+## # A tibble: 11 x 2
+##    status_id           user_id            
+##    &lt;chr&gt;               &lt;chr&gt;              
+##  1 1512293864517750790 296222670          
+##  2 1512293864517750790 307012324          
+##  3 1511869112401596423 4034079677         
+##  4 1511869112401596423 1306626901432324097
+##  5 1511869112401596423 1011817655957893120
+##  6 1511469730892156928 1011817655957893120
+##  7 1511469730892156928 1306626901432324097
+##  8 1511159434717761539 1448348827979747333
+##  9 1511159434717761539 15772978           
+## 10 1511159434717761539 1011817655957893120
+## 11 1511159434717761539 1306626901432324097
+## 
+## $referencers
+## # A tibble: 10 x 90
+##    user_id             status_id  created_at          screen_name text    source
+##    &lt;chr&gt;               &lt;chr&gt;      &lt;dttm&gt;              &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt; 
+##  1 61542689            150992063~ 2022-04-01 15:48:26 twelvespot  &quot;@brsh~ Twitt~
+##  2 61542689            150994022~ 2022-04-01 17:06:17 twelvespot  &quot;@brsh~ Twitt~
+##  3 18433005            151007180~ 2022-04-02 01:49:09 rcrdleitao  &quot;@brsh~ Twitt~
+##  4 35794978            151196918~ 2022-04-07 07:28:38 _lionelhen~ &quot;@brsh~ Twitt~
+##  5 1346474633520824320 150985661~ 2022-04-01 11:34:03 markjrieke  &quot;@brsh~ Twitt~
+##  6 29916355            151195192~ 2022-04-07 06:20:03 jimjam_slam &quot;@brsh~ Twitt~
+##  7 29916355            151195162~ 2022-04-07 06:18:51 jimjam_slam &quot;@brsh~ Twitt~
+##  8 29916355            151194957~ 2022-04-07 06:10:44 jimjam_slam &quot;@brsh~ Twitt~
+##  9 15772978            151132777~ 2022-04-05 12:59:55 jessicagar~ &quot;@brsh~ Twitt~
+## 10 15772978            151117782~ 2022-04-05 03:04:04 jessicagar~ &quot;@brsh~ Twitt~
+## # ... with 84 more variables: display_text_width &lt;dbl&gt;,
+## #   reply_to_status_id &lt;chr&gt;, reply_to_user_id &lt;chr&gt;,
+## #   reply_to_screen_name &lt;chr&gt;, is_quote &lt;lgl&gt;, is_retweet &lt;lgl&gt;,
+## #   favorite_count &lt;int&gt;, retweet_count &lt;int&gt;, quote_count &lt;int&gt;,
+## #   reply_count &lt;int&gt;, hashtags &lt;list&gt;, symbols &lt;list&gt;, urls_url &lt;list&gt;,
+## #   urls_t.co &lt;list&gt;, urls_expanded_url &lt;list&gt;, media_url &lt;list&gt;,
+## #   media_t.co &lt;list&gt;, media_expanded_url &lt;list&gt;, media_type &lt;list&gt;, ...</code></pre>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Which as of this writing uses the 1.1 API.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>As it takes less code.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>Which is not yet supported by <code>{rtweet}</code>. This is actively being <a href="https://github.com/ropensci/rtweet/issues/445">worked on</a> so this post may have a short shelf-life.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>You’ll need to authenticate through a Twitter developer portal app keys if you want to run those sections automatically. You’ll notice that in creating this script I actually don’t evaluate most of the sections and then use some hidden code chunks to return output.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>This seemed to particularly be the case when it came to seeing all quotes and mentions.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>The reason I’m using {httr} and v2 instead of <code>{rtweet}</code> for this is that the 1.1 API (that <code>{rtweet}</code> currently uses) doesn’t pull quote count unless you have a premium or enterprise account <a href="https://github.com/ropensci/rtweet/issues/640">rtweet#640</a>.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>Thread <a href="https://twittercommunity.com/t/how-to-fetch-retweets-and-quote-tweets-from-the-twitter-v2-search-api/156573">here</a> seemed to suggest that just searching the url was the way to go.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p><code>rtweet::get_retweeters()</code> has a lot fewer columns returned compared to that from <code>rtweet::search_tweets()</code>, which is why I use <code>select()</code> above and a different method than the section before and after this where I instead use <code>pull()</code> and then pass the ideas directly to <code>purrr::map*()</code> statements rather than wrapping them in a <code>mutate()</code> verb – which would have worked just as well. The structures of the manipulation are nearly the same… maybe should have stayed consistent here and written a function to make clear the pattern here is the same, c’est la vie.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
