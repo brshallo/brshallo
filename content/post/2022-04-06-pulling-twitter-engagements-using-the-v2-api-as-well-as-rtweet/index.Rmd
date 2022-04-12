@@ -136,7 +136,7 @@ tweet_ids_quoters <- json_data %>%
   pull(id)
 ```
 
-However I am not positive the approach below actually picks up *all* quotes^[Thread [here](https://twittercommunity.com/t/how-to-fetch-retweets-and-quote-tweets-from-the-twitter-v2-search-api/156573) seemed to suggest that just searching the url was the way to go.]. I'd also reviewed some other approaches[^other approaches].
+However I am not positive the approach below actually picks up *all* quotes^[Thread [here](https://twittercommunity.com/t/how-to-fetch-retweets-and-quote-tweets-from-the-twitter-v2-search-api/156573) seemed to suggest that just searching the url was the way to go.]. I'd also reviewed some other approaches[^other-approaches].
 
 ```{r}
 search_tweets_urls <- function(tweet_id){
@@ -151,7 +151,7 @@ quoters <- map_dfr(tweet_ids_quoters, search_tweets_urls) %>%
   as_tibble()
 ```
 
-[^other approaches]:
+[^other-approaches]: 
     This also seems to be way to see quoters: https://twittercommunity.com/t/how-we-can-get-list-of-replies-on-a-tweet-or-reply-to-a-tweet-in-twitter-api/144958/7
     
     ```{r, eval = FALSE}
