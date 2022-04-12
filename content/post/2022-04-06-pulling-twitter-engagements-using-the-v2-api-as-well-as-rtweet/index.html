@@ -10,16 +10,16 @@ slug: pulling-twitter-engagements-using-the-v2-api-as-well-as-rtweet
 output:
   blogdown::html_page:
     toc: no
-thumbnail: /2022/04/06/pulling-twitter-engagements-using-the-v2-api-as-well-as-rtweet/images/rtweet.png
+thumbnail: /2022/04/11/pulling-twitter-engagements-using-the-v2-api-as-well-as-rtweet/images/rtweet.png
 ---
 
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
 <p>This is a follow-up to a short post I wrote on <a href="https://www.bryanshalloway.com/2022/04/04/notes-on-r-access-to-twitter-s-v2-api/">R Access to Twitter’s v2 API</a>. In this post I’ll walk through a few more examples of pulling data from twitter using a mix of Twitter’s v2 API as well as the <code>{rtweet}</code> package<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
-<p>I’ll pull all Twitter users that I (<span class="citation">[@brshallo]</span>(<a href="https://twitter.com/brshallo" class="uri">https://twitter.com/brshallo</a>)) have recently been engaged by or engaged with. I’ll use a mix of <code>{rtweet}</code> and <code>{httr}</code> to collect recent engagements. For each type of engagement I’ll lean towards using <code>{rtweet}</code><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. I’ll use <code>{httr}</code> in cases where it’s more convenient to use Twitter’s v2 API<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
-<p>In this post I’m not really worried about optimizing my queries, minimizing API hits, etc. E.g. when using <code>{rtweet}</code> I <em>should</em> authenticate through my project app which has higher rate limits (see <a href="https://docs.ropensci.org/rtweet/reference/rtweet_user.html">Authentication options</a>) but instead I just use the default <code>{rtweet}</code> user authentication. Note also that the default <code>{rtweet}</code> authentication only works when running scripts interactively<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
-<p>See prior post for links on authentication mechanisms. I’m assuming you have “TWITTER_BEARER” in your .Renviron file (for the sections where I use <code>{httr}</code> in this post) as well as the default <code>{rtweet}</code> authentication set-up.</p>
+<p>I’ll pull all Twitter users that I (<a href="https://twitter.com/brshallo">brshallo</a>) have recently been engaged by (e.g. they like my tweet) or engaged with (e.g. I like their tweet). I’ll lean towards using <code>{rtweet}</code><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> but will use <code>{httr}</code> in cases where it’s more convenient to use Twitter’s v2 API<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
+<p>For this post I’m not really worried about optimizing my queries, minimizing API hits, etc. E.g. when using <code>{rtweet}</code> I <em>should</em> authenticate through my project app which has higher rate limits (see <a href="https://docs.ropensci.org/rtweet/reference/rtweet_user.html">Authentication options</a>) but instead I just use the default <code>{rtweet}</code> user authentication. Note also that the default <code>{rtweet}</code> authentication only works when running scripts interactively<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
+<p>See prior post for links on authentication mechanisms. I’m assuming you have “TWITTER_BEARER”<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> as well as “TWITTER_PAT”<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> in your .Renviron file.</p>
 <pre class="r"><code>library(rjson)
 require(httr)
 require(jsonlite)
@@ -38,13 +38,13 @@ headers &lt;- c(`Authorization` = sprintf(&#39;Bearer %s&#39;, bearer_token))</c
 <ol style="list-style-type: decimal">
 <li><a href="#get-favorited-users">GET favorited users</a></li>
 <li><a href="#get-all-tweets-from-user">GET all tweets from user</a> – starting point for most of the following sections</li>
-<li>From initial query [GET references] in those tweets</li>
+<li>From initial query <a href="#get-references">GET references</a> in those tweets</li>
 <li>Filter to only tweets with likes, <a href="#get-favoriters">GET favoriters</a></li>
 <li>Filter to only tweets with quotes, search URL’s to <a href="#get-quoters">GET quoters</a></li>
 <li>Filter to only tweets with retweets, <a href="#get-retweeters">GET retweeters</a></li>
 <li><a href="#get-repliers-and-mentions">GET repliers and mentions</a></li>
 </ol>
-<p>I’ll finish by <a href="#putting-them-together-into-a-function">Putting them together into a function</a>. Note that not all queries are <em>perfect</em> at pulling each engagements<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.</p>
+<p>I’ll finish by <a href="#putting-them-together-into-a-function">Putting them together into a function</a>. Note that not all queries are <em>perfect</em> at pulling all engagements<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
 <div id="get-favorited-users" class="section level2">
 <h2>GET favorited users</h2>
 <p>It’s often easiest to just let <code>{rtweet}</code> do the work.</p>
@@ -55,7 +55,7 @@ favorites &lt;- rtweet::get_favorites(user = user_id)</code></pre>
 </div>
 <div id="get-all-tweets-from-user" class="section level2">
 <h2>GET all tweets from user</h2>
-<p>Pulls up to 100 of the most recent tweets from a user<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>.</p>
+<p>Pulls up to 100 of the most recent tweets from a user<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
 <pre class="r"><code>url_handle &lt;- glue::glue(&quot;https://api.twitter.com/2/users/{user_id}/tweets?max_results=100&quot;, user_id = user_id)
 
 params &lt;- list(tweet.fields = &quot;public_metrics,created_at,in_reply_to_user_id,referenced_tweets&quot;)
@@ -69,8 +69,8 @@ obj &lt;- httr::content(response, as = &quot;text&quot;)
 json_data &lt;- jsonlite::fromJSON(obj, flatten = TRUE)$data %&gt;% 
   as_tibble()</code></pre>
 </div>
-<div id="get-users-references" class="section level2">
-<h2>GET users references</h2>
+<div id="get-references" class="section level2">
+<h2>GET references</h2>
 <pre class="r"><code>statuses_referenced &lt;- bind_rows(json_data$referenced_tweets) %&gt;% 
   rename(status_id = id)
 
@@ -109,7 +109,7 @@ tweet_favoriters &lt;-
 <pre class="r"><code>tweet_ids_quoters &lt;- json_data %&gt;% 
   filter(public_metrics.quote_count &gt; 0) %&gt;%
   pull(id)</code></pre>
-<p>Again, if you can use <code>{rtweet}</code> it’s generally easier to do this. However I am not positive the approach below actually picks up <em>all</em> quotes<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>. I’d also reviewed some other approaches[^other approaches].</p>
+<p>However I am not positive the approach below actually picks up <em>all</em> quotes<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>. I’d also reviewed some other approaches[^other approaches].</p>
 <pre class="r"><code>search_tweets_urls &lt;- function(tweet_id){
   rtweet::search_tweets(
     glue::glue(&quot;url:{tweet_id}&quot;, 
@@ -120,11 +120,9 @@ tweet_favoriters &lt;-
 quoters &lt;- map_dfr(tweet_ids_quoters, search_tweets_urls) %&gt;% 
   filter(is_quote) %&gt;% 
   as_tibble()</code></pre>
-<pre><code>[^other approaches]:
-This also seems to be way to see quoters: https://twittercommunity.com/t/how-we-can-get-list-of-replies-on-a-tweet-or-reply-to-a-tweet-in-twitter-api/144958/7
-
-
-```r
+<p>[^other approaches]:
+This also seems to be way to see quoters: <a href="https://twittercommunity.com/t/how-we-can-get-list-of-replies-on-a-tweet-or-reply-to-a-tweet-in-twitter-api/144958/7" class="uri">https://twittercommunity.com/t/how-we-can-get-list-of-replies-on-a-tweet-or-reply-to-a-tweet-in-twitter-api/144958/7</a></p>
+<pre><code>```r
 get_quoters &lt;- function(tweet_id){
   url_handle &lt;- glue::glue(&quot;https://api.twitter.com/2/tweets/search/recent?tweet.fields=author_id&amp;query=url:{status_id}&quot;, status_id = tweet_id)
   
@@ -148,14 +146,14 @@ quoters &lt;- map(tweet_ids_quoters, get_quoters)
 <pre class="r"><code>tweet_ids_rt &lt;- json_data %&gt;% 
   filter(public_metrics.retweet_count &gt; 0) %&gt;%
   select(status_id = id)</code></pre>
-<p>I use a slightly different approach in this section than in other similar sections<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
+<p>I use a slightly different approach in this section than in other similar sections<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
 <pre class="r"><code>retweeters &lt;- tweet_ids_rt %&gt;% 
   mutate(retweeters = map(status_id, get_retweeters)) %&gt;% 
   unnest(retweeters)</code></pre>
 </div>
 <div id="get-repliers-and-mentions" class="section level2">
 <h2>GET repliers and mentions</h2>
-<p>Alternatively you might just use <code>rtweet::</code>get_mentions()` but this only pulls mentions of the currently authenticated user. I also tried some other approaches here[^reply-approaches].</p>
+<p>Alternatively you might just use <code>rtweet::get_mentions()</code> but this only pulls mentions of the currently authenticated user. I also tried other approaches here<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>.</p>
 <pre class="r"><code>get_mentions_v2 &lt;- function(user_id){
   url_handle &lt;- glue::glue(&quot;https://api.twitter.com/2/users/{user_id}/mentions&quot;, user_id = user_id)
   
@@ -172,34 +170,6 @@ quoters &lt;- map(tweet_ids_quoters, get_quoters)
 tweets_mentions &lt;- get_mentions_v2(gorthon_id)
 
 repliers_mentions &lt;- lookup_tweets(mentions$id)</code></pre>
-<pre><code>[^reply-approaches]: 
-Another simple approach would be to just try: `rtweet::search_tweets(&quot;@brshallo&quot;)` . I tried the approach below, but really didnt&#39; seem to work quite as expected...
-
-```r
-tweet_ids_repliers &lt;- json_data %&gt;% 
-  filter(public_metrics.reply_count &gt; 0) %&gt;%
-  pull(id)
-
-# pulled from here: https://twittercommunity.com/t/how-to-fetch-retweets-and-quote-tweets-from-the-twitter-v2-search-api/156573 but didn&#39;t really work as expected...
-get_replies &lt;- function(tweet_id){
-url_handle &lt;- glue::glue(&quot;https://api.twitter.com/2/tweets/search/recent?tweet.fields=author_id&amp;query=conversation_id:{status_id}&quot;, status_id = tweet_id)
-
-response &lt;- httr::GET(url = url_handle,
-                     httr::add_headers(.headers = headers))
-                     # query = params)
-
-obj &lt;- httr::content(response, as = &quot;text&quot;)
-x &lt;- rjson::fromJSON(obj)
-
-x$data %&gt;% 
-  map_dfr(as_tibble)
-}
-
-repliers &lt;- map(tweet_ids_repliers, get_replies)
-filter(is_quote)
-
-repliers &lt;- bind_rows(repliers)
-```</code></pre>
 </div>
 <div id="putting-them-together-into-a-function" class="section level2">
 <h2>Putting them together into a function</h2>
@@ -322,11 +292,38 @@ brshallo_engagements</code></pre>
 <ol>
 <li id="fn1"><p>Which as of this writing uses the 1.1 API.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 <li id="fn2"><p>As it takes less code.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
-<li id="fn3"><p>Which is not yet supported by <code>{rtweet}</code>. This is actively being <a href="https://github.com/ropensci/rtweet/issues/445">worked on</a> so this post may have a short shelf-life.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>Or in cases where the field isn’t available in <code>{rtweet}</code>. V2 is not yet supported by <code>{rtweet}</code> but is actively being <a href="https://github.com/ropensci/rtweet/issues/445">worked on</a> so this post may have a short shelf-life.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
 <li id="fn4"><p>You’ll need to authenticate through a Twitter developer portal app keys if you want to run those sections automatically. You’ll notice that in creating this script I actually don’t evaluate most of the sections and then use some hidden code chunks to return output.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
-<li id="fn5"><p>This seemed to particularly be the case when it came to seeing all quotes and mentions.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
-<li id="fn6"><p>The reason I’m using {httr} and v2 instead of <code>{rtweet}</code> for this is that the 1.1 API (that <code>{rtweet}</code> currently uses) doesn’t pull quote count unless you have a premium or enterprise account <a href="https://github.com/ropensci/rtweet/issues/640">rtweet#640</a>.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
-<li id="fn7"><p>Thread <a href="https://twittercommunity.com/t/how-to-fetch-retweets-and-quote-tweets-from-the-twitter-v2-search-api/156573">here</a> seemed to suggest that just searching the url was the way to go.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
-<li id="fn8"><p><code>rtweet::get_retweeters()</code> has a lot fewer columns returned compared to that from <code>rtweet::search_tweets()</code>, which is why I use <code>select()</code> above and a different method than the section before and after this where I instead use <code>pull()</code> and then pass the ideas directly to <code>purrr::map*()</code> statements rather than wrapping them in a <code>mutate()</code> verb – which would have worked just as well. The structures of the manipulation are nearly the same… maybe should have stayed consistent here and written a function to make clear the pattern here is the same, c’est la vie.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>For the sections where I use <code>{httr}</code> in this post.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>For the sections where I use <code>{rtweet}</code>. This should be set-up through the default <code>{rtweet}</code> set-up.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>This seemed to particularly be the case when it came to seeing all quotes and mentions.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>The reason I’m using {httr} and v2 instead of <code>{rtweet}</code> for this is that the 1.1 API (that <code>{rtweet}</code> currently uses) doesn’t pull quote count unless you have a premium or enterprise account <a href="https://github.com/ropensci/rtweet/issues/640">rtweet#640</a>.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>Thread <a href="https://twittercommunity.com/t/how-to-fetch-retweets-and-quote-tweets-from-the-twitter-v2-search-api/156573">here</a> seemed to suggest that just searching the url was the way to go.<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p><code>rtweet::get_retweeters()</code> has a lot fewer columns returned compared to that from <code>rtweet::search_tweets()</code>, which is why I use <code>select()</code> above and a different method than the section before and after this where I instead use <code>pull()</code> and then pass the ideas directly to <code>purrr::map*()</code> statements rather than wrapping them in a <code>mutate()</code> verb – which would have worked just as well. The structures of the manipulation are nearly the same… maybe should have stayed consistent here and written a function to make clear the pattern here is the same, c’est la vie.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>Another simple approach would be to just try: <code>rtweet::search_tweets("@brshallo")</code> . I tried the approach below, but really didnt’ seem to work quite as expected…</p>
+<pre class="r"><code>tweet_ids_repliers &lt;- json_data %&gt;% 
+  filter(public_metrics.reply_count &gt; 0) %&gt;%
+  pull(id)
+
+# pulled from here: https://twittercommunity.com/t/how-to-fetch-retweets-and-quote-tweets-from-the-twitter-v2-search-api/156573 but didn&#39;t really work as expected...
+get_replies &lt;- function(tweet_id){
+url_handle &lt;- glue::glue(&quot;https://api.twitter.com/2/tweets/search/recent?tweet.fields=author_id&amp;query=conversation_id:{status_id}&quot;, status_id = tweet_id)
+
+response &lt;- httr::GET(url = url_handle,
+                     httr::add_headers(.headers = headers))
+                     # query = params)
+
+obj &lt;- httr::content(response, as = &quot;text&quot;)
+x &lt;- rjson::fromJSON(obj)
+
+x$data %&gt;% 
+  map_dfr(as_tibble)
+}
+
+repliers &lt;- map(tweet_ids_repliers, get_replies)
+filter(is_quote)
+
+repliers &lt;- bind_rows(repliers)</code></pre>
+<a href="#fnref11" class="footnote-back">↩︎</a></li>
 </ol>
 </div>

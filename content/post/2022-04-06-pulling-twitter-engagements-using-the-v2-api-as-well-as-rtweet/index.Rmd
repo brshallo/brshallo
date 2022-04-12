@@ -10,7 +10,7 @@ slug: pulling-twitter-engagements-using-the-v2-api-as-well-as-rtweet
 output:
   blogdown::html_page:
     toc: no
-thumbnail: /2022/04/06/pulling-twitter-engagements-using-the-v2-api-as-well-as-rtweet/images/rtweet.png
+thumbnail: /2022/04/11/pulling-twitter-engagements-using-the-v2-api-as-well-as-rtweet/images/rtweet.png
 ---
 
 ```{r setup, include=FALSE}
@@ -19,11 +19,11 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, eval = FALS
 
 This is a follow-up to a short post I wrote on [R Access to Twitter's v2 API](https://www.bryanshalloway.com/2022/04/04/notes-on-r-access-to-twitter-s-v2-api/). In this post I'll walk through a few more examples of pulling data from twitter using a mix of Twitter's v2 API as well as the `{rtweet}` package^[Which as of this writing uses the 1.1 API.].
 
-I'll pull all Twitter users that I ([@brshallo](https://twitter.com/brshallo)) have recently been engaged by or engaged with. I'll use a mix of `{rtweet}` and `{httr}` to collect recent engagements. For each type of engagement I'll lean towards using `{rtweet}`^[As it takes less code.]. I'll use `{httr}` in cases where it's more convenient to use Twitter's v2 API^[Which is not yet supported by `{rtweet}`. This is actively being [worked on](https://github.com/ropensci/rtweet/issues/445) so this post may have a short shelf-life.]. 
+I'll pull all Twitter users that I ([brshallo](https://twitter.com/brshallo)) have recently been engaged by (e.g. they like my tweet) or engaged with (e.g. I like their tweet). I'll lean towards using `{rtweet}`^[As it takes less code.] but will use `{httr}` in cases where it's more convenient to use Twitter's v2 API^[Or in cases where the field isn't available in `{rtweet}`. V2 is not yet supported by `{rtweet}` but is actively being [worked on](https://github.com/ropensci/rtweet/issues/445) so this post may have a short shelf-life.]. 
 
-In this post I'm not really worried about optimizing my queries, minimizing API hits, etc. E.g. when using `{rtweet}` I *should* authenticate through my project app which has higher rate limits (see [Authentication options](https://docs.ropensci.org/rtweet/reference/rtweet_user.html)) but instead I just use the default `{rtweet}` user authentication. Note also that the default `{rtweet}` authentication only works when running scripts interactively^[You'll need to authenticate through a Twitter developer portal app keys if you want to run those sections automatically. You'll notice that in creating this script I actually don't evaluate most of the sections and then use some hidden code chunks to return output.]. 
+For this post I'm not really worried about optimizing my queries, minimizing API hits, etc. E.g. when using `{rtweet}` I *should* authenticate through my project app which has higher rate limits (see [Authentication options](https://docs.ropensci.org/rtweet/reference/rtweet_user.html)) but instead I just use the default `{rtweet}` user authentication. Note also that the default `{rtweet}` authentication only works when running scripts interactively^[You'll need to authenticate through a Twitter developer portal app keys if you want to run those sections automatically. You'll notice that in creating this script I actually don't evaluate most of the sections and then use some hidden code chunks to return output.]. 
 
-See prior post for links on authentication mechanisms. I'm assuming you have "TWITTER_BEARER" in your .Renviron file (for the sections where I use `{httr}` in this post) as well as the default `{rtweet}` authentication set-up.
+See prior post for links on authentication mechanisms. I'm assuming you have "TWITTER_BEARER"^[For the sections where I use `{httr}` in this post.] as well as "TWITTER_PAT"^[For the sections where I use `{rtweet}`. This should be set-up through the default `{rtweet}` set-up.] in your .Renviron file.
 
 ```{r}
 library(rjson)
@@ -52,7 +52,7 @@ In each sub-section I'll pull a different kind of engagement.
 6. Filter to only tweets with retweets, [GET retweeters]
 7. [GET repliers and mentions]
 
-I'll finish by [Putting them together into a function]. Note that not all queries are *perfect* at pulling each engagements^[This seemed to particularly be the case when it came to seeing all quotes and mentions.]. 
+I'll finish by [Putting them together into a function]. Note that not all queries are *perfect* at pulling all engagements^[This seemed to particularly be the case when it came to seeing all quotes and mentions.]. 
 
 ## GET favorited users
 
@@ -84,7 +84,7 @@ json_data <- jsonlite::fromJSON(obj, flatten = TRUE)$data %>%
   as_tibble()
 ```
 
-## GET users references
+## GET references
 
 ```{r}
 statuses_referenced <- bind_rows(json_data$referenced_tweets) %>% 
@@ -136,7 +136,7 @@ tweet_ids_quoters <- json_data %>%
   pull(id)
 ```
 
-Again, if you can use `{rtweet}` it's generally easier to do this. However I am not positive the approach below actually picks up *all* quotes^[Thread [here](https://twittercommunity.com/t/how-to-fetch-retweets-and-quote-tweets-from-the-twitter-v2-search-api/156573) seemed to suggest that just searching the url was the way to go.]. I'd also reviewed some other approaches[^other approaches].
+However I am not positive the approach below actually picks up *all* quotes^[Thread [here](https://twittercommunity.com/t/how-to-fetch-retweets-and-quote-tweets-from-the-twitter-v2-search-api/156573) seemed to suggest that just searching the url was the way to go.]. I'd also reviewed some other approaches[^other approaches].
 
 ```{r}
 search_tweets_urls <- function(tweet_id){
@@ -151,7 +151,7 @@ quoters <- map_dfr(tweet_ids_quoters, search_tweets_urls) %>%
   as_tibble()
 ```
 
-    [^other approaches]:
+[^other approaches]:
     This also seems to be way to see quoters: https://twittercommunity.com/t/how-we-can-get-list-of-replies-on-a-tweet-or-reply-to-a-tweet-in-twitter-api/144958/7
     
     ```{r, eval = FALSE}
@@ -192,7 +192,7 @@ retweeters <- tweet_ids_rt %>%
 
 ## GET repliers and mentions
 
-Alternatively you might just use `rtweet::`get_mentions()` but this only pulls mentions of the currently authenticated user. I also tried some other approaches here[^reply-approaches].
+Alternatively you might just use `rtweet::get_mentions()` but this only pulls mentions of the currently authenticated user. I also tried other approaches here[^reply-approaches].
 
 ```{r}
 get_mentions_v2 <- function(user_id){
@@ -213,7 +213,7 @@ tweets_mentions <- get_mentions_v2(gorthon_id)
 repliers_mentions <- lookup_tweets(mentions$id)
 ```
 
-    [^reply-approaches]: 
+[^reply-approaches]: 
     Another simple approach would be to just try: `rtweet::search_tweets("@brshallo")` . I tried the approach below, but really didnt' seem to work quite as expected...
     ```{r}
     tweet_ids_repliers <- json_data %>% 
