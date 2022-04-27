@@ -38,6 +38,12 @@ This post is not required for understanding part three of the series: [Quantile 
 
 This post was largely inspired by topics discussed in the [Prediction intervals with tidymodels, best practices?](https://community.rstudio.com/t/prediction-intervals-with-tidymodels-best-practices/82594) Rstudio Community thread. 
 
+# Update
+
+I copied most of the code referenced at gists in this post to the [spin](https://github.com/brshallo/spin) package. The [workboots](https://github.com/markjrieke/workboots) package by [Mark Rieke](https://twitter.com/markjrieke) is essentially the same thing^[As of now. Mark may be making some additions in the future though per chats at Twitter [thread](https://twitter.com/brshallo/status/1509720819873857543?s=20&t=MSEaAKRv6PfT3IulqGxePw).] but is available on CRAN. I also created a placeholder [spinach](https://github.com/brshallo/spinach) where I may do some future work...
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">{spinach} -- Simulating Prediction INtervals And CHance -- a <a href="https://twitter.com/hashtag/tidymodels?src=hash&amp;ref_src=twsrc%5Etfw">#tidymodels</a> <a href="https://twitter.com/hashtag/tidyverse?src=hash&amp;ref_src=twsrc%5Etfw">#tidyverse</a> friendly📦for a general interface to simulating uncertainty of predictions.<br><br>Only a placeholder with a link to a prototype right now but hoping to start on soon: <a href="https://t.co/YpipdO5f1u">https://t.co/YpipdO5f1u</a> <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> <a href="https://t.co/de2A4Z6WiD">pic.twitter.com/de2A4Z6WiD</a></p>&mdash; Bryan Shalloway (@brshallo) <a href="https://twitter.com/brshallo/status/1509720819873857543?ref_src=twsrc%5Etfw">April 1, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 # Rough Idea
 
 Compared to analytic approaches, estimating sources of uncertainty through simulation has the advantage of... 
