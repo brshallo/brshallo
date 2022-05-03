@@ -48,7 +48,16 @@
         {{ $.Scratch.Get "summary" }}</div>
         </a>
       </div>
-
+      
+      <div class="tags">
+        {{ with (.GetTerms "tags") }}
+          {{ range . }}
+            <div class="tag">
+              <a href="{{ .Permalink }}">{{ .LinkTitle }}</a>
+            </div>
+          {{ end }}
+        {{ end }}
+      </div>
       
     </article>
     {{ end }}
