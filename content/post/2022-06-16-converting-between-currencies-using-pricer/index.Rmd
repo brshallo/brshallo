@@ -1,12 +1,12 @@
 ---
-title: Converting between currencies using priceR
+title: Converting Between Currencies Using priceR
 author: Bryan Shalloway
 date: '2022-06-16'
-slug: converting-between-currencies-using-pricer
 categories:
   - data science
   - rstats
 tags: ["`r funspotr::spot_tags(drop_knitr = TRUE)`"]
+slug: converting-between-currencies-using-pricer
 output:
   blogdown::html_page:
     toc: no
