@@ -1,0 +1,179 @@
+---
+title: Converting between currencies using priceR
+author: Bryan Shalloway
+date: '2022-06-16'
+slug: converting-between-currencies-using-pricer
+categories:
+  - data science
+  - rstats
+tags: ["`r funspotr::spot_tags(drop_knitr = TRUE)`"]
+output:
+  blogdown::html_page:
+    toc: no
+thumbnail: /2022/06/16/converting-between-currencies-using-pricer/images/priceR.png
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+
+In this post I'll walk through an example of how to convert between currencies. A challenge is that the conversion rate is constantly changing. If you have historical data you'll want the conversion to be based on what the exchange rate was at the time. Hence the fields you need when doing currency conversion are:
+
+1. Date of transaction
+2. Start currency (what you'll be converting from)
+3. End currency (what you'll be converting to)
+4. Price (in units of starting currency)
+
+For my example I'll use the [priceR](https://stevecondylios.github.io/priceR/) package which provides an R interface to the [exchangerate.host](https://exchangerate.host/#/#docs) API. To limit the number of API hits required I *first*  create a lookup table with all unique currency conversions and dates required and *then* use this table to convert between currencies.
+
+## Simulate data
+
+I'll invent some data.
+
+- `sale_date` : date the transaction took place
+- `local_currency` : currency code that `price` is in
+- `price` : sale price in `local_currency
+
+```{r}
+library(priceR)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(lubridate)
+
+sim_count <- 10000
+
+set.seed(123)
+transactions <- tibble(
+  sales_date = sample(
+    seq(as.Date('2021/09/01'), 
+        as.Date('2022/01/01'), 
+        by = "day"), 
+    replace = TRUE, sim_count) %>% 
+    sort(),
+  local_currencies = sample(
+    c("CAD", "EUR", "JPY"), 
+    replace = TRUE, sim_count),
+  list_price = abs(rnorm(sim_count, 1000, 1000))
+)
+```
+
+Note that I'm not worried here about keeping the sale prices consistent with one another -- they're all just random values hovering around 1000 units of the local currency. Also, for my first example, I'll just convert everything to "USD."
+
+## Create rates lookup table
+
+* `data`: dataframe of transactions of interest  
+* `currency_code`: local currency code that you want to convert away from  
+* `date`: date of transaction  
+* `to`: string of currency code you want to convert to, default is "USD"^[Can only be a single value when building the lookup function at this stage. However later when applying `convert_currency()` you can have it be any currency that is in the lookup table.]
+* `floor_unit`: default is "day". If is set to e.g. "month" it will lookup the conversion rate based on the day at the start of the month^[Highest granularity for API is day.].  
+
+```{r}
+create_rates_lookup <- function(data, 
+                                currency_code, 
+                                date = lubridate::today(),
+                                to = "USD", 
+                                floor_unit = "day"){
+  rates_start <- data %>% 
+    count(currency_code = {{currency_code}}, 
+          date = {{date}} %>% 
+            as.Date() %>% 
+            floor_date(floor_unit)
+          ) 
+  
+  # When passing things to the priceR API it is MUCH faster to send over a range
+  # of dates rather than doing this individually for each date. Doing such
+  # reduces API calls.
+  rates_end <- rates_start %>% 
+    group_by(currency_code) %>% 
+    summarise(date_range = list(range(date))) %>% 
+    mutate(
+      rates_lookup = map2(
+        currency_code,
+        date_range,
+        ~ priceR::historical_exchange_rates(
+          from = .x,
+          to = to,
+          start_date = .y[[1]],
+          end_date = .y[[2]]
+        ) %>%
+          set_names("date_lookup", "rate")
+      )
+    ) %>% 
+    select(-date_range) %>% 
+    unnest(rates_lookup)
+  
+  rates <- rates_end %>% 
+    semi_join(rates_start, c("date_lookup" = "date"))
+  
+  rates_lookup <- rates %>% 
+    mutate(to = to) %>% 
+    select(from = currency_code, to, date = date_lookup, rate)
+  
+  # this step makes it so could convert away from "to" currency --
+  # i.e. so can both convert from "USD" and to "USD" from another currency.
+  bind_rows(rates_lookup,
+            rates_lookup %>%
+              rename(from = to, to = from) %>%
+              mutate(rate = 1 / rate)) %>% 
+    distinct()
+}
+
+rates_lookup <- create_rates_lookup(transactions, 
+                                    local_currencies, 
+                                    sales_date)
+
+rates_lookup
+```
+
+
+
+## Function to convert prices
+
+This function is set-up to look-up the conversion rates based on the vector inputs^[This could be converted to be an "all inclusive" function -- i.e. no need to specify the `rates_lookup` in a separate step. However the advantage with the current set-up is you could use the `rates_lookup` table on multiple functions. It might also make sense to have `create_rates_lookup()` simply output a function that would be like `convert_currency()` but specific to the rates that were looked-up, i.e. just setting `currencies = rates_lookup`.].
+
+```{r}
+convert_currency <- function(price, 
+                             date, 
+                             from, 
+                             to = "USD", 
+                             currencies = rates_lookup){
+  tibble(price = price, 
+         from = from, 
+         to = to, 
+         date = date) %>% 
+    left_join(currencies) %>% 
+    mutate(output = price * rate) %>% 
+    pull(output)
+}
+```
+
+## Convert Prices
+
+Now let's convert our original currencies to USD.
+
+```{r}
+transactions_converted <- transactions %>%
+  mutate(list_price_usd = 
+           convert_currency(list_price,
+                            sales_date,
+                            from = local_currencies,
+                            to = "USD"))
+
+transactions_converted
+```
+
+Note that it is possible to then convert from "USD" to any currency type that is in the `to` field of our lookup table. Below I'll convert `list_price_usd` to currencies other than USD^[In this way you are not restricted to converting to a single `to` currency.], `list_price_converted` will represent the value of `list_price` converted based on `local_currencies` and `new_currencies` (i.e. `from` and `to` respectively).
+
+```{r}
+transactions_converted %>%
+  mutate(new_currencies = sample(c("CAD", "EUR", "JPY"), replace = TRUE, sim_count)) %>%
+  mutate(list_price_converted =
+           convert_currency(list_price_usd,
+                            sales_date,
+                            from = "USD",
+                            to = new_currencies))
+
+```

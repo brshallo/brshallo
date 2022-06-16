@@ -1,0 +1,212 @@
+---
+title: Converting between currencies using priceR
+author: Bryan Shalloway
+date: '2022-06-16'
+slug: converting-between-currencies-using-pricer
+categories:
+  - data science
+  - rstats
+tags: ["priceR", "dplyr", "tidyr", "purrr", "lubridate"]
+output:
+  blogdown::html_page:
+    toc: no
+thumbnail: /2022/06/16/converting-between-currencies-using-pricer/images/priceR.png
+---
+
+
+
+<p>In this post I’ll walk through an example of how to convert between currencies. A challenge is that the conversion rate is constantly changing. If you have historical data you’ll want the conversion to be based on what the exchange rate was at the time. Hence the fields you need when doing currency conversion are:</p>
+<ol style="list-style-type: decimal">
+<li>Date of transaction</li>
+<li>Start currency (what you’ll be converting from)</li>
+<li>End currency (what you’ll be converting to)</li>
+<li>Price (in units of starting currency)</li>
+</ol>
+<p>For my example I’ll use the <a href="https://stevecondylios.github.io/priceR/">priceR</a> package which provides an R interface to the <a href="https://exchangerate.host/#/#docs">exchangerate.host</a> API. To limit the number of API hits required I <em>first</em> create a lookup table with all unique currency conversions and dates required and <em>then</em> use this table to convert between currencies.</p>
+<div id="simulate-data" class="section level2">
+<h2>Simulate data</h2>
+<p>I’ll invent some data.</p>
+<ul>
+<li><code>sale_date</code> : date the transaction took place</li>
+<li><code>local_currency</code> : currency code that <code>price</code> is in</li>
+<li><code>price</code> : sale price in `local_currency</li>
+</ul>
+<pre class="r"><code>library(priceR)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(lubridate)
+
+sim_count &lt;- 10000
+
+set.seed(123)
+transactions &lt;- tibble(
+  sales_date = sample(
+    seq(as.Date(&#39;2021/09/01&#39;), 
+        as.Date(&#39;2022/01/01&#39;), 
+        by = &quot;day&quot;), 
+    replace = TRUE, sim_count) %&gt;% 
+    sort(),
+  local_currencies = sample(
+    c(&quot;CAD&quot;, &quot;EUR&quot;, &quot;JPY&quot;), 
+    replace = TRUE, sim_count),
+  list_price = abs(rnorm(sim_count, 1000, 1000))
+)</code></pre>
+<p>Note that I’m not worried here about keeping the sale prices consistent with one another – they’re all just random values hovering around 1000 units of the local currency. Also, for my first example, I’ll just convert everything to “USD.”</p>
+</div>
+<div id="create-rates-lookup-table" class="section level2">
+<h2>Create rates lookup table</h2>
+<ul>
+<li><code>data</code>: dataframe of transactions of interest<br />
+</li>
+<li><code>currency_code</code>: local currency code that you want to convert away from<br />
+</li>
+<li><code>date</code>: date of transaction<br />
+</li>
+<li><code>to</code>: string of currency code you want to convert to, default is “USD”<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></li>
+<li><code>floor_unit</code>: default is “day”. If is set to e.g. “month” it will lookup the conversion rate based on the day at the start of the month<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</li>
+</ul>
+<pre class="r"><code>create_rates_lookup &lt;- function(data, 
+                                currency_code, 
+                                date = lubridate::today(),
+                                to = &quot;USD&quot;, 
+                                floor_unit = &quot;day&quot;){
+  rates_start &lt;- data %&gt;% 
+    count(currency_code = {{currency_code}}, 
+          date = {{date}} %&gt;% 
+            as.Date() %&gt;% 
+            floor_date(floor_unit)
+          ) 
+  
+  # When passing things to the priceR API it is MUCH faster to send over a range
+  # of dates rather than doing this individually for each date. Doing such
+  # reduces API calls.
+  rates_end &lt;- rates_start %&gt;% 
+    group_by(currency_code) %&gt;% 
+    summarise(date_range = list(range(date))) %&gt;% 
+    mutate(
+      rates_lookup = map2(
+        currency_code,
+        date_range,
+        ~ priceR::historical_exchange_rates(
+          from = .x,
+          to = to,
+          start_date = .y[[1]],
+          end_date = .y[[2]]
+        ) %&gt;%
+          set_names(&quot;date_lookup&quot;, &quot;rate&quot;)
+      )
+    ) %&gt;% 
+    select(-date_range) %&gt;% 
+    unnest(rates_lookup)
+  
+  rates &lt;- rates_end %&gt;% 
+    semi_join(rates_start, c(&quot;date_lookup&quot; = &quot;date&quot;))
+  
+  rates_lookup &lt;- rates %&gt;% 
+    mutate(to = to) %&gt;% 
+    select(from = currency_code, to, date = date_lookup, rate)
+  
+  # this step makes it so could convert away from &quot;to&quot; currency --
+  # i.e. so can both convert from &quot;USD&quot; and to &quot;USD&quot; from another currency.
+  bind_rows(rates_lookup,
+            rates_lookup %&gt;%
+              rename(from = to, to = from) %&gt;%
+              mutate(rate = 1 / rate)) %&gt;% 
+    distinct()
+}
+
+rates_lookup &lt;- create_rates_lookup(transactions, 
+                                    local_currencies, 
+                                    sales_date)
+
+rates_lookup</code></pre>
+<pre><code>## # A tibble: 738 x 4
+##    from  to    date        rate
+##    &lt;chr&gt; &lt;chr&gt; &lt;date&gt;     &lt;dbl&gt;
+##  1 CAD   USD   2021-09-01 0.793
+##  2 CAD   USD   2021-09-02 0.796
+##  3 CAD   USD   2021-09-03 0.799
+##  4 CAD   USD   2021-09-04 0.798
+##  5 CAD   USD   2021-09-05 0.798
+##  6 CAD   USD   2021-09-06 0.798
+##  7 CAD   USD   2021-09-07 0.790
+##  8 CAD   USD   2021-09-08 0.788
+##  9 CAD   USD   2021-09-09 0.790
+## 10 CAD   USD   2021-09-10 0.788
+## # ... with 728 more rows</code></pre>
+</div>
+<div id="function-to-convert-prices" class="section level2">
+<h2>Function to convert prices</h2>
+<p>This function is set-up to look-up the conversion rates based on the vector inputs<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
+<pre class="r"><code>convert_currency &lt;- function(price, 
+                             date, 
+                             from, 
+                             to = &quot;USD&quot;, 
+                             currencies = rates_lookup){
+  tibble(price = price, 
+         from = from, 
+         to = to, 
+         date = date) %&gt;% 
+    left_join(currencies) %&gt;% 
+    mutate(output = price * rate) %&gt;% 
+    pull(output)
+}</code></pre>
+</div>
+<div id="convert-prices" class="section level2">
+<h2>Convert Prices</h2>
+<p>Now let’s convert our original currencies to USD.</p>
+<pre class="r"><code>transactions_converted &lt;- transactions %&gt;%
+  mutate(list_price_usd = 
+           convert_currency(list_price,
+                            sales_date,
+                            from = local_currencies,
+                            to = &quot;USD&quot;))
+
+transactions_converted</code></pre>
+<pre><code>## # A tibble: 10,000 x 4
+##    sales_date local_currencies list_price list_price_usd
+##    &lt;date&gt;     &lt;chr&gt;                 &lt;dbl&gt;          &lt;dbl&gt;
+##  1 2021-09-01 CAD                  1002.         794.   
+##  2 2021-09-01 CAD                   885.         701.   
+##  3 2021-09-01 JPY                   284.           2.58 
+##  4 2021-09-01 JPY                    83.6          0.760
+##  5 2021-09-01 CAD                  2185.        1732.   
+##  6 2021-09-01 EUR                   468.         554.   
+##  7 2021-09-01 EUR                   668.         791.   
+##  8 2021-09-01 EUR                  1064.        1260.   
+##  9 2021-09-01 JPY                  1922.          17.5  
+## 10 2021-09-01 JPY                  3334.          30.3  
+## # ... with 9,990 more rows</code></pre>
+<p>Note that it is possible to then convert from “USD” to any currency type that is in the <code>to</code> field of our lookup table. Below I’ll convert <code>list_price_usd</code> to currencies other than USD<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>, <code>list_price_converted</code> will represent the value of <code>list_price</code> converted based on <code>local_currencies</code> and <code>new_currencies</code> (i.e. <code>from</code> and <code>to</code> respectively).</p>
+<pre class="r"><code>transactions_converted %&gt;%
+  mutate(new_currencies = sample(c(&quot;CAD&quot;, &quot;EUR&quot;, &quot;JPY&quot;), replace = TRUE, sim_count)) %&gt;%
+  mutate(list_price_converted =
+           convert_currency(list_price_usd,
+                            sales_date,
+                            from = &quot;USD&quot;,
+                            to = new_currencies))</code></pre>
+<pre><code>## # A tibble: 10,000 x 6
+##    sales_date local_currencies list_price list_price_usd new_currencies
+##    &lt;date&gt;     &lt;chr&gt;                 &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt;         
+##  1 2021-09-01 CAD                  1002.         794.    JPY           
+##  2 2021-09-01 CAD                   885.         701.    EUR           
+##  3 2021-09-01 JPY                   284.           2.58  CAD           
+##  4 2021-09-01 JPY                    83.6          0.760 EUR           
+##  5 2021-09-01 CAD                  2185.        1732.    CAD           
+##  6 2021-09-01 EUR                   468.         554.    CAD           
+##  7 2021-09-01 EUR                   668.         791.    EUR           
+##  8 2021-09-01 EUR                  1064.        1260.    JPY           
+##  9 2021-09-01 JPY                  1922.          17.5   CAD           
+## 10 2021-09-01 JPY                  3334.          30.3   EUR           
+## # ... with 9,990 more rows, and 1 more variable: list_price_converted &lt;dbl&gt;</code></pre>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Can only be a single value when building the lookup function at this stage. However later when applying <code>convert_currency()</code> you can have it be any currency that is in the lookup table.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Highest granularity for API is day.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>This could be converted to be an “all inclusive” function – i.e. no need to specify the <code>rates_lookup</code> in a separate step. However the advantage with the current set-up is you could use the <code>rates_lookup</code> table on multiple functions. It might also make sense to have <code>create_rates_lookup()</code> simply output a function that would be like <code>convert_currency()</code> but specific to the rates that were looked-up, i.e. just setting <code>currencies = rates_lookup</code>.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>In this way you are not restricted to converting to a single <code>to</code> currency.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
