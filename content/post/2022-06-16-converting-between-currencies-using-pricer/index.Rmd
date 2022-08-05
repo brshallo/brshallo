@@ -28,6 +28,10 @@ In this post I'll walk through an example of how to convert between currencies. 
 
 For my example I'll use the [priceR](https://stevecondylios.github.io/priceR/) package which provides an R interface to the [exchangerate.host](https://exchangerate.host/#/#docs) API. To limit the number of API hits required I *first*  create a lookup table with all unique currency conversions and dates required and *then* use this table to convert between currencies.
 
+## Update
+
+I've made some improvements and taken the key functionality in this post and put it into a function at the gist [convert-currencies.R](https://gist.github.com/brshallo/650c1ad3f4bd9b74076592c6bc4ff8ae). I added an [Appendix] where I just use this function directly.
+
 ## Simulate data
 
 I'll invent some data.
@@ -177,3 +181,41 @@ transactions_converted %>%
                             to = new_currencies))
 
 ```
+
+# Appendix
+
+For my initial "transactions" example dataset here, I'll have `from` and `to` currencies that can vary line-by-line to showcase that the `convert_currencies()` function handles these fine.
+
+```{r}
+set.seed(123)
+transactions_complex <- tibble(
+  sales_date = sample(
+    seq(as.Date('2021/01/01'), 
+        as.Date('2022/01/01'), 
+        by = "day"), 
+    replace = TRUE, sim_count) %>% 
+    sort(),
+  from_currency = sample(
+    c("CAD", "EUR", "JPY", "USD"), 
+    replace = TRUE, sim_count),
+  to_currency = sample(
+    c("CAD", "EUR", "JPY", "USD"), 
+    replace = TRUE, sim_count),
+  list_price_start = abs(rnorm(sim_count, 1000, 1000))
+) %>% 
+  filter(from_currency != to_currency)
+
+# load function from gist
+devtools::source_gist("https://gist.github.com/brshallo/650c1ad3f4bd9b74076592c6bc4ff8ae")
+
+transactions_complex %>%
+  mutate(
+    list_price_converted = convert_currencies(
+      price_from = list_price_start,
+      from = from_currency,
+      to = to_currency,
+      date = sales_date
+    )
+  )
+```
+

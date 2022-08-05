@@ -5,7 +5,7 @@ date: '2022-06-16'
 categories:
   - data science
   - rstats
-tags: ["priceR", "dplyr", "tidyr", "purrr", "lubridate"]
+tags: ["priceR", "dplyr", "tidyr", "purrr", "lubridate", "devtools"]
 slug: converting-between-currencies-using-pricer
 output:
   blogdown::html_page:
@@ -23,6 +23,10 @@ thumbnail: /2022/06/16/converting-between-currencies-using-pricer/images/priceR.
 <li>Price (in units of starting currency)</li>
 </ol>
 <p>For my example I’ll use the <a href="https://stevecondylios.github.io/priceR/">priceR</a> package which provides an R interface to the <a href="https://exchangerate.host/#/#docs">exchangerate.host</a> API. To limit the number of API hits required I <em>first</em> create a lookup table with all unique currency conversions and dates required and <em>then</em> use this table to convert between currencies.</p>
+<div id="update" class="section level2">
+<h2>Update</h2>
+<p>I’ve made some improvements and taken the key functionality in this post and put it into a function at the gist <a href="https://gist.github.com/brshallo/650c1ad3f4bd9b74076592c6bc4ff8ae">convert-currencies.R</a>. I added an <a href="#appendix">Appendix</a> where I just use this function directly.</p>
+</div>
 <div id="simulate-data" class="section level2">
 <h2>Simulate data</h2>
 <p>I’ll invent some data.</p>
@@ -200,6 +204,54 @@ transactions_converted</code></pre>
 ##  9 2021-09-01 JPY                  1922.          17.5   CAD           
 ## 10 2021-09-01 JPY                  3334.          30.3   EUR           
 ## # ... with 9,990 more rows, and 1 more variable: list_price_converted &lt;dbl&gt;</code></pre>
+</div>
+<div id="appendix" class="section level1">
+<h1>Appendix</h1>
+<p>For my initial “transactions” example dataset here, I’ll have <code>from</code> and <code>to</code> currencies that can vary line-by-line to showcase that the <code>convert_currencies()</code> function handles these fine.</p>
+<pre class="r"><code>set.seed(123)
+transactions_complex &lt;- tibble(
+  sales_date = sample(
+    seq(as.Date(&#39;2021/01/01&#39;), 
+        as.Date(&#39;2022/01/01&#39;), 
+        by = &quot;day&quot;), 
+    replace = TRUE, sim_count) %&gt;% 
+    sort(),
+  from_currency = sample(
+    c(&quot;CAD&quot;, &quot;EUR&quot;, &quot;JPY&quot;, &quot;USD&quot;), 
+    replace = TRUE, sim_count),
+  to_currency = sample(
+    c(&quot;CAD&quot;, &quot;EUR&quot;, &quot;JPY&quot;, &quot;USD&quot;), 
+    replace = TRUE, sim_count),
+  list_price_start = abs(rnorm(sim_count, 1000, 1000))
+) %&gt;% 
+  filter(from_currency != to_currency)
+
+# load function from gist
+devtools::source_gist(&quot;https://gist.github.com/brshallo/650c1ad3f4bd9b74076592c6bc4ff8ae&quot;)
+
+transactions_complex %&gt;%
+  mutate(
+    list_price_converted = convert_currencies(
+      price_from = list_price_start,
+      from = from_currency,
+      to = to_currency,
+      date = sales_date
+    )
+  )</code></pre>
+<pre><code>## # A tibble: 7,532 x 5
+##    sales_date from_currency to_currency list_price_start list_price_converted
+##    &lt;date&gt;     &lt;chr&gt;         &lt;chr&gt;                  &lt;dbl&gt;                &lt;dbl&gt;
+##  1 2021-01-01 JPY           CAD                  1454.                17.9   
+##  2 2021-01-01 CAD           USD                  3315.              2604.    
+##  3 2021-01-01 CAD           USD                  1009.               793.    
+##  4 2021-01-01 JPY           EUR                  2375.                18.9   
+##  5 2021-01-01 USD           JPY                  2792.            288225.    
+##  6 2021-01-01 CAD           USD                  2548.              2002.    
+##  7 2021-01-01 JPY           CAD                  1017.                12.5   
+##  8 2021-01-01 EUR           USD                   815.               992.    
+##  9 2021-01-01 EUR           JPY                   548.             68870.    
+## 10 2021-01-01 JPY           EUR                     7.58               0.0603
+## # ... with 7,522 more rows</code></pre>
 </div>
 <div class="footnotes">
 <hr />
