@@ -50,7 +50,7 @@ If your interest in solar is primarily wrapped-up in a goal to reduce your perso
 
 With a variety of green investment options available, it's important to maintain a shrewd perspective and choose the ones that optimize upon your goals[^action]. Investing in a cleaner future has never been easier or more important; I encourage you to take an active role in its development.
 
-[^Anecdotal]: Touring around the city I regularly see residential solar installations. When I ask friends/family what they think about getting solar more of them say "I want to!" I didn't do a thorough review hence this statement is largely vibes based. I thought I heard installs were up ~20 percent year over year. However total installations are still a small fraction of what they are in California. What we *do* get a ton of in Seattle is ads for solar installations. 
+[^Anecdotal]: Touring around the city I regularly see residential solar installations. When I ask friends/family what they think about getting solar more of them say "I want to!" I didn't do a thorough review hence this statement is largely vibes based. According to [[Google Project Sunroof](https://sunroof.withgoogle.com/) total installations are still a small fraction of what they are in California. What we *do* get a ton of in Seattle is ads for solar installations. 
 
 [^sun-islands]: There are also lots of shade creating trees. It is worth noting that there are “sun islands” not too far from Seattle that get substantially less cloud coverage. For example Whidbey Island (35 mile drive and just off the coast). The cool, temperate Seattle climate also has some advantages for panel efficiency.
 
