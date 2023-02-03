@@ -1,0 +1,53 @@
+---
+title: Recalibrating Quantiles
+author: Bryan Shalloway
+date: '2022-08-24'
+categories:
+  - rstats
+tags:
+  - '`r funspotr::spot_tags(''https://raw.githubusercontent.com/brshallo/funspotr-examples/main/R/save-examples.R'',
+    drop_knitr = TRUE)`'
+slug: scaling-quantiles
+---
+
+TLDR: Everyone knows over fitting your model will mess-up your predictions. This post is about how it also messes-up any associated prediction intervals. 
+
+Last year I did a series of posts on building prediction intervals (link). Two of the methods described used in-sample data to build the prediction intervals. Analytic approaches (like in Ordinary Least Squares) as well as quantile regression both use the training dataset to provide information about the distribution of a prediction^[E.g. the 2.5th and 97.5th percentile of the data for a 95% prediction interval.]. A risk here is that *if* your model overfits, your prediction intervals will likely be too narrow^[As the uncertainty is likely underestimated.]. I.e. a 95% prediction interval may only have 88% coverage on out-of-sample data^[Your quantiles will likely be biased towards the median. I.e. a quantile regression prediction for 0.10 may equate to a quantile of 0.13 on holdout data.].
+
+In those posts, I'd provided [Cautions With Overfitting](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#cautions-with-overfitting) in the context of prediction intervals/quantiles and suggested doing a spot-check comparing your model's performance on the training dataset against it's performance on a holdout dataset. If the performance is relatively similar in both the training and holdout data, that's an indicator your model is not overfitting^[To be more exhaustive you may want to review the coverage across a range of quantiles or compare aggregate measures of quantile predictions like the Weighted Scaled Pinball Loss. Checking more than just RMSE of the expected value predictions is a good idea.] and you may be ready to move on to producing prediction intervals.
+
+However, there are cases when the best performing model may still be overfitting^[Or you just don't want to go through a rigorous anti-overfitting process.]. In these cases, an alternative option is to *calibrate* your predicted quantiles / prediction intervals based on the coverage on a hold-out dataset. 
+
+In the remainder of this post I'll walk through an example of how to calibrate your quantiles with a holdout dataset.
+
+# Calibrating your quantiles
+
+You may have heard about calibrating your predictions in the context of predicted probabilities. This typically occurs when you are predicting the likelihoods of discrete outcomes and your predicted probabilities do not line-up well with the actual rate of occurrence of events. The most common methods for calibrating in these contexts are isotonic regression and Platt scaling, which I touch on briefly in [Rescale Predictions...](https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/#rescale-predictions-to-predicted-probabilities)[^scaling]. However, when calibrating quantiles there are no discrete outcomes, so using platt scaling^[i.e. logistic regression] is not the optimal approach.
+
+[^scaling]: Sometimes people confuse recalibrating for scaling which are different things. Scaling your data typically comes up in contexts of data-prep (not outputted predictions) for particular machine learning algorithms that expect scale invariance -- e.g. normalizing your data before passing it into a regularized regression technique is a common example of scaling your data.
+
+**Beta Regression**
+
+However because the target outcome in our case is quantiles (i.e. constrained between 0 and 1), a better approach may be to use beta regression^[Beta regression is often used in contexts where there is some proportion being modeled. In this case we don't really have a proportion but it should work nonetheless] as your "quantile calibration method."  
+
+**Arbitrary Model**
+
+Really though you can use any algorithm that constrains the target between 0 and 1. The main concern typically will be in how the approach does at the tails of the distribution where you have fewer data points to inform the calibrating model.
+
+# Example
+
+Again, *any* method that maps quantiles on the training set to the corresponding quantiles on a holdout set will work. To demonstrate this, I'll just use a look-up table for my example.
+
+Build model on 
+
+2064515815
+
+# Appendix
+
+## Note to Twitter
+
+Any tips on the best approaches for calibrating predictions of quantiles?
+
+I.e. picture your model is a bit overfit, you'd expect then that a prediction for the 0.10 quantile actually may be a bit narrow and correspond with say a 0.13 quantile... or a 95% prediction interval may actually be an 88% prediction interval (on holdout data)
+I'm finishing-up a post where I suggest using beta regression 
+My suggestion is to use beta regression 
