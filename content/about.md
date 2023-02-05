@@ -11,7 +11,7 @@ Bryan graduated with honors in Cognitive Neuroscience from Washington University
 
 *Career in Data Science:*
 
-Bryan has been a Data Scientist at [NetApp](https://www.netapp.com/) since July of 2017. He has worked as the lead data scientists on a wide range of problems with different teams in customer support, sales, and pricing. Examples of his projects:
+Bryan has been a Data Scientist at [NetApp](https://www.netapp.com/) since July of 2017. He has worked as lead data scientist on a wide range of problems with different teams in customer support, sales, and pricing. Examples of his projects:
 
 * Support ticket prioritization: Rate open customer support tickets according to risk of escalation.
 * Forecasting: Produce automated sales forecasts across product lines and geographies.
@@ -21,8 +21,8 @@ Outside of his direct responsibilities, Bryan is active in fostering internal an
 
 * Co-lead NetApp Data Science study group on topics including *Feature Engineering*, *Pricing Optimization*, and *Interpretable Machine Learning*.
 * Promote adoption of improved practices in areas such as hiring Data Scientists and workflows for predictive modeling.
-* Regular presenter to NetApp Data Science community and local technical communities. 
-* Mentor emerging NetApp talent and supported local university students completing their cap-stone projects in data analytics.
+* Present to local and global Data Science communities. 
+* Mentor new hires, support local university students completing capstone project, teach Data Analytics workshops.
 * "NetApp Service Award" recipient in recognition of volunteerism.
 
 Bryan created this blog as a place to document some of his ideas and learning. He wanted to do so in a way that was consistent with the open tutorials, books, software, and communities he has learned from over the course of his career.
