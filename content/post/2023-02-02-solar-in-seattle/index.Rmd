@@ -9,9 +9,9 @@ tags: []
 thumbnail: /2023/02/02/solar-in-seattle/images/bill-mead-wmaP3Tl80ww-unsplash.jpg
 ---
 
-**TLDR:** Residential solar installations have gained popularity in the Seattle area over the last few years[^Anecdotal]. Prima facie, these represent a suboptimal use of panels which could be more productive in regions of the country that are less overcast or have greater energy demands. The common inclination to "act locally" is sometimes misguided.  Climate change and personal investments are global topics; decision making concerning them should be treated as such[^grain-of-salt].
+**TLDR:** Residential solar installations have gained popularity in the Seattle area over the last few years[^Anecdotal]. Prima facie, these represent a suboptimal use of panels which could be more productive in regions of the country that are less overcast or have greater energy demands. The common inclination to "act locally" is sometimes misguided.  Climate change and personal investments are global topics; decision making concerning them should be treated as such[^grain-of-salt]. Even with the falling costs of solar and the rising imperative of climate change, Seattleites should consider alternatives to home solar installations.
 
-[^grain-of-salt]: This post is more "hot take" than researched evaluation of solar and green energy investments. Most of my sources are just a mash-up of things I maybe read somewhere and intuition, rather than a thorough review of literature.
+[^grain-of-salt]: Most of my sources are just a mash-up of things I maybe read somewhere and intuition, rather than a thorough review of literature.
 
 Anyone who lives in a residential area in Seattle has likely seen [this](https://www.youtube.com/watch?v=0StcKgAWnu4), [this](https://www.youtube.com/watch?v=MdbA_Q8AEGA), or similar ads for home solar installations. These elide the problem that Seattle is a comparatively bad candidate for residential solar:
 
