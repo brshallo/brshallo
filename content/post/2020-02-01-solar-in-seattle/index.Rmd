@@ -1,17 +1,18 @@
 ---
 title: Solar in Seattle
 author: Bryan Shalloway
-date: '2023-02-02'
-slug: solar-in-seattle
+date: '2020-02-01'
 categories:
   - politics
-tags: []
-thumbnail: /2023/02/02/solar-in-seattle/images/bill-mead-wmaP3Tl80ww-unsplash.jpg
+slug: solar-in-seattle
+thumbnail: /2020/02/01/solar-in-seattle/images/bill-mead-wmaP3Tl80ww-unsplash.jpg
 ---
 
-**TLDR:** Residential solar installations have gained popularity in the Seattle area over the last few years[^Anecdotal]. Prima facie, these represent a suboptimal use of panels which could be more productive in regions of the country that are less overcast or have greater energy demands. The common inclination to "act locally" is sometimes misguided.  Climate change and personal investments are global topics; decision making concerning them should be treated as such[^grain-of-salt]. Even with the falling costs of solar and the rising imperative of climate change, Seattleites should consider alternatives to home solar installations.
+**TLDR:** Residential solar installations have gained popularity in the Seattle area over the last few years[^Anecdotal]. Prima facie, these seem to represent a suboptimal use of panels which could be more productive in regions of the country that are less overcast or have greater energy demands. The common inclination to "act locally" is sometimes misguided.  Climate change and personal investments are global topics; decision making concerning them should be treated as such[^grain-of-salt]. Even with the falling costs of solar and the rising imperative of climate change, Seattleites should consider alternatives to home solar installations.
 
 [^grain-of-salt]: Most of my sources are just a mash-up of things I maybe read somewhere and intuition, rather than a thorough review of literature.
+
+*This post was actually written in early 2023, I am in the process of reorganizing my posts and as an interim solution to move this post away from data science related posts I just changed the date.*
 
 Anyone who lives in a residential area in Seattle has likely seen [this](https://www.youtube.com/watch?v=0StcKgAWnu4), [this](https://www.youtube.com/watch?v=MdbA_Q8AEGA), or similar ads for home solar installations. These elide the problem that Seattle is a comparatively bad candidate for residential solar:
 
@@ -48,7 +49,7 @@ If your interest in solar is primarily as a means to reduce your personal carbon
 1. compare it against alternatives, including both real (e.g. physical change to a home) and financial (e.g. stocks, bonds) assets^[Both climate change and your investment portfolio are topics to be examined in a global context; it is important to consider the full range of options available to you and not get hung-up on thinking *just* in terms of your personal consumption or physical modifications you can make to your home.]
 1. evaluate it on a standard scale of financial and environmental returns on investment
 
-With a variety of green investment options available, it's important to maintain a shrewd perspective and choose the ones that optimize upon your goals[^action]. Investing in a cleaner future has never been easier or more important; I encourage you to take an active and thoughtful role in its development.
+With a variety of green investment options available, it's important to maintain a shrewd perspective and choose the ones that optimize upon your goals[^action]. If you were already "on the fence" about a solar installation in Seattle, there likely exists an opportunity elsewhere with a better return on investment that should tip you over into becoming an active green energy funder. Investing in a cleaner future has never been easier or more important; I encourage you to take a thoughtful and participatory role in its development.
 
 [^Anecdotal]: Touring around the city I regularly see residential solar installations. When I ask friends/family what they think about getting solar more of them say "I want to!" I didn't do a thorough review hence this statement is largely vibes based. According to [[Google Project Sunroof](https://sunroof.withgoogle.com/) total installations are still a small fraction of what they are in California. What we *do* get a ton of in Seattle is ads for solar installations. 
 

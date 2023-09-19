@@ -10,39 +10,314 @@ tags:
 slug: scaling-quantiles
 ---
 
-TLDR: Everyone knows over fitting your model will mess-up your predictions. This post is about how it also messes-up any associated prediction intervals. 
-
-Last year I did a series of posts on building prediction intervals (link). Two of the methods described used in-sample data to build the prediction intervals. Analytic approaches (like in Ordinary Least Squares) as well as quantile regression both use the training dataset to provide information about the distribution of a prediction^[E.g. the 2.5th and 97.5th percentile of the data for a 95% prediction interval.]. A risk here is that *if* your model overfits, your prediction intervals will likely be too narrow^[As the uncertainty is likely underestimated.]. I.e. a 95% prediction interval may only have 88% coverage on out-of-sample data^[Your quantiles will likely be biased towards the median. I.e. a quantile regression prediction for 0.10 may equate to a quantile of 0.13 on holdout data.].
-
-In those posts, I'd provided [Cautions With Overfitting](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#cautions-with-overfitting) in the context of prediction intervals/quantiles and suggested doing a spot-check comparing your model's performance on the training dataset against it's performance on a holdout dataset. If the performance is relatively similar in both the training and holdout data, that's an indicator your model is not overfitting^[To be more exhaustive you may want to review the coverage across a range of quantiles or compare aggregate measures of quantile predictions like the Weighted Scaled Pinball Loss. Checking more than just RMSE of the expected value predictions is a good idea.] and you may be ready to move on to producing prediction intervals.
-
-However, there are cases when the best performing model may still be overfitting^[Or you just don't want to go through a rigorous anti-overfitting process.]. In these cases, an alternative option is to *calibrate* your predicted quantiles / prediction intervals based on the coverage on a hold-out dataset. 
-
-In the remainder of this post I'll walk through an example of how to calibrate your quantiles with a holdout dataset.
-
-# Calibrating your quantiles
-
-You may have heard about calibrating your predictions in the context of predicted probabilities. This typically occurs when you are predicting the likelihoods of discrete outcomes and your predicted probabilities do not line-up well with the actual rate of occurrence of events. The most common methods for calibrating in these contexts are isotonic regression and Platt scaling, which I touch on briefly in [Rescale Predictions...](https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/#rescale-predictions-to-predicted-probabilities)[^scaling]. However, when calibrating quantiles there are no discrete outcomes, so using platt scaling^[i.e. logistic regression] is not the optimal approach.
-
-[^scaling]: Sometimes people confuse recalibrating for scaling which are different things. Scaling your data typically comes up in contexts of data-prep (not outputted predictions) for particular machine learning algorithms that expect scale invariance -- e.g. normalizing your data before passing it into a regularized regression technique is a common example of scaling your data.
-
-**Beta Regression**
-
-However because the target outcome in our case is quantiles (i.e. constrained between 0 and 1), a better approach may be to use beta regression^[Beta regression is often used in contexts where there is some proportion being modeled. In this case we don't really have a proportion but it should work nonetheless] as your "quantile calibration method."  
-
-**Arbitrary Model**
-
-Really though you can use any algorithm that constrains the target between 0 and 1. The main concern typically will be in how the approach does at the tails of the distribution where you have fewer data points to inform the calibrating model.
+TLDR: Models are often selected based on how well they produce predictions. However this criteria doesn't guarantee the corresponding prediction *intervals* will be trustworthy. If your selected model is somewhat overfit to the training data or if there are model assumptions you are ignoring, the associated intervals may be unreliable. A simple heuristic is to build a separate model whose responsibility will be calibrating your intervals^[I'll be using the term "prediction interval" in this post, maybe I should have used "prediction band"... [Types of prediction bands]...].
 
 # Example
 
-Again, *any* method that maps quantiles on the training set to the corresponding quantiles on a holdout set will work. To demonstrate this, I'll just use a look-up table for my example.
+I'll start by copying the linear regression workflow from my previous [Understanding Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/) post. The goal of this model is to provide price ranges for home prices in the Ames, Iowa dataset. 
+
+**Setting up the data**
+
+Notice that I set-up two splits. This creates three datasets so I'll have data for...
+
+1. `ames_train`: Training initial model
+2.  `ames_valid `: Evaluate model before final test set and potentially use for calibrating prediction intervals
+3. `ames_holdout`: Final holdout data that can be used for evaluating prediction intervals after calibration.
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(AmesHousing)
+
+ames <- make_ames() %>% 
+  mutate(Years_Old = Year_Sold - Year_Built,
+         Years_Old = ifelse(Years_Old < 0, 0, Years_Old))
+
+set.seed(34)
+data_split <- initial_split(ames, prop = 0.80, strata = "Sale_Price")
+
+ames_train_valid <- training(data_split) 
+
+set.seed(1234)
+data_train_valid_spit <- initial_split(ames_train_valid, prop = 0.75, strata = "Sale_Price")
+
+ames_train <- training(data_train_valid_spit)
+ames_valid <- testing(data_train_valid_spit)
+ames_test  <- testing(data_split) 
+```
+
+**Building the Primary model**
+
+```{r}
+lm_recipe <- 
+  recipe(
+    Sale_Price ~ Lot_Area + Neighborhood  + Years_Old + Gr_Liv_Area + Overall_Qual + Total_Bsmt_SF + Garage_Area, 
+    data = ames_train
+  ) %>%
+  step_log(Sale_Price, base = 10) %>%
+  step_log(Lot_Area, Gr_Liv_Area, base = 10) %>%
+  step_log(Total_Bsmt_SF, Garage_Area, base = 10, offset = 1) %>%
+  step_novel(Neighborhood, Overall_Qual) %>% 
+  step_other(Neighborhood, Overall_Qual, threshold = 50) %>% 
+  step_dummy(Neighborhood, Overall_Qual) %>%
+  step_interact(terms = ~contains("Neighborhood")*Lot_Area)
+
+lm_mod <- linear_reg() %>% 
+  set_engine(engine = "lm") %>%
+  set_mode("regression")
+
+lm_wf <- workflows::workflow() %>% 
+  add_model(lm_mod) %>% 
+  add_recipe(lm_recipe) %>% 
+  fit(ames_train)
+```
+
+**Output Predictions**
+
+Let's write a function that will add predictions (AKA point estimates) and prediction intervals at a specified level (e.g. 80%).
+
+```{r}
+bind_intervals <- function(p_level, data = ames_valid){
+  # with modern tidymodels should just use parsnip::augment() to do most of this
+  data_preds <- predict(
+    workflows::extract_fit_parsnip(lm_wf),
+    workflows::extract_recipe(lm_wf) %>% bake(data),
+  ) %>%
+    bind_cols(relocate(data, Sale_Price)) %>%
+    mutate(.pred = 10 ^ .pred) %>%
+    select(
+      Sale_Price,
+      .pred,
+      Lot_Area,
+      Neighborhood,
+      Years_Old,
+      Gr_Liv_Area,
+      Overall_Qual,
+      Total_Bsmt_SF,
+      Garage_Area
+    )
+    
+  predict(
+  workflows::extract_fit_parsnip(lm_wf),
+  workflows::extract_recipe(lm_wf) %>% bake(data),
+  type = "pred_int",
+  level = p_level
+) %>% 
+  mutate(across(contains(".pred"), ~10^.x)) %>%
+  bind_cols(select(data_preds, .pred, Sale_Price)) %>% 
+  select(Sale_Price, contains(".pred"))
+  
+}
+
+bind_intervals(0.8) %>% 
+  mutate(covered = ifelse(Sale_Price <= .pred_upper & Sale_Price >= .pred_lower, 1, 0)) %>%
+  mutate(.pred_split = log(.pred) %>% cut_number(n = 10)) %>% 
+  group_by(.pred_split) %>% 
+  summarise(coverage = mean(covered)) %>% 
+  ggplot(aes(x = .pred_split, y = coverage))+
+  geom_point()+
+  geom_hline(yintercept = 0.8)+
+  ylim(0.5, 1)
+  # geom_smooth()+
+  # geom_jitter(height = 0.01)+
+  # geom_density(aes(x = .pred, fill = as.factor(covered)))
+
+```
+
+**Evaluate Prediction Intervals**
+
+Next I'll write a function that calculates the coverage  (i.e. the proportion of observations that land within the interval^[E.g. does a 95% prediction interval actually contain 95 out of 100 observations on new data.]) based on the actual `Sale_Price` for an output like the above.
+
+```{r}
+coverage <- function(data){
+  data %>%
+    mutate(
+      covered = ifelse(Sale_Price >= .pred_lower & Sale_Price <= .pred_upper, 1, 0)
+      ) %>%
+    summarise(coverage = mean(covered)) %>% 
+    pluck("coverage")
+}
+```
+
+Let's calculate our coverage rate for 80% prediction intervals on one of our holdout data sets. The coverage rate actually comes out to be a bit *higher* than our expected coverage^[The fact the coverage rate is higher on out-of-sample data may be surprising as many times you may expect the coverage on out of sample data to be lower due to the data overfitting the training set and underestimating the true noise in the model. Cases like this where the coverage is actually higher on out-of-sample data may be the result of model or data assumptions not holding.]. This suggests our prediction intervals are not well-calibrated.
+```{r}
+bind_intervals(0.80, data = ames_valid) %>% 
+  coverage()
+```
+
+Let's use our functions to calculate coverage rates across prediction intervals ranging from 50% to 95%. I'll check the coverage rates on both data that was used to train the model (`ames_train`) and one of our holdout data sets (`ames_valid`).
+
+```{r}
+coverage_rates <- tibble(
+  intervals = seq(0.5, 0.95, by = 0.01)
+) %>% 
+  mutate(coverage_holdout = map_dbl(intervals, 
+                            ~bind_intervals(.x, data = ames_valid) %>% coverage()),
+         coverage_training = map_dbl(intervals, 
+                            ~bind_intervals(.x, data = ames_train) %>% coverage()))
+
+coverage_rates %>%  
+  ggplot(aes(x = intervals))+
+  geom_point(aes(y = coverage_holdout, colour = "holdout sample"))+
+  geom_point(aes(y = coverage_training, colour = "training sample"))+
+  geom_line(aes(y = intervals, colour = "expected = actual"))+
+  labs(title = "Expected vs Actual Coverage", 
+       subtitle = "At different prediction interval levels", 
+       x = "Expected Coverage", 
+       y = "Actual Coverage", 
+       colour = NULL)+
+  theme_bw()
+```
+
+For the most part, across our confidence^[Speaking about "confidence" when talking about the "confidence interval on an individual prediction" can get confusing -- because people often confuse prediction intervals and confidence intervals. In an earlier draft of this post I had instead used the term "certainty" level rather than "confidence" but decided that would cause even more confusion...] levels our coverage seems too high. 
+
+Let's distill the chart above into summary statistics^[For the deviation of expected coverage from expectations when looking at the prediction intervals on the training and holdout data.]. To do this, I'll sum the average of the scaled^[The reason for scaling is that otherwise the deviations for the high confidence errors will generally be off.] absolute differences between the confidence level and the coverage rate across levels. This measure is similar to the Expected Calibration Error (ECE) metric -- which is used in classification contexts to review the calibration of predicted probabilities^[Note that the ECE measure is not without it's problems. See [Measuring Calibration in Deep Learning](https://openaccess.thecvf.com/content_CVPRW_2019/papers/Uncertainty%20and%20Robustness%20in%20Deep%20Visual%20Learning/Nixon_Measuring_Calibration_in_Deep_Learning_CVPRW_2019_paper.pdf)]. 
+
+The pseudo scaled expected calibration error is slightly higher for the prediction intervals made on holdout data.
+
+```{r}
+scaled_errors <- function(actual, expected){
+  abs_errors <- abs(actual - expected)
+  mean(abs_errors / expected)
+}
+
+coverage_rates %>% 
+  summarise(pseudo_scaled_ece_train = scaled_errors(coverage_training, intervals),
+            pseudo_scaled_holdout = scaled_errors(coverage_holdout, intervals))
+```
+
+The next step will be building our calibration model.
+
+
+## Secondary Model for Calibration
+
+For the sake of our example we are saying that, despite its issues, we want to use this model to produce prediction intervals[^keep-it]. We'll also say we want to output bounds for varying confidence levels. One set of stakeholders may want 80% intervals, another 90% a third 95%. Hence our intervals should be calibrated across confidence levels and be consistent with one another^[E.g. an 85% confidence interval should be wider than an 84% confidence level. This means that training a global model for our calibration may be a good path forward -- as opposed to, for example, training individual calibrating models at each confidence level which would be less likely to be consistent with one another. However the approach I use does not strictly enforce this.]. 
+
+[^keep-it]: A reason you may want to do this is that the model produces the most accurate point estimates but you still have some interest in the prediction intervals and want them to be consistent with the model you are using for producing your point estimates
+
+In the next step we'll build a separate model to calibrate our primary model's prediction intervals. To train this secondary "calibrating" model we'll need to encode a target that is relevant to the fidelity of the intervals of our observations. 
+
+## Picking a Target for Calibration
+
+There are any number of approaches you could take for setting-up your calibration step. The approach I will use is similar to [Calibrating Predicted Probabilities] but a distinct process^[And less well researched than in the classification context.]. My target will be a binary (1/0) of whether or not the point is covered within the initial interval. At this step our modeling function looks something like...
+
+{Covered: 1/0} ~ {Intercept: base rate of coverage}
+
+
+**Adaptive?**
+
+It could be the case that 
+
+**Global or local calibration of confidence?**
+
+We could duplicate our dataset and calculate our target "covered?" (1/0) for each confidence level and then pass all these observations into a single global model that is responsible for returning well-calibrated outputs across confidence levels, we would just add to our model specification...
+
+
+
+*Covered (target) ~ Level + prediction*: For each confidence level (e.g. 95%), calculate whether or not the point is covered within the interval (1;0). 
+
+The calibrating model will be a classification model that returns probabilities between 0 and 1^[Depending on the model type you may need to transform the outputs of the predictions of the calibrating model from log-odds into probabilities.]. These probabilities will correspond with the likelihood a given confidence level covers an out-of-sample observation. 
+
+There are a variety of variations you could make on this approach[^variations].  For example, if you want the calibrating model to be adaptive[^adaptive] you could pass in the primary model's prediction or other variables as inputs for training the calibrating model[^too-complicated]. Note also that we're clearly violating our model assumptions for logistic regression, e.g. our observations are not independent[^problems].
+
+[^variations]: Similarly, you could calibrate the bottom and top bounds separately by changing 1/0 to be whether actual is more extreme than that bound (e.g. 1/0 on is it less than or equal to the 97.5th percentile when training the model for the upper bound). These approaches most resemble calibration techniques like Platt Scaling used in classification contexts where the predicted probabilities of discrete outcomes are being calibrated. Note that you could also train the model on the aggregate coverage rate at each prediction interval[^downside-of-coverage]. 
+
+[^adaptive]: The term "adaptive" is typically used in "conformal inference" to refer to whether or not the range on the prediction intervals is subject to vary depending on the specific prediction. For example, a model may say the 95% prediction interval means y +/- 3.2, an adaptive model would allow that 3.2 to vary depending on the value of y or some other set of variables so that the uncertainty is specific to the point being predicted.
+
+[^too-complicated]: If you make this too complicated though you run the risk of your calibrating model no longer doing a great job of calibrating. Part of the reason the secondary model calibrates well is that it is such a simple model.
+
+[^problems]: The original data is essentially duplicated for each confidence level, hence why the observations will not be independent. However we care more about the predictions of the secondary model now so, in theory, can relax somewhat on our assumptions. Yet there's also something weird about passing in confidence levels as inputs. Hence the resulting model may not be a meaningful or suitable representation of the underlying factors driving the enclosure likelihood. All of which is to restate that the approach I'm describing is more a heuristic vs something with strong theoretical underpinnings.
+
+Past public [Competitions], like M5, have used things like Pinball Loss which is perhaps a better choice... but also a little more complicated to walk through). 
+
+*Model types:*
+
+There are a variety of model types and targets you might set to train this calibrating model. 
+
+* Linear model
+* Cubist
+
+
+
+[^downside-of-coverage]: A problem with using coverage as our measure of interest for our calibrating model is that the measure is not independent. Also, coverage is a weird measure because it ties upper and lower bounds together rather than scoring each bound individually. 
+
+
+# Explanation
+
+In 2021 I did a series of posts on building prediction intervals (Part 1 was on [Understanding Prediction Intervals](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/)). Analytic approaches (like Ordinary Least Squares) use the training dataset to provide information about the distribution of a prediction^[E.g. the 2.5th and 97.5th percentile of the data for a 95% prediction interval.]. Many other methods also use in-sample data to estimate the distribution for prediction intervals. A risk here is that *if* your model overfits, your prediction intervals will likely be too narrow^[As the uncertainty is likely underestimated.]. E.g. a 95% prediction interval may only have 88% of observations actually fall within it when faced with new data^[Depending on the technique you use, quantile regression can also be biased, e.g. towards the median. I.e. a quantile regression prediction for 0.10 may equate to a quantile of 0.13 on holdout data. However this depends on the technique you are using.]. Alternatively, there could be other situations where your coverage on out-of-sample data is actually higher than expected. If you care that expectations of your prediction intervals align with coverage on new data, one option is to take steps to make some adjustments to your outputs.
+
+**Are Prediction Intervals Inference or Prediction?**
+
+Prediction intervals sit between the two main purposes of building models: inference and prediction. However because the intervals often come with strong distributional assumptions, the process of building prediction intervals should often align more with the careful process of doing inference (which typically requires more attention to assumptions about the model and the underlying data compared to when the focus is primarily on prediction).
+
+In previous posts, I'd provided some [Cautions With Overfitting](https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/#cautions-with-overfitting). In the context of producing prediction intervals, I had suggested doing a spot-check to compare your model's performance on the training data against it's performance on holdout data. If the performance is relatively similar in both the training and holdout data, that's an indicator your model is able to generalize^[I.e. that it's not overfitting. To be more exhaustive you may want to review the coverage across a range of quantiles or compare aggregate measures of quantile predictions like the Weighted Scaled Pinball Loss. Checking more than just RMSE of the expected value predictions is a good idea.]) and you at least have some minimal clearance to think about prediction intervals. 
+
+**When you don't trust the intervals produced by your selected model**
+
+There are cases when the model you want to select (e.g. because it is the most performant) has some issues. Perhaps the model is still somewhat overfit to the training set. Maybe there are model assumptions you know are violated. Maybe you're just nervous you're missing something...  Whatever it is, you may not fully trust that the model you have selected will produce well calibrated prediction intervals but you still want to move forward (warts and all) with the model. 
+
+**Getting well calibrated prediction intervals**
+
+The approach I will describe in this post  -- building a secondary calibrating model -- is a fast / simple / practical heuristic but lacks strong theoretical underpinnings. If you need a flexible, well supported approach, I recommend looking into conformal inference, or a modeling approach that directly outputs well calibrated intervals. (See [*Valid prediction intervals for regression problems*](https://arxiv.org/pdf/2107.00363.pdf), Dewolf, Baets, Waegeman.)
+
+The tidymodels ecosystem is in the process of adding well integrated solutions for conformal inference:
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Join me at <a href="https://twitter.com/hashtag/positconf2023?src=hash&amp;ref_src=twsrc%5Etfw">#positconf2023</a> to learn about conformal inference tools in the probably package. <br><br>You can make prediction intervals for any type of regression model!<br><br>Sept 17-23 in Chicago! Register now at <a href="https://t.co/MsFRQ0jQ9D">https://t.co/MsFRQ0jQ9D</a>.<a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> <a href="https://t.co/N5mbSg2vHy">pic.twitter.com/N5mbSg2vHy</a></p>&mdash; Max Kuhn (@topepos) <a href="https://twitter.com/topepos/status/1654513475069132800?ref_src=twsrc%5Etfw">May 5, 2023</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+# Appendix
+
+In the [Appendix] under [Calibrating your quantiles] I'll get into a more 
+
+
+
+
+## Calibrating Coverage
+
+To calibrate these prediction intervals to align better with expected coverage, we can now just fit another model where our target will be "actual coverage" and our input "expected coverage". There are a wide range of model types we might use, for this example I'll try three:
+
+1. *beta regression*: In the context of calibrating predicted probabilities of discrete outcomes, Platt scaling (which is essentially just logistic regression) is very common. Beta regression, while not a perfect fit, is often used when predicting proportions on a 0 to 1 scale so I thought may be a decent fit here.  
+2. *cubist*: The other common approach for calibrating predicted probabilities is "isotonic regression" which is essentially just a decision tree. A cubist model is just a decision tree that terminates in linear regression models and I figured may allow for less choppy slopes... which, given the previous plot may be better.
+3. *look-up table*: Not a 
+
+A caution here is that there are fewer observations
+
+
+
+## Types of prediction bands
+
+Depending on the type of model you are using, the interpretation of the bounds around a predication can mean different things. If you're using Ordinary Least Squares you'll be producing prediction intervals. If you're using Bayesian methods you'll be creating credible intervals on a prediction. If you're using quantile regression methods you're intervals are composed of predicted quantiles that you pair together. Each of these approaches, roughly speaking, offer different ways of producing bounds around a prediction (sometimes generally referred to as "prediction bands"). My example is a rough way of 
+
+1. taking those intervals
+2. setting-up a training scheme that is relevant to the calibration of the intervals -- in my example coverage[^downside-of-coverage] 
+3. calibrating them using an additional model and holdout data.
+
+## Calibrating Predicted Probabilities
+
+You may have heard about calibrating your predictions in the context of predicted probabilities. This typically occurs when you are predicting the likelihoods of discrete outcomes and your predicted probabilities do not line-up well with the actual rate of occurrence of events. Common methods for calibrating predicted probabilities of discrete events are isotonic regression and Platt scaling, which I touch on briefly in [Rescale Predictions...](https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/#rescale-predictions-to-predicted-probabilities)[^scaling].
+
+[^scaling]: Sometimes people confuse recalibrating for scaling which are different things. Scaling your data typically comes up in contexts of data-prep (not outputted predictions) for particular machine learning algorithms that expect scale invariance -- e.g. normalizing your data before passing it into a regularized regression technique is a common example of scaling your data.
+
+
+However the target in this case is not a series of discrete outcomes but rather rates of coverage between 0 and 1 for different sizes of intervals, making Beta Regression a potentially more appropriate approach^[Beta regression is often used in contexts where there is some proportion being modeled. In this case we don't really have a proportion but it should work nonetheless.]. (Platt scaling -- which is essentially just Logistic Regression -- could be set-up as well but Beta Regression is probably a more natural choice here.)
+
+With whichever approach you use, the main concern typically will be in how the algorithm does at the tails of the distribution (i.e. your more extreme observations) where there are fewer data points to inform the model responsible for calibrating the quantiles.
+
+## Competitions
+
+There are tons of prediction competitions out there but far fewer prediction interval competitions. A prominent one though was the [M5 forecasting competition in uncertainty](https://www.kaggle.com/c/m5-forecasting-uncertainty). The metric used for evaluation was Weighted Scaled Pinball Loss. I'll also note that the few submissions I went through seemed to primraily be focused on predicting quantiles directly with the model versus building a model and then a second calibrating model as I go through in this post.
+
+# Example
+
+
+
+
+Again, *any* method that maps quantiles on the training set to the corresponding quantiles on a holdout dataset will work. To demonstrate this, I'll just use a look-up table for my example.
 
 Build model on 
 
 2064515815
 
-# Appendix
+## Note about forecasting competition
 
 ## Note to Twitter
 
@@ -51,3 +326,56 @@ Any tips on the best approaches for calibrating predictions of quantiles?
 I.e. picture your model is a bit overfit, you'd expect then that a prediction for the 0.10 quantile actually may be a bit narrow and correspond with say a 0.13 quantile... or a 95% prediction interval may actually be an 88% prediction interval (on holdout data)
 I'm finishing-up a post where I suggest using beta regression 
 My suggestion is to use beta regression 
+
+
+## Approaches
+
+-- coverage based approach
+-- take as input deviation from lower bound and predict deviation from lower bound; deviation from upper bound and predict deviation from upper bound and then do this across the board to get better calibrated prediction intervals
+-- try and force it into something resembling the approach for isotonic regression; e.g. does value fall below upper bound, does value fall above lower bound, encode as 1 or 0 if yes and then train a logit or other model and use the supplied values...
+-- 
+
+
+
+# Notes
+
+coverage and then train a secondary model where input: confidence (i.e. expected coverage); target: coverage on holdout data. This is not an ideal measure in that each data point becomes an aggregation of prior data points and  -- but intuitively simple for the purposes of this post -- I'll be using coverage.
+
+
+## Can you reuse the training data for calibration?
+
+In our case, the coverage rate is under estimated when considering the outputted prediction intervals on both the observations the model was trained on as well as on the holdout data[^reuse-or-new]. However the under estimation is more extreme when reviewing the intervals for the holdout data. While we could get close to calibrated intervals by just reusing the primary model's training data to train our calibrating model, it is best practice to use separate data for any calibrating step^[This avoids baking in any bias from the primary model and training data to the calibrating model.]. 
+
+[^reuse-or-new]: The model likely has some issue(s) with model assumptions regarding the distribution of the errors. In this case, it looks like you could do at least a partial job of calibrating the intervals by reusing the training data. An alluring aspect of reusing the original training data is that your calibrating model will be based on a larger dataset and your primary model will get more data for training. *Still*, in most cases you should use new data for any calibration.
+
+
+```{r}
+library(tidyverse)
+
+neighborhoods <- tibble(
+  x_dist = rnorm(10000000, mean = -0.5),
+  y_dist = rnorm(10000000, mean = 0.0),
+  z_dist = rnorm(10000000, mean = 0.5))
+
+expected_sds_from_pop_mean_given_threshold <- function(threshold){
+  neighborhoods %>% 
+    summarise(`group mean: -0.5` = mean(ifelse(x_dist > threshold, x_dist, NA), na.rm = TRUE),
+              `group mean: 0.0` = mean(ifelse(y_dist > threshold, y_dist, NA), na.rm = TRUE),
+              `group mean: 0.5` = mean(ifelse(z_dist > threshold, z_dist, NA), na.rm = TRUE))
+}
+
+
+tibble(threshold = seq(0, 3, by = 0.25)) %>% 
+  mutate(devs_from_mean = map(threshold, expected_sds_from_pop_mean_given_threshold)) %>%
+  unnest(devs_from_mean) %>% 
+  round(2) %>% 
+  print() %>% 
+  pivot_longer(contains("group")) %>% 
+  ggplot(aes(x = threshold, y = value, colour = name))+
+  geom_line()+
+  ylim(0, NA)+
+  labs(x = "Threshold to enter lottery",
+       y = "Expected SD's over pop",
+       caption = "Overall population is assumed to have a mean of 0 and a standard deviation of 1")
+```
+
