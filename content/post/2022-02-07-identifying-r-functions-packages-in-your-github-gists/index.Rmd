@@ -32,30 +32,35 @@ In this post I...
 1. create a function to extract code chunks from simple .md files
 1. parse the functions and packages in my code using [funspotr](https://github.com/brshallo/funspotr)^[In the future I may do a follow-up that passes the parsed functions and packages through a network analysis or some other approach to better visualize the relationships between code snippets.].
 
+**This post was updated on 2023-10-11 to make it consistent with updated `{funspotr}` code. Tables were also updated to reflect brshallo gists at this time. The following post on network plots however was not updated.**
 
 # Parsing code
 
 First I used funspotr to get a table with all of my gists.
 
-```{r, inlcude = FALSE}
+```{r, include = FALSE}
 
 ```
 
+```{r, include = FALSE}
+### THERE IS SOMETHING WEIRD WITH FORMATTING IN THIS FILE
+### THAT IS WHY THERE ARE ALL THESE DUPLICATE AND UNNECESSARY CODE CHUNKS
+### I GAVE UP ON FIxING IT IN THE "CORRECT" WAY
+
+library(dplyr)
+library(purrr)
+library(stringr)
+library(funspotr)
+
+```
 
 ```{r}
 library(dplyr)
 library(purrr)
 library(stringr)
 library(funspotr)
-```
 
-```{r}
-library(dplyr)
-library(purrr)
-library(stringr)
-library(funspotr)
-
-brshallo_gists <- funspotr::github_gists("brshallo")
+brshallo_gists <- funspotr::list_files_github_gists("brshallo", keep_non_r = TRUE)
 
 brshallo_gists
 ```
@@ -65,25 +70,26 @@ brshallo_gists
 funspotr is already set-up to parse all the unique functions and packages from R or Rmd files.
 
 ```{r, include = FALSE}
-# display output was weird here so just copied code and set eval = FALSE
 r_gists <- brshallo_gists %>% 
-  filter(funspotr:::str_detect_r_rmd(contents))
+  filter(funspotr:::str_detect_r_docs(relative_paths))
 
-r_gists_parsed <- funspotr::github_spot_funs(custom_urls = r_gists)
+r_gists_parsed <- funspotr::spot_funs_files(r_gists)
 
 r_gists_unnested <- r_gists_parsed %>% 
-  funspotr::unnest_github_results()
+  funspotr::unnest_results()
 ```
 
 ```{r, eval = FALSE}
 r_gists <- brshallo_gists %>% 
-  filter(funspotr:::str_detect_r_rmd(contents))
+  filter(funspotr:::str_detect_r_docs(relative_paths))
 
-r_gists_parsed <- funspotr::github_spot_funs(custom_urls = r_gists)
+r_gists_parsed <- funspotr::spot_funs_files(r_gists)
 
 r_gists_unnested <- r_gists_parsed %>% 
-  funspotr::unnest_github_results()
+  funspotr::unnest_results()
 ```
+
+Hidden from this post but a warning message indicates a couple files which did not parse correctly. In this particular case those files were created using reprexes for .md output but I saved them as .R files -- hence they failed parsing.
 
 ```{r}
 r_gists_unnested
@@ -138,32 +144,40 @@ I map `extract_code_md()` on all the .md gists and then parse the files using fu
 ```{r, include = FALSE}
 # display output was weird here so just copied code and set eval = FALSE
 md_gists <- brshallo_gists %>% 
-  filter(!funspotr:::str_detect_r_rmd(contents))
+  filter(!funspotr:::str_detect_r_docs(relative_paths))
 
 md_gists_local <- md_gists %>% 
-  # name urls because that's what funspotr::githup_spot_funs() expects
-  mutate(urls = map_chr(urls, extract_code_md))
+  rename(urls = absolute_paths) %>% 
+  # name absolute_paths because that's what funspotr::spot_funs_files() expects
+  mutate(absolute_paths = map_chr(urls, extract_code_md))
 
-md_gists_parsed <- funspotr::github_spot_funs(custom_urls = md_gists_local)
-
+md_gists_parsed <- funspotr::spot_funs_files(md_gists_local) %>% 
+  mutate(absolute_paths = urls) %>% 
+  select(-urls)
+  
 md_gists_unnested <- md_gists_parsed %>% 
-  funspotr::unnest_github_results()
+  funspotr::unnest_results()
 ```
 
 ```{r, eval = FALSE}
-# display output was weird here so just copied code and set eval = FALSE
 md_gists <- brshallo_gists %>% 
-  filter(!funspotr:::str_detect_r_rmd(contents))
+  filter(!funspotr:::str_detect_r_docs(relative_paths))
 
 md_gists_local <- md_gists %>% 
-# name urls because that's what funspotr::githup_spot_funs() expects
-  mutate(urls = map_chr(urls, extract_code_md))
+  rename(urls = absolute_paths) %>% 
+  # name absolute_paths because that's what funspotr::spot_funs_files() expects
+  mutate(absolute_paths = map_chr(urls, extract_code_md))
 
-md_gists_parsed <- funspotr::github_spot_funs(custom_urls = md_gists_local)
-
+md_gists_parsed <- funspotr::spot_funs_files(md_gists_local) %>% 
+  mutate(absolute_paths = urls) %>% 
+  select(-urls)
+  
 md_gists_unnested <- md_gists_parsed %>% 
-  funspotr::unnest_github_results()
+  funspotr::unnest_results()
 ```
+
+
+In this case also some files did not parse correctly though this is hidden due to `warning = FALSE` settings in the code chunks. These are essentially just not included in the unnested output.
 
 ```{r}
 md_gists_unnested
@@ -182,11 +196,11 @@ gists_unnested <- bind_rows(
 ) %>% 
   # got this arranging by a vector trick from SO:
   # https://stackoverflow.com/questions/52216341/how-to-sort-rows-of-a-data-frame-based-on-a-vector-using-dplyr-pipe
-  arrange(match(contents, brshallo_gists$contents)) %>% 
+  arrange(match(relative_paths, brshallo_gists$relative_paths)) %>% 
   # add back-in links to url's where files are rather than urls column being
   # local paths for .md snippets
-  select(-urls) %>% 
-  left_join(brshallo_gists, by = "contents")
+  select(-absolute_paths) %>% 
+  left_join(brshallo_gists, by = "relative_paths")
 
 gists_unnested %>% 
   DT::datatable(rownames = FALSE,
