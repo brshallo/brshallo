@@ -60,7 +60,7 @@ library(purrr)
 library(stringr)
 library(funspotr)
 
-brshallo_gists <- funspotr::list_files_github_gists("brshallo", keep_non_r = TRUE)
+brshallo_gists <- funspotr::list_files_github_gists("brshallo", pattern = ".")
 
 brshallo_gists
 ```

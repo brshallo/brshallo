@@ -67,7 +67,7 @@ library(purrr)
 library(stringr)
 library(funspotr)
 
-brshallo_gists &lt;- funspotr::list_files_github_gists(&quot;brshallo&quot;, keep_non_r = TRUE)
+brshallo_gists &lt;- funspotr::list_files_github_gists(&quot;brshallo&quot;, pattern = &quot;.&quot;)
 
 brshallo_gists</code></pre>
 <pre><code>## # A tibble: 112 × 2
