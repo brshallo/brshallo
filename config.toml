@@ -19,8 +19,8 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_cache$", "\\.knit\\.md$", "\\.utf8\
     url = "/about/"
     weight = 1
 [[menu.main]]
-    name = "Twitter"
-    url = "https://twitter.com/brshallo"
+    name = "Presentations"
+    url = "https://www.youtube.com/watch?v=gme4Fb9JVjk&list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95"
     weight = 2
 [[menu.main]]
     name = "GitHub"
@@ -32,9 +32,10 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_cache$", "\\.knit\\.md$", "\\.utf8\
     url = "https://www.linkedin.com/in/bryanshalloway/"
     weight = 4
 [[menu.main]]
-    name = "Presentations"
-    url = "https://www.youtube.com/watch?v=gme4Fb9JVjk&list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95"
+    name = "Twitter"
+    url = "https://twitter.com/brshallo"
     weight = 5
+
 
 [params]
     summary_length = 200
