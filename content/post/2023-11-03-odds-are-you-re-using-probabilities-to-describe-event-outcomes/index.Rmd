@@ -6,7 +6,7 @@ slug: odds-are-you-re-using-probabilities-to-describe-event-outcomes
 categories:
   - data science
 tags: ["`r funspotr::spot_tags(drop_knitr = TRUE)`"]
-thumbnail: /2022/11/03/odds-are-you-re-using-probabilities-to-describe-event-outcomes/images/may-the-odds-be-ever-in-your-favor.jpg
+thumbnail: /2023/11/03/odds-are-you-re-using-probabilities-to-describe-event-outcomes/images/may-the-odds-be-ever-in-your-favor.jpg
 ---
 
 
