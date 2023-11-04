@@ -6,6 +6,7 @@ slug: odds-are-you-re-using-probabilities-to-describe-event-outcomes
 categories:
   - data science
 tags: ["`r funspotr::spot_tags(drop_knitr = TRUE)`"]
+thumbnail: /2022/11/03/odds-are-you-re-using-probabilities-to-describe-event-outcomes/images/may-the-odds-be-ever-in-your-favor.jpg
 ---
 
 
@@ -33,7 +34,7 @@ Note that if you are completely new to odds, you should first start here: [Ratio
 
 # When odds are helpful
 
-You make a glass of chocolate milk for your nephew and add 1 part chocolate for every 9 parts milk. He has a sip and says, "Please make it three times as chocolatey." The most obvious way to satisfy his request would be to triple the amount of chocolate in the cup^[The size of his sip is being approximated to a size of 0 parts.], i.e. the ratio of chocolate to milk should go from 1 to 9 to 3 to 9. To go from one part chocolate to three parts chocolate you simply add two more parts chocolate, bringing the beverage to the correct 3 to 9 chocolate to milk ratio (simplified: 1 to 3). If instead you took his comment as him wanting the cup to be composed of $\frac{3}{10}$ chocolate instead of $\frac{1}{10}$ chocolate, your calculations (without starting over on the drink) would be more complicated^[If you go through the hassle, you would realize you'd need to add $\frac{20}{7}$ more parts of chocolate to the beverage.]. 
+You make a glass of chocolate milk for your nephew and add 1 part chocolate for every 9 parts milk. He takes a sip and says, "Please make it three times as chocolatey." The most obvious way to satisfy his request would be to triple the amount of chocolate in the cup^[The size of his sip is being approximated to a size of 0 parts.], i.e. the ratio of chocolate to milk should go from 1 : 9 to 3 : 9. To go from one part chocolate to three parts chocolate you simply add two more parts chocolate, bringing the beverage to the correct 3 to 9 chocolate to milk ratio (simplified: 1 to 3). If instead you took his comment as him wanting the cup to be composed of $\frac{3}{10}$ chocolate rather than the current $\frac{1}{10}$ chocolate, your calculations (without starting over on the drink) would be more complicated^[If you go through the hassle, you would realize you'd need to add $\frac{20}{7}$ more parts of chocolate to the beverage.]. 
 
 In a similar way that it can be easier to think of parts of recipes in terms of ratios rather than fractions out of a whole, it can sometimes be easier to think of event distributions in terms of odds rather than probabilities.
 
@@ -46,7 +47,7 @@ In a similar way that it can be easier to think of parts of recipes in terms of 
 
 Let's change examples to sports and substitute parts *chocolate* to *milk* for parts *winning* to *losing* when playing on one's home court. Say in professional basketball the odds of the home team winning are 3 to 2, i.e. for every 3 home team wins the away team wins 2. Equivalently there is a $\frac{3}{5}$ chance (60% probability) of the home team winning. Maybe you want to compare this 'home court advantage' between professional and college basketball. Odds ratios are a useful method for describing such relationships as they are easy to calculate and manipulate and allow flexibility in problem formulation.
 
-Perhaps you have a friend who says "College players get rattled easily. The impact of home court advantage in college is twice what it is at the professional level." This type of comparison could be viewed as an odds ratio. You have two sets of odds each concerning winning to losing on home court, one for college and one for the pros, and you are taking the ratio of the odds to characterize the relationship of home court advantage depending on the league of play^[Becuase odds themselves are a kind of ratio, odds ratios are just a particular kind of ratio of ratios.]. Pretend your friend next asks, "Given my statement above and what you know about home court advantage at the professional level, what would be the relationship between winning and losing at home in college?^[You try and interrogate them for additional details but they remain silent, leaving you with a vague problem statement.]" 
+Perhaps you have a friend who says "College players get rattled easily. The impact of home court advantage in college is twice what it is at the professional level." This type of comparison could be viewed as an odds ratio. You have two sets of odds each concerning winning to losing on home court, one for college and one for the pros, and you are taking the ratio of the odds to characterize the relationship of home court advantage depending on the league of play^[Becuase odds themselves are a kind of ratio, odds ratios are just a particular kind of ratio of ratios.]. Pretend your friend next asks, "Given my statement above and what you know about home court advantage at the professional level, what would be the relationship between winning and losing at home in college^[You try and interrogate them for additional details but they remain silent, leaving you with a vague problem statement.]?" 
 
 Taking an odds approach, you might formalize the problem your friend gave you as:
 
@@ -64,7 +65,7 @@ $$\frac{??}{2/3} = 1/2$$
 
 Solving for this, our odds of *losing* at home in college simplifies to 1 to 3. This is the reciprocal of our 3 to 1 odds of *winning* at home. Whether we frame the problem in terms of 'winning at home' or 'losing at home', the odds are reciprocally related, demonstrating a consistent relationship.
 
-*It is less clear how you might formalize the problem in terms of probabilities, also the reciprocal nature of your solutions would not be preserved under multiplication.* Doubling the probability of winning from $\frac{3}{5}$ would produce a meaningless answer of $\frac{6}{5}$. You could attempt to flip the problem and instead first frame it as 'What is the chance of *losing* at home in college.' Chance of losing at home is $\frac{2}{5}$, halved becomes $\frac{1}{5}$, entailing the chance of winning would be $\frac{4}{5}$. While you arrived at an answer for "chance of home team winning in college: $\frac{4}{5}$," your solution was dependent on whether you started out from a "chance of winning" or a "chance of losing" perspective. 
+*It is less clear how you might formalize the problem in terms of probabilities; also the reciprocal nature of your solutions would not be preserved under multiplication.* Doubling the probability of winning from $\frac{3}{5}$ would produce a meaningless answer of $\frac{6}{5}$. You could attempt to flip the problem and instead first frame it as 'What is the chance of *losing* at home in college.' Chance of losing at home is $\frac{2}{5}$, halved becomes $\frac{1}{5}$, entailing the chance of winning would be $\frac{4}{5}$. While you arrived at an answer for "chance of home team winning in college: $\frac{4}{5}$," your solution was dependent on whether you started out from a "chance of winning" or a "chance of losing" perspective. 
 
 **Another Example:**
 
@@ -81,7 +82,7 @@ This simplifies to a 2:1 odds of winning at home in college or, if you inverted 
 
 # Communicating odds
 
-An advantage of probabilities over odds is that people are accustomed to probabilities. If you want to communicate odds to someone who is new to the concept, a helpful heuristic is to frame it in the template 'for every ___ ___, there are ___ ___." E.g. "For every 3 home wins, there are 2 home losses", or the odds of winning at home are 3 to 2. If you want to communicate a relationship between odds with an odds ratio you could tweak this structure slightly, e.g. "The ratio of home wins to home losses is twice as high in college compared to in the pros." Keeping the context of the problem central to the explanation is central to being understood. The payoff of using odds is the ability to clearly articulate multiplicative relationships and comparisons between event outcomes, which can often be cumbersome or unclear when confined to the language of probability alone.
+An advantage of probabilities over odds is that people are accustomed to probabilities. If you want to communicate odds to someone who is new to the concept, a helpful heuristic is to frame it in the template "for every ___ ___, there are ___ ___." E.g. "For every 3 home wins, there are 2 home losses", or the odds of winning at home are 3 to 2. If you want to communicate a relationship between odds with an odds ratio you could tweak this structure slightly, e.g. "The ratio of home wins to home losses is twice as high in college compared to in the pros." Keeping the context of the problem central to the explanation is central to being understood. The payoff of using odds is the ability to clearly articulate multiplicative relationships and comparisons between event outcomes which may be cumbersome or unclear when confined to the language of probability alone.
 
 *With a little help, we can stop acting like Han Solo.*
 
@@ -112,9 +113,6 @@ create_graph() %>%
               node_aes = node_aes(fillcolor = "blue",
                                   fontsize = 5)) %>% 
   render_graph()
-
-# change to show a literal bag with gganimate moving things
-
 ```
 
 Odds could be used to represent the ratio between red and blue marbles. Probability could represent the fraction of all marbles that are red^[Note that while probability is limited to the domain of 0 to 1, odds can take any positive rational number.]. 
@@ -158,7 +156,7 @@ You can switch between odds and probabilities using the function below:
 
 $$O = \frac{P}{1-P}$$
 
-However, the style of thinking for odds emphasizes the relationship *between* the frequencies of possible events, whereas probabilities emphasizes the relative frequency of a *particular* event. Some problems lend themselves more naturally to probability and others to odds^[I briefly reference some of these differences in [Other problems]. However for the remainder of the post I'll focus on where odds suggest an intuitive and consistent framework -- afterall odds are the ones that need PR help.].
+Odds emphasizes the relationship *between* the frequencies of possible events whereas probabilities emphasizes the relative frequency of a *particular* event. Some problems lend themselves more naturally to probability and others to odds^[I briefly reference some of these differences in [Other problems]. However for the remainder of the post I'll focus on where odds suggest an intuitive and consistent framework -- afterall odds are the ones that need PR help.].
 
 ## Many variables
 
