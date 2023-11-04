@@ -1,0 +1,175 @@
+---
+title: Odds Are You're Using Probabilities to Describe Event Outcomes
+author: Bryan Shalloway
+date: '2023-11-03'
+slug: odds-are-you-re-using-probabilities-to-describe-event-outcomes
+categories:
+  - data science
+tags: ["dplyr", "ggplot2", "DiagrammeR"]
+---
+
+<script src="{{< blogdown/postref >}}index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="{{< blogdown/postref >}}index_files/viz/viz.js"></script>
+<link href="{{< blogdown/postref >}}index_files/DiagrammeR-styles/styles.css" rel="stylesheet" />
+<script src="{{< blogdown/postref >}}index_files/grViz-binding/grViz.js"></script>
+
+<div id="TOC">
+<ul>
+<li><a href="#when-odds-are-helpful" id="toc-when-odds-are-helpful">When odds are helpful</a>
+<ul>
+<li><a href="#ratio-of-odds-odds-ratio" id="toc-ratio-of-odds-odds-ratio">Ratio of odds (odds ratio)</a></li>
+</ul></li>
+<li><a href="#communicating-odds" id="toc-communicating-odds">Communicating odds</a></li>
+<li><a href="#appendix" id="toc-appendix">Appendix</a>
+<ul>
+<li><a href="#ratios-and-fractions-of-events" id="toc-ratios-and-fractions-of-events">Ratios and fractions of events</a></li>
+<li><a href="#many-variables" id="toc-many-variables">Many variables</a>
+<ul>
+<li><a href="#other-problems" id="toc-other-problems">Other problems</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+
+<p>We grow up learning proportions, percentages, risks, probabilities. You encounter them when a teacher gives a grade on a test or a doctor describes the risk of an illness. On the other hand, we rarely interact with odds and when we do it’s often in contexts like:</p>
+<p><img src="images/may-the-odds-be-ever-in-your-favor.jpg" /></p>
+<p>So that in our modern cultural concsciousness ‘odds’ are relegated to the shady domains of gambling, sports betting<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, and dystopian murder games.</p>
+<p>However human understanding of odds predates our formal understanding of probability. You can find references to odds dating back to Shakespeare:</p>
+<blockquote>
+<p>Knew that we ventured on such dangerous seas<br />
+That if we wrought out life ’twas <em>ten to one</em>;<br />
+- Shakespeare’s <em>Henry IV, Part II</em>, 1597</p>
+</blockquote>
+<p>Yet, in most common settings, modern society has largely supplanted odds for probabilities. You can imagine if Shakespeare were writing today the line might end “’twas <em>ten out of eleven<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</em>”</p>
+<p>Beyond betting and dramatic playwriting, ‘odds’ remain a useful method for conceptualizing event distributions. My hope is you leave this post with some intuitions on when communicating with odds may be useful and an understanding of how the ‘odds way’ of framing a problem can be convenient for comparing event outcomes across circumstances<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
+<p>Note that if you are completely new to odds, you should first start here: <a href="#ratios-and-fractions-of-events">Ratios and fractions of events</a> or find a short primer online.</p>
+<div id="when-odds-are-helpful" class="section level1">
+<h1>When odds are helpful</h1>
+<p>You make a glass of chocolate milk for your nephew and add 1 part chocolate for every 9 parts milk. He has a sip and says, “Please make it three times as chocolatey.” The most obvious way to satisfy his request would be to triple the amount of chocolate in the cup<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>, i.e. the ratio of chocolate to milk should go from 1 to 9 to 3 to 9. To go from one part chocolate to three parts chocolate you simply add two more parts chocolate, bringing the beverage to the correct 3 to 9 chocolate to milk ratio (simplified: 1 to 3). If instead you took his comment as him wanting the cup to be composed of <span class="math inline">\(\frac{3}{10}\)</span> chocolate instead of <span class="math inline">\(\frac{1}{10}\)</span> chocolate, your calculations (without starting over on the drink) would be more complicated<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.</p>
+<p>In a similar way that it can be easier to think of parts of recipes in terms of ratios rather than fractions out of a whole, it can sometimes be easier to think of event distributions in terms of odds rather than probabilities.</p>
+<p><em>Odds are often helpful for thinking about discrete outcomes when:</em></p>
+<ul>
+<li>the outcome of interest is essentially arbitrary or symmetric (e.g. you could frame the problem in terms of parts <em>milk</em> or parts <em>chocolate</em>)</li>
+<li>you want to compare your ratio of outcomes across different contexts (e.g. how does the distribution of milk to chocolate in <em>my cup</em> relate to the distribution in some <em>other cup</em>?) or solve for relationships in a way that uses multiplication</li>
+</ul>
+<div id="ratio-of-odds-odds-ratio" class="section level2">
+<h2>Ratio of odds (odds ratio)</h2>
+<p>Let’s change examples to sports and substitute parts <em>chocolate</em> to <em>milk</em> for parts <em>winning</em> to <em>losing</em> when playing on one’s home court. Say in professional basketball the odds of the home team winning are 3 to 2, i.e. for every 3 home team wins the away team wins 2. Equivalently there is a <span class="math inline">\(\frac{3}{5}\)</span> chance (60% probability) of the home team winning. Maybe you want to compare this ‘home court advantage’ between professional and college basketball. Odds ratios are a useful method for describing such relationships as they are easy to calculate and manipulate and allow flexibility in problem formulation.</p>
+<p>Perhaps you have a friend who says “College players get rattled easily. The impact of home court advantage in college is twice what it is at the professional level.” This type of comparison could be viewed as an odds ratio. You have two sets of odds each concerning winning to losing on home court, one for college and one for the pros, and you are taking the ratio of the odds to characterize the relationship of home court advantage depending on the league of play<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. Pretend your friend next asks, “Given my statement above and what you know about home court advantage at the professional level, what would be the relationship between winning and losing at home in college?<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>”</p>
+<p>Taking an odds approach, you might formalize the problem your friend gave you as:</p>
+<ul>
+<li><em>Already known:</em> Odds of winning at home in the pros is 3 to 2.</li>
+<li><em>New information from friend:</em> The ratio of home wins to losses in the pros vs college (i.e. the odds ratio) is 2 to 1.</li>
+<li><em>Question friend is asking:</em> What are the odds of winning at home in college?”</li>
+</ul>
+<p><span class="math display">\[\frac{??}{3/2} = 2/1\]</span></p>
+<p>To solve for the odds of winning at home in college you simply double the ratio of winning at home in the pros and you now have a meaningful answer for your friend: the odds of the home team winning at the college level are 3 to 1!</p>
+<p>You could have framed this problem in terms of losses and come to an equivalent conclusion. E.g. let’s invert our example:</p>
+<p><span class="math display">\[\frac{??}{2/3} = 1/2\]</span></p>
+<p>Solving for this, our odds of <em>losing</em> at home in college simplifies to 1 to 3. This is the reciprocal of our 3 to 1 odds of <em>winning</em> at home. Whether we frame the problem in terms of ‘winning at home’ or ‘losing at home’, the odds are reciprocally related, demonstrating a consistent relationship.</p>
+<p><em>It is less clear how you might formalize the problem in terms of probabilities, also the reciprocal nature of your solutions would not be preserved under multiplication.</em> Doubling the probability of winning from <span class="math inline">\(\frac{3}{5}\)</span> would produce a meaningless answer of <span class="math inline">\(\frac{6}{5}\)</span>. You could attempt to flip the problem and instead first frame it as ‘What is the chance of <em>losing</em> at home in college.’ Chance of losing at home is <span class="math inline">\(\frac{2}{5}\)</span>, halved becomes <span class="math inline">\(\frac{1}{5}\)</span>, entailing the chance of winning would be <span class="math inline">\(\frac{4}{5}\)</span>. While you arrived at an answer for “chance of home team winning in college: <span class="math inline">\(\frac{4}{5}\)</span>,” your solution was dependent on whether you started out from a “chance of winning” or a “chance of losing” perspective.</p>
+<p><strong>Another Example:</strong></p>
+<p>To reiterate this lack of symmetry when manipulating a probability and its complement, let’s say your friend instead says, “Home court advantage is only a third more important in college than in the pros.” We can think of ‘a third more’ as a relationship of 4 to 3.</p>
+<p>For odds this becomes:</p>
+<p><span class="math display">\[\frac{??}{3/2} = 4/3\]</span></p>
+<p>This simplifies to a 2:1 odds of winning at home in college or, if you inverted the problem, you would calculate a 1:2 odds of losing – again, these solutions are consistent with one another.</p>
+<p><em>For probability</em>, if we start at a <span class="math inline">\(\frac{3}{5}\)</span> chance of winning at home in the pros and multiply this by <span class="math inline">\(\frac{4}{3}\)</span> we get an 80% chance of winning at home in college. However say you invert the problem to calculate it from the perspective of losing: <span class="math inline">\(\frac{2}{5}*\frac{3}{4} = \frac{3}{10}\)</span> this 30% home loss rate equates to a 70% home win rate. Hence, depending on whether you set-up the initial calculation in terms of home winning or home losing, you get a college home win rate of either 80% or 70% respectively. This lack of conformity of results when manipulating<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> the relationship between event outcomes and their complements can make probabilities less wieldly compared to constructing problems as odds<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>.</p>
+</div>
+</div>
+<div id="communicating-odds" class="section level1">
+<h1>Communicating odds</h1>
+<p>An advantage of probabilities over odds is that people are accustomed to probabilities. If you want to communicate odds to someone who is new to the concept, a helpful heuristic is to frame it in the template ’for every ___ <strong><em>, there are </em></strong> ___.” E.g. “For every 3 home wins, there are 2 home losses”, or the odds of winning at home are 3 to 2. If you want to communicate a relationship between odds with an odds ratio you could tweak this structure slightly, e.g. “The ratio of home wins to home losses is twice as high in college compared to in the pros.” Keeping the context of the problem central to the explanation is central to being understood. The payoff of using odds is the ability to clearly articulate multiplicative relationships and comparisons between event outcomes, which can often be cumbersome or unclear when confined to the language of probability alone.</p>
+<p><em>With a little help, we can stop acting like Han Solo.</em></p>
+<p><img src="images/asteroid-odds.jpg" /></p>
+<p><em>Who, in the end, could not beat the odds.</em></p>
+<p><img src="images/han-solo-death.jpg" /></p>
+</div>
+<div id="appendix" class="section level1">
+<h1>Appendix</h1>
+<div id="ratios-and-fractions-of-events" class="section level2">
+<h2>Ratios and fractions of events</h2>
+<p>Imagine a bag with 5 red marbles and 2 blue marbles that has been mixed thoroughly.</p>
+<pre class="r"><code>library(dplyr)
+library(ggplot2)
+library(DiagrammeR)
+
+create_graph() %&gt;%
+  add_n_nodes(5, 
+              label = &quot;I am red!!&quot;,
+              node_aes = node_aes(fillcolor = &quot;red&quot;,
+                                  fontsize = 5)) %&gt;% 
+  add_n_nodes(2, 
+              label = &quot;I am blue :-(&quot;,
+              node_aes = node_aes(fillcolor = &quot;blue&quot;,
+                                  fontsize = 5)) %&gt;% 
+  render_graph()</code></pre>
+<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-1" style="width:672px;height:192px;"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"I am red!!\", fontsize = \"5\", fillcolor = \"#FF0000\", fontcolor = \"#FFFFFF\"] \n  \"2\" [label = \"I am red!!\", fontsize = \"5\", fillcolor = \"#FF0000\", fontcolor = \"#FFFFFF\"] \n  \"3\" [label = \"I am red!!\", fontsize = \"5\", fillcolor = \"#FF0000\", fontcolor = \"#FFFFFF\"] \n  \"4\" [label = \"I am red!!\", fontsize = \"5\", fillcolor = \"#FF0000\", fontcolor = \"#FFFFFF\"] \n  \"5\" [label = \"I am red!!\", fontsize = \"5\", fillcolor = \"#FF0000\", fontcolor = \"#FFFFFF\"] \n  \"6\" [label = \"I am blue :-(\", fontsize = \"5\", fillcolor = \"#0000FF\", fontcolor = \"#FFFFFF\"] \n  \"7\" [label = \"I am blue :-(\", fontsize = \"5\", fillcolor = \"#0000FF\", fontcolor = \"#FFFFFF\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code># change to show a literal bag with gganimate moving things</code></pre>
+<p>Odds could be used to represent the ratio between red and blue marbles. Probability could represent the fraction of all marbles that are red<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
+<p><span class="math display">\[O(R) = \frac{R}{B}\]</span><br />
+<span class="math display">\[P(R) = \frac{R}{B+R}\]</span></p>
+<p><em>Ratio for odds</em><a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>:</p>
+<pre class="r"><code>tibble(color = c(rep(&quot;red&quot;, 5), rep(&quot;blue&quot;, 2)),
+       y = c(rep(.5, 5), rep(-.5, 2)), 
+       x = c(1:5, 2.5, 3.5)) %&gt;% 
+  ggplot(aes(x = x, y = y, colour = color, size = 10))+
+  geom_hline(yintercept = 0, size = 3, colour = &quot;black&quot;)+
+  geom_point()+
+  theme_void()+
+  guides(size = &quot;none&quot;, colour = &quot;none&quot;)+
+  scale_colour_manual(values = c(blue = &quot;blue&quot;, red = &quot;red&quot;))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="192" /></p>
+<p><em>Fraction for probability</em><a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>:</p>
+<pre class="r"><code>tibble(color = c(rep(&quot;red&quot;, 5), rep(&quot;red&quot;, 5), rep(&quot;blue&quot;, 2)),
+       y = c(rep(.5, 5), rep(-.5, 7)), 
+       x = c(1:5, seq(0, 6, length.out = 7))) %&gt;% 
+  ggplot(aes(x = x, y = y, colour = color, size = 10))+
+  geom_hline(yintercept = 0, size = 3, colour = &quot;black&quot;)+
+  geom_point()+
+  theme_void()+
+  guides(size = &quot;none&quot;, colour = &quot;none&quot;)+
+  scale_colour_manual(values = c(blue = &quot;blue&quot;, red = &quot;red&quot;))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="192" /></p>
+<p>For odds (when there are only two possible outcomes<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>) each outcome could be thought of as existing <em>either</em> in the numerator or in the denominator. For probabilities, the class of interest (e.g. red marbles) influences both sides<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>.</p>
+<p>You can switch between odds and probabilities using the function below:</p>
+<p><span class="math display">\[O = \frac{P}{1-P}\]</span></p>
+<p>However, the style of thinking for odds emphasizes the relationship <em>between</em> the frequencies of possible events, whereas probabilities emphasizes the relative frequency of a <em>particular</em> event. Some problems lend themselves more naturally to probability and others to odds<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>.</p>
+</div>
+<div id="many-variables" class="section level2">
+<h2>Many variables</h2>
+<p>There are other factors that might affect the relationship between winning or losing at home other than college/professional level (e.g. ‘quality of coach’, ‘distance away team traveled’, etc.). Understanding odds and ratios of odds is important when using methods like Logistic Regression that can relate the association of multiple variables to an event outcome<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
+<div id="other-problems" class="section level3">
+<h3>Other problems</h3>
+<p>We’ve shown how ratios of odds are helpful for comparing the impacts of variables when the target outcome falls into categories such as win/loss, red/blue, etc. Problems like these are often modeled in relation to multiple variables using methods like logistic regression, which are well-suited for considering odds and odds ratios. However, ratios of odds are not the only, or always the best, way to formalize all types of problems involving discrete events. In many medical environments (e.g., cohort studies), it is common to speak in terms of ‘relative risk’, which relates to a ratio of probabilities<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>. When the goal is to model the frequency of an event’s occurrence, Poisson regression is often the method of choice<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>. Poisson regression models the probability of a given number of events occurring within a fixed period or space and therefore interpretation of the parts of the model is more aligned with considerations of probability. Another example where probability is commonly preferred over odds is in Bayes’ theorem. One of the most important functions in statistics, Bayes’ theorem is typically presented and, I believe easier to follow, in its probability formulation:</p>
+<p>Bayes’ function, probability:</p>
+<p><span class="math display">\[P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}\]</span></p>
+<p>For comparison, here’s a common formulation of Bayes’ theorem in terms of odds:</p>
+<p><span class="math display">\[O(A|B) = O(A) \cdot \frac{P(B|A)}{P(B|\neg A)}\]</span></p>
+<p>These examples highlight that while formulating problems in terms of odds is helpful in certain contexts involving discrete outcomes, in other scenarios, probability is indeed the more appropriate formulation.</p>
+</div>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>I will not be explaining American betting or the meaning of -100, +200…<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Which, to me, doesn’t capture the doom of that moment with quite the same import. I’m also assuming today’s Shakespeare still prefers antiquated phrasings like ”’twas.”<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>The inspiration for this post came from my old graduate school classmate, Will Burton. Will argued that describing anything in terms of ‘odds’ to business stakeholders adds confusion. Wherever possible he translates statistical measures on event outcomes to be in terms of probability. Due to our modern conditioning, Will may be right, however in this post I describe some simple examples where an ‘odds’ way of describing the problem may feel more natural.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>The size of his sip is being approximated to a size of 0 parts.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>If you go through the hassle, you would realize you’d need to add <span class="math inline">\(\frac{20}{7}\)</span> more parts of chocolate to the beverage.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>Becuase odds themselves are a kind of ratio, odds ratios are just a particular kind of ratio of ratios.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>You try and interrogate them for additional details but they remain silent, leaving you with a vague problem statement.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>Specifically, when multiplying…<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>In the examples, ‘twice’ or a ‘third bigger’ of ‘an effect on home winning’ is an intentionally vague, contrived phrasing; you should work-out with stakeholders precisely what is being asked in order to determine an appropriate approach. For these cases I largely leaned on the problems of multiplication manipulations of probabilities. For a more rigorous discussion of how to try and formalize a similar comment, check-out this Stack Exchange thread: <a href="https://math.stackexchange.com/questions/761504/what-does-twice-as-likely-mean" class="uri">https://math.stackexchange.com/questions/761504/what-does-twice-as-likely-mean</a>.<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>Note that while probability is limited to the domain of 0 to 1, odds can take any positive rational number.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>You could say there are 5 to 2 (5:2) odds of selecting a red marble at random from the bag or, if you ran this exercise many times, you’d expect to select 2.5 times as many red marbles as blue marbles.<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>You’d say there is a <span class="math inline">\(\frac{5}{7}\)</span> chance of selecting a red marble, or that you would select a red marble ~71% of the time.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>I’ll only be discussing problems with two possible outcomes.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p><em>Sidenote</em>: It might be fun to think of odds as being more egalitarian because, in the case of a binary outcome, both possible outcomes get their own side of the ratio/fraction. Probabilities are ‘outcome of interest’ centric in that the selected outcome affects both sides. Hence, if you believe in things like equality and freedom you should be a fan of odds and odds ratios!<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
+<li id="fn15"><p>I briefly reference some of these differences in <a href="#other-problems">Other problems</a>. However for the remainder of the post I’ll focus on where odds suggest an intuitive and consistent framework – afterall odds are the ones that need PR help.<a href="#fnref15" class="footnote-back">↩︎</a></p></li>
+<li id="fn16"><p>A more simple example (or at least better in-line with a reader’s expectations) for odds may have been to start with the odds of an individual team winning and then compare their odds of winning at home or away as the example for odds ratios. Instead I took ‘home winning’ as my starting point and went from there to concoct a perhaps stretched example of comparisons of home winning between leagues.<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
+<li id="fn17"><p>However odds are also commonly used in medical contexts.<a href="#fnref17" class="footnote-back">↩︎</a></p></li>
+<li id="fn18"><p>e.g., “How many times will the mascot start dancing during the game?” Relevant variables might include the weight of the costume, whether it’s a game against a rival, etc.<a href="#fnref18" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
