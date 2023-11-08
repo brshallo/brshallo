@@ -19,7 +19,7 @@ We grow up learning proportions, percentages, risks, probabilities.  You encount
 
 ![](images/may-the-odds-be-ever-in-your-favor.jpg)
 
-So that in our modern cultural concsciousness 'odds' are relegated to the shady domains of gambling, sports betting^[I will not be explaining American betting or the meaning of -100, +200...], and dystopian murder games. 
+So that in our modern cultural consciousness 'odds' are relegated to the shady domains of gambling, sports betting^[I will not be explaining American betting or the meaning of -100, +200...], and dystopian murder games. 
 
 However human understanding of odds predates our formal understanding of probability. You can find references to odds dating back to Shakespeare:  
 
@@ -48,7 +48,7 @@ In a similar way that it can be easier to think of parts of recipes in terms of 
 
 Let's change examples to sports and substitute parts *chocolate* to *milk* for parts *winning* to *losing* when playing on one's home court. Say in professional basketball the odds of the home team winning are 3 to 2, i.e. for every 3 home team wins the away team wins 2. Equivalently there is a $\frac{3}{5}$ chance (60% probability) of the home team winning. Maybe you want to compare this 'home court advantage' between professional and college basketball. Odds ratios are a useful method for describing such relationships as they are easy to calculate and manipulate and allow flexibility in problem formulation.
 
-Perhaps you have a friend who says "College players get rattled easily. The impact of home court advantage in college is twice what it is at the professional level." This type of comparison could be viewed as an odds ratio. You have two sets of odds each concerning winning to losing on home court, one for college and one for the pros, and you are taking the ratio of the odds to characterize the relationship of home court advantage depending on the league of play^[Becuase odds themselves are a kind of ratio, odds ratios are just a particular kind of ratio of ratios.]. Pretend your friend next asks, "Given my statement above and what you know about home court advantage at the professional level, what would be the relationship between winning and losing at home in college^[You try and interrogate them for additional details but they remain silent, leaving you with a vague problem statement.]?" 
+Perhaps you have a friend who says "College players get rattled easily. The impact of home court advantage in college is twice what it is at the professional level." This type of comparison could be viewed as an odds ratio. You have two sets of odds each concerning winning to losing on home court, one for college and one for the pros, and you are taking the ratio of the odds to characterize the relationship of home court advantage depending on the league of play^[Because odds themselves are a kind of ratio, odds ratios are just a particular kind of ratio of ratios.]. Pretend your friend next asks, "Given my statement above and what you know about home court advantage at the professional level, what would be the relationship between winning and losing at home in college^[You try and interrogate them for additional details but they remain silent, leaving you with a vague problem statement.]?" 
 
 Taking an odds approach, you might formalize the problem your friend gave you as:
 
@@ -157,7 +157,7 @@ You can switch between odds and probabilities using the function below:
 
 $$O = \frac{P}{1-P}$$
 
-Odds emphasizes the relationship *between* the frequencies of possible events whereas probabilities emphasizes the relative frequency of a *particular* event. Some problems lend themselves more naturally to probability and others to odds^[I briefly reference some of these differences in [Other problems]. However for the remainder of the post I'll focus on where odds suggest an intuitive and consistent framework -- afterall odds are the ones that need PR help.].
+Odds emphasizes the relationship *between* the frequencies of possible events whereas probabilities emphasizes the relative frequency of a *particular* event. Some problems lend themselves more naturally to probability and others to odds^[I briefly reference some of these differences in [Other problems]. However for the remainder of the post I'll focus on where odds suggest an intuitive and consistent framework -- after all odds are the ones that need PR help.].
 
 ## Many variables
 
