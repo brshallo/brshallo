@@ -5,7 +5,7 @@ date: '2024-02-11'
 slug: aggregating-measures-of-uncertainty
 categories:
   - rstats
-thumbnail: /2024/02/11/aggregating-measures-of-uncertainty/images/images/joint-distribution.png
+thumbnail: /2024/02/11/aggregating-measures-of-uncertainty/images/joint-distribution.png
 ---
 
 There are many situations where you want to aggregate values, however if those values are on different scales or are related to measures of uncertainty, it's typically more complicated than simply taking a simple mean or sum.
@@ -14,7 +14,7 @@ As an example, say your firm sells a variety of different products. Each product
 
 Another common example may be in forecasting. Perhaps you are producing forecasts for products at a county, state, and national level. In addition to point estimates though you are producing ranges for these forecasts. Aggregating lower and upper bounds from the lowest level forecasts up to higher levels requires more than just taking a sum^[or going from higher level bounds to lower levels is more than just dividing the minimum bound based on the proportion at the lower levels.].
 
-In this post I'll briefly introduce a few of the general types of approaches an analyst may take when faced with the problem of aggregating measures that in some way rely on or reflect a measure of uncertainty or are on different scales (in future posts I may delve into the details of each approach in more detail). (These "type" distinctions are overlapping and more reflect distinctions I found convenient for articulation rather than concrte separations.)
+In this post I'll briefly introduce a few of the general types of approaches an analyst may take when faced with the problem of aggregating measures that in some way rely on or reflect a measure of uncertainty or are on different scales (in future posts I may delve into the details of each approach in more detail). (These "type" distinctions are overlapping and more reflect distinctions I found convenient for articulation rather than concrete separations.)
 
 **Analytic approach**
 
@@ -22,7 +22,7 @@ If each of the parts you want to aggregate follow a well-defined parametric dist
 
 **Transformation to a common scale**
 
-This approach is similar to what I calledd the "analytic approach" but it involves doing some kind of transformation on a measure to put it onto some common scale at which point an aggregation can be done appropriately. Related to the "mistakes of aggregating uncertainty" is the "mistake of applying linear aggregations on values that do not follow a linear scale." A common mistake I've seen is analysts taking the average of correlation coefficients. A few years ago I wrote a toy package [piececor](https://github.com/brshallo/piececor) for investigating piecewise correlations in a [tidyverse](https://www.tidyverse.org/) friendly way. In this case, the default method for getting aggregated measures across correlations was to use a Fisher Transformation, in other cases getting the data onto some other common scale may be appropriate^[Again, these approaches are similar to the "analytic" based approaches in that they typically come with various distributional assumptions.].
+This approach is similar to what I called the "analytic approach" but it involves doing some kind of transformation on a measure to put it onto some common scale at which point an aggregation can be done appropriately. Related to the "mistakes of aggregating uncertainty" is the "mistake of applying linear aggregations on values that do not follow a linear scale." A common mistake I've seen is analysts taking the average of correlation coefficients. A few years ago I wrote a toy package [piececor](https://github.com/brshallo/piececor) for investigating piecewise correlations in a [tidyverse](https://www.tidyverse.org/) friendly way. In this case, the default method for getting aggregated measures across correlations was to use a Fisher Transformation, in other cases getting the data onto some other common scale may be appropriate^[Again, these approaches are similar to the "analytic" based approaches in that they typically come with various distributional assumptions.].
 
 **Simulate it**
 
