@@ -11,7 +11,7 @@ Bryan graduated with honors in Cognitive Neuroscience from Washington University
 
 *Career in Data Science:*
 
-Bryan has been a Data Scientist at [NetApp](https://www.netapp.com/) since July of 2017. He has worked as lead data scientist on a wide range of problems with different teams in customer support, sales, and pricing. Examples of his projects:
+Bryan has worked in data science at [NetApp](https://www.netapp.com/) since July of 2017. He has worked as lead data scientist on a wide range of problems with different teams in customer support, sales, and pricing. Examples of his projects:
 
 * Support ticket prioritization: Rate open customer support tickets according to risk of escalation.
 * Forecasting: Produce automated sales forecasts across product lines and geographies.
