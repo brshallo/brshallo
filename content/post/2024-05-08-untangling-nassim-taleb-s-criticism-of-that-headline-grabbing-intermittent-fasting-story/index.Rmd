@@ -12,8 +12,6 @@ output:
 thumbnail: /2024/05/08/untangling-nassim-taleb-s-criticism-of-that-headline-grabbing-intermittent-fasting-story/images/normal-dist.png
 ---
 
-**DRAFT**
-
 **TLDR:** *Parts of Taleb's critique of an, albeit overhyped study on Intermittent Fasting, seem specious.*
 
 Veritasium recently put out a video on "The Problem With Science Communication" that details how news outlets and science journalism gravitate to big headlines that are often misleading, overstate the findings, or are outliers that go against the weight of evidence in the field. The video doesn't just fault news outlets but also suggests labs and research institutions are incentivized to put out punchier sounding press releases that summarize their findings in ways that are more likely to draw media attention to their work. 
@@ -24,7 +22,7 @@ In March a headline grabbing summary of a study came-out regarding an associatio
 
 ![](images/ama-headline.png)
 
-These and other reports were based on a poster and abstract summarizing the study^[Links of which can be found at the [AMA release](https://newsroom.heart.org/news/8-hour-time-restricted-eating-linked-to-a-91-higher-risk-of-cardiovascular-death)]. The actual paper had not yet been released. The specific part of the poster that drew so much attention was this table of results that showed a greater risk of cardiovascular mortality in those practicing intermittent fasting (eating within a less than 8 hour window) compared to the reference group:
+These and other reports were based on a poster and abstract summarizing the study^[Links of which can be found at the [AMA release](https://newsroom.heart.org/news/8-hour-time-restricted-eating-linked-to-a-91-higher-risk-of-cardiovascular-death)]. The actual paper had not yet been released. The specific part of the poster that drew so much attention was this table of results that showed a greater risk of cardiovascular death in those practicing intermittent fasting (eating within a less than 8 hour window) compared to the reference group:
 
 ![](images//if-table.png)
 
@@ -85,7 +83,7 @@ He packs a lot in here[^misunderstand] and after rereading it several times I th
 * "Of these, only 31 had an event .0015 vs .0008!": 0.0015 comes from $\frac{31}{20,078}$ i.e. out of the ~20,000 people surveyed, ~0.15% of those individuals were intermittent fasting and also died of cardiovascular failure. The 0.0008 is where things get confusing, it comes from $\frac{\frac{31}{1.91}}{20,078}$
 . I interpret this as essentially saying that if you took the intermittent fasting group's subsample size and applied the reference level's lower hazard rate ($\frac{31}{1.91}$) you would only have expected to get ~16 deaths, those 16 expected deaths then would only have represented ~0.08% of total data in the study ($\frac{16}{20,078}$). Restating this: if it's *actually* the case that the intermittent fasting group *doesn't* have a higher mortality rate, then you would have expected 16 deaths in that subsample which would represent ~0.08% of total data in the study^[Speaking loosely, this part comes off as having an almost false resemblance to what a p-value gets at, which is sort of: "how unlikely is it that you would have seen 31 deaths when you would have expected to see just 16 based on the reference level and underlying data/attributes."]. 
 
-  A problem here is he's taking a series of somewhat irrelevant conjunctive steps to build up these tiny proportions. To a large extent, these proportions are so small just as a function of intermittent fasting being comparatively uncommon in the national survey used by this study^[A reason the subsample's size relative to the total study might seem relevant is that if there is improper classification of people into their eating duration groups, as he suggests (mentioned previously above), then the relative rates could matter as subsamples bleed into one another. However as I note in the prior bullet, that could reduce the chance of observing an effect as it may be washed out by noise, rather than raising the risk of a Type 1 error (as he suggests). While there are also mechanisms where a type 1 error may become more likely... without further details, it's overly speculative to conclude how it would affect the results.]. 
+  A problem here is he's taking a series of somewhat irrelevant conjunctive steps to build up these tiny proportions. To a large extent, these proportions are small just as a function of intermittent fasting being comparatively uncommon in the national survey used by this study^[A reason the subsample's size relative to the total study might seem relevant is that if there is improper classification of people into their eating duration groups, as he suggests (mentioned previously above), then the relative rates could matter as subsamples bleed into one another. However as I note in the prior bullet, that could reduce the chance of observing an effect as it may be washed out by noise, rather than raising the risk of a Type 1 error (as he suggests). While there are also mechanisms where a type 1 error may become more likely... without further details, it's overly speculative to conclude how it would affect the results.]. 
 
 * Next he displays some Mathematica code to show that "A tiny .2 sigma change doubles the incidence!":
 
@@ -156,7 +154,7 @@ c(qnorm( (31 * 5 * 5) / 20000), qnorm( (31 * 5 * 5 / 1.91) / 20000)) |> round(2)
 
 Even if you made it so *half* of the 20,000 participants were in the intermittent fasting group (and kept the 5x death rate -- so 3,700 deaths in the intermittent fasting group) your "difference in sigmas that ~doubles incidence" would only go up to 0.4. Hence even with data that shows an obvious effect, Taleb's calculations could superficially make it seem like the results are "fragile to parameter change."
 
-His approach also somewhat begs the question because what "difference in standard deviations from reference level that ~doubles incidence" would Taleb accept as being substantive^[A common cut-point in traditional statistical analyses is to say if something is ~2 standard deviations from the reference level it is "statistically significant" (as this achieves a p value of <0.05 so is unlikely to be the result of chance). However it's not clear what Taleb is looking for and his approach here isn't a statistical test.]...? but mostly this just isn't the way to test things.
+His approach also somewhat begs the question because what "difference in standard deviations from reference level that ~doubles incidence" would Taleb accept as being substantive^[A common cut-point in traditional statistical analyses is to say if something is ~2 standard deviations from the reference level it is "statistically significant" (as this achieves a p value of <0.05 so is unlikely to be the result of chance). However it's not clear what Taleb is looking for and his approach here isn't a statistical test.]...? but mostly this just isn't a way to test things.
 
 ## Wrapping-up
 
