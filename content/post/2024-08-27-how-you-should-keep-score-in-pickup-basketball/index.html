@@ -17,10 +17,10 @@ thumbnail: /2024/08/27/how-you-should-keep-score-in-pickup-basketball/index_file
 <li><a href="#summary" id="toc-summary">Summary</a></li>
 <li><a href="#taking-action" id="toc-taking-action">Taking action</a></li>
 <li><a href="#other-considerations" id="toc-other-considerations">Other considerations</a></li>
-<li><a href="#appendix" id="toc-appendix">Appendix</a></li>
-<li><a href="#but-you-dont-play-pickup-basketball-to-infinity" id="toc-but-you-dont-play-pickup-basketball-to-infinity">But you don’t play pickup basketball to infinity</a></li>
-<li><a href="#finite-geometric-series" id="toc-finite-geometric-series">Finite geometric series</a>
+<li><a href="#appendix" id="toc-appendix">Appendix</a>
 <ul>
+<li><a href="#but-you-dont-play-pickup-basketball-to-infinity" id="toc-but-you-dont-play-pickup-basketball-to-infinity">But you don’t play pickup basketball to infinity</a></li>
+<li><a href="#finite-geometric-series" id="toc-finite-geometric-series">Finite geometric series</a></li>
 <li><a href="#scoring-system-in-pickup-basketball" id="toc-scoring-system-in-pickup-basketball">Scoring system in pickup basketball</a></li>
 </ul></li>
 </ul>
@@ -645,7 +645,7 @@ table</code></pre>
 </div>
 <div id="taking-action" class="section level2">
 <h2>Taking action</h2>
-<p>You might think that the expected values of different shots would naturally balance out. If you’re playing by 1s and 2s with alternating possession (where I’ve said deep shots are more valuable) you would think players would defend long range shots more aggressively which would lead to the shooting percentage on those shots dropping relative to interior shots. In practice though, this modification does not happen as much as would be expected by fully rational players<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>. Instead, many people anchor their play style to whatever brand of basketball they are accustomed and do not fully adjust to the scoring and possession system in place. Given these tendencies, <em>what should you do?</em></p>
+<p>You might think that the expected values of different shots would naturally balance out. For example, if you’re playing by 1s and 2s with alternating possession (where I’ve said deep shots are more valuable) you would think players would defend long range shots more aggressively which would lead to the shooting percentage on those shots dropping relative to interior shots. In practice though, this modification does not happen as much as would be expected by fully rational players<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>. Instead, many people anchor their play style to whatever brand of basketball they are accustomed and do not fully adjust to the scoring and possession system in place. Given these tendencies, <em>what should you do?</em></p>
 <ol style="list-style-type: decimal">
 <li>Advocate for a balanced scoring system<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a></li>
 </ol>
@@ -653,7 +653,7 @@ table</code></pre>
 <ol start="2" style="list-style-type: decimal">
 <li>Arbitrage</li>
 </ol>
-<p>In many cases you will not be able to influence the scoring system. Under these conditions other players not fully adapting to unbalanced values of interior or long range shots is an opportunity. For example, if the system advantages long range scoring, do your best to get your best shooter as many decent looks as possible and push your team to play good outside defense<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>.</p>
+<p>In many cases you will not be able to influence the scoring system. Under these conditions other players not fully adapting to unbalanced values of shots is an opportunity. For example, if the system advantages long range scoring, do your best to get your best shooter as many decent looks as possible and push your team to play good outside defense<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>.</p>
 </div>
 <div id="other-considerations" class="section level2">
 <h2>Other considerations</h2>
@@ -746,20 +746,19 @@ data_chart %&gt;%
   scale_x_continuous(labels = scales::percent)+
   coord_fixed()</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/imbalance-across-pcts-1.png" width="672" /></p>
-<p>The greater range in color hue for make-it-take-it settings demonstrates how, as you deviate from balanced shooting percentage conditions, shot imbalance grows more quickly than when playing with alternating possession after scores. This is why the 45%; 30% standard shooting percentage points in the upper right and lower left charts, while being quite different in terms of distance from “perfect balance” are pretty similar in terms of proportion imbalanced.</p>
+<p>The greater range in color hue for make-it-take-it settings demonstrates how, as you deviate from balanced shooting percentage conditions, shot imbalance grows more quickly than when playing with alternating possession after scores. This is why the “standard shooting conditions” points in the upper right and lower left charts are pretty similar in terms of proportion imbalanced while being pretty different in terms of shooting %s distance from “perfectly balanced”.</p>
 <p>Everything above the red “perfect balance” lines (or curves in the cases of make-it-take) can be interpreted as shooting percentages where long range shooting has an expected points advantage. Everything below them represents shooting percentages where interior shooting has an advantage. For example, in games where interior shooting percentages are still ~45% but long range shooting is a bit worse (e.g. percentages in the low 20s) 1s and 2s with alternating possession after a score can actually be more balanced than 2s and 3s. However you would be setting-up conditions for a lot of missed shots.</p>
 <p><img src="https://media0.giphy.com/media/eRaZhg8XZ3FoQ/giphy.gif"></p>
 <p>Sometimes it’s better to just play by all 1s.</p>
 </div>
 <div id="appendix" class="section level2">
 <h2>Appendix</h2>
+<div id="but-you-dont-play-pickup-basketball-to-infinity" class="section level3">
+<h3>But you don’t play pickup basketball to infinity</h3>
+<p>The solutions in <a href="#what-if-youre-playing-make-it-take-it">What if you’re playing make-it-take-it?</a> are with infinite series but in pickup basketball you typically play to some fixed value (e.g. 7, 11, 15, 16, 21, 25). Evaluating <a href="#finite-geometric-series">Finite geometric series</a> would allow you to condition your expected value calculations on how many points (or actually scoring possessions) remain. However, the values for the finite geometric series would only substantively differ from our infinite series calculations as you get near to the end of the game by which point you’d be better thinking in terms of event outcomes rather than expected points. Event outcomes are a problem of probability rather than expected value and require a different type of analysis. In the future I may do a “Simulating pickup basketball outcomes” post<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>. However for my purposes (identifying the rules that promote the most balanced games), infinite series work fine as an approximation for expected points while remaining easy to describe (as each statement of value does not need to be predicated on how many points remain in the game). From the <a href="#summary">Summary</a> section on I stop saying “approximate expected points” and just say<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a> “expected points.”</p>
 </div>
-<div id="but-you-dont-play-pickup-basketball-to-infinity" class="section level2">
-<h2>But you don’t play pickup basketball to infinity</h2>
-<p>The solutions in [What if you’re playing make-it-take-it?] are with infinite series but in pickup basketball you typically play to some fixed value (e.g. 7, 11, 15, 16, 21, 25). Evaluating <a href="#finite-geometric-series">Finite geometric series</a> would allow you to condition your expected value calculations on how many points (or actually scoring possessions) remain. However, the values for the finite geometric series would only substantively differ from our infinite series calculations as you get near to the end of the game at which point (and even before then probably) you should start thinking in terms of event outcomes rather than expected points. Event outcomes are a problem of probability rather than expected value and require a different type of analysis. In the future I may do a “Simulating pickup basketball outcomes” post<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>. However for my purposes now, infinite series work fine as an approximation for expected points while remaining easy to describe (as each statement of value does not need to be predicated on how many points remain in the game). From the <a href="#summary">Summary</a> section on I stop saying “approximate expected points” and just say<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a> “expected points.”</p>
-</div>
-<div id="finite-geometric-series" class="section level2">
-<h2>Finite geometric series</h2>
+<div id="finite-geometric-series" class="section level3">
+<h3>Finite geometric series</h3>
 <p><em>…much of this section was written while thinking about the problem in the wrong way…</em></p>
 <p>Calculating the finite geometric series allows us to consider how many points (/scoring rounds) are left in the game. Equation for calculating the value of a finite geometric series:</p>
 <p><span class="math display">\[
@@ -833,6 +832,7 @@ data_2s3s_finite %&gt;%
   guides(color = guide_legend(title = NULL))</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>We again see a pretty similar story as to what we found when evaluating the infinite series: in 2s and 3s make-it-take-it there’s a decent imbalance favoring interior shots. This advantage exists (pretty much) no matter how many points remain.</p>
+</div>
 <div id="scoring-system-in-pickup-basketball" class="section level3">
 <h3>Scoring system in pickup basketball</h3>
 <p><em>In pickup basketball, two common scoring systems are used: “1s and 2s” and “2s and 3s.”</em></p>
