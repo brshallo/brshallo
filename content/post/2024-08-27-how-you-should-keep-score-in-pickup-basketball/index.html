@@ -1,0 +1,872 @@
+---
+title: How  You Should Keep Score in PIckup Basketball
+author: Bryan Shalloway
+date: '2024-08-27'
+slug: how-you-should-keep-score-in-pickup-basketball
+categories:
+  - rstats
+codefolding_show: hide
+tags: ["gt", "dplyr", "tidyr", "ggplot2", "purrr", "forcats", "scales"]
+thumbnail: /2024/08/27/how-you-should-keep-score-in-pickup-basketball/index_files/figure-html/imbalance-across-pcts-1.png
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#what-if-youre-playing-make-it-take-it" id="toc-what-if-youre-playing-make-it-take-it">What if you’re playing make-it-take-it?</a></li>
+<li><a href="#summary" id="toc-summary">Summary</a></li>
+<li><a href="#taking-action" id="toc-taking-action">Taking action</a></li>
+<li><a href="#other-considerations" id="toc-other-considerations">Other considerations</a></li>
+<li><a href="#appendix" id="toc-appendix">Appendix</a>
+<ul>
+<li><a href="#finite-geometric-series" id="toc-finite-geometric-series">Finite geometric series</a></li>
+<li><a href="#scoring-system-in-pickup-basketball" id="toc-scoring-system-in-pickup-basketball">Scoring system in pickup basketball</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p><strong>TLDR:</strong> <em>For full court pickup basketball you should play by 2s and 3s. Make-it-take-it by 1s and 2s is also fine. Otherwise, adapt your game according to the scoring and possession system in place.</em></p>
+<p>Steph Curry is sometimes blamed for ruining pickup basketball:</p>
+<p><img src="images/curry-comment.png" /></p>
+<p>The argument is that people in pickup games see Steph launching 3’s, emulate him – but aren’t as talented – so games become a mess of people bricking long range shots with hardly any real basketball going on.</p>
+<p><img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2VxMnQ4eHF2MTR4b3Uya3ZzZzRtN3ByNjkzbXZrOTEzZ2h4MzFjcSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/hpFTV3KfDXTQ9X8pEX/giphy.webp"></p>
+<p>Another idea is that Steph is less to blame for this phenomena than the incentives embedded in the most common <a href="#scoring-system-in-pickup-basketball">scoring system in pickup basketball</a>: 1’s and 2’s. In 1s and 2s if you can hit a long distance shot at least half as often as an interior shot, it makes sense to take it because the expected value (/points) is greater than for an interior shot. You can find <a href="https://www.reddit.com/r/Basketball/comments/195vxba/basketball_is_meant_to_be_played_scoring_2s_and/">people on Reddit arguing</a> these and related points.</p>
+<p>I lean towards the incentives based perspective. This post will be a review of the “balance” of games under different scoring and possession systems. I’m defining “balanced” games as those where the expected points from interior and long range shots are similar to one another.</p>
+<p>To make this explicit, say the average team<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> shooting percentage for interior shots is 45% and the average for long-range shots is 30% (for my examples the specific shooting percentages don’t matter so much as that the ratio between <em>interior : long range</em> shooting stays close to <em>0.45 : 0.30</em>)<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. If you’re playing 2s and 3s, the expected value of an interior shot is <span class="math inline">\(2 \times 0.45 = 0.9\)</span> and the expected value of a long range shot is <span class="math inline">\(3 \times 0.3 = 0.9\)</span> – i.e. the expected value of both types of shots is equivalent (perfectly balanced). Given these shooting percentages (and ignoring offensive rebounds<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>) the expected value in 1s and 2s would be <span class="math inline">\(1 \times 0.45 = 0.45\)</span> for an interior shot and <span class="math inline">\(2 \times 0.3 = 0.6\)</span> from distance. In this scenario a long range shot comes with 33% more value (or 29% if using a symmetric measure<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> of percent difference).</p>
+<p>The 2s and 3s scoring system is the minority position in most pickup games<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> but is somewhat more popular among analytics oriented players and common practice among the converted<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. Hence the conventional sports nerd wisdom is to advocate for playing by 2s and 3s (see <a href="https://grantland.com/the-triangle/video-how-to-fix-pickup-basketball-with-analytics/">How to Fix Pickup Basketball…</a>). However that analysis doesn’t take into account possession.</p>
+<div id="what-if-youre-playing-make-it-take-it" class="section level2">
+<h2>What if you’re playing make-it-take-it?</h2>
+<p><em>2s and 3s is only more balanced when you alternate possession after each score.</em> While alternating possession is the norm in full court pickup basketball, in half court the more common play style is for the scoring team to retain possession – called “make-it-take-it.” Under these conditions<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>, calculating expected points is a little more complicated as you need to consider not just the expected points of the shot attempt but also the value associated with the chance of retaining possession (and making future shots) if you score<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
+<p>Calculating the expected points for a shot is no longer just:</p>
+<p><span class="math inline">\(\text{(number of points)} \times \text{(shooting percentage)}\)</span></p>
+<p>but:</p>
+<p><span class="math inline">\(\left(\text{number of points}\right) \times \left(\text{shooting percentage}\right) \\+ \left(\text{chance last shot was made}\right) \times \left(\text{number of points}\right) \times \left(\text{shooting percentage}\right) \\+ \left(\text{chance last two shots were made}\right) \times \left(\text{number of points}\right) \times \left(\text{shooting percentage}\right) \\+ \ldots \left(\text{and so on and so on}\right) \ldots\)</span></p>
+<p>If we consider the expected points of an interior shot (when playing 1s and 2s) the series can be represented as:</p>
+<p><span class="math display">\[
+1 \times 0.45 + 1 \times 0.45^2 + \ldots + 1 \times 0.45^n
+\]</span></p>
+<p>You might recognize this from calculus as a geometric series and notice that because each additional term in the series gets smaller and smaller towards 0, the total value of the sum will converge to a constant. The value of a converging infinite geometric series can be represented by the simple equation<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>:</p>
+<p><span class="math display">\[
+\frac{\text{(start value)}}{(1 - \text{rate})}
+\]</span></p>
+<p>We can use this to determine, roughly, the expected points<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> for a shot attempt. If we plug in our values for a 1 pointer with 45% chance of being made:</p>
+<p><span class="math display">\[
+\frac{(0.45 \times 1)}{(1 - 0.45)} = 0.82
+\]</span></p>
+<p>and compare this to the rough expected points of a 2 pointer at 30%:</p>
+<p><span class="math display">\[
+\frac{(0.30 \times 2)}{(1 - 0.30)} = 0.86
+\]</span></p>
+<p>This shows a less than 5% difference in expected points if taking an interior or long range shot when playing make-it-take<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>. This is pretty balanced, which is good news as 1s and 2s make-it-take-it is the norm for half court pickup basketball. Compare this relative balance to the expected values when playing make-it-take by 2s and 3s.</p>
+<p>Expected points for a 2 pointer in make-it-take-it:</p>
+<p><span class="math display">\[
+\frac{(0.45 \times 2)}{(1 - 0.45)} = 1.64
+\]</span></p>
+<p>vs a 3 pointer:</p>
+<p><span class="math display">\[
+\frac{(0.3 \times 3)}{(1 - 0.3)} = 1.29
+\]</span></p>
+<p>Under these conditions, an interior shot has almost 27% greater expected value than taking a long range shot (24% symmetric percent difference). In this case 2s and 3s is almost as imbalanced for interior shots as the 33% advantage we saw for distance shots when playing 1s and 2s with alternating possession. It’s good then that 2s and 3s make-it-take-it is somewhat rare.</p>
+<p><strong>But you don’t play pickup basketball to infinity…</strong></p>
+<p>The solutions above are for an infinite series but in pickup basketball you typically play to some fixed value (e.g. 7, 11, 15, 16, 21, 25). What you actually want is the solutions for finite geometric series that are conditioned on how many points<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a> are left in the game. When playing make-it-take-it by 1s and 2s, 1-pointers actually show a slight advantage if there are 4 or less points remaining in the game after which the small advantage shifts to 2-pointers. In general though, calculating the sums of the finite series tells the same overarching story as we told when calculating expected values with infinite series. “<em>Given 45% : 30% (interior : long range) shooting percentages, make-it-take-it by 1s and 2s is pretty balanced whereas make-it-take-it by 2s and 3s gives an expected points advantage to interior shooting.</em>”</p>
+<p>Therefore infinite series seem to work fine as an approximation for expected points while being simple to describe as each statement does not need to be conditioned on how many points remain in the game. See the <a href="#finite-geometric-series">Finite geometric series</a> section in the appendix if you’re interested in more detail though.</p>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>The two conditions that lead to similar in-game expected values for interior and long range shots are make-it-take-it 1s and 2s as well as 2s and 3s with alternating possession after scores<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>.</p>
+<pre class="r"><code># Load the gt package
+library(gt)
+library(dplyr)
+
+# Function to calculate percentage difference and format the string
+format_with_difference &lt;- function(value1, value2) {
+  diff &lt;- round(abs(value2 - value1) / ((value1 + value2) / 2) * 100, 0)
+  return(paste0(value1, &quot; : &quot;, value2, &quot;&lt;br&gt;(&quot;, diff, &quot;% difference)&quot;))
+}
+
+# Update the data frame with formatted strings
+data &lt;- tibble(ShotType = c(&quot;1pts : 2pts&quot;, &quot;2pts : 3pts&quot;),
+               MakeItTakeIt = c(format_with_difference(0.82, 0.86), format_with_difference(1.64, 1.29)),
+               Alternating = c(format_with_difference(0.45, 0.60), format_with_difference(0.90, 0.90)))
+
+# Create a gt table
+table &lt;- gt(data) %&gt;%
+  # Add a title and subtitle
+  tab_header(
+    title = &quot;Relative differences in expected points of shot type&quot;,
+    subtitle = md(&quot;Given shooting percentages of... *interior: 45% ; long range: 30%*&quot;)
+  ) %&gt;%
+  # Add spanner column label with italicized text
+  tab_spanner(
+    label = md(&quot;**Possession after a score**&quot;),
+    columns = c(MakeItTakeIt, Alternating)
+  ) %&gt;%
+  tab_spanner(
+    label = md(&quot;**Points assigned**&quot;),
+    columns = c(ShotType)
+  ) %&gt;%
+  # Customize column labels
+  cols_label(
+    ShotType = md(&quot;*interior : long-range*&quot;),
+    MakeItTakeIt = md(&quot;*make-it-take-it*&quot;),
+    Alternating = md(&quot;*alternating*&quot;)
+  ) %&gt;%
+  # Add vertical lines and other styles
+  tab_style(
+    style = cell_borders(
+      sides = &quot;right&quot;,
+      color = &quot;lightgray&quot;,
+      weight = px(1)
+    ),
+    locations = list(
+      cells_body(columns = MakeItTakeIt),
+      cells_column_labels(columns = MakeItTakeIt)
+    )
+  ) %&gt;%
+  tab_style(
+    style = cell_borders(
+      sides = &quot;left&quot;,
+      color = &quot;lightgray&quot;,
+      weight = px(2)
+    ),
+    locations = cells_body(columns = c(MakeItTakeIt))
+  ) %&gt;%
+  tab_style(
+    style = cell_borders(
+      sides = &quot;right&quot;,
+      color = &quot;lightgray&quot;,
+      weight = px(2)
+    ),
+    locations = cells_column_labels(columns = c(ShotType))
+  ) %&gt;%
+  tab_style(
+    style = cell_text(
+      align = &quot;center&quot;,
+      style = &quot;italic&quot;
+    ),
+    locations = cells_body(columns = c(ShotType))
+  ) %&gt;%
+  tab_style(
+    style = cell_text(
+      color = &quot;darkblue&quot;
+    ),
+    locations = cells_title(groups = &quot;title&quot;)
+  ) %&gt;%
+  # Render the markdown in the cells
+  fmt_markdown(columns = c(MakeItTakeIt, Alternating)) %&gt;%
+  tab_footnote(&quot;Symmetric absolute percent difference used as metric for % difference.&quot;) %&gt;%
+  tab_style(
+    style = cell_text(size = px(10)),
+    locations = cells_footnotes()
+  )
+
+# Print the table
+table</code></pre>
+<div id="othiygdtis" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#othiygdtis table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#othiygdtis thead, #othiygdtis tbody, #othiygdtis tfoot, #othiygdtis tr, #othiygdtis td, #othiygdtis th {
+  border-style: none;
+}
+
+#othiygdtis p {
+  margin: 0;
+  padding: 0;
+}
+
+#othiygdtis .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#othiygdtis .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#othiygdtis .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#othiygdtis .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#othiygdtis .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#othiygdtis .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#othiygdtis .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#othiygdtis .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#othiygdtis .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#othiygdtis .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#othiygdtis .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#othiygdtis .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#othiygdtis .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#othiygdtis .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#othiygdtis .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#othiygdtis .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#othiygdtis .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#othiygdtis .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#othiygdtis .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#othiygdtis .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#othiygdtis .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#othiygdtis .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#othiygdtis .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#othiygdtis .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#othiygdtis .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#othiygdtis .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#othiygdtis .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#othiygdtis .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#othiygdtis .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#othiygdtis .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#othiygdtis .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#othiygdtis .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#othiygdtis .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#othiygdtis .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#othiygdtis .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#othiygdtis .gt_left {
+  text-align: left;
+}
+
+#othiygdtis .gt_center {
+  text-align: center;
+}
+
+#othiygdtis .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#othiygdtis .gt_font_normal {
+  font-weight: normal;
+}
+
+#othiygdtis .gt_font_bold {
+  font-weight: bold;
+}
+
+#othiygdtis .gt_font_italic {
+  font-style: italic;
+}
+
+#othiygdtis .gt_super {
+  font-size: 65%;
+}
+
+#othiygdtis .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#othiygdtis .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#othiygdtis .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#othiygdtis .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#othiygdtis .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#othiygdtis .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#othiygdtis .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="3" class="gt_heading gt_title gt_font_normal" style="color: #00008B;">Relative differences in expected points of shot type</td>
+    </tr>
+    <tr class="gt_heading">
+      <td colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Given shooting percentages of… <em>interior: 45% ; long range: 30%</em></td>
+    </tr>
+    <tr class="gt_col_headings gt_spanner_row">
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;Points assigned&lt;/strong&gt;">
+        <span class="gt_column_spanner"><strong>Points assigned</strong></span>
+      </th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" scope="colgroup" id="&lt;strong&gt;Possession after a score&lt;/strong&gt;">
+        <span class="gt_column_spanner"><strong>Possession after a score</strong></span>
+      </th>
+    </tr>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-right-width: 2px; border-right-style: solid; border-right-color: lightgray;" scope="col" id="&lt;em&gt;interior : long-range&lt;/em&gt;"><em>interior : long-range</em></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-right-width: 1px; border-right-style: solid; border-right-color: lightgray;" scope="col" id="&lt;em&gt;make-it-take-it&lt;/em&gt;"><em>make-it-take-it</em></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="&lt;em&gt;alternating&lt;/em&gt;"><em>alternating</em></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="ShotType" class="gt_row gt_left" style="text-align: center; font-style: italic;">1pts : 2pts</td>
+<td headers="MakeItTakeIt" class="gt_row gt_left" style="border-right-width: 1px; border-right-style: solid; border-right-color: lightgray; border-left-width: 2px; border-left-style: solid; border-left-color: lightgray;"><div class='gt_from_md'><p>0.82 : 0.86<br>(5% difference)</p>
+</div></td>
+<td headers="Alternating" class="gt_row gt_left"><div class='gt_from_md'><p>0.45 : 0.6<br>(29% difference)</p>
+</div></td></tr>
+    <tr><td headers="ShotType" class="gt_row gt_left" style="text-align: center; font-style: italic;">2pts : 3pts</td>
+<td headers="MakeItTakeIt" class="gt_row gt_left" style="border-right-width: 1px; border-right-style: solid; border-right-color: lightgray; border-left-width: 2px; border-left-style: solid; border-left-color: lightgray;"><div class='gt_from_md'><p>1.64 : 1.29<br>(24% difference)</p>
+</div></td>
+<td headers="Alternating" class="gt_row gt_left"><div class='gt_from_md'><p>0.9 : 0.9<br>(0% difference)</p>
+</div></td></tr>
+  </tbody>
+  
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" style="font-size: 10px;" colspan="3"> Symmetric absolute percent difference used as metric for % difference.</td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+</div>
+<div id="taking-action" class="section level2">
+<h2>Taking action</h2>
+<p>You might think that the expected values of different shots would naturally balance out. If you’re playing by 1s and 2s with alternating possession (where deep shots are more valuable) you would think players would defend long range shots more aggressively which would lead to the shooting percentage on those shots dropping relative to interior shots. In practice though, this adjustment does not happen as much as would be expected by fully rational players. Instead, many people anchor their play style to whatever brand of basketball they are accustomed and do not fully adjust to the scoring and possession system in place. Given these tendencies, <em>what should you do?</em></p>
+<ol style="list-style-type: decimal">
+<li>Advocate for a balanced scoring system<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a></li>
+</ol>
+<p>This means if you’re playing full court (with alternating possessions after scores), push for playing by 2s and 3s to 21 (rather than the more common 1s and 2s to 15). If you’re playing half court, you don’t need to do anything as games are typically played make-it-take by 1s and 2s, which has mostly fine incentives<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Arbitrage</li>
+</ol>
+<p>In many cases you will not be able to influence the scoring system. Under these conditions other players not fully adapting to unbalanced values of interior or long range shots is an opportunity. For example, if the system advantages long range scoring, do your best to get your best shooter as many decent looks as possible and push your team to play good outside defense<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
+</div>
+<div id="other-considerations" class="section level2">
+<h2>Other considerations</h2>
+<p>The conclusion that “1s and 2s make-it-take-it” and “2s and 3s alternating possession” make for the most balanced games depends on my guesses for shooting percentages<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>. 45% and 30% for interior and long range are reasonable estimates for competitive pickup games but may not apply universally<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>.</p>
+<p>The chart below shows, across a range of possible interior and long range shooting percentages, the relative imbalance in expected points under each of the four {possession} x {scoring} conditions<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>.</p>
+<pre class="r"><code>library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(purrr)
+
+shooting_pcts &lt;- crossing(
+  tibble(pct_long = seq(0.10, 0.40, by = 0.01)),
+  tibble(pct_short = seq(0.20, 0.60, by = 0.01))
+)
+
+shots_pts &lt;- tibble(pts_long = c(2,3),
+       pts_short = c(1, 2)
+)
+
+exp_value_alternating &lt;- function(pts, percent) pts * percent
+
+exp_value_makeitakeit &lt;- function(pts, percent) (percent * pts) / (1 - percent)
+
+total_pct_difference &lt;- function(x, y) (x - y) / ((x + y) / 2)
+
+data_imbalance &lt;- crossing(shooting_pcts, shots_pts) %&gt;% 
+  mutate(pts_type = paste0(pts_short, &quot;&amp;&quot;, pts_long)) %&gt;% 
+  # expected value of each shot
+  mutate(exp_short_alt = exp_value_alternating(pts_short, pct_short),
+         exp_short_miti = exp_value_makeitakeit(pts_short, pct_short),
+         exp_long_alt = exp_value_alternating(pts_long, pct_long),
+         exp_long_miti = exp_value_makeitakeit(pts_long, pct_long)) %&gt;% 
+  # percentage imbalances
+  mutate(alt = total_pct_difference(exp_short_alt, exp_long_alt),
+         miti = total_pct_difference(exp_short_miti, exp_long_miti))
+
+data_chart &lt;- data_imbalance %&gt;% 
+  pivot_longer(one_of(&quot;alt&quot;, &quot;miti&quot;), names_to = &quot;possession_type&quot;, values_to = &quot;pct_imbalance&quot;) %&gt;% 
+  mutate(possession_type = ifelse(possession_type == &quot;alt&quot;, &quot;alternating&quot;, &quot;make-it-take-it&quot;)) %&gt;% 
+  mutate(type_combine = paste0(pts_type, &quot;; &quot;, possession_type)) %&gt;% 
+  mutate(near_0 = near(pct_imbalance, 0, 0.05)) %&gt;% 
+  mutate(pct_imbalance = abs(pct_imbalance)) %&gt;% 
+  mutate(type_combine = forcats::fct_relevel(type_combine, &quot;1&amp;2; make-it-take-it&quot;, &quot;1&amp;2; alternating&quot;, &quot;2&amp;3; make-it-take-it&quot;, &quot;2&amp;3; alternating&quot;))
+
+data_near &lt;- data_chart %&gt;% 
+  filter(near_0) %&gt;% 
+  mutate(near_0 = &quot;+/- 0.05 imbalance&quot;)
+
+data_reviewed &lt;- data_chart %&gt;% 
+  filter(near(pct_long, 0.30), near(pct_short, 0.45)) %&gt;% 
+  mutate(label = &quot;Standard shooting conditions:\n45% shooting from interior;\n30% shooting from long range&quot;)
+
+# equations for perfect balance
+alt_1_2 &lt;- function(x) x / 2
+alt_2_3 &lt;- function(x) x / 1.5
+miti_1_2 &lt;- function(x) x / (2 - x)
+miti_2_3 &lt;- function(x) 2 * x / (3 - x)
+
+perfect_balance &lt;- list(alt_1_2, alt_2_3, miti_1_2, miti_2_3) %&gt;% 
+  map(~{tibble(pct_short = seq(0.20, 0.60, by = 0.01)) %&gt;% mutate(pct_long = .x(pct_short))}) %&gt;% 
+  map2(list(&quot;1&amp;2; alternating&quot;, &quot;2&amp;3; alternating&quot;, &quot;1&amp;2; make-it-take-it&quot;, &quot;2&amp;3; make-it-take-it&quot;),
+      ~{mutate(.x, type_combine = .y)}) %&gt;% 
+  bind_rows() %&gt;% 
+  mutate(type_combine = forcats::fct_relevel(type_combine, &quot;1&amp;2; make-it-take-it&quot;, &quot;1&amp;2; alternating&quot;, &quot;2&amp;3; make-it-take-it&quot;, &quot;2&amp;3; alternating&quot;))
+
+
+data_chart %&gt;% 
+  ggplot(aes(x = pct_short, y = pct_long))+
+  geom_tile(aes(fill = pct_imbalance))+
+  geom_tile(aes(fill = pct_imbalance, colour = near_0), alpha = 0, data = data_near)+
+  geom_line(color = &quot;red&quot;, data = perfect_balance)+
+  geom_point(aes(shape = label), data = data_reviewed, colour = &quot;violet&quot;)+
+  scale_color_manual(values = c(&quot;red&quot;))+
+  facet_wrap(~type_combine)+
+  theme_bw()+
+  labs(
+    title = &quot;Imbalance of expected points by shooting percentages&quot;,
+    # subtitle = &quot;For 45%; 30%, full court 2s and 3s or make-it-take-it 1s and 2s are most balanced&quot;,
+    # subtitle = &quot;By scoring and possession rules&quot;,
+    fill = &quot;Proportion imbalance&quot;,
+    x = &quot;Interior shooting %&quot;, 
+    y = &quot;Long range shooting %&quot;,
+    caption = &quot;Symmetric absolute difference used as metric for proportion imbalance.&quot;)+
+  theme(legend.key = element_rect(colour=&quot;white&quot;),
+        legend.position = &quot;right&quot;)+
+  guides(color = guide_legend(title = NULL, order = 2),
+         fill = guide_legend(order = 1),
+         shape = guide_legend(title = NULL))+
+  scale_y_continuous(limits = c(NA, 0.4), labels = scales::percent)+
+  scale_x_continuous(labels = scales::percent)+
+  coord_fixed()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/imbalance-across-pcts-1.png" width="672" /></p>
+<p>The wider color hue range in make-it-take-it settings demonstrates how, as you deviate from balanced shooting percentage conditions, shot imbalance grows more quickly than when playing with alternating possession after scores<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>. Everything above the red “perfect balance” lines (or curves in the cases of make-it-take) can be interpreted as shooting percentages where long range shooting has an expected points advantage. Everything below them represents shooting percentages where interior shooting has an advantage. For example, in games where interior shooting percentages are still ~45% but long range shooting is a bit worse, e.g. percentages in the low 20s, 1s and 2s with alternating possession after a score can actually be more balanced than 2s and 3s. However you would still be setting-up conditions for a lot of missed shots.</p>
+<p><img src="https://media0.giphy.com/media/eRaZhg8XZ3FoQ/giphy.gif"></p>
+<p>Sometimes it’s better to just play by all 1s.</p>
+</div>
+<div id="appendix" class="section level2">
+<h2>Appendix</h2>
+<div id="finite-geometric-series" class="section level3">
+<h3>Finite geometric series</h3>
+<p>Calculating the finite geometric series is more precise as it allows us to consider how many points (/scoring rounds) are left in the game. Equation for calculating the value of a finite geometric series:</p>
+<p><span class="math display">\[
+\frac{\text{(start value)} \cdot (1 - \text{rate}^n)}{(1 - \text{rate})}
+\]</span></p>
+<p>In our case, <em>n</em> is the number of remaining scoring possessions. However the number of remaining scoring possessions will depend on whether you’re shooting interior or long-range shots. Long range shots are worth more points so there would be fewer scoring possessions until the end of the game. For example, if you’re playing by 1s and 2s there will be ~half as many scoring possessions remaining if you’re sinking long-range compared to interior shots<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a>.</p>
+<p>Taking this into account, let’s look at the expected value of each shot if we range the number of points left in the game from 2 to 20 (still using our 45% and 30% shooting percentages).</p>
+<pre class="r"><code>library(dplyr)
+library(ggplot2)
+
+finite_geometric_series &lt;- function(start, rate, n){
+  (start * (1 - rate^n)) / (1 - rate)
+}
+
+data_1s2s_finite &lt;- bind_rows(
+  tibble(shot_pts = 1,
+         shot_pct = 0.45,
+         points_remain = seq(2, 14, by = 2)) %&gt;% 
+    mutate(n_rounds = points_remain),
+  tibble(shot_pts = 2,
+         shot_pct = 0.30,
+         points_remain = seq(2, 14, by = 2)) %&gt;% 
+    mutate(n_rounds = points_remain / 2)  
+) %&gt;% 
+  mutate(exp_pts = finite_geometric_series(shot_pts*shot_pct, shot_pct, n_rounds)) %&gt;% 
+  mutate(shot_pts_title = ifelse(shot_pts == 1, &quot;interior (1pts; 45%)&quot;, &quot;long-range (2pts; 30%)&quot;)) 
+
+data_1s2s_finite %&gt;% 
+  ggplot(aes(x = points_remain, y = exp_pts, colour = shot_pts_title))+
+  geom_line()+
+  scale_x_continuous(breaks = seq(2, 20, by = 2)) +  
+  theme_bw()+
+  ylim(0, NA) +
+  labs(
+    title = &quot;Expected Value of Shots Based on Points Left in the Game&quot;,
+    subtitle = &quot;1s and 2s, make-it-take-it&quot;,
+    x = &quot;Points Left in the Game&quot;,
+    y = &quot;Expected Value&quot;,
+    color = &quot;Shot Type&quot;
+  ) +
+  guides(color = guide_legend(title = NULL))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>Interior shots actually have a <em>slight</em> advantage when there’s &lt;= 4 points remaining in the game. However the values are still not <em>that</em> far apart making for a reasonably balanced game throughout.</p>
+<p>Finite sums for make-it-take-it 2s and 3s:</p>
+<pre class="r"><code>data_2s3s_finite &lt;- bind_rows(
+  tibble(shot_pts = 2,
+         shot_pct = 0.45,
+         points_remain = seq(5, 24, by = 1)) %&gt;% 
+    mutate(n_rounds = points_remain / 2),
+  tibble(shot_pts = 3,
+         shot_pct = 0.30,
+         points_remain = seq(5, 24, by = 1)) %&gt;% 
+    mutate(n_rounds = points_remain / 3)  
+) %&gt;% 
+  mutate(exp_pts = finite_geometric_series(shot_pts * shot_pct, shot_pct, n_rounds)) %&gt;% 
+  mutate(shot_pts_title = ifelse(shot_pts == 2, &quot;interior (2pts; 45%)&quot;, &quot;long-range (3pts; 30%)&quot;))
+
+data_2s3s_finite %&gt;% 
+  ggplot(aes(x = points_remain, y = exp_pts, colour = shot_pts_title))+
+  geom_line()+
+  # scale_x_continuous(breaks = seq(2, 20, by = 2)) +  
+  theme_bw()+
+  ylim(0, NA) +
+  scale_x_continuous(breaks = seq(6, 24, by = 6)) +  
+  labs(
+    title = &quot;Expected Value of Shots Based on Points Left in the Game&quot;,
+    subtitle = &quot;2s and 3s, make-it-take-it&quot;,
+    x = &quot;Points Left in the Game&quot;,
+    y = &quot;Expected Value&quot;,
+    color = &quot;Shot Type&quot;
+  ) +
+  guides(color = guide_legend(title = NULL))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>We again see a pretty similar story as to what we found when evaluating the infinite series: in 2s and 3s make-it-take-it there’s a decent imbalance favoring interior shots. This advantage exists (pretty much) no matter how many points remain.</p>
+</div>
+<div id="scoring-system-in-pickup-basketball" class="section level3">
+<h3>Scoring system in pickup basketball</h3>
+<p><em>In pickup basketball, two common scoring systems are used: “1s and 2s” and “2s and 3s.”</em></p>
+<ol style="list-style-type: decimal">
+<li><strong>1s and 2s</strong>: In this system, shots made inside the three-point line are worth 1 point, and shots made beyond the three-point line are worth 2 points. This system puts incentives on long-range shooting because a successful three-point shot is worth twice as much as a shot made inside the arc.</li>
+<li><strong>2s and 3s</strong>: Here, shots made inside the three-point line are worth 2 points, and shots made beyond the three-point line are worth 3 points, mirroring the scoring system used in professional basketball.</li>
+</ol>
+<p><em>Pickup basketball games also differ in how possession is handled after a score:</em></p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Make-it-Take-it</strong>: In this rule, the team that scores retains possession of the ball. This is common in half-court games.</p></li>
+<li><p><strong>Alternating Possession</strong>: In this rule, possession alternates between teams after each score. This is almost always the way possession is handled in full-court games.</p></li>
+</ol>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>It’s not that every player has to have a 30% long range shooting percentage and 45% interior shooting percentage. It could be that some of the players on the team are far worse at shooting 3s, but they just won’t take those shots.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>This isn’t completely true when considering make-it-take-it but as long as things don’t depart too much from the shooting percentages I’m using, most of the takeaways stay the same.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>I’m also ignoring free throws because playing with these are exceptionally rare in pickup basketball.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p><a href="https://patrickjuli.us/2016/01/27/how-i-wish-we-measured-percentage-change/">Article</a> on symmetric measure for percentage difference.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>Article surveying the most common <a href="https://www.sbnation.com/lookit/2015/4/7/8353509/what-are-the-rules-of-pick-up-basketball-survey">rules of pickup</a>.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>and finds sympathy among those without a jump shot<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>and continuing to ignore turnovers, offensive rebounds, and other complicating factors<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>A better descriptor might be “pseudo-expected points.”<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p><a href="https://www.khanacademy.org/math/integral-calculus/ic-series/ic-geometric-series/a/proof-of-infinite-geometric-series-formula">Proof on Khan Academy</a><a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>As I discuss in <a href="#finite-geometric-series">Finite geometric series</a> in the appendix the value is dependent on how many points are left in the game, but in practice, this doesn’t make a big difference in conclusions.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>Maybe a slight edge for long range shots but pretty close (i.e. balanced).<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>(actually scoring possessions)<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>The other play formats lead to imbalances that favor either long range or interior shooting.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p>Being the ethical and upstanding individual you are, you should advocate for the most balanced system available. A more cynical person might say that you should try and skew the scoring system to whichever gives your team the greatest advantage… however I think it’s more fun to just try and keep things balanced.<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
+<li id="fn15"><p>You <em>could</em> push for 2s and 3s with alternating possession though which is a little more balanced and has the advantage of being more robust to variations in shooting percentage which I touch-on in <a href="#other-considerations">Other considerations</a>.<a href="#fnref15" class="footnote-back">↩︎</a></p></li>
+<li id="fn16"><p>Even under reasonably balanced rules you can still find opportunities where people don’t play in-line with expected value. One example, is in 1s and 2s make-it-take-it some players will be overly concerned about long range shots (and under appreciate the value of retaining possession) and defend in a way that opens themselves up to drives and high percentage interior shots. This is particularly the case if playing with less than 10 players (e.g. 3 vs 3 or 4 vs 4) where interior play is already more open and the shooting percentage on interior shots likely goes up by more than it does for long range shots.<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
+<li id="fn17"><p>There’s also the possibility that much of this post is rationalizing my own frustrations at growing up without a decent jump shot and having to always play 1s and 2s.<a href="#fnref17" class="footnote-back">↩︎</a></p></li>
+<li id="fn18"><p>In the case of alternating possession, proportion imbalanced is linearly related to the ratio of {interior shooting %} : {long range shooting %}, e.g. in the case of 2s and 3s alternating possession, what matters is not the specific shooting percentages but how far they deviate from the ratio of 0.45 : 0.30. However when playing make-it-take-it the relationship is not linear (though within a small window of shooting percentages a linear relationship works OK as an approximation).<a href="#fnref18" class="footnote-back">↩︎</a></p></li>
+<li id="fn19"><p>The “perfect balance” equations were found by setting the interior and long range expected points equations equal to each other and simplifying.<a href="#fnref19" class="footnote-back">↩︎</a></p></li>
+<li id="fn20"><p>This is why the 45%; 30% shooting conditions in the upper right and lower left, while being very different in terms of distance from the “perfect balance” lines are pretty similar in terms of proportion imbalanced.<a href="#fnref20" class="footnote-back">↩︎</a></p></li>
+<li id="fn21"><p>In the curves I’m ignoring that some of these point values are impossible given the scoring systems.<a href="#fnref21" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
