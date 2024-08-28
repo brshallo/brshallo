@@ -17,9 +17,10 @@ thumbnail: /2024/08/27/how-you-should-keep-score-in-pickup-basketball/index_file
 <li><a href="#summary" id="toc-summary">Summary</a></li>
 <li><a href="#taking-action" id="toc-taking-action">Taking action</a></li>
 <li><a href="#other-considerations" id="toc-other-considerations">Other considerations</a></li>
-<li><a href="#appendix" id="toc-appendix">Appendix</a>
+<li><a href="#appendix" id="toc-appendix">Appendix</a></li>
+<li><a href="#but-you-dont-play-pickup-basketball-to-infinity" id="toc-but-you-dont-play-pickup-basketball-to-infinity">But you don’t play pickup basketball to infinity</a></li>
+<li><a href="#finite-geometric-series" id="toc-finite-geometric-series">Finite geometric series</a>
 <ul>
-<li><a href="#finite-geometric-series" id="toc-finite-geometric-series">Finite geometric series</a></li>
 <li><a href="#scoring-system-in-pickup-basketball" id="toc-scoring-system-in-pickup-basketball">Scoring system in pickup basketball</a></li>
 </ul></li>
 </ul>
@@ -36,20 +37,20 @@ thumbnail: /2024/08/27/how-you-should-keep-score-in-pickup-basketball/index_file
 <p>The 2s and 3s scoring system is the minority position in most pickup games<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> but is somewhat more popular among analytics oriented players and common practice among the converted<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. Hence the conventional sports nerd wisdom is to advocate for playing by 2s and 3s (see <a href="https://grantland.com/the-triangle/video-how-to-fix-pickup-basketball-with-analytics/">How to Fix Pickup Basketball…</a>). However that analysis doesn’t take into account possession.</p>
 <div id="what-if-youre-playing-make-it-take-it" class="section level2">
 <h2>What if you’re playing make-it-take-it?</h2>
-<p><em>2s and 3s is only more balanced when you alternate possession after each score.</em> While alternating possession is the norm in full court pickup basketball, in half court the more common play style is for the scoring team to retain possession – called “make-it-take-it.” Under these conditions<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>, calculating expected points is a little more complicated as you need to consider not just the expected points of the shot attempt but also the value associated with the chance of retaining possession (and making future shots) if you score<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
+<p><em>2s and 3s is only more balanced when you alternate possession after each score.</em> While alternating possession is the norm in full court pickup basketball, in half court the more common play style is for the scoring team to retain possession – called “make-it-take-it.” Under these conditions<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>, calculating expected points is a little more complicated as you need to consider not just the expected points of the shot attempt but also the value associated with the chance of retaining possession (and making future shots) if you score.</p>
 <p>Calculating the expected points for a shot is no longer just:</p>
 <p><span class="math inline">\(\text{(number of points)} \times \text{(shooting percentage)}\)</span></p>
 <p>but:</p>
 <p><span class="math inline">\(\left(\text{number of points}\right) \times \left(\text{shooting percentage}\right) \\+ \left(\text{chance last shot was made}\right) \times \left(\text{number of points}\right) \times \left(\text{shooting percentage}\right) \\+ \left(\text{chance last two shots were made}\right) \times \left(\text{number of points}\right) \times \left(\text{shooting percentage}\right) \\+ \ldots \left(\text{and so on and so on}\right) \ldots\)</span></p>
-<p>If we consider the expected points of an interior shot (when playing 1s and 2s) the series can be represented as:</p>
+<p>If we consider the expected points of an interior shot (when playing 1s and 2s) the series can be approximated as:</p>
 <p><span class="math display">\[
 1 \times 0.45 + 1 \times 0.45^2 + \ldots + 1 \times 0.45^n
 \]</span></p>
-<p>You might recognize this from calculus as a geometric series and notice that because each additional term in the series gets smaller and smaller towards 0, the total value of the sum will converge to a constant. The value of a converging infinite geometric series can be represented by the simple equation<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>:</p>
+<p>You might recognize this from calculus as a geometric series and notice that because each additional term in the series gets smaller and smaller towards 0, the total value of the sum will converge to a constant. The value of a converging infinite geometric series can be represented by the simple equation<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>:</p>
 <p><span class="math display">\[
 \frac{\text{(start value)}}{(1 - \text{rate})}
 \]</span></p>
-<p>We can use this to determine, roughly, the expected points<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> for a shot attempt. If we plug in our values for a 1 pointer with 45% chance of being made:</p>
+<p>We can use this to approximate the expected points for a shot attempt (see <a href="#but-you-dont-play-pickup-basketball-to-infinity">But you don’t play pickup basketball to infinity</a> for why this is just an approximation). If we plug in our values for a 1 pointer with 45% chance of being made:</p>
 <p><span class="math display">\[
 \frac{(0.45 \times 1)}{(1 - 0.45)} = 0.82
 \]</span></p>
@@ -57,8 +58,8 @@ thumbnail: /2024/08/27/how-you-should-keep-score-in-pickup-basketball/index_file
 <p><span class="math display">\[
 \frac{(0.30 \times 2)}{(1 - 0.30)} = 0.86
 \]</span></p>
-<p>This shows a less than 5% difference in expected points if taking an interior or long range shot when playing make-it-take<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>. This is pretty balanced, which is good news as 1s and 2s make-it-take-it is the norm for half court pickup basketball. Compare this relative balance to the expected values when playing make-it-take by 2s and 3s.</p>
-<p>Expected points for a 2 pointer in make-it-take-it:</p>
+<p>This shows a less than 5% difference in approximate expected points if taking an interior or long range shot when playing make-it-take<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>. This is pretty balanced, which is good news as 1s and 2s make-it-take-it is the norm for half court pickup basketball. Compare this relative balance to the expected values when playing make-it-take by 2s and 3s.</p>
+<p>Approximate expected points for a 2 pointer in make-it-take-it:</p>
 <p><span class="math display">\[
 \frac{(0.45 \times 2)}{(1 - 0.45)} = 1.64
 \]</span></p>
@@ -67,13 +68,10 @@ thumbnail: /2024/08/27/how-you-should-keep-score-in-pickup-basketball/index_file
 \frac{(0.3 \times 3)}{(1 - 0.3)} = 1.29
 \]</span></p>
 <p>Under these conditions, an interior shot has almost 27% greater expected value than taking a long range shot (24% symmetric percent difference). In this case 2s and 3s is almost as imbalanced for interior shots as the 33% advantage we saw for distance shots when playing 1s and 2s with alternating possession. It’s good then that 2s and 3s make-it-take-it is somewhat rare.</p>
-<p><strong>But you don’t play pickup basketball to infinity…</strong></p>
-<p>The solutions above are for an infinite series but in pickup basketball you typically play to some fixed value (e.g. 7, 11, 15, 16, 21, 25). What you actually want is the solutions for finite geometric series that are conditioned on how many points<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a> are left in the game. When playing make-it-take-it by 1s and 2s, 1-pointers actually show a slight advantage if there are 4 or less points remaining in the game after which the small advantage shifts to 2-pointers. In general though, calculating the sums of the finite series tells the same overarching story as we told when calculating expected values with infinite series. “<em>Given 45% : 30% (interior : long range) shooting percentages, make-it-take-it by 1s and 2s is pretty balanced whereas make-it-take-it by 2s and 3s gives an expected points advantage to interior shooting.</em>”</p>
-<p>Therefore infinite series seem to work fine as an approximation for expected points while being simple to describe as each statement does not need to be conditioned on how many points remain in the game. See the <a href="#finite-geometric-series">Finite geometric series</a> section in the appendix if you’re interested in more detail though.</p>
 </div>
 <div id="summary" class="section level2">
 <h2>Summary</h2>
-<p>The two conditions that lead to similar in-game expected values for interior and long range shots are make-it-take-it 1s and 2s as well as 2s and 3s with alternating possession after scores<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>.</p>
+<p>The two conditions that lead to similar in-game expected values for interior and long range shots are make-it-take-it 1s and 2s as well as 2s and 3s with alternating possession after scores<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
 <pre class="r"><code># Load the gt package
 library(gt)
 library(dplyr)
@@ -647,20 +645,20 @@ table</code></pre>
 </div>
 <div id="taking-action" class="section level2">
 <h2>Taking action</h2>
-<p>You might think that the expected values of different shots would naturally balance out. If you’re playing by 1s and 2s with alternating possession (where deep shots are more valuable) you would think players would defend long range shots more aggressively which would lead to the shooting percentage on those shots dropping relative to interior shots. In practice though, this adjustment does not happen as much as would be expected by fully rational players. Instead, many people anchor their play style to whatever brand of basketball they are accustomed and do not fully adjust to the scoring and possession system in place. Given these tendencies, <em>what should you do?</em></p>
+<p>You might think that the expected values of different shots would naturally balance out. If you’re playing by 1s and 2s with alternating possession (where I’ve said deep shots are more valuable) you would think players would defend long range shots more aggressively which would lead to the shooting percentage on those shots dropping relative to interior shots. In practice though, this modification does not happen as much as would be expected by fully rational players<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>. Instead, many people anchor their play style to whatever brand of basketball they are accustomed and do not fully adjust to the scoring and possession system in place. Given these tendencies, <em>what should you do?</em></p>
 <ol style="list-style-type: decimal">
-<li>Advocate for a balanced scoring system<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a></li>
+<li>Advocate for a balanced scoring system<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a></li>
 </ol>
-<p>This means if you’re playing full court (with alternating possessions after scores), push for playing by 2s and 3s to 21 (rather than the more common 1s and 2s to 15). If you’re playing half court, you don’t need to do anything as games are typically played make-it-take by 1s and 2s, which has mostly fine incentives<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>.</p>
+<p>This means if you’re playing full court (with alternating possessions after scores), push for playing by 2s and 3s to 21 (rather than the more common 1s and 2s to 15). If you’re playing half court, you don’t need to do anything as games are typically played make-it-take by 1s and 2s, which has mostly fine incentives<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>.</p>
 <ol start="2" style="list-style-type: decimal">
 <li>Arbitrage</li>
 </ol>
-<p>In many cases you will not be able to influence the scoring system. Under these conditions other players not fully adapting to unbalanced values of interior or long range shots is an opportunity. For example, if the system advantages long range scoring, do your best to get your best shooter as many decent looks as possible and push your team to play good outside defense<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
+<p>In many cases you will not be able to influence the scoring system. Under these conditions other players not fully adapting to unbalanced values of interior or long range shots is an opportunity. For example, if the system advantages long range scoring, do your best to get your best shooter as many decent looks as possible and push your team to play good outside defense<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>.</p>
 </div>
 <div id="other-considerations" class="section level2">
 <h2>Other considerations</h2>
-<p>The conclusion that “1s and 2s make-it-take-it” and “2s and 3s alternating possession” make for the most balanced games depends on my guesses for shooting percentages<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>. 45% and 30% for interior and long range are reasonable estimates for competitive pickup games but may not apply universally<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>.</p>
-<p>The chart below shows, across a range of possible interior and long range shooting percentages, the relative imbalance in expected points under each of the four {possession} x {scoring} conditions<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a>.</p>
+<p>The conclusion that “1s and 2s make-it-take-it” and “2s and 3s alternating possession” make for the most balanced games depends on my guesses for shooting percentages<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>. 45% and 30% for interior and long range are reasonable estimates for competitive pickup games but may not apply universally<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>.</p>
+<p>The chart below shows, across a range of possible interior and long range shooting percentages, the relative imbalance in expected points under each of the four {possession} x {scoring} conditions<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a>.</p>
 <pre class="r"><code>library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -748,20 +746,27 @@ data_chart %&gt;%
   scale_x_continuous(labels = scales::percent)+
   coord_fixed()</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/imbalance-across-pcts-1.png" width="672" /></p>
-<p>The wider color hue range in make-it-take-it settings demonstrates how, as you deviate from balanced shooting percentage conditions, shot imbalance grows more quickly than when playing with alternating possession after scores<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>. Everything above the red “perfect balance” lines (or curves in the cases of make-it-take) can be interpreted as shooting percentages where long range shooting has an expected points advantage. Everything below them represents shooting percentages where interior shooting has an advantage. For example, in games where interior shooting percentages are still ~45% but long range shooting is a bit worse, e.g. percentages in the low 20s, 1s and 2s with alternating possession after a score can actually be more balanced than 2s and 3s. However you would still be setting-up conditions for a lot of missed shots.</p>
+<p>The greater range in color hue for make-it-take-it settings demonstrates how, as you deviate from balanced shooting percentage conditions, shot imbalance grows more quickly than when playing with alternating possession after scores. This is why the 45%; 30% standard shooting percentage points in the upper right and lower left charts, while being quite different in terms of distance from “perfect balance” are pretty similar in terms of proportion imbalanced.</p>
+<p>Everything above the red “perfect balance” lines (or curves in the cases of make-it-take) can be interpreted as shooting percentages where long range shooting has an expected points advantage. Everything below them represents shooting percentages where interior shooting has an advantage. For example, in games where interior shooting percentages are still ~45% but long range shooting is a bit worse (e.g. percentages in the low 20s) 1s and 2s with alternating possession after a score can actually be more balanced than 2s and 3s. However you would be setting-up conditions for a lot of missed shots.</p>
 <p><img src="https://media0.giphy.com/media/eRaZhg8XZ3FoQ/giphy.gif"></p>
 <p>Sometimes it’s better to just play by all 1s.</p>
 </div>
 <div id="appendix" class="section level2">
 <h2>Appendix</h2>
-<div id="finite-geometric-series" class="section level3">
-<h3>Finite geometric series</h3>
-<p>Calculating the finite geometric series is more precise as it allows us to consider how many points (/scoring rounds) are left in the game. Equation for calculating the value of a finite geometric series:</p>
+</div>
+<div id="but-you-dont-play-pickup-basketball-to-infinity" class="section level2">
+<h2>But you don’t play pickup basketball to infinity</h2>
+<p>The solutions in [What if you’re playing make-it-take-it?] are with infinite series but in pickup basketball you typically play to some fixed value (e.g. 7, 11, 15, 16, 21, 25). Evaluating <a href="#finite-geometric-series">Finite geometric series</a> would allow you to condition your expected value calculations on how many points (or actually scoring possessions) remain. However, the values for the finite geometric series would only substantively differ from our infinite series calculations as you get near to the end of the game at which point (and even before then probably) you should start thinking in terms of event outcomes rather than expected points. Event outcomes are a problem of probability rather than expected value and require a different type of analysis. In the future I may do a “Simulating pickup basketball outcomes” post<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a>. However for my purposes now, infinite series work fine as an approximation for expected points while remaining easy to describe (as each statement of value does not need to be predicated on how many points remain in the game). From the <a href="#summary">Summary</a> section on I stop saying “approximate expected points” and just say<a href="#fn19" class="footnote-ref" id="fnref19"><sup>19</sup></a> “expected points.”</p>
+</div>
+<div id="finite-geometric-series" class="section level2">
+<h2>Finite geometric series</h2>
+<p><em>…much of this section was written while thinking about the problem in the wrong way…</em></p>
+<p>Calculating the finite geometric series allows us to consider how many points (/scoring rounds) are left in the game. Equation for calculating the value of a finite geometric series:</p>
 <p><span class="math display">\[
 \frac{\text{(start value)} \cdot (1 - \text{rate}^n)}{(1 - \text{rate})}
 \]</span></p>
-<p>In our case, <em>n</em> is the number of remaining scoring possessions. However the number of remaining scoring possessions will depend on whether you’re shooting interior or long-range shots. Long range shots are worth more points so there would be fewer scoring possessions until the end of the game. For example, if you’re playing by 1s and 2s there will be ~half as many scoring possessions remaining if you’re sinking long-range compared to interior shots<a href="#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a>.</p>
-<p>Taking this into account, let’s look at the expected value of each shot if we range the number of points left in the game from 2 to 20 (still using our 45% and 30% shooting percentages).</p>
+<p>In our case, <em>n</em> is the number of remaining scoring possessions. However the number of remaining scoring possessions will depend on whether you’re shooting interior or long-range shots. Long range shots are worth more points so there would be fewer scoring possessions until the end of the game. For example, if you’re playing by 1s and 2s there will be ~half as many scoring possessions remaining if you’re sinking long-range compared to interior shots<a href="#fn20" class="footnote-ref" id="fnref20"><sup>20</sup></a>. Taking this into account, let’s look at the expected value of each shot (still using our 45% and 30% shooting percentages).</p>
+<p>The usefulness of looking at these charts is limited for the reasons described in <a href="#but-you-dont-play-pickup-basketball-to-infinity">But you don’t play pickup basketball to infinity</a> (namely that you should think in terms of event outcomes, particularly near the end of the game). Also I’ve included point values in the charts that are impossible and calculations at points that are nonsensical. The purpose of the charts are mainly to show the pretty quick rate at which the expected values converge – suggesting that, for most of the game, infinite series are a decent metric to use when considering shot selections if playing make-it-take-it.</p>
 <pre class="r"><code>library(dplyr)
 library(ggplot2)
 
@@ -772,11 +777,11 @@ finite_geometric_series &lt;- function(start, rate, n){
 data_1s2s_finite &lt;- bind_rows(
   tibble(shot_pts = 1,
          shot_pct = 0.45,
-         points_remain = seq(2, 14, by = 2)) %&gt;% 
+         points_remain = seq(2, 14, by = 1)) %&gt;% 
     mutate(n_rounds = points_remain),
   tibble(shot_pts = 2,
          shot_pct = 0.30,
-         points_remain = seq(2, 14, by = 2)) %&gt;% 
+         points_remain = seq(2, 14, by = 1)) %&gt;% 
     mutate(n_rounds = points_remain / 2)  
 ) %&gt;% 
   mutate(exp_pts = finite_geometric_series(shot_pts*shot_pct, shot_pct, n_rounds)) %&gt;% 
@@ -797,16 +802,15 @@ data_1s2s_finite %&gt;%
   ) +
   guides(color = guide_legend(title = NULL))</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<p>Interior shots actually have a <em>slight</em> advantage when there’s &lt;= 4 points remaining in the game. However the values are still not <em>that</em> far apart making for a reasonably balanced game throughout.</p>
 <p>Finite sums for make-it-take-it 2s and 3s:</p>
 <pre class="r"><code>data_2s3s_finite &lt;- bind_rows(
   tibble(shot_pts = 2,
          shot_pct = 0.45,
-         points_remain = seq(5, 24, by = 1)) %&gt;% 
+         points_remain = seq(3, 24, by = 1)) %&gt;% 
     mutate(n_rounds = points_remain / 2),
   tibble(shot_pts = 3,
          shot_pct = 0.30,
-         points_remain = seq(5, 24, by = 1)) %&gt;% 
+         points_remain = seq(3, 24, by = 1)) %&gt;% 
     mutate(n_rounds = points_remain / 3)  
 ) %&gt;% 
   mutate(exp_pts = finite_geometric_series(shot_pts * shot_pct, shot_pct, n_rounds)) %&gt;% 
@@ -818,7 +822,7 @@ data_2s3s_finite %&gt;%
   # scale_x_continuous(breaks = seq(2, 20, by = 2)) +  
   theme_bw()+
   ylim(0, NA) +
-  scale_x_continuous(breaks = seq(6, 24, by = 6)) +  
+  scale_x_continuous(breaks = seq(3, 24, by = 3)) +  
   labs(
     title = &quot;Expected Value of Shots Based on Points Left in the Game&quot;,
     subtitle = &quot;2s and 3s, make-it-take-it&quot;,
@@ -829,7 +833,6 @@ data_2s3s_finite %&gt;%
   guides(color = guide_legend(title = NULL))</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>We again see a pretty similar story as to what we found when evaluating the infinite series: in 2s and 3s make-it-take-it there’s a decent imbalance favoring interior shots. This advantage exists (pretty much) no matter how many points remain.</p>
-</div>
 <div id="scoring-system-in-pickup-basketball" class="section level3">
 <h3>Scoring system in pickup basketball</h3>
 <p><em>In pickup basketball, two common scoring systems are used: “1s and 2s” and “2s and 3s.”</em></p>
@@ -854,19 +857,18 @@ data_2s3s_finite %&gt;%
 <li id="fn5"><p>Article surveying the most common <a href="https://www.sbnation.com/lookit/2015/4/7/8353509/what-are-the-rules-of-pick-up-basketball-survey">rules of pickup</a>.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
 <li id="fn6"><p>and finds sympathy among those without a jump shot<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
 <li id="fn7"><p>and continuing to ignore turnovers, offensive rebounds, and other complicating factors<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
-<li id="fn8"><p>A better descriptor might be “pseudo-expected points.”<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
-<li id="fn9"><p><a href="https://www.khanacademy.org/math/integral-calculus/ic-series/ic-geometric-series/a/proof-of-infinite-geometric-series-formula">Proof on Khan Academy</a><a href="#fnref9" class="footnote-back">↩︎</a></p></li>
-<li id="fn10"><p>As I discuss in <a href="#finite-geometric-series">Finite geometric series</a> in the appendix the value is dependent on how many points are left in the game, but in practice, this doesn’t make a big difference in conclusions.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
-<li id="fn11"><p>Maybe a slight edge for long range shots but pretty close (i.e. balanced).<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
-<li id="fn12"><p>(actually scoring possessions)<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
-<li id="fn13"><p>The other play formats lead to imbalances that favor either long range or interior shooting.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
-<li id="fn14"><p>Being the ethical and upstanding individual you are, you should advocate for the most balanced system available. A more cynical person might say that you should try and skew the scoring system to whichever gives your team the greatest advantage… however I think it’s more fun to just try and keep things balanced.<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
-<li id="fn15"><p>You <em>could</em> push for 2s and 3s with alternating possession though which is a little more balanced and has the advantage of being more robust to variations in shooting percentage which I touch-on in <a href="#other-considerations">Other considerations</a>.<a href="#fnref15" class="footnote-back">↩︎</a></p></li>
-<li id="fn16"><p>Even under reasonably balanced rules you can still find opportunities where people don’t play in-line with expected value. One example, is in 1s and 2s make-it-take-it some players will be overly concerned about long range shots (and under appreciate the value of retaining possession) and defend in a way that opens themselves up to drives and high percentage interior shots. This is particularly the case if playing with less than 10 players (e.g. 3 vs 3 or 4 vs 4) where interior play is already more open and the shooting percentage on interior shots likely goes up by more than it does for long range shots.<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
-<li id="fn17"><p>There’s also the possibility that much of this post is rationalizing my own frustrations at growing up without a decent jump shot and having to always play 1s and 2s.<a href="#fnref17" class="footnote-back">↩︎</a></p></li>
-<li id="fn18"><p>In the case of alternating possession, proportion imbalanced is linearly related to the ratio of {interior shooting %} : {long range shooting %}, e.g. in the case of 2s and 3s alternating possession, what matters is not the specific shooting percentages but how far they deviate from the ratio of 0.45 : 0.30. However when playing make-it-take-it the relationship is not linear (though within a small window of shooting percentages a linear relationship works OK as an approximation).<a href="#fnref18" class="footnote-back">↩︎</a></p></li>
-<li id="fn19"><p>The “perfect balance” equations were found by setting the interior and long range expected points equations equal to each other and simplifying.<a href="#fnref19" class="footnote-back">↩︎</a></p></li>
-<li id="fn20"><p>This is why the 45%; 30% shooting conditions in the upper right and lower left, while being very different in terms of distance from the “perfect balance” lines are pretty similar in terms of proportion imbalanced.<a href="#fnref20" class="footnote-back">↩︎</a></p></li>
-<li id="fn21"><p>In the curves I’m ignoring that some of these point values are impossible given the scoring systems.<a href="#fnref21" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p><a href="https://www.khanacademy.org/math/integral-calculus/ic-series/ic-geometric-series/a/proof-of-infinite-geometric-series-formula">Proof on Khan Academy</a><a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>Maybe a slight edge for long range shots but pretty close (i.e. balanced).<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>The other play formats lead to imbalances that favor either long range or interior shooting.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>Also some adjustments may be difficult to make regardless of intention.<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>Being the ethical and upstanding individual you are, you should advocate for the most balanced system available. A more cynical person might say that you should try and skew the scoring system to whichever gives your team the greatest advantage… however I think it’s more fun to just try and keep things balanced.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>You <em>could</em> push for 2s and 3s with alternating possession though which is a little more balanced and has the advantage of being more robust to variations in shooting percentage which I touch-on in <a href="#other-considerations">Other considerations</a>.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p>Even under reasonably balanced rules you can still find opportunities where people don’t play in-line with expected value. One example, is in 1s and 2s make-it-take-it some players will be overly concerned about long range shots (and under appreciate the value of retaining possession) and defend in a way that opens themselves up to drives and high percentage interior shots. This is particularly the case if playing with less than 10 players (e.g. 3 vs 3 or 4 vs 4) where interior play is already more open and the shooting percentage on interior shots likely goes up by more than it does for long range shots.<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
+<li id="fn15"><p>There’s also the possibility that much of this post is rationalizing my own frustrations at growing up without a decent jump shot and having to always play 1s and 2s.<a href="#fnref15" class="footnote-back">↩︎</a></p></li>
+<li id="fn16"><p>In the case of alternating possession, proportion imbalanced is linearly related to the ratio of {interior shooting %} : {long range shooting %}, e.g. in the case of 2s and 3s alternating possession, what matters is not the specific shooting percentages but how far they deviate from the ratio of 0.45 : 0.30. However when playing make-it-take-it the relationship is not linear (though within a small window of shooting percentages a linear relationship works OK as an approximation).<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
+<li id="fn17"><p>The “perfect balance” equations were found by setting the interior and long range expected points equations equal to each other and simplifying.<a href="#fnref17" class="footnote-back">↩︎</a></p></li>
+<li id="fn18"><p>E.g. 1s and 2s make-it-take to 11, you’re down 9 - 7 with the ball… what are your chances of winning if you…<a href="#fnref18" class="footnote-back">↩︎</a></p></li>
+<li id="fn19"><p>This allows me to put both “alternating” and “make-it-take-it” calculations on the same figures without having to clarify that the former is expected points and the latter approximate expected points.<a href="#fnref19" class="footnote-back">↩︎</a></p></li>
+<li id="fn20"><p>In the curves I’m ignoring that some of these point values are impossible given the scoring systems.<a href="#fnref20" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
