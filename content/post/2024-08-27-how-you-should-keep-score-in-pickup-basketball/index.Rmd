@@ -292,11 +292,15 @@ data_chart %>%
   coord_fixed()
 ```
 
-Everything above the red "perfect balance" lines (or curves in the cases of make-it-take) can be interpreted as shooting percentages where long range shooting has an expected points advantage. Everything below them represents shooting percentages where interior shooting has an advantage[^conditions]. For example, in games where interior shooting percentages are still ~45% but long range shooting is a bit worse (e.g. percentages in the low 20s) 1s and 2s with alternating possession after a score can actually be more balanced than 2s and 3s. However you would be setting-up conditions for a lot of missed shots. 
+The greater range in color hue for make-it-take-it settings demonstrates how, as you deviate from balanced shooting percentage conditions, expected value imbalance grows more quickly than when playing with alternating possession. Hence make-it-take-it comes with greater downside risks of incentives getting out of whack[^conditions-note]. 
+
+[^conditions-note]: This is why the points on the graph for "standard shooting percentages" in the upper right and lower left charts are noticeably different distances from the "perfectly balanced" shooting percentage for that condition but similar in terms of proportion imbalanced. 
+
+The red indicates the shooting percentages for balanced incentives. Everything above the red "perfect balance" lines (or curves in the cases of make-it-take) can be interpreted as shooting percentages where long range shooting has an expected points advantage. Everything below them represents shooting percentages where interior shooting has an advantage[^conditions]. For example, in games where interior shooting percentages are still ~45% but long range shooting is a bit worse (e.g. percentages in the low 20s) 1s and 2s with alternating possession after a score can actually be more balanced than 2s and 3s. However you would be setting-up conditions for a lot of missed shots. 
 
 [^conditions]: You can see where the standard shooting percentages we investigate fall in these conditions. "2&3; alternating" is directly on the "perfect balance" line, "1&2; make-it-take-it" is close to it's perfect balance curve. Whereas "1&2; alternating" is above it's line, indicating an advantage for long range shooting and "2&3; make-it-take-it" is below it's line indicating an advantage for interior shooting. 
 
-    The greater range in color hue for make-it-take-it settings demonstrates how, as you deviate from balanced shooting percentage conditions, shot expected value imbalance grows more quickly than when playing with alternating possession. This is why the points on the graph for "standard shooting percentages" in the upper right and lower left charts are noticeably different distances from the "perfectly balanced" shooting percentage for that condition but similar in terms of proportion imbalanced. 
+    
 
 <img src="https://media0.giphy.com/media/eRaZhg8XZ3FoQ/giphy.gif">
 
