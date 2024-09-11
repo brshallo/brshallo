@@ -199,7 +199,7 @@ The conclusion that "1s and 2s make-it-take-it" and "2s and 3s alternating posse
 
 [^ratios-relations]: In the case of alternating possession, proportion imbalanced is linearly related to the ratio of {interior shooting %} : {long range shooting %}, e.g. in the case of 2s and 3s alternating possession, what matters is not the specific shooting percentages but how far they deviate from the ratio of 0.45 : 0.30. However when playing make-it-take-it the relationship is not linear (though within a small window of shooting percentages a linear relationship works OK as an approximation).
 
-The chart below shows, across a range of possible interior and long range shooting percentages, the relative imbalance in expected points under each of the four {possession} x {scoring} conditions[^chart-notes]. 
+The chart below shows, across a range of possible interior and long range shooting percentages, the relative imbalance in expected points under each of the four {possession} x {scoring} conditions[^chart-notes]. See [Table of imbalances] in the appendix to look-up these values at any point.
 
 [^chart-notes]: The "perfect balance" equations were found by setting the interior and long range expected points equations equal to each other and simplifying.
 
@@ -235,13 +235,15 @@ data_imbalance <- crossing(shooting_pcts, shots_pts) %>%
   mutate(alt = total_pct_difference(exp_short_alt, exp_long_alt),
          miti = total_pct_difference(exp_short_miti, exp_long_miti))
 
-data_chart <- data_imbalance %>% 
+data_chart_raw <- data_imbalance %>% 
   pivot_longer(one_of("alt", "miti"), names_to = "possession_type", values_to = "pct_imbalance") %>% 
   mutate(possession_type = ifelse(possession_type == "alt", "alternating", "make-it-take-it")) %>% 
   mutate(type_combine = paste0(pts_type, "; ", possession_type)) %>% 
   mutate(near_0 = near(pct_imbalance, 0, 0.05)) %>% 
-  mutate(pct_imbalance = abs(pct_imbalance)) %>% 
   mutate(type_combine = forcats::fct_relevel(type_combine, "1&2; make-it-take-it", "1&2; alternating", "2&3; make-it-take-it", "2&3; alternating"))
+
+data_chart <- data_chart_raw %>% 
+  mutate(pct_imbalance = abs(pct_imbalance))
 
 data_near <- data_chart %>% 
   filter(near_0) %>% 
@@ -311,6 +313,29 @@ Sometimes it's better to just play by all 1s.
 ### But you don't play pickup basketball to infinity
 
 The solutions in [What if you're playing make-it-take-it?] are with infinite series but in pickup basketball you typically play to some fixed value (e.g. 7, 11, 15, 16, 21, 25). Evaluating [Finite geometric series] would allow you to condition your expected value calculations on how many points (or actually scoring possessions) remain. However, the values for the finite geometric series would only substantively differ from our infinite series calculations as you get near to the end of the game. By this point you'd be better thinking in terms of event outcomes rather than expected points. After all you don't really care about expected points but chance of winning^[The expected points calculations for finite geometric series get weird near the end of the game because you can't score more points after the game ends... but this doesn't matter, you just care about getting to the end of the game.]. Event outcomes are a problem of probability rather than expected value and require a different type of analysis. In the future I may do a "Simulating pickup basketball outcomes" post^[E.g. 1s and 2s make-it-take to 11, you're down 9 - 7 with the ball... what are your chances of winning if you...]. However for my purposes in this post (identifying the rules that promote the most balanced games), infinite series work fine as an approximation for expected points. The calculations are also easy to describe as each statement of value does not need to be predicated on how many points remain in the game. From the [Summary] section on I stop saying "approximate expected points" and just say^[This allows me to put both "alternating" and "make-it-take-it" calculations on the same figures without having to clarify that the former is expected points and the latter approximate expected points.] "expected points."
+
+### Table of imbalances
+
+Positive values in the `diff%_*` columns represent imbalances in favor of interior shots whereas negative values indicate imbalances in favor of long range shots.
+
+```{r}
+library(DT)
+
+data_table <- data_chart_raw %>%
+  select(type_combine, pct_long, pct_short, pct_imbalance) %>% 
+  pivot_wider(names_from = type_combine, values_from = pct_imbalance) %>% 
+  # mutate(across(everything(), scales::percent, accuracy = 1)) %>% 
+  rename_with(~stringr::str_replace(., "pct", "fg%"), starts_with("pct_")) %>% 
+  rename_with(~paste0("diff%_", .), contains(" ")) %>% 
+  dplyr::relocate(contains("short")) %>% 
+  mutate(across(everything(), ~round(.x, 2)))
+
+datatable(data_table, 
+          options = list(dom = 'ltipr'), 
+          filter = list(position = 'top'),
+          rownames = FALSE) %>% 
+  DT::formatPercentage(names(data_table), 0)
+```
 
 ### Finite geometric series
 
