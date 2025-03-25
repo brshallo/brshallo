@@ -330,11 +330,13 @@ data_table <- data_chart_raw %>%
   dplyr::relocate(contains("short")) %>% 
   mutate(across(everything(), ~round(.x, 2)))
 
-datatable(data_table, 
-          options = list(dom = 'ltipr'), 
-          filter = list(position = 'top'),
-          rownames = FALSE) %>% 
-  DT::formatPercentage(names(data_table), 0)
+dt_table <- datatable(data_table,
+          options = list(dom = 'ltipr'),
+          filter = "top",
+          rownames = FALSE) %>%
+  DT::formatPercentage(names(data_table), digits = 0)
+
+htmltools::div(dt_table, id = "dt-table", style = 'overflow-x: auto')
 ```
 
 ### Finite geometric series
