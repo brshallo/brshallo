@@ -32,9 +32,9 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_cache$", "\\.knit\\.md$", "\\.utf8\
     url = "https://www.linkedin.com/in/bryanshalloway/"
     weight = 4
 [[menu.main]]
-    name = "Twitter"
-    url = "https://twitter.com/brshallo"
-    weight = 5
+    name = "Posts"
+    url = "/"
+    weight = 1.5
 
 
 [params]
