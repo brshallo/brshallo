@@ -14,7 +14,7 @@ thumbnail: /2024/08/27/how-you-should-keep-score-in-pickup-basketball/index_file
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE)
 ```
 
-**TLDR:** *For full court pickup basketball you should play by 2s and 3s. Make-it-take-it by 1s and 2s is also fine. Adapt your game according to the scoring and possession system in place.*
+**TLDR:** *For full court pickup basketball you should play by 2s and 3s. If you're playing make-it-take-it, you can calculate the expected value of a possession with a geometric series and it turns out 1s and 2s actually makes for more balanced scoring.*
 
 Steph Curry is sometimes blamed for ruining pickup basketball:
 
