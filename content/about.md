@@ -11,18 +11,20 @@ Bryan graduated with honors in Cognitive Neuroscience from Washington University
 
 *Career in Data Science:*
 
-Bryan has worked in data science at [NetApp](https://www.netapp.com/) since July of 2017. He has worked as lead data scientist on a wide range of problems with different teams in customer support, sales, and pricing. Examples of his projects:
+Out of grad school, Bryan joined [NetApp](https://www.netapp.com/) where he worked from 2017 - 2025 as lead data scientist on a wide range of problems with different teams in customer support, sales, and pricing. Examples of his projects:
 
-* Support ticket prioritization: Rate open customer support tickets according to risk of escalation.
-* Forecasting: Produce automated sales forecasts across product lines and geographies.
-* Price optimization: Establish statistical bases for price and discount guidance on product configurations.
+* Support ticket prioritization: Rate open customer support tickets according escalation risk.
+* Forecasting: Build automated sales forecasts across product lines and geographies.
+* Price optimization: Develop statistical approaches for pricing and discount guidance.
 
-Outside of his direct responsibilities, Bryan is active in fostering internal and local Data Science communities. Examples of his engagements:
+Outside of his direct responsibilities, he has been active in fostering internal and local Data Science communities. Examples of his engagements:
 
-* Co-lead NetApp Data Science study group on topics including *Feature Engineering*, *Pricing Optimization*, and *Interpretable Machine Learning*.
-* Promote adoption of improved practices in areas such as hiring Data Scientists and workflows for predictive modeling.
+* Co-lead Data Science study group on topics including *Feature Engineering*, *Pricing Optimization*, and *Interpretable Machine Learning*.
+* Promote adoption of improved practices in areas such as hiring Data Scientists and workflows for predictive modeling, and statistical analysis.
 * Present to local and global Data Science communities. 
-* Mentor new hires, support local university students completing capstone project, teach Data Analytics workshops.
-* "NetApp Service Award" recipient in recognition of volunteerism.
+* Mentor new hires, support university capstone projects, and teach Data Analytics workshops. Received company “Service Award” in recognition of volunteerism.
+* AI operating committee member driving smart adoption of AI across the organization.
 
-Bryan created this blog as a place to document some of his ideas and learning. He wanted to do so in a way that was consistent with the open tutorials, books, software, and communities he has learned from over the course of his career.
+In June 2025, Bryan joined Meta, where he's been working on improving experimentation and long-term evaluation practices across core infrastructure and platform systems supporting Meta’s Family of Apps.
+
+Inspired by the open tutorials, books, software, and communities he has learned from throughout his career, Bryan created this blog as a place to document some of his ideas and learning. 

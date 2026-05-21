@@ -1,5 +1,5 @@
 .Rproj.user
-.Rhistory
+*.Rhistory
 .RData
 .Ruserdata
 todo.txt
@@ -16,3 +16,4 @@ Thumbs.db
 # when netlify builds the site can add to ignore
 /public/
 /resources/
+.positai
