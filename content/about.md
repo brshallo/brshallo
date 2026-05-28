@@ -21,9 +21,9 @@ Outside of his direct responsibilities, Bryan has been active in fostering inter
 
 * Co-led Data Science study groups on topics including *Feature Engineering*, *Pricing Optimization*, and *Interpretable Machine Learning*.
 * Promoted adoption of improved practices in areas such as hiring Data Scientists and reproducible analysis.
-* Present to local and global Data Science communities. 
+* Presented to local and global Data Science communities like Posit Conf and UseR!. 
 * Mentored new hires, supported university capstone projects, and taught Data Analytics workshops. Received company “Service Award” in recognition of volunteerism.
-* AI operating committee member driving smart adoption of AI and agentic workflows across the organization.
+* Drove smart adoption of AI and agentic workflows as member of AI Operating Committee.
 
 In June 2025, Bryan joined [Meta](https://www.meta.com/), where he's been working on improving experimentation and long-term evaluation practices across core infrastructure and platform systems supporting Meta’s Family of Apps.
 
