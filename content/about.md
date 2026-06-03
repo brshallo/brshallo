@@ -21,7 +21,7 @@ Outside of his direct responsibilities, Bryan has been active in fostering inter
 
 * Co-led Data Science study groups on topics including *Feature Engineering*, *Pricing Optimization*, and *Interpretable Machine Learning*.
 * Promoted adoption of improved practices in areas such as hiring Data Scientists and reproducible analysis.
-* Presented to local and global Data Science communities like Posit Conf and UseR!. 
+* Presented to local and global Data Science communities. 
 * Mentored new hires, supported university capstone projects, and taught Data Analytics workshops. Received company “Service Award” in recognition of volunteerism.
 * Drove smart adoption of AI and agentic workflows as member of AI Operating Committee.
 
