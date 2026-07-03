@@ -2,179 +2,215 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Bryan Shalloway&#39;s Blog</title>
-    <link>/categories/</link>
+    <link>https://www.bryanshalloway.com/categories/</link>
     <description>Recent content in Categories on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 11 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 23 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://www.bryanshalloway.com/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>politics</title>
-      <link>/categories/politics/</link>
-      <pubDate>Mon, 11 Jan 2021 00:00:00 +0000</pubDate>
+      <title>business</title>
+      <link>https://www.bryanshalloway.com/categories/business/</link>
+      <pubDate>Tue, 23 Jun 2026 00:00:00 +0000</pubDate>
       
-      <guid>/categories/politics/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>data science</title>
-      <link>/categories/data-science/</link>
-      <pubDate>Tue, 08 Dec 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/data-science/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>machine learning</title>
-      <link>/categories/machine-learning/</link>
-      <pubDate>Tue, 08 Dec 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/machine-learning/</guid>
+      <guid>https://www.bryanshalloway.com/categories/business/</guid>
       <description></description>
     </item>
     
     <item>
       <title>rstats</title>
-      <link>/categories/rstats/</link>
-      <pubDate>Tue, 08 Dec 2020 00:00:00 +0000</pubDate>
+      <link>https://www.bryanshalloway.com/categories/rstats/</link>
+      <pubDate>Tue, 27 Aug 2024 00:00:00 +0000</pubDate>
       
-      <guid>/categories/rstats/</guid>
+      <guid>https://www.bryanshalloway.com/categories/rstats/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>data science</title>
+      <link>https://www.bryanshalloway.com/categories/data-science/</link>
+      <pubDate>Fri, 03 Nov 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/data-science/</guid>
       <description></description>
     </item>
     
     <item>
       <title>statistics</title>
-      <link>/categories/statistics/</link>
-      <pubDate>Tue, 08 Dec 2020 00:00:00 +0000</pubDate>
+      <link>https://www.bryanshalloway.com/categories/statistics/</link>
+      <pubDate>Fri, 17 Dec 2021 00:00:00 +0000</pubDate>
       
-      <guid>/categories/statistics/</guid>
+      <guid>https://www.bryanshalloway.com/categories/statistics/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>modeling</title>
-      <link>/categories/modeling/</link>
-      <pubDate>Mon, 23 Nov 2020 00:00:00 +0000</pubDate>
+      <title>pipelines</title>
+      <link>https://www.bryanshalloway.com/categories/pipelines/</link>
+      <pubDate>Mon, 10 May 2021 00:00:00 +0000</pubDate>
       
-      <guid>/categories/modeling/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>programming</title>
-      <link>/categories/programming/</link>
-      <pubDate>Mon, 23 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/programming/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>business</title>
-      <link>/categories/business/</link>
-      <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/business/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>pricing</title>
-      <link>/categories/pricing/</link>
-      <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/pricing/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>game</title>
-      <link>/categories/game/</link>
-      <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/game/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>math</title>
-      <link>/categories/math/</link>
-      <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/math/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>psychology</title>
-      <link>/categories/psychology/</link>
-      <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/psychology/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>hiring</title>
-      <link>/categories/hiring/</link>
-      <pubDate>Tue, 27 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/hiring/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ai</title>
-      <link>/categories/ai/</link>
-      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/ai/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>javascript</title>
-      <link>/categories/javascript/</link>
-      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/javascript/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>visualization</title>
-      <link>/categories/visualization/</link>
-      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/visualization/</guid>
+      <guid>https://www.bryanshalloway.com/categories/pipelines/</guid>
       <description></description>
     </item>
     
     <item>
       <title>r</title>
-      <link>/categories/r/</link>
+      <link>https://www.bryanshalloway.com/categories/r/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/r/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>politics</title>
+      <link>https://www.bryanshalloway.com/categories/politics/</link>
+      <pubDate>Mon, 11 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/politics/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>machine learning</title>
+      <link>https://www.bryanshalloway.com/categories/machine-learning/</link>
+      <pubDate>Tue, 08 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/machine-learning/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>modeling</title>
+      <link>https://www.bryanshalloway.com/categories/modeling/</link>
+      <pubDate>Mon, 23 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/modeling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>programming</title>
+      <link>https://www.bryanshalloway.com/categories/programming/</link>
+      <pubDate>Mon, 23 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/programming/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pricing</title>
+      <link>https://www.bryanshalloway.com/categories/pricing/</link>
+      <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/pricing/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>game</title>
+      <link>https://www.bryanshalloway.com/categories/game/</link>
+      <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/game/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>math</title>
+      <link>https://www.bryanshalloway.com/categories/math/</link>
+      <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/math/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>psychology</title>
+      <link>https://www.bryanshalloway.com/categories/psychology/</link>
+      <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/psychology/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hiring</title>
+      <link>https://www.bryanshalloway.com/categories/hiring/</link>
+      <pubDate>Tue, 27 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/hiring/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>animation</title>
+      <link>https://www.bryanshalloway.com/categories/animation/</link>
+      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/animation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>image-recognition</title>
+      <link>https://www.bryanshalloway.com/categories/image-recognition/</link>
+      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/image-recognition/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>visualization</title>
+      <link>https://www.bryanshalloway.com/categories/visualization/</link>
+      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/visualization/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>geometry</title>
+      <link>https://www.bryanshalloway.com/categories/geometry/</link>
       <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>/categories/r/</guid>
+      <guid>https://www.bryanshalloway.com/categories/geometry/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>riddles</title>
+      <link>https://www.bryanshalloway.com/categories/riddles/</link>
+      <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/riddles/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>linear algebra</title>
+      <link>https://www.bryanshalloway.com/categories/linear-algebra/</link>
+      <pubDate>Mon, 24 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/linear-algebra/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>combinatorics</title>
+      <link>https://www.bryanshalloway.com/categories/combinatorics/</link>
+      <pubDate>Thu, 13 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/categories/combinatorics/</guid>
       <description></description>
     </item>
     
     <item>
       <title>travel</title>
-      <link>/categories/travel/</link>
+      <link>https://www.bryanshalloway.com/categories/travel/</link>
       <pubDate>Wed, 01 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>/categories/travel/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>trave</title>
-      <link>/categories/trave/</link>
-      <pubDate>Sat, 28 Dec 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/trave/</guid>
+      <guid>https://www.bryanshalloway.com/categories/travel/</guid>
       <description></description>
     </item>
     

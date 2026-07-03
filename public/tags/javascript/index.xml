@@ -2,18 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>javascript on Bryan Shalloway&#39;s Blog</title>
-    <link>/tags/javascript/</link>
+    <link>https://www.bryanshalloway.com/tags/javascript/</link>
     <description>Recent content in javascript on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 20 Jul 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/javascript/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 20 Jul 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://www.bryanshalloway.com/tags/javascript/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Animate interactive objects with Face Detection, JavaScript and Chrome Browser</title>
-      <link>/2020/07/20/animate-interactive-objects-with-face-detection-javascript-and-chrome-browser/</link>
+      <link>https://www.bryanshalloway.com/2020/07/20/animate-interactive-objects-with-face-detection-javascript-and-chrome-browser/</link>
       <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/07/20/animate-interactive-objects-with-face-detection-javascript-and-chrome-browser/</guid>
+      <guid>https://www.bryanshalloway.com/2020/07/20/animate-interactive-objects-with-face-detection-javascript-and-chrome-browser/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
@@ -23,7 +24,8 @@
 &lt;li&gt;&lt;a href=&#34;#next-steps&#34;&gt;Next steps&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#learning-path-and-resources&#34;&gt;Learning path and resources&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#closing-thoughts&#34;&gt;Closing thoughts&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#additional-actions&#34;&gt;Additional actions&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -36,11 +38,11 @@
 &lt;p&gt;Try to recall that creepy sensation you get when someone or something is looking at you. Now imagine having that all of the time. That is the unsettled feeling I want to evoke. A few ideas:&lt;/p&gt;
 Poster for a new Lord of the Rings movie that has an Eye of Sauron that follows you as you walk into the cinema&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.
 &lt;center&gt;
-&lt;img src=&#34;https://i.insider.com/5aec114a19ee861f008b4855?width=1200&amp;amp;format=jpeg&amp;amp;auto=webp&#34; title=&#34;fig:&#34; alt=&#34;Eye of Sauron&#34; style=&#34;width:50.0%&#34; /&gt;
+&lt;img src=&#34;https://i.insider.com/5aec114a19ee861f008b4855?width=1200&amp;amp;format=jpeg&amp;amp;auto=webp&#34; title=&#34;fig:&#34; style=&#34;width:50.0%&#34; alt=&#34;Eye of Sauron&#34; /&gt;
 &lt;/center&gt;
 An army recruiter with an “I want you” Uncle Sam poster behind him whose finger points at you as you walk by.
 &lt;center&gt;
-&lt;img src=&#34;https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Unclesamwantyou.jpg/440px-Unclesamwantyou.jpg&#34; title=&#34;fig:&#34; alt=&#34;Uncle Sam&#34; style=&#34;width:50.0%&#34; /&gt;
+&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-07-20-animate-interactive-objects-with-face-detection-javascript-and-chrome-browser_files/uncle-sam.jpg&#34; title=&#34;fig:&#34; style=&#34;width:50.0%&#34; alt=&#34;Uncle Sam&#34; /&gt;
 &lt;/center&gt;
 &lt;p&gt;Someone at the grocery store (during COVID19) whose shirt beeps and flashes red if you get within 6 feet of them.&lt;/p&gt;
 &lt;p&gt;I intentionally made these examples somewhat dystopian. There is an important societal reckoning taking place right now regarding tracking technologies (particularly in regard to its impacts on communities of color). I wanted to work on something that, while playful, would call to mind concerns of a ‘Big Brother’ or ‘watchful eye’ like figure.&lt;/p&gt;
@@ -77,7 +79,7 @@ An army recruiter with an “I want you” Uncle Sam poster behind him whose fin
 &lt;p&gt;&lt;strong&gt;Improve position mapping:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Using estimates of the length of facial landmarks, you can estimate the distance someone is from the screen. See relevant project on &lt;a href=&#34;https://github.com/philiiiiiipp/Android-Screen-to-Face-Distance-Measurement&#34;&gt;github&lt;/a&gt;&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;. Once you have an estimate of someone’s position, you can more accurately adjust the animation so that the eye looks like it is following the user through space&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;. Here is a ‘back of the napkin’ sketch of my mental model for the problem:&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2020-07-20-animate-interactive-objects-with-face-detection-javascript-and-chrome-browser_files/back-of-napkin-eyeball.jpg&#34; alt=&#34;Diagram of key location points for animating eyeball with reference to a user.&#34; /&gt;
+&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-07-20-animate-interactive-objects-with-face-detection-javascript-and-chrome-browser_files/back-of-napkin-eyeball.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;Diagram of key location points for animating eyeball with reference to a user.&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;Once you have an estimate of the distance a face is from the camera, the important points for the projection of the eye to a 2d animation can be filled-in (with just a little bit of trigonometry). Ultimately I’d love to do something like can be found at this &lt;a href=&#34;https://github.com/evermeer/EVFaceTracker&#34;&gt;github repo&lt;/a&gt;:&lt;/p&gt;
@@ -141,20 +143,20 @@ New addition to the livingroom, giant eyeball that follows you around when you l
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Maybe also Peloton, car display, watch, Mirror… (if you’re fancy).&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Similarly, picture a portrait whose eyes follow you as you walk-by – similar to Mark Rober’s [video] (&lt;a href=&#34;https://www.youtube.com/watch?v=sPgKu2E-jdw&#34; class=&#34;uri&#34;&gt;https://www.youtube.com/watch?v=sPgKu2E-jdw&lt;/a&gt;), but tracking you automatically.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;And that could be easily shared across devices.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;This is my first project using JavaScript (don’t expect much when it comes to code quality).&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;There are errors and most of the math here is almost nonsensical.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;For my use-case though I may use face height rather than (or in addition to) face width – as cannot trust that people will be turned towards my camera and figure it is less likely they will tilt their head.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Though may be somewhat limited as a user has two eyes, not just one, so depth illusion might not work perfectly.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;Afterall, we’re not working with holograms or special glasses.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;The animation would become distorted for users other than the individual the animation is tracking.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;But wanted to at least post this first draft&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Open Computer Vision&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Or some python animation library I might be able to find.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Again, don’t expect much when it comes to code quality.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Perhaps will fix / improve in future.&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Maybe also Peloton, car display, watch, Mirror… (if you’re fancy).&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Similarly, picture a portrait whose eyes follow you as you walk-by – similar to Mark Rober’s [video] (&lt;a href=&#34;https://www.youtube.com/watch?v=sPgKu2E-jdw&#34; class=&#34;uri&#34;&gt;https://www.youtube.com/watch?v=sPgKu2E-jdw&lt;/a&gt;), but tracking you automatically.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;And that could be easily shared across devices.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;This is my first project using JavaScript (don’t expect much when it comes to code quality).&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;There are errors and most of the math here is almost nonsensical.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;For my use-case though I may use face height rather than (or in addition to) face width – as cannot trust that people will be turned towards my camera and figure it is less likely they will tilt their head.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Though may be somewhat limited as a user has two eyes, not just one, so depth illusion might not work perfectly.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;Afterall, we’re not working with holograms or special glasses.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;The animation would become distorted for users other than the individual the animation is tracking.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;But wanted to at least post this first draft&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Open Computer Vision&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Or some python animation library I might be able to find.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Again, don’t expect much when it comes to code quality.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Perhaps will fix / improve in future.&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>

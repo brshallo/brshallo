@@ -2,29 +2,33 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>pricing on Bryan Shalloway&#39;s Blog</title>
-    <link>/categories/pricing/</link>
+    <link>https://www.bryanshalloway.com/categories/pricing/</link>
     <description>Recent content in pricing on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 02 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="/categories/pricing/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 02 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://www.bryanshalloway.com/categories/pricing/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Influencing Distributions with Tiered Incentives</title>
-      <link>/2020/11/02/influencing-distributions/</link>
+      <link>https://www.bryanshalloway.com/2020/11/02/influencing-distributions/</link>
       <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/11/02/influencing-distributions/</guid>
+      <guid>https://www.bryanshalloway.com/2020/11/02/influencing-distributions/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#simple-example&#34;&gt;Simple Example&lt;/a&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#applying-incentives&#34;&gt;Applying Incentives&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#simple-example&#34;&gt;Simple Example&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#applying-incentives&#34;&gt;Applying Incentives&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#takeaways-of-resulting-distribution&#34;&gt;Takeaways of Resulting Distribution&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#think-carefully-about-assumptions&#34;&gt;Think Carefully About Assumptions&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#how-to-set-assumptions&#34;&gt;How to Set Assumptions&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#simple-assumptions&#34;&gt;Simple Assumptions&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#trade-offs&#34;&gt;Trade-offs&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
@@ -37,13 +41,35 @@
 &lt;div id=&#34;simple-example&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Simple Example&lt;/h1&gt;
 &lt;p&gt;Imagine you have a product that can be sold anywhere from $100 to $150. Sales reps want to sell for as high of a price as possible and customers want to purchase for as low of a price as possible. In this tension your product ends-up selling, on average, for $125 and follows a truncated normal distribution with standard deviation of $10&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+
+theme_set(theme_bw())&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data_distribution &amp;lt;- tibble(price = 100:150,
+       dens = dnorm(price, mean = 125, sd = 10)) %&amp;gt;% 
+  mutate(dens_scaled = dens / sum(dens))
+
+data_distribution %&amp;gt;% 
+  ggplot(aes(x = price, y = dens_scaled))+
+  geom_col()+
+  ylim(c(0, 0.15))+
+  labs(y = &amp;quot;density&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;div id=&#34;applying-incentives&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Applying Incentives&lt;/h2&gt;
 &lt;p&gt;Executive leadership wants to apply additional incentives on sales reps to keep prices high&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;. They task you with setting-up a tiered compensation scheme whereby deals at the top-end of the distribution get a higher compensation rate compared to deals at the bottom end of the distribution.&lt;/p&gt;
 &lt;p&gt;Applying such an additional incentive on sales teams has the potential advantage of pushing some proportion of deals to a higher price&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;. There are also &lt;a href=&#34;#trade-offs&#34;&gt;Trade-offs&lt;/a&gt; associated with such an initiative (indicated in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;), these will be ignored for the purposes of this exercise.&lt;/p&gt;
 &lt;p&gt;Say you decide to set cut-points to split the distribution into quartiles such that sales reps get larger bonuses if their deals fall into higher quartiles.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data_distribution %&amp;gt;% 
+  mutate(cum_dens = cumsum(dens_scaled),
+         quartile = (cum_dens) %/% 0.2500001 + 1,
+         quartile = as.factor(quartile)) %&amp;gt;% 
+  rename(initial_quartile = quartile) %&amp;gt;% 
+  ggplot(aes(x = price, y = dens_scaled, fill = initial_quartile))+
+  geom_col()+
+  scale_fill_discrete(type = c(&amp;quot;deeppink&amp;quot;, &amp;quot;orange&amp;quot;, &amp;quot;yellow2&amp;quot;, &amp;quot;royalblue&amp;quot;))+
+  ylim(c(0, 0.15))+
+  labs(y = &amp;quot;density&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Applying incentives is likely to lead to a different distribution for future deals.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;em&gt;Consider what the relevant factors and assumptions are in influencing the existing distribution. &lt;/em&gt;&lt;/li&gt;
@@ -56,12 +82,92 @@
 &lt;li&gt;How this influence degrades the farther away the starting position of a deal is from the next tier up in incentives.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;You could paramaterize this problem and model the expected distribution. Making some &lt;a href=&#34;#simple-assumptions&#34;&gt;Simple Assumptions&lt;/a&gt; (described in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;), the chart below shows a (potential) resulting distribution after applying the incentives.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Gray bars in the chart below indicate where (on the original distribution) movement to a higher tier will occur.
-&lt;img src=&#34;/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data_distribution &amp;lt;- data_distribution %&amp;gt;% 
+  mutate(cum_dens = cumsum(dens_scaled),
+         incentive = ((cum_dens) %/% 0.2500001) * 5,
+         incentive_delta = ifelse(incentive == 15, 0, 5)) # hard coded&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# very inefficient approach computationally
+get_row_bump &amp;lt;- function(price_current){
+  current_incentive &amp;lt;- data_distribution %&amp;gt;% 
+    filter(price == {{price_current}}) %&amp;gt;% 
+    pull(incentive)
+
+  output &amp;lt;- data_distribution %&amp;gt;% 
+    filter(price &amp;gt; {{price_current}}, incentive &amp;gt; current_incentive) %&amp;gt;% 
+    head(1) %&amp;gt;% 
+    pull(price)
+  
+  if(length(output) == 0) output &amp;lt;- NA
+  
+  output
+}
+
+proportion_raised &amp;lt;- function(density, incentive_delta, distance){
+  decay &amp;lt;- 0.75^(distance - 1)
+  incentive &amp;lt;- incentive_delta * 0.15
+  # incentive &amp;lt;- ifelse(incentive &amp;gt; 1, 1, incentive)
+  
+  density * decay * incentive
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data_distribution %&amp;gt;% 
+  mutate(quartile = (cum_dens) %/% 0.2500001 + 1,
+         quartile = as.factor(quartile)) %&amp;gt;% 
+  mutate(price_next = map_int(price, get_row_bump),
+         price_dist = price_next - price) %&amp;gt;% 
+  mutate(density_convert = proportion_raised(dens_scaled, incentive_delta, price_dist)) %&amp;gt;% 
+  select(-dens) %&amp;gt;% 
+  # add converted density to nearest point
+  group_by(incentive) %&amp;gt;% 
+  mutate(dens_convert_total = sum(density_convert),
+         price_switch = price == min(price)) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  mutate(dens_convert_total = lag(dens_convert_total),
+         dens_convert_total = ifelse(price_switch, dens_convert_total, 0)) %&amp;gt;%
+  # na&amp;#39;s to 0&amp;#39;s
+  mutate(across(c(density_convert, dens_convert_total), ~ifelse(is.na(.x), 0, .x))) %&amp;gt;% 
+  # adjust percentages
+  mutate(dens_adj = dens_scaled - density_convert + dens_convert_total) %&amp;gt;%
+  rename(initial_quartile = quartile) %&amp;gt;% 
+  # graph
+  ggplot(aes(x = price))+
+  geom_col(aes(y = dens_adj, fill = initial_quartile))+
+  scale_fill_discrete(type = c(&amp;quot;deeppink&amp;quot;, &amp;quot;orange&amp;quot;, &amp;quot;yellow2&amp;quot;, &amp;quot;royalblue&amp;quot;))+
+  ylim(c(0, 0.15))+
+  labs(y = &amp;quot;density&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Gray bars in the chart below indicate where (on the original distribution) movement to a higher tier will occur.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data_distribution %&amp;gt;% 
+  mutate(quartile = (cum_dens) %/% 0.2500001 + 1,
+         quartile = as.factor(quartile)) %&amp;gt;% 
+  mutate(price_next = map_int(price, get_row_bump),
+         price_dist = price_next - price) %&amp;gt;% 
+  mutate(density_convert = proportion_raised(dens_scaled, incentive_delta, price_dist)) %&amp;gt;% 
+  select(-dens) %&amp;gt;% 
+  rename(initial_quartile = quartile) %&amp;gt;% 
+  ggplot(aes(x = price))+
+  geom_col(aes(y = dens_scaled, fill = initial_quartile))+
+  geom_col(aes(y = density_convert), fill = &amp;quot;gray&amp;quot;)+
+  scale_fill_discrete(type = c(&amp;quot;deeppink&amp;quot;, &amp;quot;orange&amp;quot;, &amp;quot;yellow2&amp;quot;, &amp;quot;royalblue&amp;quot;))+
+  ylim(c(0, 0.15))+
+  labs(y = &amp;quot;density&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-02-influencing-distributions_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;div id=&#34;takeaways-of-resulting-distribution&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Takeaways of Resulting Distribution&lt;/h3&gt;
 &lt;p&gt;The greatest proportion of deals were moved from orange to yellow and from yellow to blue. Pink to orange had the least amount of movement (due to the first quartile being spread across a wider range).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data_distribution %&amp;gt;% 
+  mutate(quartile = (cum_dens) %/% 0.2500001 + 1,
+         quartile = as.factor(quartile)) %&amp;gt;% 
+  mutate(price_next = map_int(price, get_row_bump),
+         price_dist = price_next - price) %&amp;gt;% 
+  mutate(density_convert = proportion_raised(dens_scaled, incentive_delta, price_dist)) %&amp;gt;% 
+  select(-dens) %&amp;gt;% 
+  mutate(incentive = case_when(incentive == 0 ~ &amp;quot;pink to orange&amp;quot;,
+                               incentive == 5 ~ &amp;quot;orange to yellow&amp;quot;,
+                               incentive == 10 ~ &amp;quot;yellow to blue&amp;quot;,
+                               TRUE ~ &amp;quot;stayed blue&amp;quot;) %&amp;gt;% fct_inorder()) %&amp;gt;% 
+  group_by(incentive) %&amp;gt;% 
+  summarise(density_converted = sum(density_convert) %&amp;gt;% round(3)) %&amp;gt;% 
+  knitr::kable()&lt;/code&gt;&lt;/pre&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr class=&#34;header&#34;&gt;
@@ -149,17 +255,17 @@
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Limits for Y axis appear too large for this chart but are set from 0 to 0.15 so as to be consistent with similar figures later in post.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;E.g. to prevent brand erosion, improve margins, etc.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;This assumes that there is some slack in the existing deals and that representatives are in a position to impact this and will do so if provided higher incentives.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;or potentially a ‘natural’ distribution that would exist in the absence of incentives&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;Key to this assumption is how incentives degrade as you move farther from a cut-point.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;These do not consider potential psychological impacts or difficulty of implementation.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Similar to in a market.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;Research into psychological biases suggests the former may be true.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;You could also construct this such that lower quartiles have negative incentives and higher quartiles have positive incentives.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;The functions governing these behaviors are almost certainly more sophisticated.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Factoring this possibility in would likely lead to incentives at the higher quartiles making a slightly larger impact.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Limits for Y axis appear too large for this chart but are set from 0 to 0.15 so as to be consistent with similar figures later in post.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;E.g. to prevent brand erosion, improve margins, etc.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;This assumes that there is some slack in the existing deals and that representatives are in a position to impact this and will do so if provided higher incentives.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;or potentially a ‘natural’ distribution that would exist in the absence of incentives&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;Key to this assumption is how incentives degrade as you move farther from a cut-point.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;These do not consider potential psychological impacts or difficulty of implementation.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Similar to in a market.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;Research into psychological biases suggests the former may be true.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;You could also construct this such that lower quartiles have negative incentives and higher quartiles have positive incentives.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;The functions governing these behaviors are almost certainly more sophisticated.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Factoring this possibility in would likely lead to incentives at the higher quartiles making a slightly larger impact.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
@@ -167,24 +273,28 @@
     
     <item>
       <title>Linear Regression in Pricing Analysis, Essential Things to Know</title>
-      <link>/2020/08/17/pricing-insights-from-historical-data-part-1/</link>
+      <link>https://www.bryanshalloway.com/2020/08/17/pricing-insights-from-historical-data-part-1/</link>
       <pubDate>Mon, 17 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/08/17/pricing-insights-from-historical-data-part-1/</guid>
+      <guid>https://www.bryanshalloway.com/2020/08/17/pricing-insights-from-historical-data-part-1/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#what-influences-price&#34;&gt;What influences price?&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#what-influences-price&#34;&gt;What influences price?&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#simple-linear-regression-model&#34;&gt;Simple linear regression model&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#inference-and-challenges&#34;&gt;Inference and challenges&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#inference-and-challenges&#34;&gt;Inference and challenges&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#violation-of-model-assumptions&#34;&gt;Violation of model assumptions&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#the-tug-of-war-between-colinear-inputs&#34;&gt;The tug-of-war between colinear inputs&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#improving-model-fit-considerations&#34;&gt;Improving model fit, considerations&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#closing-notes-and-tips&#34;&gt;Closing notes and tips&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#pricing-challenges&#34;&gt;Pricing challenges&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#future-pricing-posts&#34;&gt;Future pricing posts&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#dataset-considerations&#34;&gt;Dataset considerations&lt;/a&gt;&lt;/li&gt;
@@ -197,7 +307,7 @@
 
 &lt;p&gt;&lt;strong&gt;Pricing is hard.&lt;/strong&gt;&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;https://media2.giphy.com/media/SG0KKFtwUpqJW/giphy.gif&#34; alt=&#34;Price is Right Contestant… struggling&#34; /&gt;
+&lt;img src=&#34;https://media2.giphy.com/media/SG0KKFtwUpqJW/giphy.gif&#34; alt=&#34;&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;Price is Right Contestant… struggling&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;This is particularly true with large complicated products, common in Business to Business sales (B2B). B2B sellers may lack important information (e.g. accurate estimates of customer budget or ‘street’ prices for the various configurations of their products – the &lt;a href=&#34;#pricing-challenges&#34;&gt;Pricing challenges&lt;/a&gt; section discusses other internal and external limitations in setting prices). However organizations typically &lt;em&gt;do have&lt;/em&gt; historical data on internal sales transactions as well as leadership with a strong desire for &lt;em&gt;insights&lt;/em&gt; into pricing behavior. For now I’ll put aside the question of how to use econometric approaches to set ideal prices. Instead, I’ll walk through some statistical methods that rely only on historical sales information and that can be used for analyzing differences, trends, and abnormalities in your organizations pricing.&lt;/p&gt;
@@ -215,7 +325,7 @@
 &lt;h2&gt;Simple linear regression model&lt;/h2&gt;
 &lt;p&gt;Let’s build a model for home price that uses &lt;em&gt;just&lt;/em&gt; house square footage, represented by &lt;code&gt;Gr_Liv_Area&lt;/code&gt;&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;, as a feature for predicting home price.&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-\operatorname{Sale\_Price} = 13290 + 112(\operatorname{Gr\_Liv\_Area}) + \epsilon
+\operatorname{\widehat{Sale\_Price}} = 13290 + 112(\operatorname{Gr\_Liv\_Area})
 \]&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;The coefficient on sale price of &lt;em&gt;112&lt;/em&gt; is a measure of expected dollars per unit change in square foot. If you build the model without an intercept&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;, the coefficient more directly equates to dollars per square foot&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt;. However it’s &lt;em&gt;typically&lt;/em&gt; more appropriate to &lt;a href=&#34;https://stats.stackexchange.com/questions/7948/when-is-it-ok-to-remove-the-intercept-in-a-linear-regression-model&#34;&gt;leave the intercept in the model&lt;/a&gt;&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
@@ -252,7 +362,7 @@
 &lt;h3&gt;The tug-of-war between colinear inputs&lt;/h3&gt;
 &lt;p&gt;Let’s add to our regression model another variable, number of bathrooms represented by the &lt;code&gt;bathrooms&lt;/code&gt; variable.&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-\operatorname{Sale\_Price} = 5491 + 94(\operatorname{Gr\_Liv\_Area}) + 19555(\operatorname{bathrooms}) + \epsilon
+\operatorname{\widehat{Sale\_Price}} = 5491 + 94(\operatorname{Gr\_Liv\_Area}) + 19555(\operatorname{bathrooms})
 \]&lt;/span&gt;&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -284,9 +394,8 @@
 &lt;p&gt;Let’s consider a model with another variable added: &lt;code&gt;TotRms_AbvGrd&lt;/code&gt;, the total number of rooms (above ground and excluding bathrooms) in the home. This variable is also correlated with &lt;code&gt;Gr_Liv_Area&lt;/code&gt; and number of &lt;code&gt;bathrooms&lt;/code&gt; (correlation of ~0.8 and ~0.6 respectively).&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
 \begin{aligned}
-\operatorname{Sale\_Price} &amp;amp;= 35600 + 122(\operatorname{Gr\_Liv\_Area})\ + \\
-&amp;amp;\quad 20411(\operatorname{bathrooms}) - 11389(\operatorname{TotRms\_AbvGrd})\ + \\
-&amp;amp;\quad \epsilon
+\operatorname{\widehat{Sale\_Price}} &amp;amp;= 35600 + 122(\operatorname{Gr\_Liv\_Area})\ + \\
+&amp;amp;\quad 20411(\operatorname{bathrooms}) - 11389(\operatorname{TotRms\_AbvGrd})
 \end{aligned}
 \]&lt;/span&gt;&lt;/p&gt;
 &lt;table&gt;
@@ -440,50 +549,50 @@
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Internal sales data alone is limited in that its focused on only a component of sales, rather than considering the full picture – this puts the analyst in a familiar position of one with incomplete information, and a constrained scope of influence.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Dataset should be structured such that each feature is a column and each row an observation, e.g. a sale.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Sort of, and under certain contexts…&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Hedonic_regression&#34; class=&#34;uri&#34;&gt;https://en.wikipedia.org/wiki/Hedonic_regression&lt;/a&gt;&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;Missing important components or misattributing influence of price can cause bias in the model (omitted variable bias).&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;and how it can also be used for things like creating price indices&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Does not including basement.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;I.e. make it zero so that the expected value of a house of 0 square foot is $0&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;In this case, the coefficient for the model becomes 119.7 if the intercept is set to zero.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;Hedonic modeling also has a variety of approaches associated with evaluating changes in the intercept term between models that (again) can be read in the the &lt;a href=&#34;https://www.oecd-ilibrary.org/docserver/9789264197183-7-en.pdf?expires=1597241573&amp;amp;id=id&amp;amp;accname=guest&amp;amp;checksum=0FA9E2EB249B3EB5DBA108E3AC44CCA3&#34;&gt;Handbook on Residential Property Prices Indices&lt;/a&gt;.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Note there are more modern approaches to estimating this range using Bayesian or simulation based methods.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;At least to the extent that satisfying them doesn’t improve your predictions, or suggest a different model type may be more appropriate.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Although some would argue that you don’t need to worry too much about any of your assumptions except that your observations are independent of one another.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Model assumptions of linear regression by Ordinary Least Squares is already covered extensively in essentially every tutorial and Introduction to Statistics textbook on regression.&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;Perhaps representing a preference for larger rooms or open space among buyers or a confounding effect with some other variable. For the purposes of this post i simply want to point out how coefficient values can vary under conditions of colinearity.&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;(though not perfect colinearity)&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;Hence the importance of being particularly thoughtful of the variables you input into the model and avoiding variables that roughly duplicate one another.&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn18&#34;&gt;&lt;p&gt;A common rule of thumb for when variables are ‘too correlated’ is 0.90 – at least in regression contexts and cases where you are focused on inference. In other contexts (e.g. those that appear in &lt;a href=&#34;https://www.kaggle.com/&#34;&gt;Kaggle&lt;/a&gt; prediction competitions) this threshold can be much higher. However, as discussed, lower levels of correlation can still contribute to instability in your coefficient estimates&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;Where you care about the individual parameter estimates and want them to be meaningful.&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn20&#34;&gt;&lt;p&gt;This is what “variance” means in the bias-variance trade-off common in model development. This may also be referred to as instability in the model or parameter estimates.&lt;a href=&#34;#fnref20&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn21&#34;&gt;&lt;p&gt;An example of this may be standardizing the underlying data so that the coefficient estimates may be more directly compared to one another (as the underlying data is all on the same scale).&lt;a href=&#34;#fnref21&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn22&#34;&gt;&lt;p&gt;Standardizing the data is also important for many fitting methods, e.g. regularization.&lt;a href=&#34;#fnref22&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn23&#34;&gt;&lt;p&gt;E.g. a log transform on an input alters the interpretation of the coefficient to be something closer to dollars per percentage point change of input. Log on target means percentage change in price per unit change in input. If you take the log of both your inputs and your target, the coefficient represents percent change in x related to percent change in y, also known as an ‘elasticity’ model in econometrics.&lt;a href=&#34;#fnref23&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;There may be a preference to speak in the simplest terms: change in price as a function of unit change in component – which may put pressure on the analyst to limit data transformations. It is the analysts job then to strike the correct balance between producing a model that fits the data and one that can be understood by stakeholders.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;Neural networks in particular.&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn26&#34;&gt;&lt;p&gt;Many non-linear methods still have sophisticated preprocessing requirements. Though these are sometimes more generic – meaning less work to customize between problems to reach at least some minimum level of fit between problems (again, in some contexts).&lt;a href=&#34;#fnref26&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn27&#34;&gt;&lt;p&gt;Some of what I read on hedonic modeling seemed to discourage the use of methods other than Ordinary Least Squares (e.g. Weighted Least Squares) but I’ve found other methods to be helpful.&lt;a href=&#34;#fnref27&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn28&#34;&gt;&lt;p&gt;Regularization with an L1 penalty provides the added bonus of also doing variable selection.&lt;a href=&#34;#fnref28&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn29&#34;&gt;&lt;p&gt;For robust methods and regularization, there are less established methods for producing confidence intervals. You may need to use simulation methods (which are more computationally intensive).&lt;a href=&#34;#fnref29&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn30&#34;&gt;&lt;p&gt;Generally it is a good idea to describe the mean error or some other measure, so that they can get a sense of how close the model you are describing is fitting the data, or whether the effects you are talking about are general, but not particularly useful for predictions.&lt;a href=&#34;#fnref30&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn31&#34;&gt;&lt;p&gt;And a preference for transformations that retain an intuitive interpretability for the model.&lt;a href=&#34;#fnref31&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn32&#34;&gt;&lt;p&gt;Then review the coefficient estimates across them.&lt;a href=&#34;#fnref32&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn33&#34;&gt;&lt;p&gt;I tend to rely heavily on regularization techniques.&lt;a href=&#34;#fnref33&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn34&#34;&gt;&lt;p&gt;A variety of factors though push organizations to simplify their products and this process – for the purposes of this post though, I’ll assume a complicated product portfolio.&lt;a href=&#34;#fnref34&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn35&#34;&gt;&lt;p&gt;For a more full discussion on these concepts see UVA coursera specialization on &lt;a href=&#34;https://www.coursera.org/learn/uva-darden-bcg-pricing-strategy-cost-economics?utm_source=gg&amp;amp;utm_medium=sem&amp;amp;utm_content=01-CourseraCatalog-DSA-US&amp;amp;campaignid=9918777773&amp;amp;adgroupid=102058276958&amp;amp;device=c&amp;amp;keyword=&amp;amp;matchtype=b&amp;amp;network=g&amp;amp;devicemodel=&amp;amp;adpostion=&amp;amp;creativeid=434544785640&amp;amp;hide_mobile_promo=&amp;amp;gclid=CjwKCAjwsan5BRAOEiwALzomXyDwos6rlUmAwFrv9BjJFUPnyvzPRedArpRD2iRkocMemgtsZrfihxoCjfUQAvD_BwE&#34;&gt;Cost and Economics in Pricing Strategy&lt;/a&gt;.&lt;a href=&#34;#fnref35&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn36&#34;&gt;&lt;p&gt;Organizations may lack the money or the will.&lt;a href=&#34;#fnref36&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn37&#34;&gt;&lt;p&gt;Maybe your company doesn’t want to pay the expensive prices that data vendors set for this information (this may especially be a problem if you are a small organization with a small budget).&lt;a href=&#34;#fnref37&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn38&#34;&gt;&lt;p&gt;While a home seller may be more sympathetic to some buyers over others (E.g. a newly wedded couple looking to start a family over a real-estate mogul looking for investment properties), such preferences likely impact price less than the analogue in the B2B contexts where sellers seek to strike details with popular brands as means of establishing product relevance and enabling further marketing and potentially collaboration opportunities. It is important to note though that the ‘Clayton Act’ and ‘Robinson Patman Act’ make price discrimination in B2B contexts illegal (except in certain circumstances).&lt;a href=&#34;#fnref38&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn39&#34;&gt;&lt;p&gt;PCA or factor analysis seems like a potentially useful approach in pricing contexts in cases where the variables you have do not clearly represent discrete components of the product – hopefully PCA would help to identify these implicit components.&lt;a href=&#34;#fnref39&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn40&#34;&gt;&lt;p&gt;Due to the lack of transparency into how they produce predictions.&lt;a href=&#34;#fnref40&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn41&#34;&gt;&lt;p&gt;Or at least in places where a price seems unfair, it may be easier to quickly identify where the issue lies.&lt;a href=&#34;#fnref41&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn42&#34;&gt;&lt;p&gt;There is a book &lt;em&gt;Weapons of Math Destruction&lt;/em&gt; by Cathy O’Neil that points to a lack of interpretability as one of the chief concerns with modern learning algorithms.&lt;a href=&#34;#fnref42&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn43&#34;&gt;&lt;p&gt;May as well use a Machine Learning method at this point.&lt;a href=&#34;#fnref43&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn44&#34;&gt;&lt;p&gt;In both cases non-informative regressors will tend towards zero (in the case of ridge regression, they will never &lt;em&gt;quite&lt;/em&gt; reach zero). These approaches typically require tuning to identify the ideal weight (i.e. pressure) assigned to the penalty.&lt;a href=&#34;#fnref44&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Internal sales data alone is limited in that its focused on only a component of sales, rather than considering the full picture – this puts the analyst in a familiar position of one with incomplete information, and a constrained scope of influence.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Dataset should be structured such that each feature is a column and each row an observation, e.g. a sale.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Sort of, and under certain contexts…&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Hedonic_regression&#34; class=&#34;uri&#34;&gt;https://en.wikipedia.org/wiki/Hedonic_regression&lt;/a&gt;&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;Missing important components or misattributing influence of price can cause bias in the model (omitted variable bias).&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;and how it can also be used for things like creating price indices&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Does not including basement.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;I.e. make it zero so that the expected value of a house of 0 square foot is $0&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;In this case, the coefficient for the model becomes 119.7 if the intercept is set to zero.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;Hedonic modeling also has a variety of approaches associated with evaluating changes in the intercept term between models that (again) can be read in the the &lt;a href=&#34;https://www.oecd-ilibrary.org/docserver/9789264197183-7-en.pdf?expires=1597241573&amp;amp;id=id&amp;amp;accname=guest&amp;amp;checksum=0FA9E2EB249B3EB5DBA108E3AC44CCA3&#34;&gt;Handbook on Residential Property Prices Indices&lt;/a&gt;.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Note there are more modern approaches to estimating this range using Bayesian or simulation based methods.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;At least to the extent that satisfying them doesn’t improve your predictions, or suggest a different model type may be more appropriate.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Although some would argue that you don’t need to worry too much about any of your assumptions except that your observations are independent of one another.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Model assumptions of linear regression by Ordinary Least Squares is already covered extensively in essentially every tutorial and Introduction to Statistics textbook on regression.&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;Perhaps representing a preference for larger rooms or open space among buyers or a confounding effect with some other variable. For the purposes of this post i simply want to point out how coefficient values can vary under conditions of colinearity.&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;(though not perfect colinearity)&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;Hence the importance of being particularly thoughtful of the variables you input into the model and avoiding variables that roughly duplicate one another.&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn18&#34;&gt;&lt;p&gt;A common rule of thumb for when variables are ‘too correlated’ is 0.90 – at least in regression contexts and cases where you are focused on inference. In other contexts (e.g. those that appear in &lt;a href=&#34;https://www.kaggle.com/&#34;&gt;Kaggle&lt;/a&gt; prediction competitions) this threshold can be much higher. However, as discussed, lower levels of correlation can still contribute to instability in your coefficient estimates&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;Where you care about the individual parameter estimates and want them to be meaningful.&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn20&#34;&gt;&lt;p&gt;This is what “variance” means in the bias-variance trade-off common in model development. This may also be referred to as instability in the model or parameter estimates.&lt;a href=&#34;#fnref20&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn21&#34;&gt;&lt;p&gt;An example of this may be standardizing the underlying data so that the coefficient estimates may be more directly compared to one another (as the underlying data is all on the same scale).&lt;a href=&#34;#fnref21&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn22&#34;&gt;&lt;p&gt;Standardizing the data is also important for many fitting methods, e.g. regularization.&lt;a href=&#34;#fnref22&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn23&#34;&gt;&lt;p&gt;E.g. a log transform on an input alters the interpretation of the coefficient to be something closer to dollars per percentage point change of input. Log on target means percentage change in price per unit change in input. If you take the log of both your inputs and your target, the coefficient represents percent change in x related to percent change in y, also known as an ‘elasticity’ model in econometrics.&lt;a href=&#34;#fnref23&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;There may be a preference to speak in the simplest terms: change in price as a function of unit change in component – which may put pressure on the analyst to limit data transformations. It is the analysts job then to strike the correct balance between producing a model that fits the data and one that can be understood by stakeholders.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;Neural networks in particular.&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn26&#34;&gt;&lt;p&gt;Many non-linear methods still have sophisticated preprocessing requirements. Though these are sometimes more generic – meaning less work to customize between problems to reach at least some minimum level of fit between problems (again, in some contexts).&lt;a href=&#34;#fnref26&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn27&#34;&gt;&lt;p&gt;Some of what I read on hedonic modeling seemed to discourage the use of methods other than Ordinary Least Squares (e.g. Weighted Least Squares) but I’ve found other methods to be helpful.&lt;a href=&#34;#fnref27&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn28&#34;&gt;&lt;p&gt;Regularization with an L1 penalty provides the added bonus of also doing variable selection.&lt;a href=&#34;#fnref28&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn29&#34;&gt;&lt;p&gt;For robust methods and regularization, there are less established methods for producing confidence intervals. You may need to use simulation methods (which are more computationally intensive).&lt;a href=&#34;#fnref29&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn30&#34;&gt;&lt;p&gt;Generally it is a good idea to describe the mean error or some other measure, so that they can get a sense of how close the model you are describing is fitting the data, or whether the effects you are talking about are general, but not particularly useful for predictions.&lt;a href=&#34;#fnref30&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn31&#34;&gt;&lt;p&gt;And a preference for transformations that retain an intuitive interpretability for the model.&lt;a href=&#34;#fnref31&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn32&#34;&gt;&lt;p&gt;Then review the coefficient estimates across them.&lt;a href=&#34;#fnref32&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn33&#34;&gt;&lt;p&gt;I tend to rely heavily on regularization techniques.&lt;a href=&#34;#fnref33&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn34&#34;&gt;&lt;p&gt;A variety of factors though push organizations to simplify their products and this process – for the purposes of this post though, I’ll assume a complicated product portfolio.&lt;a href=&#34;#fnref34&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn35&#34;&gt;&lt;p&gt;For a more full discussion on these concepts see UVA coursera specialization on &lt;a href=&#34;https://www.coursera.org/learn/uva-darden-bcg-pricing-strategy-cost-economics?utm_source=gg&amp;amp;utm_medium=sem&amp;amp;utm_content=01-CourseraCatalog-DSA-US&amp;amp;campaignid=9918777773&amp;amp;adgroupid=102058276958&amp;amp;device=c&amp;amp;keyword=&amp;amp;matchtype=b&amp;amp;network=g&amp;amp;devicemodel=&amp;amp;adpostion=&amp;amp;creativeid=434544785640&amp;amp;hide_mobile_promo=&amp;amp;gclid=CjwKCAjwsan5BRAOEiwALzomXyDwos6rlUmAwFrv9BjJFUPnyvzPRedArpRD2iRkocMemgtsZrfihxoCjfUQAvD_BwE&#34;&gt;Cost and Economics in Pricing Strategy&lt;/a&gt;.&lt;a href=&#34;#fnref35&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn36&#34;&gt;&lt;p&gt;Organizations may lack the money or the will.&lt;a href=&#34;#fnref36&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn37&#34;&gt;&lt;p&gt;Maybe your company doesn’t want to pay the expensive prices that data vendors set for this information (this may especially be a problem if you are a small organization with a small budget).&lt;a href=&#34;#fnref37&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn38&#34;&gt;&lt;p&gt;While a home seller may be more sympathetic to some buyers over others (E.g. a newly wedded couple looking to start a family over a real-estate mogul looking for investment properties), such preferences likely impact price less than the analogue in the B2B contexts where sellers seek to strike details with popular brands as means of establishing product relevance and enabling further marketing and potentially collaboration opportunities. It is important to note though that the ‘Clayton Act’ and ‘Robinson Patman Act’ make price discrimination in B2B contexts illegal (except in certain circumstances).&lt;a href=&#34;#fnref38&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn39&#34;&gt;&lt;p&gt;PCA or factor analysis seems like a potentially useful approach in pricing contexts in cases where the variables you have do not clearly represent discrete components of the product – hopefully PCA would help to identify these implicit components.&lt;a href=&#34;#fnref39&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn40&#34;&gt;&lt;p&gt;Due to the lack of transparency into how they produce predictions.&lt;a href=&#34;#fnref40&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn41&#34;&gt;&lt;p&gt;Or at least in places where a price seems unfair, it may be easier to quickly identify where the issue lies.&lt;a href=&#34;#fnref41&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn42&#34;&gt;&lt;p&gt;There is a book &lt;em&gt;Weapons of Math Destruction&lt;/em&gt; by Cathy O’Neil that points to a lack of interpretability as one of the chief concerns with modern learning algorithms.&lt;a href=&#34;#fnref42&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn43&#34;&gt;&lt;p&gt;May as well use a Machine Learning method at this point.&lt;a href=&#34;#fnref43&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn44&#34;&gt;&lt;p&gt;In both cases non-informative regressors will tend towards zero (in the case of ridge regression, they will never &lt;em&gt;quite&lt;/em&gt; reach zero). These approaches typically require tuning to identify the ideal weight (i.e. pressure) assigned to the penalty.&lt;a href=&#34;#fnref44&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>

@@ -2,30 +2,433 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>httr on Bryan Shalloway&#39;s Blog</title>
-    <link>/tags/httr/</link>
+    <link>https://www.bryanshalloway.com/tags/httr/</link>
     <description>Recent content in httr on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 12 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/httr/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 11 Apr 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.bryanshalloway.com/tags/httr/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Pulling Twitter Engagements Using the v2 API as Well as rtweet</title>
+      <link>https://www.bryanshalloway.com/2022/04/11/pulling-twitter-engagements-using-the-v2-api-as-well-as-rtweet/</link>
+      <pubDate>Mon, 11 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/2022/04/11/pulling-twitter-engagements-using-the-v2-api-as-well-as-rtweet/</guid>
+      <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/2022/04/11/pulling-twitter-engagements-using-the-v2-api-as-well-as-rtweet/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;This is a follow-up to a short post I wrote on &lt;a href=&#34;https://www.bryanshalloway.com/2022/04/04/notes-on-r-access-to-twitter-s-v2-api/&#34;&gt;R Access to Twitter’s v2 API&lt;/a&gt;. In this post I’ll walk through a few more examples of pulling data from twitter using a mix of Twitter’s v2 API as well as the &lt;code&gt;{rtweet}&lt;/code&gt; package&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I’ll pull all Twitter users that I (&lt;a href=&#34;https://twitter.com/brshallo&#34;&gt;brshallo&lt;/a&gt;) have recently been engaged by (e.g. they like my tweet) or engaged with (e.g. I like their tweet). I’ll lean towards using &lt;code&gt;{rtweet}&lt;/code&gt;&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt; but will use &lt;code&gt;{httr}&lt;/code&gt; in cases where it’s more convenient to use Twitter’s v2 API&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For this post I’m not really worried about optimizing my queries, minimizing API hits, etc. E.g. when using &lt;code&gt;{rtweet}&lt;/code&gt; I &lt;em&gt;should&lt;/em&gt; authenticate through my project app which has higher rate limits (see &lt;a href=&#34;https://docs.ropensci.org/rtweet/reference/rtweet_user.html&#34;&gt;Authentication options&lt;/a&gt;) but instead I just use the default &lt;code&gt;{rtweet}&lt;/code&gt; user authentication. Note also that the default &lt;code&gt;{rtweet}&lt;/code&gt; authentication only works when running scripts interactively&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;See prior post for links on authentication mechanisms. I’m assuming you have “TWITTER_BEARER”&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt; as well as “TWITTER_PAT”&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt; in your .Renviron file.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rjson)
+require(httr)
+require(jsonlite)
+require(dplyr)
+library(purrr)
+library(lubridate)
+library(rtweet)
+library(tidyr)
+
+# bearer_token only used when using httr and twitter v2 API
+bearer_token &amp;lt;- Sys.getenv(&amp;quot;TWITTER_BEARER&amp;quot;)
+headers &amp;lt;- c(`Authorization` = sprintf(&amp;#39;Bearer %s&amp;#39;, bearer_token))&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;getting-all-engagements&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;GETting all engagements&lt;/h1&gt;
+&lt;p&gt;In each sub-section I’ll pull a different kind of engagement.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;a href=&#34;#get-favorited-users&#34;&gt;GET favorited users&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#get-all-tweets-from-user&#34;&gt;GET all tweets from user&lt;/a&gt; – starting point for most of the following sections&lt;/li&gt;
+&lt;li&gt;From initial query &lt;a href=&#34;#get-references&#34;&gt;GET references&lt;/a&gt; in those tweets&lt;/li&gt;
+&lt;li&gt;Filter to only tweets with likes, &lt;a href=&#34;#get-favoriters&#34;&gt;GET favoriters&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Filter to only tweets with quotes, search URL’s to &lt;a href=&#34;#get-quoters&#34;&gt;GET quoters&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Filter to only tweets with retweets, &lt;a href=&#34;#get-retweeters&#34;&gt;GET retweeters&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#get-repliers-and-mentions&#34;&gt;GET repliers and mentions&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I’ll finish by &lt;a href=&#34;#putting-them-together-into-a-function&#34;&gt;Putting them together into a function&lt;/a&gt;. Note that not all queries are &lt;em&gt;perfect&lt;/em&gt; at pulling all engagements&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;get-favorited-users&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;GET favorited users&lt;/h2&gt;
+&lt;p&gt;It’s often easiest to just let &lt;code&gt;{rtweet}&lt;/code&gt; do the work.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Twitter id for brshallo
+user_id &amp;lt;- &amp;quot;307012324&amp;quot;
+
+favorites &amp;lt;- rtweet::get_favorites(user = user_id)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;get-all-tweets-from-user&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;GET all tweets from user&lt;/h2&gt;
+&lt;p&gt;Pulls up to 100 of the most recent tweets from a user&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;url_handle &amp;lt;- glue::glue(&amp;quot;https://api.twitter.com/2/users/{user_id}/tweets?max_results=100&amp;quot;, user_id = user_id)
+
+params &amp;lt;- list(tweet.fields = &amp;quot;public_metrics,created_at,in_reply_to_user_id,referenced_tweets&amp;quot;)
+
+response &amp;lt;- httr::GET(url = url_handle,
+                     httr::add_headers(.headers = headers),
+                     query = params)
+
+obj &amp;lt;- httr::content(response, as = &amp;quot;text&amp;quot;)
+
+json_data &amp;lt;- jsonlite::fromJSON(obj, flatten = TRUE)$data %&amp;gt;% 
+  as_tibble()&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;get-references&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;GET references&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;statuses_referenced &amp;lt;- bind_rows(json_data$referenced_tweets) %&amp;gt;% 
+  rename(status_id = id)
+
+users_referenced &amp;lt;- rtweet::lookup_tweets(statuses_referenced$status_id)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;get-favoriters&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;GET favoriters&lt;/h2&gt;
+&lt;p&gt;Filter initial query of tweets to only those with more than 0 likes.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;liked_tweets &amp;lt;- json_data %&amp;gt;% 
+  filter(public_metrics.like_count &amp;gt; 0)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Functionalize approach described in getting favoriters from prior post &lt;a href=&#34;https://www.bryanshalloway.com/2022/04/04/notes-on-r-access-to-twitter-s-v2-api/&#34;&gt;R Access to Twitter’s v2 API&lt;/a&gt; and map tweet-ids through.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tweet_ids &amp;lt;- liked_tweets$id
+
+get_favoriters &amp;lt;- function(tweet_id){
+  url_handle &amp;lt;- glue::glue(&amp;quot;https://api.twitter.com/2/tweets/{status_id}/liking_users&amp;quot;, status_id = tweet_id)
+  
+  response &amp;lt;- httr::GET(url = url_handle,
+                       httr::add_headers(.headers = headers))
+                       # query = params)
+  
+  obj &amp;lt;- httr::content(response, as = &amp;quot;text&amp;quot;)
+  x &amp;lt;- rjson::fromJSON(obj)
+  
+  x$data %&amp;gt;% 
+    map_dfr(as_tibble)
+}
+
+tweet_favoriters &amp;lt;-
+  map_dfr(tweet_ids, ~ bind_cols(tibble(liked_status_id = .x),
+                                get_favoriters(.x))) %&amp;gt;%
+  rename(user_id = id)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;get-quoters&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;GET quoters&lt;/h2&gt;
+&lt;p&gt;Filter to only posts with quotes.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tweet_ids_quoters &amp;lt;- json_data %&amp;gt;% 
+  filter(public_metrics.quote_count &amp;gt; 0) %&amp;gt;%
+  pull(id)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;However I am not positive the approach below actually picks up &lt;em&gt;all&lt;/em&gt; quotes&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt;. I’d also reviewed some other approaches&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;search_tweets_urls &amp;lt;- function(tweet_id){
+  rtweet::search_tweets(
+    glue::glue(&amp;quot;url:{tweet_id}&amp;quot;, 
+               tweet_id = tweet_id)
+    )
+} 
+
+quoters &amp;lt;- map_dfr(tweet_ids_quoters, search_tweets_urls) %&amp;gt;% 
+  filter(is_quote) %&amp;gt;% 
+  as_tibble()&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;get-retweeters&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;GET retweeters&lt;/h2&gt;
+&lt;p&gt;Filter to only posts that were retweeted.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tweet_ids_rt &amp;lt;- json_data %&amp;gt;% 
+  filter(public_metrics.retweet_count &amp;gt; 0) %&amp;gt;%
+  select(status_id = id)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I use a slightly different approach in this section than in other similar sections&lt;a href=&#34;#fn11&#34; class=&#34;footnote-ref&#34; id=&#34;fnref11&#34;&gt;&lt;sup&gt;11&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;retweeters &amp;lt;- tweet_ids_rt %&amp;gt;% 
+  mutate(retweeters = map(status_id, get_retweeters)) %&amp;gt;% 
+  unnest(retweeters)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;get-repliers-and-mentions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;GET repliers and mentions&lt;/h2&gt;
+&lt;p&gt;Alternatively you might just use &lt;code&gt;rtweet::get_mentions()&lt;/code&gt; but this only pulls mentions of the currently authenticated user. I also tried other approaches here&lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;get_mentions_v2 &amp;lt;- function(user_id){
+  url_handle &amp;lt;- glue::glue(&amp;quot;https://api.twitter.com/2/users/{user_id}/mentions&amp;quot;, user_id = user_id)
+  
+  response &amp;lt;- httr::GET(url = url_handle,
+                        httr::add_headers(.headers = headers))
+  
+  obj &amp;lt;- httr::content(response, as = &amp;quot;text&amp;quot;)
+  x &amp;lt;- rjson::fromJSON(obj)
+  
+  x$data %&amp;gt;% 
+    map_dfr(as_tibble)
+}
+
+tweets_mentions &amp;lt;- get_mentions_v2(gorthon_id)
+
+repliers_mentions &amp;lt;- lookup_tweets(mentions$id)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;putting-them-together-into-a-function&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Putting them together into a function&lt;/h2&gt;
+&lt;p&gt;The function at &lt;a href=&#34;https://gist.github.com/brshallo/119d6a1f858e0e5c20d77212dee8891a&#34;&gt;this gist&lt;/a&gt; returns the output from each of the above sections as a list.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Twitter id for brshallo
+user_id &amp;lt;- &amp;quot;307012324&amp;quot;
+
+# load function get_engagements()
+source(&amp;quot;https://gist.githubusercontent.com/brshallo/119d6a1f858e0e5c20d77212dee8891a/raw/751d022c7bc2e2148292bb78a5178737d9914024/get-engagements.R&amp;quot;)
+
+brshallo_engagements &amp;lt;- get_engagements(user_id)
+
+brshallo_engagements&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## $favorites
+## # A tibble: 10 x 91
+##    user_id             status_id  created_at          screen_name text    source
+##  * &amp;lt;chr&amp;gt;               &amp;lt;chr&amp;gt;      &amp;lt;dttm&amp;gt;              &amp;lt;chr&amp;gt;       &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt; 
+##  1 248350998           151302361~ 2022-04-10 05:18:34 BuildABarr  &amp;quot;Drop ~ Twitt~
+##  2 368551889           151263551~ 2022-04-09 03:36:23 IsabellaGh~ &amp;quot;@elli~ Twitt~
+##  3 1469531055736590337 151242047~ 2022-04-08 13:21:54 emkayco     &amp;quot;Have ~ Twitt~
+##  4 35794978            151196918~ 2022-04-07 07:28:38 _lionelhen~ &amp;quot;@brsh~ Twitt~
+##  5 29916355            151194957~ 2022-04-07 06:10:44 jimjam_slam &amp;quot;@brsh~ Twitt~
+##  6 29916355            151195192~ 2022-04-07 06:20:03 jimjam_slam &amp;quot;@brsh~ Twitt~
+##  7 29916355            151189984~ 2022-04-07 02:53:06 jimjam_slam &amp;quot;@mdne~ Twitt~
+##  8 3089027769          151189179~ 2022-04-07 02:21:09 gyp_casino  &amp;quot;@mdne~ Twitt~
+##  9 15772978            151132777~ 2022-04-05 12:59:55 jessicagar~ &amp;quot;@brsh~ Twitt~
+## 10 144592995           151129000~ 2022-04-05 10:29:49 Rbloggers   &amp;quot;R Acc~ r-blo~
+## # ... with 85 more variables: display_text_width &amp;lt;dbl&amp;gt;,
+## #   reply_to_status_id &amp;lt;chr&amp;gt;, reply_to_user_id &amp;lt;chr&amp;gt;,
+## #   reply_to_screen_name &amp;lt;chr&amp;gt;, is_quote &amp;lt;lgl&amp;gt;, is_retweet &amp;lt;lgl&amp;gt;,
+## #   favorite_count &amp;lt;int&amp;gt;, retweet_count &amp;lt;int&amp;gt;, quote_count &amp;lt;int&amp;gt;,
+## #   reply_count &amp;lt;int&amp;gt;, hashtags &amp;lt;list&amp;gt;, symbols &amp;lt;list&amp;gt;, urls_url &amp;lt;list&amp;gt;,
+## #   urls_t.co &amp;lt;list&amp;gt;, urls_expanded_url &amp;lt;list&amp;gt;, media_url &amp;lt;list&amp;gt;,
+## #   media_t.co &amp;lt;list&amp;gt;, media_expanded_url &amp;lt;list&amp;gt;, media_type &amp;lt;list&amp;gt;, ...
+## 
+## $favoriters
+## # A tibble: 90 x 4
+##    liked_status_id     user_id            name           username       
+##    &amp;lt;chr&amp;gt;               &amp;lt;chr&amp;gt;              &amp;lt;chr&amp;gt;          &amp;lt;chr&amp;gt;          
+##  1 1512295676004093955 117241741          Brett J. Gall  brettjgall     
+##  2 1512295676004093955 2724597409         Peter Ellis    ellis2013nz    
+##  3 1512294950905409543 274123666          Kristen Downs  KristenDDowns  
+##  4 1512293864517750790 3656879234         &amp;lt;U+5F20&amp;gt;&amp;lt;U+4EAE&amp;gt;           psychelzh      
+##  5 1512293864517750790 703843771419484160 Ayush Patel    ayushbipinpatel
+##  6 1512293864517750790 419185498          Kevin Gilds    Kevin_Gilds    
+##  7 1512293864517750790 127357236          Juan LB        Juan_FLB       
+##  8 1512293864517750790 49451947           Luis Remiro    LuisMRemiro    
+##  9 1512293864517750790 253175044          Nicholas Viau  nicholasviau   
+## 10 1512293864517750790 2202983986         Stefania Klayn Ettti_20       
+## # ... with 80 more rows
+## 
+## $references
+## # A tibble: 12 x 90
+##    user_id            status_id  created_at          screen_name  text    source
+##    &amp;lt;chr&amp;gt;              &amp;lt;chr&amp;gt;      &amp;lt;dttm&amp;gt;              &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt; 
+##  1 307012324          151115943~ 2022-04-05 01:50:59 brshallo     &amp;quot;As an~ Twitt~
+##  2 307012324          151229344~ 2022-04-08 04:57:09 brshallo     &amp;quot;@mdne~ Twitt~
+##  3 307012324          150969487~ 2022-04-01 00:51:20 brshallo     &amp;quot;It al~ Twitt~
+##  4 307012324          151229386~ 2022-04-08 04:58:49 brshallo     &amp;quot;@mdne~ Twitt~
+##  5 307012324          147233714~ 2021-12-18 22:45:04 brshallo     &amp;quot;First~ Twitt~
+##  6 29916355           151189984~ 2022-04-07 02:53:06 jimjam_slam  &amp;quot;@mdne~ Twitt~
+##  7 29916355           151194957~ 2022-04-07 06:10:44 jimjam_slam  &amp;quot;@brsh~ Twitt~
+##  8 144592995          151129000~ 2022-04-05 10:29:49 Rbloggers    &amp;quot;R Acc~ r-blo~
+##  9 248350998          151302361~ 2022-04-10 05:18:34 BuildABarr   &amp;quot;Drop ~ Twitt~
+## 10 3146735425         151226195~ 2022-04-08 02:52:00 mdneuzerling &amp;quot;Lovel~ Twitt~
+## 11 983470194982088704 151182189~ 2022-04-06 21:43:22 R4DScommuni~ &amp;quot;The n~ Zapie~
+## 12 2724597409         151226515~ 2022-04-08 03:04:44 ellis2013nz  &amp;quot;@mdne~ Twitt~
+## # ... with 84 more variables: display_text_width &amp;lt;dbl&amp;gt;,
+## #   reply_to_status_id &amp;lt;chr&amp;gt;, reply_to_user_id &amp;lt;chr&amp;gt;,
+## #   reply_to_screen_name &amp;lt;chr&amp;gt;, is_quote &amp;lt;lgl&amp;gt;, is_retweet &amp;lt;lgl&amp;gt;,
+## #   favorite_count &amp;lt;int&amp;gt;, retweet_count &amp;lt;int&amp;gt;, quote_count &amp;lt;int&amp;gt;,
+## #   reply_count &amp;lt;int&amp;gt;, hashtags &amp;lt;list&amp;gt;, symbols &amp;lt;list&amp;gt;, urls_url &amp;lt;list&amp;gt;,
+## #   urls_t.co &amp;lt;list&amp;gt;, urls_expanded_url &amp;lt;list&amp;gt;, media_url &amp;lt;list&amp;gt;,
+## #   media_t.co &amp;lt;list&amp;gt;, media_expanded_url &amp;lt;list&amp;gt;, media_type &amp;lt;list&amp;gt;, ...
+## 
+## $quoters
+## NULL
+## 
+## $retweeters
+## # A tibble: 11 x 2
+##    status_id           user_id            
+##    &amp;lt;chr&amp;gt;               &amp;lt;chr&amp;gt;              
+##  1 1512293864517750790 296222670          
+##  2 1512293864517750790 307012324          
+##  3 1511869112401596423 4034079677         
+##  4 1511869112401596423 1306626901432324097
+##  5 1511869112401596423 1011817655957893120
+##  6 1511469730892156928 1011817655957893120
+##  7 1511469730892156928 1306626901432324097
+##  8 1511159434717761539 1448348827979747333
+##  9 1511159434717761539 15772978           
+## 10 1511159434717761539 1011817655957893120
+## 11 1511159434717761539 1306626901432324097
+## 
+## $referencers
+## # A tibble: 10 x 90
+##    user_id             status_id  created_at          screen_name text    source
+##    &amp;lt;chr&amp;gt;               &amp;lt;chr&amp;gt;      &amp;lt;dttm&amp;gt;              &amp;lt;chr&amp;gt;       &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt; 
+##  1 61542689            150992063~ 2022-04-01 15:48:26 twelvespot  &amp;quot;@brsh~ Twitt~
+##  2 61542689            150994022~ 2022-04-01 17:06:17 twelvespot  &amp;quot;@brsh~ Twitt~
+##  3 18433005            151007180~ 2022-04-02 01:49:09 rcrdleitao  &amp;quot;@brsh~ Twitt~
+##  4 35794978            151196918~ 2022-04-07 07:28:38 _lionelhen~ &amp;quot;@brsh~ Twitt~
+##  5 1346474633520824320 150985661~ 2022-04-01 11:34:03 markjrieke  &amp;quot;@brsh~ Twitt~
+##  6 29916355            151195192~ 2022-04-07 06:20:03 jimjam_slam &amp;quot;@brsh~ Twitt~
+##  7 29916355            151195162~ 2022-04-07 06:18:51 jimjam_slam &amp;quot;@brsh~ Twitt~
+##  8 29916355            151194957~ 2022-04-07 06:10:44 jimjam_slam &amp;quot;@brsh~ Twitt~
+##  9 15772978            151132777~ 2022-04-05 12:59:55 jessicagar~ &amp;quot;@brsh~ Twitt~
+## 10 15772978            151117782~ 2022-04-05 03:04:04 jessicagar~ &amp;quot;@brsh~ Twitt~
+## # ... with 84 more variables: display_text_width &amp;lt;dbl&amp;gt;,
+## #   reply_to_status_id &amp;lt;chr&amp;gt;, reply_to_user_id &amp;lt;chr&amp;gt;,
+## #   reply_to_screen_name &amp;lt;chr&amp;gt;, is_quote &amp;lt;lgl&amp;gt;, is_retweet &amp;lt;lgl&amp;gt;,
+## #   favorite_count &amp;lt;int&amp;gt;, retweet_count &amp;lt;int&amp;gt;, quote_count &amp;lt;int&amp;gt;,
+## #   reply_count &amp;lt;int&amp;gt;, hashtags &amp;lt;list&amp;gt;, symbols &amp;lt;list&amp;gt;, urls_url &amp;lt;list&amp;gt;,
+## #   urls_t.co &amp;lt;list&amp;gt;, urls_expanded_url &amp;lt;list&amp;gt;, media_url &amp;lt;list&amp;gt;,
+## #   media_t.co &amp;lt;list&amp;gt;, media_expanded_url &amp;lt;list&amp;gt;, media_type &amp;lt;list&amp;gt;, ...&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Which as of this writing uses the 1.1 API.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;As it takes less code.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Or in cases where the field isn’t available in &lt;code&gt;{rtweet}&lt;/code&gt;. V2 is not yet supported by &lt;code&gt;{rtweet}&lt;/code&gt; but is actively being &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/445&#34;&gt;worked on&lt;/a&gt; so this post may have a short shelf-life.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;You’ll need to authenticate through a Twitter developer portal app keys if you want to run those sections automatically. You’ll notice that in creating this script I actually don’t evaluate most of the sections and then use some hidden code chunks to return output.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;For the sections where I use &lt;code&gt;{httr}&lt;/code&gt; in this post.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;For the sections where I use &lt;code&gt;{rtweet}&lt;/code&gt;. This should be set-up through the default &lt;code&gt;{rtweet}&lt;/code&gt; set-up.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;This seemed to particularly be the case when it came to seeing all quotes and mentions.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;The reason I’m using {httr} and v2 instead of &lt;code&gt;{rtweet}&lt;/code&gt; for this is that the 1.1 API (that &lt;code&gt;{rtweet}&lt;/code&gt; currently uses) doesn’t pull quote count unless you have a premium or enterprise account &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/640&#34;&gt;rtweet#640&lt;/a&gt;.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;Thread &lt;a href=&#34;https://twittercommunity.com/t/how-to-fetch-retweets-and-quote-tweets-from-the-twitter-v2-search-api/156573&#34;&gt;here&lt;/a&gt; seemed to suggest that just searching the url was the way to go.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;This also seems to be way to see quoters: &lt;a href=&#34;https://twittercommunity.com/t/how-we-can-get-list-of-replies-on-a-tweet-or-reply-to-a-tweet-in-twitter-api/144958/7&#34; class=&#34;uri&#34;&gt;https://twittercommunity.com/t/how-we-can-get-list-of-replies-on-a-tweet-or-reply-to-a-tweet-in-twitter-api/144958/7&lt;/a&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;get_quoters &amp;lt;- function(tweet_id){
+  url_handle &amp;lt;- glue::glue(&amp;quot;https://api.twitter.com/2/tweets/search/recent?tweet.fields=author_id&amp;amp;query=url:{status_id}&amp;quot;, status_id = tweet_id)
+
+  response &amp;lt;- httr::GET(url = url_handle,
+                       httr::add_headers(.headers = headers))
+                       # query = params)
+
+  obj &amp;lt;- httr::content(response, as = &amp;quot;text&amp;quot;)
+  x &amp;lt;- rjson::fromJSON(obj)
+
+  x$data %&amp;gt;% 
+    map_dfr(as_tibble)
+}
+
+quoters &amp;lt;- map(tweet_ids_quoters, get_quoters)&lt;/code&gt;&lt;/pre&gt;
+&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;&lt;code&gt;rtweet::get_retweeters()&lt;/code&gt; has a lot fewer columns returned compared to that from &lt;code&gt;rtweet::search_tweets()&lt;/code&gt;, which is why I use &lt;code&gt;select()&lt;/code&gt; above and a different method than the section before and after this where I instead use &lt;code&gt;pull()&lt;/code&gt; and then pass the ideas directly to &lt;code&gt;purrr::map*()&lt;/code&gt; statements rather than wrapping them in a &lt;code&gt;mutate()&lt;/code&gt; verb – which would have worked just as well. The structures of the manipulation are nearly the same… maybe should have stayed consistent here and written a function to make clear the pattern here is the same, c’est la vie.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Another simple approach would be to just try: &lt;code&gt;rtweet::search_tweets(&#34;@brshallo&#34;)&lt;/code&gt; . I tried the approach below, but really didnt’ seem to work quite as expected…&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tweet_ids_repliers &amp;lt;- json_data %&amp;gt;% 
+  filter(public_metrics.reply_count &amp;gt; 0) %&amp;gt;%
+  pull(id)
+
+# pulled from here: https://twittercommunity.com/t/how-to-fetch-retweets-and-quote-tweets-from-the-twitter-v2-search-api/156573 but didn&amp;#39;t really work as expected...
+get_replies &amp;lt;- function(tweet_id){
+url_handle &amp;lt;- glue::glue(&amp;quot;https://api.twitter.com/2/tweets/search/recent?tweet.fields=author_id&amp;amp;query=conversation_id:{status_id}&amp;quot;, status_id = tweet_id)
+
+response &amp;lt;- httr::GET(url = url_handle,
+                     httr::add_headers(.headers = headers))
+                     # query = params)
+
+obj &amp;lt;- httr::content(response, as = &amp;quot;text&amp;quot;)
+x &amp;lt;- rjson::fromJSON(obj)
+
+x$data %&amp;gt;% 
+  map_dfr(as_tibble)
+}
+
+repliers &amp;lt;- map(tweet_ids_repliers, get_replies)
+filter(is_quote)
+
+repliers &amp;lt;- bind_rows(repliers)&lt;/code&gt;&lt;/pre&gt;
+&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>R Access to Twitter&#39;s V2 API</title>
+      <link>https://www.bryanshalloway.com/2022/04/04/notes-on-r-access-to-twitter-s-v2-api/</link>
+      <pubDate>Mon, 04 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/2022/04/04/notes-on-r-access-to-twitter-s-v2-api/</guid>
+      <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/2022/04/04/notes-on-r-access-to-twitter-s-v2-api/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+&lt;div id=&#34;TOC&#34;&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;The &lt;a href=&#34;https://github.com/ropensci/rtweet&#34;&gt;rtweet&lt;/a&gt; package is still the easiest way to GET and POST Twitter data from R. However its developers are currently &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/445&#34;&gt;working on&lt;/a&gt; adapting it to the new API. V2 comes with a variety of new features. The one I was interested in was being able to GET the users who liked a tweet.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/cjbarrie/academictwitteR&#34;&gt;academictwitteR&lt;/a&gt; is probably the most established package that provides a quickstart entry point to the V2 API. However it requires creating an academic account in twitter, i.e. the user must be affiliated with a university. I also stumbled onto &lt;a href=&#34;https://github.com/MaelKubli/RTwitterV2&#34;&gt;RTwitterV2&lt;/a&gt; and &lt;a href=&#34;https://github.com/vosonlab/voson.tcn&#34;&gt;voson.tcn&lt;/a&gt; which both also provide quickstarts on the V2 API, but did not explore these.&lt;/p&gt;
+&lt;p&gt;Instead I followed the tutorial &lt;a href=&#34;https://developer.twitter.com/en/docs/tutorials/getting-started-with-r-and-v2-of-the-twitter-api&#34;&gt;Getting started with R and v2 of the Twitter API&lt;/a&gt; by Twitter Developer Advocate &lt;a href=&#34;https://twitter.com/jessicagarson&#34;&gt;Jessica Garson&lt;/a&gt; that uses &lt;code&gt;{httr}&lt;/code&gt; to interact more directly with the API. I highly recommend reading her tutorial. The code below is mostly just copied from there but changed to provide an example of getting the usernames of those that liked a tweet&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;GETting likers of tweet&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Last year, twitter announced &lt;a href=&#34;https://twittercommunity.com/t/announcing-twitter-api-v2-likes-lookup-and-blocks-lookup/154353&#34;&gt;Likes lookup&lt;/a&gt; in API v2.&lt;/p&gt;
+&lt;p&gt;Below is a minimal example of how to find every user who liked any tweet, in my case I’ll check favoriters of my initial announcement of the &lt;a href=&#34;https://github.com/brshallo/pwiser/&#34;&gt;pwiser&lt;/a&gt; package.&lt;/p&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+Compute all pairwise ratios, t-tests, distance metrics, or whatever using {pwiser} a new 📦 I&#39;m writing with &lt;a href=&#34;https://twitter.com/CarloooMedina?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@CarloooMedina&lt;/span&gt;&lt;/a&gt; for applying arbitrary functions on pairwise combinations of columns using a &lt;code&gt;dplyr::across()&lt;/code&gt; style syntax: &lt;a href=&#34;https://t.co/DTXElWbuuX&#34;&gt;https://t.co/DTXElWbuuX&lt;/a&gt; &lt;a href=&#34;https://twitter.com/hashtag/rstats?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#rstats&lt;/a&gt; &lt;a href=&#34;https://twitter.com/hashtag/tidyverse?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#tidyverse&lt;/a&gt; &lt;a href=&#34;https://t.co/wrMzX5mOYx&#34;&gt;pic.twitter.com/wrMzX5mOYx&lt;/a&gt;
+&lt;/p&gt;
+— Bryan Shalloway (&lt;span class=&#34;citation&#34;&gt;@brshallo&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/brshallo/status/1394072770661822464?ref_src=twsrc%5Etfw&#34;&gt;May 16, 2021&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;p&gt;First you need to:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Apply for a Twitter developer account.&lt;/li&gt;
+&lt;li&gt;Create a project&lt;/li&gt;
+&lt;li&gt;Create an app within that project&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Once you’ve done this, you’ll need to save your BEARER TOKEN somewhere secure, see Hadley’s write-up on &lt;a href=&#34;https://cran.r-project.org/web/packages/httr/vignettes/secrets.html&#34;&gt;Managing secrets&lt;/a&gt; and use your choice of approach. For the write-up below I’ll load the secret from the environment&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rjson)
+require(httr)
+require(jsonlite)
+require(dplyr)
+library(purrr)
+
+bearer_token &amp;lt;- Sys.getenv(&amp;quot;TWITTER_BEARER&amp;quot;)
+headers &amp;lt;- c(`Authorization` = sprintf(&amp;#39;Bearer %s&amp;#39;, bearer_token))
+
+tweet_id &amp;lt;- &amp;quot;1394072770661822464&amp;quot;
+url_handle &amp;lt;- glue::glue(&amp;quot;https://api.twitter.com/2/tweets/{status_id}/liking_users&amp;quot;, status_id = tweet_id)
+
+response &amp;lt;- httr::GET(url = url_handle,
+                     httr::add_headers(.headers = headers))
+                     # query = params)
+
+obj &amp;lt;- httr::content(response, as = &amp;quot;text&amp;quot;)
+x &amp;lt;- rjson::fromJSON(obj)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And then let’s pull out the usernames of the people who liked the tweet:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;x$data %&amp;gt;% 
+  purrr::map_chr(&amp;quot;username&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;Rick_Scavetta&amp;quot;   &amp;quot;dikiprawisuda&amp;quot;   &amp;quot;technocrat&amp;quot;      &amp;quot;abuabara&amp;quot;       
+##  [5] &amp;quot;kavenacca4&amp;quot;      &amp;quot;pheeree&amp;quot;         &amp;quot;mattansb&amp;quot;        &amp;quot;AndrewKostandy&amp;quot; 
+##  [9] &amp;quot;1AliG&amp;quot;           &amp;quot;ncypris&amp;quot;         &amp;quot;jkregenstein&amp;quot;    &amp;quot;MarkDruffel&amp;quot;    
+## [13] &amp;quot;pablofbaez&amp;quot;      &amp;quot;JobNmadu&amp;quot;        &amp;quot;LuisDVerde&amp;quot;      &amp;quot;dataleteo&amp;quot;      
+## [17] &amp;quot;FredOnion&amp;quot;       &amp;quot;SebLammers&amp;quot;      &amp;quot;meier_flo&amp;quot;       &amp;quot;tomecicuta&amp;quot;     
+## [21] &amp;quot;ameresv&amp;quot;         &amp;quot;ginanjar_utama&amp;quot;  &amp;quot;jmblanch&amp;quot;        &amp;quot;ThatBenFrost&amp;quot;   
+## [25] &amp;quot;lan24hd&amp;quot;         &amp;quot;henda52&amp;quot;         &amp;quot;Md_Harris&amp;quot;       &amp;quot;EmilyRiederer&amp;quot;  
+## [29] &amp;quot;pvallejomedina&amp;quot;  &amp;quot;thisisdaryn&amp;quot;     &amp;quot;ericarbailey&amp;quot;    &amp;quot;DrMeltemYucel&amp;quot;  
+## [33] &amp;quot;c_welk&amp;quot;          &amp;quot;stewartli3&amp;quot;      &amp;quot;patilindrajeets&amp;quot; &amp;quot;rick_pack2&amp;quot;     
+## [37] &amp;quot;AlainLesaffre&amp;quot;   &amp;quot;Carlos_Espeleta&amp;quot; &amp;quot;ellamkaye&amp;quot;       &amp;quot;pacoramon&amp;quot;      
+## [41] &amp;quot;neslihanky&amp;quot;      &amp;quot;wang_minjie&amp;quot;     &amp;quot;PipingHotData&amp;quot;   &amp;quot;Jack36161714&amp;quot;   
+## [45] &amp;quot;KenButler12&amp;quot;     &amp;quot;xeroluck&amp;quot;        &amp;quot;rstats4ds&amp;quot;       &amp;quot;francisco_yira&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;One thing you may note is that I don’t use the &lt;code&gt;query&lt;/code&gt; argument, I just pull the default parameters – again see Jessica’s posts for a more sophisticated example as well as descriptions of the steps above.&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;I will warn that it took me an embarrassing amount of time to catch a slight change in the Twitter API between now and when Jessica wrote her post see &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/445#issuecomment-1088084784&#34;&gt;note on &lt;code&gt;expansions&lt;/code&gt;&lt;/a&gt;.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Think you need the app &lt;em&gt;within&lt;/em&gt; a project, not just a standalone app for access to V2. The &lt;strong&gt;Creating a Twitter app&lt;/strong&gt; section of &lt;a href=&#34;https://docs.ropensci.org/rtweet/articles/auth.html#creating-a-twitter-app&#34;&gt;Authentication with rtweet&lt;/a&gt; is also a helpful tutorial for getting started here. However the documentation there does not indicate the need to create a project first, however &lt;code&gt;{rtweet}&lt;/code&gt; uses V1, not V2.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Project has a local .Renviron file.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
     <item>
       <title>Feature Engineering with Sliding Windows and Lagged Inputs</title>
-      <link>/2020/10/12/window-functions-for-resampling/</link>
+      <link>https://www.bryanshalloway.com/2020/10/12/window-functions-for-resampling/</link>
       <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/10/12/window-functions-for-resampling/</guid>
+      <guid>https://www.bryanshalloway.com/2020/10/12/window-functions-for-resampling/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#load-data&#34;&gt;Load data&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#feature-engineering-data-splits&#34;&gt;Feature Engineering &amp;amp; Data Splits&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#feature-engineering-data-splits&#34;&gt;Feature Engineering &amp;amp; Data Splits&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#lag-based-features-before-split-use-dplyr-or-similar&#34;&gt;Lag Based Features (Before Split, use &lt;code&gt;dplyr&lt;/code&gt; or similar)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#data-splits&#34;&gt;Data Splits&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#other-features-after-split-use-recipes&#34;&gt;Other Features (After Split, use &lt;code&gt;recipes&lt;/code&gt;)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#model-specification-and-training&#34;&gt;Model Specification and Training&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#model-evaluation&#34;&gt;Model Evaluation&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#model-building-with-hyperparameter-tuning&#34;&gt;Model Building with Hyperparameter Tuning&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#resources&#34;&gt;Resources&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
@@ -89,14 +492,14 @@ restauraunts &amp;lt;- restauraunts %&amp;gt;%
   select(-c(NAME, contains(&amp;quot;ADDRESS&amp;quot;), CITY, STATE, POSTALCODE, PHONENUMBER, X, Y, GEOCODESTATUS))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;inspections_restaurants %&amp;gt;% 
   glimpse()&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Rows: 24,294
+&lt;pre&gt;&lt;code&gt;## Rows: 30,273
 ## Columns: 6
-## $ HSISID             &amp;lt;chr&amp;gt; &amp;quot;04092017542&amp;quot;, &amp;quot;04092017542&amp;quot;, &amp;quot;04092017542&amp;quot;, &amp;quot;04...
-## $ SCORE              &amp;lt;dbl&amp;gt; 94.5, 92.0, 95.0, 93.5, 93.0, 93.5, 92.5, 94.0, ...
-## $ TYPE               &amp;lt;chr&amp;gt; &amp;quot;Inspection&amp;quot;, &amp;quot;Inspection&amp;quot;, &amp;quot;Inspection&amp;quot;, &amp;quot;Inspe...
-## $ INSPECTOR          &amp;lt;chr&amp;gt; &amp;quot;Anne-Kathrin Bartoli&amp;quot;, &amp;quot;Laura McNeill&amp;quot;, &amp;quot;Laura ...
-## $ date               &amp;lt;date&amp;gt; 2017-04-07, 2017-11-08, 2018-03-23, 2018-09-07,...
-## $ RESTAURANTOPENDATE &amp;lt;date&amp;gt; 2017-03-01, 2017-03-01, 2017-03-01, 2017-03-01,...&lt;/code&gt;&lt;/pre&gt;
+## $ HSISID             &amp;lt;chr&amp;gt; &amp;quot;04092017542&amp;quot;, &amp;quot;04092017542&amp;quot;, &amp;quot;04092017542&amp;quot;, &amp;quot;04092~
+## $ SCORE              &amp;lt;dbl&amp;gt; 94.5, 92.0, 95.0, 93.5, 93.0, 93.5, 92.5, 94.0, 94.~
+## $ TYPE               &amp;lt;chr&amp;gt; &amp;quot;Inspection&amp;quot;, &amp;quot;Inspection&amp;quot;, &amp;quot;Inspection&amp;quot;, &amp;quot;Inspecti~
+## $ INSPECTOR          &amp;lt;chr&amp;gt; &amp;quot;Anne-Kathrin Bartoli&amp;quot;, &amp;quot;Laura McNeill&amp;quot;, &amp;quot;Laura McN~
+## $ date               &amp;lt;date&amp;gt; 2017-04-07, 2017-11-08, 2018-03-23, 2018-09-07, 20~
+## $ RESTAURANTOPENDATE &amp;lt;date&amp;gt; 2017-03-01, 2017-03-01, 2017-03-01, 2017-03-01, 20~&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;feature-engineering-data-splits&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Feature Engineering &amp;amp; Data Splits&lt;/h1&gt;
@@ -170,22 +573,17 @@ resamples  %&amp;gt;%
   extract_dates_rset() %&amp;gt;% 
   print() %&amp;gt;% 
   plot_dates_rset() &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 12 x 6
-##    splits         id     analysis_min analysis_max assessment_min assessment_max
-##    &amp;lt;list&amp;gt;         &amp;lt;chr&amp;gt;  &amp;lt;date&amp;gt;       &amp;lt;date&amp;gt;       &amp;lt;date&amp;gt;         &amp;lt;date&amp;gt;        
-##  1 &amp;lt;split [6.2K/~ Slice~ 2013-10-09   2016-10-31   2016-11-01     2017-01-31    
-##  2 &amp;lt;split [6.3K/~ Slice~ 2014-01-02   2017-01-31   2017-02-01     2017-04-28    
-##  3 &amp;lt;split [6.6K/~ Slice~ 2014-04-01   2017-04-28   2017-05-01     2017-07-31    
-##  4 &amp;lt;split [7.1K/~ Slice~ 2014-07-01   2017-07-31   2017-08-01     2017-10-31    
-##  5 &amp;lt;split [7.5K/~ Slice~ 2014-10-01   2017-10-31   2017-11-01     2018-01-31    
-##  6 &amp;lt;split [7.9K/~ Slice~ 2015-01-02   2018-01-31   2018-02-01     2018-04-30    
-##  7 &amp;lt;split [8.3K/~ Slice~ 2015-04-01   2018-04-30   2018-05-01     2018-07-31    
-##  8 &amp;lt;split [8.6K/~ Slice~ 2015-07-01   2018-07-31   2018-08-01     2018-10-31    
-##  9 &amp;lt;split [9K/1K~ Slice~ 2015-10-01   2018-10-31   2018-11-01     2019-01-31    
-## 10 &amp;lt;split [9.5K/~ Slice~ 2016-01-04   2019-01-31   2019-02-01     2019-04-30    
-## 11 &amp;lt;split [9.9K/~ Slice~ 2016-04-01   2019-04-30   2019-05-01     2019-07-31    
-## 12 &amp;lt;split [10.4K~ Slice~ 2016-07-01   2019-07-31   2019-08-01     2019-10-31&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-12-window-functions-for-resampling_files/figure-html/check-resampling-splits-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 7 x 6
+##   splits           id    analysis_min analysis_max assessment_min assessment_max
+##   &amp;lt;list&amp;gt;           &amp;lt;chr&amp;gt; &amp;lt;date&amp;gt;       &amp;lt;date&amp;gt;       &amp;lt;date&amp;gt;         &amp;lt;date&amp;gt;        
+## 1 &amp;lt;split [7789/92~ Slic~ 2015-02-10   2018-02-28   2018-03-01     2018-05-31    
+## 2 &amp;lt;split [8196/88~ Slic~ 2015-05-01   2018-05-31   2018-06-01     2018-08-31    
+## 3 &amp;lt;split [8547/90~ Slic~ 2015-08-03   2018-08-31   2018-09-04     2018-11-30    
+## 4 &amp;lt;split [8848/10~ Slic~ 2015-11-02   2018-11-30   2018-12-03     2019-02-28    
+## 5 &amp;lt;split [9370/98~ Slic~ 2016-02-01   2019-02-28   2019-03-01     2019-05-31    
+## 6 &amp;lt;split [9704/99~ Slic~ 2016-05-02   2019-05-31   2019-06-03     2019-08-30    
+## 7 &amp;lt;split [10216/9~ Slic~ 2016-08-01   2019-08-30   2019-09-03     2019-11-27&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-10-12-window-functions-for-resampling_files/figure-html/check-resampling-splits-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;For purposes of overall &lt;a href=&#34;#model-evaluation&#34;&gt;Model Evaluation&lt;/a&gt;, performance across each period will be weighted equally (regardless of number of observations in a period)&lt;a href=&#34;#fn19&#34; class=&#34;footnote-ref&#34; id=&#34;fnref19&#34;&gt;&lt;sup&gt;19&lt;/sup&gt;&lt;/a&gt; &lt;a href=&#34;#fn20&#34; class=&#34;footnote-ref&#34; id=&#34;fnref20&#34;&gt;&lt;sup&gt;20&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;other-features-after-split-use-recipes&#34; class=&#34;section level2&#34;&gt;
@@ -214,20 +612,20 @@ resamples  %&amp;gt;%
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;prep(rec_general, data = train) %&amp;gt;% 
   juice() %&amp;gt;% 
   glimpse() &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Rows: 17,048
+&lt;pre&gt;&lt;code&gt;## Rows: 14,594
 ## Columns: 12
-## $ HSISID           &amp;lt;fct&amp;gt; 04092016152, 04092014520, 04092014483, 04092012102...
-## $ TYPE             &amp;lt;fct&amp;gt; Inspection, Inspection, Inspection, Inspection, In...
-## $ INSPECTOR        &amp;lt;fct&amp;gt; David Adcock, Naterra McQueen, Andrea Anover, othe...
-## $ date             &amp;lt;date&amp;gt; 2013-10-09, 2013-10-09, 2013-10-09, 2013-10-09, 2...
-## $ SCORE_yr_overall &amp;lt;dbl&amp;gt; 96.22766, 96.22766, 96.22766, 96.22766, 96.22766, ...
-## $ SCORE_lag        &amp;lt;dbl&amp;gt; 96.0, 95.5, 97.0, 94.5, 97.5, 99.0, 96.0, 96.0, 10...
-## $ SCORE_recent     &amp;lt;dbl&amp;gt; 96.75000, 95.75000, 97.50000, 95.25000, 96.75000, ...
-## $ days_since_open  &amp;lt;dbl&amp;gt; 6.410175, 7.926964, 7.959276, 8.682029, 8.970432, ...
-## $ days_since_last  &amp;lt;dbl&amp;gt; 4.709530, 4.941642, 4.934474, 4.875197, 5.117994, ...
-## $ SCORE            &amp;lt;dbl&amp;gt; 98.5, 96.0, 96.0, 93.0, 95.0, 93.5, 95.0, 92.0, 98...
-## $ date_dow         &amp;lt;fct&amp;gt; Wed, Wed, Wed, Wed, Wed, Wed, Wed, Wed, Wed, Thu, ...
-## $ date_month       &amp;lt;fct&amp;gt; Oct, Oct, Oct, Oct, Oct, Oct, Oct, Oct, Oct, Oct, ...&lt;/code&gt;&lt;/pre&gt;
+## $ HSISID           &amp;lt;fct&amp;gt; 04092013767, 04092014115, 04092014155, 04092015493, 0~
+## $ TYPE             &amp;lt;fct&amp;gt; Inspection, Inspection, Inspection, Inspection, Inspe~
+## $ INSPECTOR        &amp;lt;fct&amp;gt; Johanna Hill, Jennifer Edwards, Angela Myers, Angela ~
+## $ date             &amp;lt;date&amp;gt; 2015-02-10, 2015-02-10, 2015-02-10, 2015-02-10, 2015~
+## $ SCORE_yr_overall &amp;lt;dbl&amp;gt; 95.59897, 95.59897, 95.59897, 95.59897, 95.59845, 95.~
+## $ SCORE_lag        &amp;lt;dbl&amp;gt; 98.0, 98.5, 94.5, 96.5, 90.5, 97.5, 93.0, 93.5, 91.0,~
+## $ SCORE_recent     &amp;lt;dbl&amp;gt; 98.40000, 98.87500, 97.37500, 92.50000, 94.25000, 95.~
+## $ days_since_open  &amp;lt;dbl&amp;gt; 8.383662, 8.248529, 8.235626, 7.568896, 6.723832, 8.0~
+## $ days_since_last  &amp;lt;dbl&amp;gt; 4.890349, 5.407172, 5.187386, 5.081404, 5.749393, 4.6~
+## $ SCORE            &amp;lt;dbl&amp;gt; 98.0, 98.5, 98.0, 87.0, 94.5, 95.5, 95.5, 90.0, 94.0,~
+## $ date_dow         &amp;lt;fct&amp;gt; Tue, Tue, Tue, Tue, Wed, Wed, Wed, Wed, Wed, Wed, Wed~
+## $ date_month       &amp;lt;fct&amp;gt; Feb, Feb, Feb, Feb, Feb, Feb, Feb, Feb, Feb, Feb, Feb~&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;model-specification-and-training&#34; class=&#34;section level1&#34;&gt;
@@ -301,7 +699,7 @@ splits_perf &amp;lt;-
   xlim(c(0, NA))+
   theme_bw()+
   labs(caption = &amp;quot;Vertical lines are average performance as captured by `tune::collect_metrics()`&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-12-window-functions-for-resampling_files/figure-html/plot-performance-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-10-12-window-functions-for-resampling_files/figure-html/plot-performance-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;We could use a paired sample t-test to formally compare the random forest and linear models’ out-of-sample RMSE performance.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;t.test(
   filter(splits_perf, source == &amp;quot;lm&amp;quot;, .metric == &amp;quot;rmse&amp;quot;) %&amp;gt;% pull(.estimate),
@@ -326,12 +724,12 @@ splits_perf &amp;lt;-
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;-0.0839&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-3.7277&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.0033&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;11&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.1334&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.0343&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.0707&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-4.3075&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.0051&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.1109&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.0305&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;Paired t-test&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;two.sided&lt;/td&gt;
 &lt;/tr&gt;
@@ -402,19 +800,19 @@ rf_tune &amp;lt;- tune_grid(rf_workflow,
 &lt;li&gt;&lt;code&gt;sliding_period()&lt;/code&gt;: slide according to an index and set k split points based on period (and other function arguments)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;code&gt;rsample::sliding_index()&lt;/code&gt; and &lt;code&gt;rsample::sliding_period()&lt;/code&gt; are maybe the most useful additions as they allow you to do resampling based on a date/time index. For &lt;code&gt;sliding_index()&lt;/code&gt;, you usually want to make use of the &lt;code&gt;step&lt;/code&gt; argument (otherwise it defaults to having a split for every observation).&lt;/p&gt;
-&lt;p&gt;I found &lt;code&gt;rsample::sliding_period()&lt;/code&gt; easier to get acquantied with than &lt;code&gt;rsample::sliding_index()&lt;/code&gt;. However within the &lt;code&gt;slider&lt;/code&gt; package I found &lt;code&gt;slider::sliding_index()&lt;/code&gt; easier to use than &lt;code&gt;slider::sliding_period()&lt;/code&gt;. Perhaps this makes sense as when setting sampling windows you are usually trying to return an object with far fewer rows, that is, collapsed to k number of rows (unless you are doing Leave-One-Out cross-validation). On the other hand, the &lt;code&gt;slider&lt;/code&gt; package is often used in a &lt;code&gt;mutate()&lt;/code&gt; step where you often want to output the same number of observations as are inputted. Perhaps then it is unsurprising the different scenarios when the &lt;code&gt;index&lt;/code&gt; vs &lt;code&gt;period&lt;/code&gt; approach feels more intuitive.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Previously users would have needed to use &lt;code&gt;rsample::rolling_origin()&lt;/code&gt;.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;As opposed to a more specialized time-series modeling approach.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;This dataset is updated on an ongoing basis as Food Inspections are conducted. This makes it a poor choice as an example dataset (because results will vary if running in the future when more data has been collected). I used it because I am familiar with the dataset, it made for a good example, and because I wanted a publicly documented example of pulling in data using an API (even a simple one).&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;There is also “violations” dataset available, which may have additional useful features, but which I will ignore for this example.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;For this example I’m pretending that we only care about predicting &lt;code&gt;SCORE&lt;/code&gt; for restaurants… as opposed to food trucks or other entities that may receive inspections.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Or at least cases where historical data is claiming there were multiple inspections on the same day.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;In some cases you may need to be more careful than this and exclude information that are proxies for inappropriate fields as well. For example, pretend that the &lt;code&gt;INSPECTOR&lt;/code&gt;s are assigned based on region. In this case, &lt;code&gt;INSPECTOR&lt;/code&gt; would be a proxy for geographic information and perhaps warranting exclusion as well (in certain cases).&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;Into training / testing sets or analysis / assessment sets.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;As discussed by Davis Vaughn at the end of this &lt;a href=&#34;https://gist.github.com/DavisVaughan/433dbdceb439c9be30ddcc78d836450d&#34;&gt;gist&lt;/a&gt;.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;An “Analysis” / “Assessment” split is similar to a “training” / “testing” split but within the training dataset (and typically multiple of these are created on the same training dataset). See section 3.4 of &lt;a href=&#34;http://www.feat.engineering/resampling.html&#34;&gt;Feature Engineering and Selection…&lt;/a&gt; for further explanation.]&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;It is important that these features be created in a way that does not cause data leakage.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Which would not be available at the time of prediction.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;I found &lt;code&gt;rsample::sliding_period()&lt;/code&gt; easier to get acquantied with than &lt;code&gt;rsample::sliding_index()&lt;/code&gt;. However within the &lt;code&gt;slider&lt;/code&gt; package I found &lt;code&gt;slider::sliding_index()&lt;/code&gt; easier to use than &lt;code&gt;slider::sliding_period()&lt;/code&gt;. Perhaps this makes sense as when setting sampling windows you are usually trying to return an object with far fewer rows, that is, collapsed to k number of rows (unless you are doing Leave-One-Out cross-validation). On the other hand, the &lt;code&gt;slider&lt;/code&gt; package is often used in a &lt;code&gt;mutate()&lt;/code&gt; step where you often want to output the same number of observations as are inputted. Perhaps then it is unsurprising the different scenarios when the &lt;code&gt;index&lt;/code&gt; vs &lt;code&gt;period&lt;/code&gt; approach feels more intuitive.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Previously users would have needed to use &lt;code&gt;rsample::rolling_origin()&lt;/code&gt;.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;As opposed to a more specialized time-series modeling approach.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;This dataset is updated on an ongoing basis as Food Inspections are conducted. This makes it a poor choice as an example dataset (because results will vary if running in the future when more data has been collected). I used it because I am familiar with the dataset, it made for a good example, and because I wanted a publicly documented example of pulling in data using an API (even a simple one).&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;There is also “violations” dataset available, which may have additional useful features, but which I will ignore for this example.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;For this example I’m pretending that we only care about predicting &lt;code&gt;SCORE&lt;/code&gt; for restaurants… as opposed to food trucks or other entities that may receive inspections.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Or at least cases where historical data is claiming there were multiple inspections on the same day.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;In some cases you may need to be more careful than this and exclude information that are proxies for inappropriate fields as well. For example, pretend that the &lt;code&gt;INSPECTOR&lt;/code&gt;s are assigned based on region. In this case, &lt;code&gt;INSPECTOR&lt;/code&gt; would be a proxy for geographic information and perhaps warranting exclusion as well (in certain cases).&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;Into training / testing sets or analysis / assessment sets.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;As discussed by Davis Vaughn at the end of this &lt;a href=&#34;https://gist.github.com/DavisVaughan/433dbdceb439c9be30ddcc78d836450d&#34;&gt;gist&lt;/a&gt;.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;An “Analysis” / “Assessment” split is similar to a “training” / “testing” split but within the training dataset (and typically multiple of these are created on the same training dataset). See section 3.4 of &lt;a href=&#34;http://www.feat.engineering/resampling.html&#34;&gt;Feature Engineering and Selection…&lt;/a&gt; for further explanation.]&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;It is important that these features be created in a way that does not cause data leakage.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Which would not be available at the time of prediction.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;I’m a fan of the ability to use negative values in the &lt;code&gt;.after&lt;/code&gt; argument:&lt;/p&gt;
 &lt;blockquote class=&#34;twitter-tweet&#34;&gt;
 &lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
@@ -423,15 +821,15 @@ This is a fairly obscure feature in {slider}, but I love it. Don’t want the cu
 — Davis Vaughan (&lt;span class=&#34;citation&#34;&gt;@dvaughan32&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/dvaughan32/status/1233116713010573312?ref_src=twsrc%5Etfw&#34;&gt;February 27, 2020&lt;/a&gt;
 &lt;/blockquote&gt;
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
-&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;If I did not make this assumption, I would need to impute the time based features at this point.&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;If I did not make this assumption, I would need to impute the time based features at this point.&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;Two helpful resources for understanding time series cross-validation:&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;From &lt;a href=&#34;https://eng.uber.com/forecasting-introduction/&#34;&gt;uber engineering&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;From &lt;a href=&#34;https://otexts.com/fpp3/tscv.html&#34;&gt;Forecasting Principles and Practices&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;An “Analysis” / “Assessment” split is similar to a “training” / “testing” split but within the training dataset (and typically multiple of these are created on the same training dataset). See section 3.4 of &lt;a href=&#34;http://www.feat.engineering/resampling.html&#34;&gt;Feature Engineering and Selection…&lt;/a&gt; for further explanation.]&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;An “Analysis” / “Assessment” split is similar to a “training” / “testing” split but within the training dataset (and typically multiple of these are created on the same training dataset). See section 3.4 of &lt;a href=&#34;http://www.feat.engineering/resampling.html&#34;&gt;Feature Engineering and Selection…&lt;/a&gt; for further explanation.]&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn18&#34;&gt;&lt;p&gt;I’ve tweeted previously about helper functions for reviewing your resampling scheme:&lt;/p&gt;
 &lt;blockquote class=&#34;twitter-tweet&#34;&gt;
 &lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
@@ -440,18 +838,18 @@ This is a fairly obscure feature in {slider}, but I love it. Don’t want the cu
 — Bryan Shalloway (&lt;span class=&#34;citation&#34;&gt;@brshallo&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/brshallo/status/1314720234373287937?ref_src=twsrc%5Etfw&#34;&gt;October 10, 2020&lt;/a&gt;
 &lt;/blockquote&gt;
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
-&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;Note that using &lt;code&gt;rsample::sliding_period()&lt;/code&gt; is likely to produce different numbers of observations between splits.&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn20&#34;&gt;&lt;p&gt;It could also make sense to weight performance metrics by number of observations. One way to do this, would be to use a control function to extract the predictions, and then evaluate the performance across the predictions. In my examples below I do keep the predictions, but end-up not doing anything with them. Alternatively you could weight the performance metric by number of observations. The justification for weighting periods of different number of observations equally is that noise may vary consistently across time windows – weighting by observations may allow an individual time period too much influence (simply because it happened to be that there were a greater proportion of inspections at that period).&lt;a href=&#34;#fnref20&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn21&#34;&gt;&lt;p&gt;For each split, this will then build the features for the assessment set based on each analysis set.&lt;a href=&#34;#fnref21&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn22&#34;&gt;&lt;p&gt;Although I just do a simple &lt;code&gt;step_log()&lt;/code&gt; transform below, more sophisticated steps on lag based inputs would also be kosher, e.g. &lt;code&gt;step_pca()&lt;/code&gt;. However there is a good argument that many of these should be done prior to a &lt;code&gt;recipes&lt;/code&gt; step. For example, say you have missing values for some of the lag based inputs – in that case it may make sense to use a lag based method for imputation, which may work better than say a mean imputation using the training set. So, like many things, just be thoughtful and constantly ask youself what will be the ideal method while &lt;em&gt;being careful&lt;/em&gt; that, to the question of “will this data be available prior to the prediction?” that you can answer in the affirmitive.&lt;a href=&#34;#fnref22&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn23&#34;&gt;&lt;p&gt;Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties. While working interactively, I did not see any substantive difference in performance.&lt;a href=&#34;#fnref23&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;Remember that this is not weighted by observations, so each assessment set impacts the overall performance equally, regardless of small differences in number of observations.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;There is no baseline performance for Rsquared because the metric itself is based off amount of variance that is explained compared to the baseline (i.e. the mean).&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn26&#34;&gt;&lt;p&gt;You would likely iterate on the model building process (e.g. perform exploratory data analysis, review outliers in initial models, etc.) and eventually get to a final set of models to evaluate on the test set.&lt;a href=&#34;#fnref26&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn27&#34;&gt;&lt;p&gt;I added a few other links to the &lt;a href=&#34;#resources&#34;&gt;Resources&lt;/a&gt; section in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;a href=&#34;#fnref27&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn28&#34;&gt;&lt;p&gt;Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties.&lt;a href=&#34;#fnref28&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn29&#34;&gt;&lt;p&gt;This was taking a &lt;em&gt;long&lt;/em&gt; time and is part of why I decided to move the tuned examples to the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;.&lt;a href=&#34;#fnref29&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;Note that using &lt;code&gt;rsample::sliding_period()&lt;/code&gt; is likely to produce different numbers of observations between splits.&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn20&#34;&gt;&lt;p&gt;It could also make sense to weight performance metrics by number of observations. One way to do this, would be to use a control function to extract the predictions, and then evaluate the performance across the predictions. In my examples below I do keep the predictions, but end-up not doing anything with them. Alternatively you could weight the performance metric by number of observations. The justification for weighting periods of different number of observations equally is that noise may vary consistently across time windows – weighting by observations may allow an individual time period too much influence (simply because it happened to be that there were a greater proportion of inspections at that period).&lt;a href=&#34;#fnref20&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn21&#34;&gt;&lt;p&gt;For each split, this will then build the features for the assessment set based on each analysis set.&lt;a href=&#34;#fnref21&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn22&#34;&gt;&lt;p&gt;Although I just do a simple &lt;code&gt;step_log()&lt;/code&gt; transform below, more sophisticated steps on lag based inputs would also be kosher, e.g. &lt;code&gt;step_pca()&lt;/code&gt;. However there is a good argument that many of these should be done prior to a &lt;code&gt;recipes&lt;/code&gt; step. For example, say you have missing values for some of the lag based inputs – in that case it may make sense to use a lag based method for imputation, which may work better than say a mean imputation using the training set. So, like many things, just be thoughtful and constantly ask youself what will be the ideal method while &lt;em&gt;being careful&lt;/em&gt; that, to the question of “will this data be available prior to the prediction?” that you can answer in the affirmitive.&lt;a href=&#34;#fnref22&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn23&#34;&gt;&lt;p&gt;Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties. While working interactively, I did not see any substantive difference in performance.&lt;a href=&#34;#fnref23&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;Remember that this is not weighted by observations, so each assessment set impacts the overall performance equally, regardless of small differences in number of observations.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;There is no baseline performance for Rsquared because the metric itself is based off amount of variance that is explained compared to the baseline (i.e. the mean).&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn26&#34;&gt;&lt;p&gt;You would likely iterate on the model building process (e.g. perform exploratory data analysis, review outliers in initial models, etc.) and eventually get to a final set of models to evaluate on the test set.&lt;a href=&#34;#fnref26&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn27&#34;&gt;&lt;p&gt;I added a few other links to the &lt;a href=&#34;#resources&#34;&gt;Resources&lt;/a&gt; section in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;a href=&#34;#fnref27&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn28&#34;&gt;&lt;p&gt;Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties.&lt;a href=&#34;#fnref28&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn29&#34;&gt;&lt;p&gt;This was taking a &lt;em&gt;long&lt;/em&gt; time and is part of why I decided to move the tuned examples to the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;.&lt;a href=&#34;#fnref29&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>

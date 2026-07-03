@@ -2,18 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>hiring on Bryan Shalloway&#39;s Blog</title>
-    <link>/categories/hiring/</link>
+    <link>https://www.bryanshalloway.com/categories/hiring/</link>
     <description>Recent content in hiring on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 27 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="/categories/hiring/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 27 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://www.bryanshalloway.com/categories/hiring/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Should You Use an Assignment as Part of Your Hiring Process for a Data Scientist?</title>
-      <link>/2020/10/27/should-you-use-an-assignment-or-exercise-as-part-of-your-hiring-process-for-a-data-scientist/</link>
+      <link>https://www.bryanshalloway.com/2020/10/27/should-you-use-an-assignment-or-exercise-as-part-of-your-hiring-process-for-a-data-scientist/</link>
       <pubDate>Tue, 27 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/10/27/should-you-use-an-assignment-or-exercise-as-part-of-your-hiring-process-for-a-data-scientist/</guid>
+      <guid>https://www.bryanshalloway.com/2020/10/27/should-you-use-an-assignment-or-exercise-as-part-of-your-hiring-process-for-a-data-scientist/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;A version of this question was asked on my alumni Slack channel. There were some excellent points brought up by those answering the question in the negative, including that…&lt;/p&gt;
@@ -65,13 +66,13 @@
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;This applies to almost every part of an application process; it’s about where you can gather small pieces of useful information at minimal time / expense.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;However, candidates who remain (and invest their time completing the exercise) may be more likely to accept an offer (falling to some extent for the sunk cost fallacy). Though this reasoning is dubious ethically and should be avoided in decision making.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Note that while I have participated in the hiring of a few data science roles I am by no means &lt;em&gt;seasoned&lt;/em&gt; in hiring data scientists.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;RTI has some good examples of data science activities on their github: &lt;a href=&#34;https://github.com/rtidatascience/data-scientist-exercise01&#34;&gt;RTI exercise 1&lt;/a&gt;, &lt;a href=&#34;https://github.com/rtidatascience/data-scientist-exercise02&#34;&gt;RTI exercise 2&lt;/a&gt;.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;and, depending on the questions, may save the team time in evaluation&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;particularly in a ‘hot’ field like data science where a lot of people are transitioning into it&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;and that provides some latitude for constructing a diverse team that fits well together&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;This applies to almost every part of an application process; it’s about where you can gather small pieces of useful information at minimal time / expense.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;However, candidates who remain (and invest their time completing the exercise) may be more likely to accept an offer (falling to some extent for the sunk cost fallacy). Though this reasoning is dubious ethically and should be avoided in decision making.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Note that while I have participated in the hiring of a few data science roles I am by no means &lt;em&gt;seasoned&lt;/em&gt; in hiring data scientists.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;RTI has some good examples of data science activities on their github: &lt;a href=&#34;https://github.com/rtidatascience/data-scientist-exercise01&#34;&gt;RTI exercise 1&lt;/a&gt;, &lt;a href=&#34;https://github.com/rtidatascience/data-scientist-exercise02&#34;&gt;RTI exercise 2&lt;/a&gt;.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;and, depending on the questions, may save the team time in evaluation&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;particularly in a ‘hot’ field like data science where a lot of people are transitioning into it&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;and that provides some latitude for constructing a diverse team that fits well together&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>

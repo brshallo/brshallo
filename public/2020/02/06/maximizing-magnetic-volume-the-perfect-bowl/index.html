@@ -5,12 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Hugo 0.75.0" />
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
 
 <title>Riddler Solutions: Perfect Bowl &amp; Magnetic Volume - Bryan Shalloway&#39;s Blog</title>
 <meta property="og:title" content="Riddler Solutions: Perfect Bowl &amp; Magnetic Volume - Bryan Shalloway&#39;s Blog">
 
 
-  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='https://www.bryanshalloway.com/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -25,6 +27,17 @@
 <link rel="stylesheet" href="/css/fonts.css" media="all">
 <link rel="stylesheet" href="/css/main.css" media="all">
 
+<script async src="https://use.fontawesome.com/32c3d13def.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <link rel="stylesheet" href="/css/custom.css" />
+
+
+
+
+  <script src="/js/collapse.js"></script>
+  <script src="/js/dropdown.js"></script>
+  <script src="/js/transition.js"></script>
 
 
   </head>
@@ -36,20 +49,20 @@
     <img src="/images/bryan_edit.jpg"
          width="60"
          height="60"
-         alt="Logo">
+         alt="Home">
   </a>
 
   <ul class="nav-links">
     
     <li><a href="/about/">About</a></li>
     
-    <li><a href="https://twitter.com/brshallo">Twitter</a></li>
+    <li><a href="/">Posts</a></li>
+    
+    <li><a href="https://www.youtube.com/watch?v=c9oU7ALJS3o&amp;list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95&amp;index=1">Presentations</a></li>
     
     <li><a href="https://github.com/brshallo">GitHub</a></li>
     
     <li><a href="https://www.linkedin.com/in/bryanshalloway/">LinkedIn</a></li>
-    
-    <li><a href="https://www.youtube.com/watch?v=gme4Fb9JVjk&amp;list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95">YouTube</a></li>
     
   </ul>
 </nav>
@@ -67,16 +80,36 @@
     <h1 class="article-title">Riddler Solutions: Perfect Bowl &amp; Magnetic Volume</h1>
 
     
+    <p class="terms">
+      
+      
+      Tags:
+      
+      <a href='/tags/dplyr'>dplyr</a>
+      
+      <a href='/tags/ggplot'>ggplot</a>
+      
+      <a href='/tags/ggforce'>ggforce</a>
+      
+      
+      
+    </p>
+    
     <span class="article-date">2020-02-06</span>
     
+    
 
+    
+    
     <div class="article-content">
       
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 <div id="TOC">
 <ul>
 <li><a href="#riddler-express">Riddler Express</a></li>
-<li><a href="#riddler-classic">Riddler Classic</a><ul>
+<li><a href="#riddler-classic">Riddler Classic</a>
+<ul>
 <li><a href="#area-of-the-base-of-the-pyramid">Area of the base of the pyramid</a></li>
 <li><a href="#height-of-the-pyramid">Height of the pyramid</a></li>
 <li><a href="#encode-functions-and-calculate-volumes">Encode functions and calculate volumes</a></li>
@@ -109,7 +142,7 @@ For example, here’s how you could split your opponent’s bowls when ɸ is 75�
 <p><strong>My Approach:</strong></p>
 <p><em>Sketched-out:</em></p>
 <div class="figure">
-<img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/bowl_calc.jpg" alt="My drawings are rotated 90° clockwise from the problem description (does not affect solution)" style="width:58.0%" />
+<img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/bowl_calc.jpg" style="width:58.0%" alt="" />
 <p class="caption">My drawings are rotated 90° clockwise from the problem description (does not affect solution)</p>
 </div>
 <p><em>Walked through:</em></p>
@@ -143,7 +176,7 @@ For example, here’s how you could split your opponent’s bowls when ɸ is 75�
 <p>The side length of the base of our pyramid will be the length of the shortest side of a Magna-Tile. We weren’t told the lengths of the sides of the Magna-Tiles but they don’t matter for this problem<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. To keep things simple, I’ll say the two congruent sides of the Magna-Tiles are equal to 1 unit.</p>
 <p>Drawing a line perpendicular to the base splits our Magna-Tile into two congruent triangles. Given the trigonometric identity that <span class="math inline">\(sin(\theta) = \frac{opposite}{hypotenuse}\)</span> and that the hypotenuse of each triangle was set at 1 unit, we can calculate the length of the base of the Magna-Tile is <em>2sin(15°).</em></p>
 <div class="figure">
-<img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/base_length.jpg" alt="Base polygon side length" style="width:58.0%" />
+<img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/base_length.jpg" style="width:58.0%" alt="" />
 <p class="caption">Base polygon side length</p>
 </div>
 <p>I used <em>Math Open Reference</em> to find an equation for <a href="https://www.mathopenref.com/polygonregulararea.html">area of a regular polygon</a> as a function of side length and number of sides: <span class="math display">\[(area\;of\;regular\;polygon)\;=\;\frac{(side\;length)^{2}(number\;of\;sides)}{4tan(\frac{180^{\circ}}{number\;of\;sides})}\]</span></p>
@@ -154,7 +187,7 @@ making area a function of <em>only</em> the number of sides on our pyramid (i.e.
 <h2>Height of the pyramid</h2>
 <p><em>Sketched out:</em></p>
 <div class="figure">
-<img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg" alt="Finding pyramid height" style="width:80.0%" />
+<img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg" style="width:80.0%" alt="" />
 <p class="caption">Finding pyramid height</p>
 </div>
 <p><em>Walked through:</em></p>
@@ -166,14 +199,14 @@ making area a function of <em>only</em> the number of sides on our pyramid (i.e.
 <p><strong>I.</strong> Length of a Magna-Tile (over its line of symmetry)</p>
 <p>Using the trigonometric rule that <span class="math inline">\(cos(\theta) = \frac{adjacent}{hypotenuse}\)</span> reveals the length of a Magna-Tile as equal to <em>cos(15°)</em> – remember we are treating the longest sides of the Magna-Tile as equal to 1 unit<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.</p>
 <div class="figure">
-<img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/mag_length.jpg" alt="Magna-Tile length (over its line of symmetry)" width="200" />
+<img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/mag_length.jpg" width="200" alt="" />
 <p class="caption">Magna-Tile length (over its line of symmetry)</p>
 </div>
 <p><strong>II.</strong> I used Math Open Reference to find the equation for <a href="https://www.mathopenref.com/apothem.html">apothem length</a> as a function of number and length of sides in a regular polygon. <span class="math display">\[apothem\;length = \frac{side\;length}{2tan(\frac{180^{\circ}}{number\;of\;sides})}\]</span> You can replace <em>side length</em> in this equation with <em>2sin(15°)</em> (calculated above), making apothem length a function of <em>only</em> the number of sides on our pyramid (i.e. the number of Magna-Tiles).</p>
 <p><strong>III.</strong> Parts <strong>I</strong> and <strong>II</strong> represent two sides of a right triangle. To find the third side (corresponding with <em>pyramid height</em>) simply use the Pythagorean theorem: <span class="math display">\[pyramid\;height = \sqrt{(MagnaTile\;length)^{2} - (apothem\;length)^{2}}\]</span>
 Fill in the values for <em>(Magna-Tile length)</em> and <em>(apothem length)</em> (as described in <strong>I</strong> &amp; <strong>II</strong>) and you’ll see pyramid height is now represented as a function of <em>only</em> number of sides (i.e. number of Magna-Tiles).</p>
 <div class="figure">
-<img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg" alt="Finding pyramid height" style="width:80.0%" />
+<img src="/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg" style="width:80.0%" alt="" />
 <p class="caption">Finding pyramid height</p>
 </div>
 </div>
@@ -194,14 +227,14 @@ Fill in the values for <em>(Magna-Tile length)</em> and <em>(apothem length)</em
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>When passing the line between the centers of the red circles.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>When passing the line between the centers of the red circles.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>Could do for either or both circles and would get same solution as below steps will form congruent triangles – but following these steps using the top red circle more closely follows the story of the problem.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>As the pyramids created will be similar so each pyramid would scale proportionally to one another.<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>In this case the longest sides are each a hypotenuse.<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>In the code I use pi / 12 radians, which is equivalent to 15° used throughout the descriptions.<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>2 and 12 Magna-Tiles represent flat structures ad therefore no volume.<a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>At 12 the structure is flat so no longer has volume.<a href="#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>When passing the line between the centers of the red circles.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>When passing the line between the centers of the red circles.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>Could do for either or both circles and would get same solution as below steps will form congruent triangles – but following these steps using the top red circle more closely follows the story of the problem.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>As the pyramids created will be similar so each pyramid would scale proportionally to one another.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>In this case the longest sides are each a hypotenuse.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>In the code I use pi / 12 radians, which is equivalent to 15° used throughout the descriptions.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>2 and 12 Magna-Tiles represent flat structures ad therefore no volume.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>At 12 the structure is flat so no longer has volume.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 
@@ -239,13 +272,21 @@ Fill in the values for <em>(Magna-Tile length)</em> and <em>(apothem length)</em
       <footer class="footer">
         <ul class="footer-links">
           <li>
-            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+            <a href="/tags">Tags</a>
           </li>
           <li>
-            <a>Blogroll:</a><a href="https://www.r-bloggers.com/" class="footer-links-kudos">R-Bloggers</a><a href="https://rweekly.org/" class="footer-links-kudos">R-Weekly</a>
+            <a href="/categories">Categories</a>
+          </li>
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          
+          <li>
+            Blogroll:<a href="https://www.r-bloggers.com/" class="footer-links-kudos">R-Bloggers</a><a href="https://rweekly.org/" class="footer-links-kudos">R-Weekly</a>
           </li>
         </ul>
       </footer>
+
 
     </div>
     

@@ -5,12 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Hugo 0.75.0" />
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
 
 <title>Undersampling Will Change the Base Rates of Your Model&#39;s Predictions - Bryan Shalloway&#39;s Blog</title>
 <meta property="og:title" content="Undersampling Will Change the Base Rates of Your Model&#39;s Predictions - Bryan Shalloway&#39;s Blog">
 
 
-  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='https://www.bryanshalloway.com/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -30,6 +32,17 @@
 <link rel="stylesheet" href="/css/fonts.css" media="all">
 <link rel="stylesheet" href="/css/main.css" media="all">
 
+<script async src="https://use.fontawesome.com/32c3d13def.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <link rel="stylesheet" href="/css/custom.css" />
+
+
+
+
+  <script src="/js/collapse.js"></script>
+  <script src="/js/dropdown.js"></script>
+  <script src="/js/transition.js"></script>
 
 
   </head>
@@ -41,20 +54,20 @@
     <img src="/images/bryan_edit.jpg"
          width="60"
          height="60"
-         alt="Logo">
+         alt="Home">
   </a>
 
   <ul class="nav-links">
     
     <li><a href="/about/">About</a></li>
     
-    <li><a href="https://twitter.com/brshallo">Twitter</a></li>
+    <li><a href="/">Posts</a></li>
+    
+    <li><a href="https://www.youtube.com/watch?v=c9oU7ALJS3o&amp;list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95&amp;index=1">Presentations</a></li>
     
     <li><a href="https://github.com/brshallo">GitHub</a></li>
     
     <li><a href="https://www.linkedin.com/in/bryanshalloway/">LinkedIn</a></li>
-    
-    <li><a href="https://www.youtube.com/watch?v=gme4Fb9JVjk&amp;list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95">YouTube</a></li>
     
   </ul>
 </nav>
@@ -72,21 +85,61 @@
     <h1 class="article-title">Undersampling Will Change the Base Rates of Your Model&#39;s Predictions</h1>
 
     
+    <p class="terms">
+      
+      
+      Tags:
+      
+      <a href='/tags/ggplot'>ggplot</a>
+      
+      <a href='/tags/dplyr'>dplyr</a>
+      
+      <a href='/tags/purrr'>purrr</a>
+      
+      <a href='/tags/tidyr'>tidyr</a>
+      
+      <a href='/tags/knitr'>knitr</a>
+      
+      <a href='/tags/modelr'>modelr</a>
+      
+      <a href='/tags/yardstick'>yardstick</a>
+      
+      
+      
+    </p>
+    
     <span class="article-date">2020-11-23</span>
     
+    
+<div id="code-folding-buttons" class="btn-group pull-right">
+  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-_extension-text-contrast="">
+    <span>Show/Hide all code</span> 
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" style="min-width: 50px;">
+  <li><a id="rmd-show-all-code" href="#">Show All Code</a>
+  </li><li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+  </ul>
+</div>
 
+
+    
+    
     <div class="article-content">
       
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 <div id="TOC">
 <ul>
 <li><a href="#create-data">Create Data</a></li>
-<li><a href="#association-of-feature-and-target">Association of ‘feature’ and ‘target’</a><ul>
+<li><a href="#association-of-feature-and-target">Association of ‘feature’ and ‘target’</a>
+<ul>
 <li><a href="#resample">Resample</a></li>
 <li><a href="#build-models">Build Models</a></li>
 <li><a href="#rescale-predictions-to-predicted-probabilities">Rescale Predictions to Predicted Probabilities</a></li>
 </ul></li>
-<li><a href="#appendix">Appendix</a><ul>
+<li><a href="#appendix">Appendix</a>
+<ul>
 <li><a href="#density-plots">Density Plots</a></li>
 <li><a href="#lift-plot">Lift Plot</a></li>
 <li><a href="#comparing-scaling-methods">Comparing Scaling Methods</a></li>
@@ -306,22 +359,22 @@ test_with_preds_adjusted %&gt;%
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>In the title I just mention Undersamping for brevities sake. Upsampling and downsampling are synonyms you may hear as well<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>I expect the audience for this post may be rather limited.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>I wrote this example After having conversations related to this a few times (and participants not grasping points that would become clear with demonstration).<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>before I started using <a href="https://www.tidymodels.org/">tidymodels</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>or any of a myriad of topics related to this.<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>There are often pretty easy built-in ways to accommodate this.<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>There are also other reasons you may not want to rescale your predictions… but in many cases you will want to.<a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>Could have been more precise here…<a href="#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p>no need for validation for this example<a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p>The higher incidence of TRUE values in the target at higher scores demonstrates the features predictive value.<a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p>One built with 5-95 split the other with a downsampled 50-50 split.<a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>Of course you could just use different decision thresholds for the predictions as well.<a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p>Decision tree based approach<a href="#fnref13" class="footnote-back">↩</a></p></li>
-<li id="fn14"><p>Logistic regression based approach<a href="#fnref14" class="footnote-back">↩</a></p></li>
-<li id="fn15"><p>E.g. when using Support Vector Machines<a href="#fnref15" class="footnote-back">↩</a></p></li>
-<li id="fn16"><p>In this case we are starting with a linear model hence we could also have just changed the intercept value to get the same affect. Rescaling methods act on the <em>predictions</em> rather than the model parameters. Hence these scaling methods have the advantage of being generalizable as they are agnostic to model type.<a href="#fnref16" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>In the title I just mention Undersamping for brevities sake. Upsampling and downsampling are synonyms you may hear as well<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>I expect the audience for this post may be rather limited.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>I wrote this example After having conversations related to this a few times (and participants not grasping points that would become clear with demonstration).<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>before I started using <a href="https://www.tidymodels.org/">tidymodels</a><a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>or any of a myriad of topics related to this.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>There are often pretty easy built-in ways to accommodate this.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>There are also other reasons you may not want to rescale your predictions… but in many cases you will want to.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>Could have been more precise here…<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>no need for validation for this example<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>The higher incidence of TRUE values in the target at higher scores demonstrates the features predictive value.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>One built with 5-95 split the other with a downsampled 50-50 split.<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>Of course you could just use different decision thresholds for the predictions as well.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>Decision tree based approach<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p>Logistic regression based approach<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
+<li id="fn15"><p>E.g. when using Support Vector Machines<a href="#fnref15" class="footnote-back">↩︎</a></p></li>
+<li id="fn16"><p>In this case we are starting with a linear model hence we could also have just changed the intercept value to get the same affect. Rescaling methods act on the <em>predictions</em> rather than the model parameters. Hence these scaling methods have the advantage of being generalizable as they are agnostic to model type.<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 
@@ -359,13 +412,28 @@ test_with_preds_adjusted %&gt;%
       <footer class="footer">
         <ul class="footer-links">
           <li>
-            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+            <a href="/tags">Tags</a>
           </li>
           <li>
-            <a>Blogroll:</a><a href="https://www.r-bloggers.com/" class="footer-links-kudos">R-Bloggers</a><a href="https://rweekly.org/" class="footer-links-kudos">R-Weekly</a>
+            <a href="/categories">Categories</a>
+          </li>
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          
+          <li>
+            Blogroll:<a href="https://www.r-bloggers.com/" class="footer-links-kudos">R-Bloggers</a><a href="https://rweekly.org/" class="footer-links-kudos">R-Weekly</a>
           </li>
         </ul>
       </footer>
+
+ 
+  <script>
+  $(document).ready(function () {
+    window.initializeCodeFolding("show" === "show");
+  });
+  </script>
+  <script src="/js/codefolding.js"></script>
 
     </div>
     

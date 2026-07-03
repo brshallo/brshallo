@@ -3,417 +3,682 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/</loc>
+    <loc>https://www.bryanshalloway.com/</loc>
+    <lastmod>2026-06-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/categories/business/</loc>
+    <lastmod>2026-06-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/categories/</loc>
+    <lastmod>2026-06-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2026/06/23/identifying-owners-of-unclaimed-property/</loc>
+    <lastmod>2026-06-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/post/</loc>
+    <lastmod>2026-06-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/dplyr/</loc>
+    <lastmod>2024-08-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/dt/</loc>
+    <lastmod>2024-08-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/forcats/</loc>
+    <lastmod>2024-08-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/ggplot2/</loc>
+    <lastmod>2024-08-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/gt/</loc>
+    <lastmod>2024-08-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2024/08/27/how-you-should-keep-score-in-pickup-basketball/</loc>
+    <lastmod>2024-08-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/htmltools/</loc>
+    <lastmod>2024-08-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/purrr/</loc>
+    <lastmod>2024-08-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/categories/rstats/</loc>
+    <lastmod>2024-08-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/scales/</loc>
+    <lastmod>2024-08-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/stringr/</loc>
+    <lastmod>2024-08-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/</loc>
+    <lastmod>2024-08-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/tidyr/</loc>
+    <lastmod>2024-08-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2024/05/08/untangling-nassim-taleb-s-criticism-of-that-headline-grabbing-intermittent-fasting-story/</loc>
+    <lastmod>2024-05-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2024/02/11/aggregating-measures-of-uncertainty/</loc>
+    <lastmod>2024-02-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/categories/data-science/</loc>
+    <lastmod>2023-11-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/diagrammer/</loc>
+    <lastmod>2023-11-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2023/11/03/odds-are-you-re-using-probabilities-to-describe-event-outcomes/</loc>
+    <lastmod>2023-11-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2022/06/16/converting-between-currencies-using-pricer/</loc>
+    <lastmod>2022-06-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/devtools/</loc>
+    <lastmod>2022-06-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/lubridate/</loc>
+    <lastmod>2022-06-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/pricer/</loc>
+    <lastmod>2022-06-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/fs/</loc>
+    <lastmod>2022-04-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/glue/</loc>
+    <lastmod>2022-04-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/httr/</loc>
+    <lastmod>2022-04-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/jsonlite/</loc>
+    <lastmod>2022-04-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2022/04/11/pulling-twitter-engagements-using-the-v2-api-as-well-as-rtweet/</loc>
+    <lastmod>2022-04-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/readr/</loc>
+    <lastmod>2022-04-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/rjson/</loc>
+    <lastmod>2022-04-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/rstudioapi/</loc>
+    <lastmod>2022-04-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/rtweet/</loc>
+    <lastmod>2022-04-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/tidyverse/</loc>
+    <lastmod>2022-04-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2022/04/04/notes-on-r-access-to-twitter-s-v2-api/</loc>
+    <lastmod>2022-04-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/funspotr/</loc>
+    <lastmod>2022-03-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2022/03/17/network-plots-of-code-collections-funspotr-part-3/</loc>
+    <lastmod>2022-03-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2022/02/07/identifying-r-functions-packages-in-your-github-gists/</loc>
+    <lastmod>2022-02-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/here/</loc>
+    <lastmod>2022-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2022/01/18/identifying-r-functions-packages-used-in-github-repos/</loc>
+    <lastmod>2022-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/yaml/</loc>
+    <lastmod>2022-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/broom/</loc>
+    <lastmod>2021-12-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/janitor/</loc>
+    <lastmod>2021-12-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2021/12/17/predicting-nba-playoff-berths-fivethirtyeight-vs-betting-markets/</loc>
+    <lastmod>2021-12-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/rvest/</loc>
+    <lastmod>2021-12-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/categories/statistics/</loc>
+    <lastmod>2021-12-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/digest/</loc>
+    <lastmod>2021-05-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2021/05/10/macros-in-the-shell-integrating-that-spreadsheet-from-finance-into-a-local-data-pipeline/</loc>
+    <lastmod>2021-05-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/mvtnorm/</loc>
+    <lastmod>2021-05-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/categories/pipelines/</loc>
+    <lastmod>2021-05-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/readxl/</loc>
+    <lastmod>2021-05-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/ggplot/</loc>
+    <lastmod>2021-04-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/pander/</loc>
+    <lastmod>2021-04-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2021/04/21/quantile-regression-forests-for-prediction-intervals/</loc>
+    <lastmod>2021-04-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/categories/r/</loc>
+    <lastmod>2021-04-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/workflows/</loc>
+    <lastmod>2021-04-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/yardstick/</loc>
+    <lastmod>2021-04-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2021/04/05/simulating-prediction-intervals/</loc>
+    <lastmod>2021-04-05T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/ameshousing/</loc>
     <lastmod>2021-03-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/</loc>
+    <loc>https://www.bryanshalloway.com/tags/parsnip/</loc>
     <lastmod>2021-03-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/</loc>
+    <loc>https://www.bryanshalloway.com/tags/recipes/</loc>
     <lastmod>2021-03-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/about/</loc>
+    <loc>https://www.bryanshalloway.com/tags/rsample/</loc>
+    <lastmod>2021-03-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2021/03/18/intuition-on-uncertainty-of-predictions-introduction-to-prediction-intervals/</loc>
+    <lastmod>2021-03-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/about/</loc>
     <lastmod>2021-03-05T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2021/01/11/basics-of-data-sources-on-homelessness/</loc>
+    <loc>https://www.bryanshalloway.com/2021/01/11/basics-of-data-sources-on-homelessness/</loc>
     <lastmod>2021-01-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/</loc>
+    <loc>https://www.bryanshalloway.com/categories/politics/</loc>
     <lastmod>2021-01-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/politics/</loc>
-    <lastmod>2021-01-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/business/</loc>
+    <loc>https://www.bryanshalloway.com/tags/knitr/</loc>
     <lastmod>2020-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/data-science/</loc>
+    <loc>https://www.bryanshalloway.com/categories/machine-learning/</loc>
     <lastmod>2020-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/expected-value/</loc>
+    <loc>https://www.bryanshalloway.com/tags/probably/</loc>
     <lastmod>2020-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/machine-learning/</loc>
+    <loc>https://www.bryanshalloway.com/2020/12/08/weighting-classification-outcomes/</loc>
     <lastmod>2020-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/ml/</loc>
-    <lastmod>2020-12-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/rstats/</loc>
-    <lastmod>2020-12-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/rstats/</loc>
-    <lastmod>2020-12-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/statistics/</loc>
-    <lastmod>2020-12-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/</loc>
-    <lastmod>2020-12-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/2020/12/08/weighting-classification-outcomes/</loc>
-    <lastmod>2020-12-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/imbalanced-data/</loc>
+    <loc>https://www.bryanshalloway.com/categories/modeling/</loc>
     <lastmod>2020-11-23T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/misclassification/</loc>
+    <loc>https://www.bryanshalloway.com/tags/modelr/</loc>
     <lastmod>2020-11-23T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/modeling/</loc>
+    <loc>https://www.bryanshalloway.com/categories/programming/</loc>
     <lastmod>2020-11-23T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/programming/</loc>
+    <loc>https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/</loc>
     <lastmod>2020-11-23T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/</loc>
-    <lastmod>2020-11-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/business/</loc>
+    <loc>https://www.bryanshalloway.com/2020/11/02/influencing-distributions/</loc>
     <lastmod>2020-11-02T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/distributions/</loc>
+    <loc>https://www.bryanshalloway.com/categories/pricing/</loc>
     <lastmod>2020-11-02T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2020/11/02/influencing-distributions/</loc>
-    <lastmod>2020-11-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/pricing/</loc>
-    <lastmod>2020-11-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/2020/10/28/idea-for-casino-games-where-the-player-almost-always-win/</loc>
+    <loc>https://www.bryanshalloway.com/tags/econocharts/</loc>
     <lastmod>2020-10-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/game/</loc>
+    <loc>https://www.bryanshalloway.com/2020/10/28/idea-for-casino-games-where-the-player-almost-always-win/</loc>
     <lastmod>2020-10-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/math/</loc>
+    <loc>https://www.bryanshalloway.com/categories/game/</loc>
     <lastmod>2020-10-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/probability/</loc>
+    <loc>https://www.bryanshalloway.com/categories/math/</loc>
     <lastmod>2020-10-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/psychology/</loc>
+    <loc>https://www.bryanshalloway.com/categories/psychology/</loc>
     <lastmod>2020-10-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/psychology/</loc>
-    <lastmod>2020-10-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/rational/</loc>
-    <lastmod>2020-10-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/hiring/</loc>
+    <loc>https://www.bryanshalloway.com/categories/hiring/</loc>
     <lastmod>2020-10-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2020/10/27/should-you-use-an-assignment-or-exercise-as-part-of-your-hiring-process-for-a-data-scientist/</loc>
+    <loc>https://www.bryanshalloway.com/2020/10/27/should-you-use-an-assignment-or-exercise-as-part-of-your-hiring-process-for-a-data-scientist/</loc>
     <lastmod>2020-10-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2020/10/12/window-functions-for-resampling/</loc>
+    <loc>https://www.bryanshalloway.com/2020/10/12/window-functions-for-resampling/</loc>
     <lastmod>2020-10-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/httr/</loc>
+    <loc>https://www.bryanshalloway.com/tags/slider/</loc>
     <lastmod>2020-10-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/jsonlite/</loc>
+    <loc>https://www.bryanshalloway.com/tags/tune/</loc>
     <lastmod>2020-10-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/tidymodels/</loc>
-    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/tidyverse/</loc>
-    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/2020/09/11/compromise-between-the-electoral-college-and-a-national-popular-vote/</loc>
+    <loc>https://www.bryanshalloway.com/2020/09/11/compromise-between-the-electoral-college-and-a-national-popular-vote/</loc>
     <lastmod>2020-09-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/collective-action-problem/</loc>
+    <loc>https://www.bryanshalloway.com/tags/pins/</loc>
     <lastmod>2020-09-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/data-journalism/</loc>
-    <lastmod>2020-09-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/electoral-college/</loc>
-    <lastmod>2020-09-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/popular-vote/</loc>
-    <lastmod>2020-09-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/hedonic-modeling/</loc>
+    <loc>https://www.bryanshalloway.com/tags/equatiomatic/</loc>
     <lastmod>2020-08-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2020/08/17/pricing-insights-from-historical-data-part-1/</loc>
+    <loc>https://www.bryanshalloway.com/2020/08/17/pricing-insights-from-historical-data-part-1/</loc>
     <lastmod>2020-08-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/pricing/</loc>
-    <lastmod>2020-08-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/ai/</loc>
+    <loc>https://www.bryanshalloway.com/2020/07/20/animate-interactive-objects-with-face-detection-javascript-and-chrome-browser/</loc>
     <lastmod>2020-07-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2020/07/20/animate-interactive-objects-with-face-detection-javascript-and-chrome-browser/</loc>
+    <loc>https://www.bryanshalloway.com/categories/animation/</loc>
     <lastmod>2020-07-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/animation/</loc>
+    <loc>https://www.bryanshalloway.com/tags/chrome-api/</loc>
     <lastmod>2020-07-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/chrome/</loc>
+    <loc>https://www.bryanshalloway.com/categories/image-recognition/</loc>
     <lastmod>2020-07-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/image-recognition/</loc>
+    <loc>https://www.bryanshalloway.com/tags/javascript/</loc>
     <lastmod>2020-07-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/javascript/</loc>
+    <loc>https://www.bryanshalloway.com/categories/visualization/</loc>
     <lastmod>2020-07-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/javascript/</loc>
-    <lastmod>2020-07-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/visualization/</loc>
-    <lastmod>2020-07-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/2020/06/25/using-across-to-build-functions-with-dplyr-with-notes-on-legacy-approaches/</loc>
+    <loc>https://www.bryanshalloway.com/2020/06/25/using-across-to-build-functions-with-dplyr-with-notes-on-legacy-approaches/</loc>
     <lastmod>2020-06-25T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/reproducibility/</loc>
+    <loc>https://www.bryanshalloway.com/tags/animatrixr/</loc>
     <lastmod>2020-06-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2020/06/24/use-flipbooks-to-explain-your-code-and-thought-process/</loc>
+    <loc>https://www.bryanshalloway.com/tags/emo/</loc>
     <lastmod>2020-06-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2020/06/03/tidy-2-way-column-combinations/</loc>
+    <loc>https://www.bryanshalloway.com/tags/flair/</loc>
+    <lastmod>2020-06-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/flipbookr/</loc>
+    <lastmod>2020-06-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/ggbeeswarm/</loc>
+    <lastmod>2020-06-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/magick/</loc>
+    <lastmod>2020-06-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/officer/</loc>
+    <lastmod>2020-06-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/pagedown/</loc>
+    <lastmod>2020-06-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/pdftools/</loc>
+    <lastmod>2020-06-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/rlang/</loc>
+    <lastmod>2020-06-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2020/06/24/use-flipbooks-to-explain-your-code-and-thought-process/</loc>
+    <lastmod>2020-06-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/corrr/</loc>
     <lastmod>2020-06-03T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/geometry/</loc>
+    <loc>https://www.bryanshalloway.com/2020/06/03/tidy-2-way-column-combinations/</loc>
+    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/weights/</loc>
+    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/categories/geometry/</loc>
     <lastmod>2020-03-04T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/math/</loc>
+    <loc>https://www.bryanshalloway.com/tags/ggforce/</loc>
     <lastmod>2020-03-04T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/r/</loc>
+    <loc>https://www.bryanshalloway.com/2020/03/04/riddler-solutions-pedestrian-puzzles/</loc>
     <lastmod>2020-03-04T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/r/</loc>
+    <loc>https://www.bryanshalloway.com/categories/riddles/</loc>
     <lastmod>2020-03-04T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2020/03/04/riddler-solutions-pedestrian-puzzles/</loc>
-    <lastmod>2020-03-04T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/riddles/</loc>
-    <lastmod>2020-03-04T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</loc>
+    <loc>https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</loc>
     <lastmod>2020-02-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/gganimate/</loc>
+    <loc>https://www.bryanshalloway.com/categories/linear-algebra/</loc>
     <lastmod>2020-02-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/linear-algebra/</loc>
-    <lastmod>2020-02-24T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/2020/02/20/visualizing-matrix-transformations-with-gganimate/</loc>
+    <loc>https://www.bryanshalloway.com/tags/gganimate/</loc>
     <lastmod>2020-02-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/combinatorics/</loc>
+    <loc>https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/</loc>
+    <lastmod>2020-02-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/categories/combinatorics/</loc>
     <lastmod>2020-02-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/</loc>
+    <loc>https://www.bryanshalloway.com/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/</loc>
     <lastmod>2020-02-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2020/02/06/maximizing-magnetic-volume-the-perfect-bowl/</loc>
+    <loc>https://www.bryanshalloway.com/tags/stringi/</loc>
+    <lastmod>2020-02-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/2020/02/06/maximizing-magnetic-volume-the-perfect-bowl/</loc>
     <lastmod>2020-02-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/iceland/</loc>
+    <loc>https://www.bryanshalloway.com/2020/02/01/solar-in-seattle/</loc>
+    <lastmod>2020-02-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.bryanshalloway.com/tags/iceland/</loc>
     <lastmod>2020-01-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2020/01/01/iceland-day-6-perlan-departure/</loc>
+    <loc>https://www.bryanshalloway.com/2020/01/01/iceland-day-6-perlan-departure/</loc>
     <lastmod>2020-01-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/travel/</loc>
+    <loc>https://www.bryanshalloway.com/tags/travel/</loc>
     <lastmod>2020-01-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/travel/</loc>
+    <loc>https://www.bryanshalloway.com/categories/travel/</loc>
     <lastmod>2020-01-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2019/12/31/iceland-day-5-blue-lagoon-new-year-s-eve/</loc>
+    <loc>https://www.bryanshalloway.com/2019/12/31/iceland-day-5-blue-lagoon-new-year-s-eve/</loc>
     <lastmod>2019-12-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2019/12/30/iceland-day-4-southeast-coast-diamond-beach/</loc>
+    <loc>https://www.bryanshalloway.com/2019/12/30/iceland-day-4-southeast-coast-diamond-beach/</loc>
     <lastmod>2019-12-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2019/12/29/iceland-day-3-thingvellier-disaster/</loc>
+    <loc>https://www.bryanshalloway.com/2019/12/29/iceland-day-3-thingvellier-disaster/</loc>
     <lastmod>2019-12-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2019/12/28/iceland-day-2-golden-circle-snowmobiling/</loc>
+    <loc>https://www.bryanshalloway.com/2019/12/28/iceland-day-2-golden-circle-snowmobiling/</loc>
     <lastmod>2019-12-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/trave/</loc>
-    <lastmod>2019-12-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/2019/12/27/iceland-day-1-landing-city-tour/</loc>
+    <loc>https://www.bryanshalloway.com/2019/12/27/iceland-day-1-landing-city-tour/</loc>
     <lastmod>2019-12-27T00:00:00+00:00</lastmod>
   </url>
   

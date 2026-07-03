@@ -2,314 +2,611 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Bryan Shalloway&#39;s Blog</title>
-    <link>/tags/</link>
+    <link>https://www.bryanshalloway.com/tags/</link>
     <description>Recent content in Tags on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 08 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 27 Aug 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://www.bryanshalloway.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>business</title>
-      <link>/tags/business/</link>
-      <pubDate>Tue, 08 Dec 2020 00:00:00 +0000</pubDate>
+      <title>dplyr</title>
+      <link>https://www.bryanshalloway.com/tags/dplyr/</link>
+      <pubDate>Tue, 27 Aug 2024 00:00:00 +0000</pubDate>
       
-      <guid>/tags/business/</guid>
+      <guid>https://www.bryanshalloway.com/tags/dplyr/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>expected value</title>
-      <link>/tags/expected-value/</link>
-      <pubDate>Tue, 08 Dec 2020 00:00:00 +0000</pubDate>
+      <title>DT</title>
+      <link>https://www.bryanshalloway.com/tags/dt/</link>
+      <pubDate>Tue, 27 Aug 2024 00:00:00 +0000</pubDate>
       
-      <guid>/tags/expected-value/</guid>
+      <guid>https://www.bryanshalloway.com/tags/dt/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>ml</title>
-      <link>/tags/ml/</link>
-      <pubDate>Tue, 08 Dec 2020 00:00:00 +0000</pubDate>
+      <title>forcats</title>
+      <link>https://www.bryanshalloway.com/tags/forcats/</link>
+      <pubDate>Tue, 27 Aug 2024 00:00:00 +0000</pubDate>
       
-      <guid>/tags/ml/</guid>
+      <guid>https://www.bryanshalloway.com/tags/forcats/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>rstats</title>
-      <link>/tags/rstats/</link>
-      <pubDate>Tue, 08 Dec 2020 00:00:00 +0000</pubDate>
+      <title>ggplot2</title>
+      <link>https://www.bryanshalloway.com/tags/ggplot2/</link>
+      <pubDate>Tue, 27 Aug 2024 00:00:00 +0000</pubDate>
       
-      <guid>/tags/rstats/</guid>
+      <guid>https://www.bryanshalloway.com/tags/ggplot2/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>imbalanced data</title>
-      <link>/tags/imbalanced-data/</link>
-      <pubDate>Mon, 23 Nov 2020 00:00:00 +0000</pubDate>
+      <title>gt</title>
+      <link>https://www.bryanshalloway.com/tags/gt/</link>
+      <pubDate>Tue, 27 Aug 2024 00:00:00 +0000</pubDate>
       
-      <guid>/tags/imbalanced-data/</guid>
+      <guid>https://www.bryanshalloway.com/tags/gt/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>misclassification</title>
-      <link>/tags/misclassification/</link>
-      <pubDate>Mon, 23 Nov 2020 00:00:00 +0000</pubDate>
+      <title>htmltools</title>
+      <link>https://www.bryanshalloway.com/tags/htmltools/</link>
+      <pubDate>Tue, 27 Aug 2024 00:00:00 +0000</pubDate>
       
-      <guid>/tags/misclassification/</guid>
+      <guid>https://www.bryanshalloway.com/tags/htmltools/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>distributions</title>
-      <link>/tags/distributions/</link>
-      <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
+      <title>purrr</title>
+      <link>https://www.bryanshalloway.com/tags/purrr/</link>
+      <pubDate>Tue, 27 Aug 2024 00:00:00 +0000</pubDate>
       
-      <guid>/tags/distributions/</guid>
+      <guid>https://www.bryanshalloway.com/tags/purrr/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>probability</title>
-      <link>/tags/probability/</link>
-      <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
+      <title>scales</title>
+      <link>https://www.bryanshalloway.com/tags/scales/</link>
+      <pubDate>Tue, 27 Aug 2024 00:00:00 +0000</pubDate>
       
-      <guid>/tags/probability/</guid>
+      <guid>https://www.bryanshalloway.com/tags/scales/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>psychology</title>
-      <link>/tags/psychology/</link>
-      <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
+      <title>stringr</title>
+      <link>https://www.bryanshalloway.com/tags/stringr/</link>
+      <pubDate>Tue, 27 Aug 2024 00:00:00 +0000</pubDate>
       
-      <guid>/tags/psychology/</guid>
+      <guid>https://www.bryanshalloway.com/tags/stringr/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>rational</title>
-      <link>/tags/rational/</link>
-      <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
+      <title>tidyr</title>
+      <link>https://www.bryanshalloway.com/tags/tidyr/</link>
+      <pubDate>Tue, 27 Aug 2024 00:00:00 +0000</pubDate>
       
-      <guid>/tags/rational/</guid>
+      <guid>https://www.bryanshalloway.com/tags/tidyr/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>DiagrammeR</title>
+      <link>https://www.bryanshalloway.com/tags/diagrammer/</link>
+      <pubDate>Fri, 03 Nov 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/diagrammer/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>devtools</title>
+      <link>https://www.bryanshalloway.com/tags/devtools/</link>
+      <pubDate>Thu, 16 Jun 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/devtools/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>lubridate</title>
+      <link>https://www.bryanshalloway.com/tags/lubridate/</link>
+      <pubDate>Thu, 16 Jun 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/lubridate/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>priceR</title>
+      <link>https://www.bryanshalloway.com/tags/pricer/</link>
+      <pubDate>Thu, 16 Jun 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/pricer/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>fs</title>
+      <link>https://www.bryanshalloway.com/tags/fs/</link>
+      <pubDate>Mon, 11 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/fs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>glue</title>
+      <link>https://www.bryanshalloway.com/tags/glue/</link>
+      <pubDate>Mon, 11 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/glue/</guid>
       <description></description>
     </item>
     
     <item>
       <title>httr</title>
-      <link>/tags/httr/</link>
-      <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
+      <link>https://www.bryanshalloway.com/tags/httr/</link>
+      <pubDate>Mon, 11 Apr 2022 00:00:00 +0000</pubDate>
       
-      <guid>/tags/httr/</guid>
+      <guid>https://www.bryanshalloway.com/tags/httr/</guid>
       <description></description>
     </item>
     
     <item>
       <title>jsonlite</title>
-      <link>/tags/jsonlite/</link>
-      <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
+      <link>https://www.bryanshalloway.com/tags/jsonlite/</link>
+      <pubDate>Mon, 11 Apr 2022 00:00:00 +0000</pubDate>
       
-      <guid>/tags/jsonlite/</guid>
+      <guid>https://www.bryanshalloway.com/tags/jsonlite/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>tidymodels</title>
-      <link>/tags/tidymodels/</link>
-      <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
+      <title>readr</title>
+      <link>https://www.bryanshalloway.com/tags/readr/</link>
+      <pubDate>Mon, 11 Apr 2022 00:00:00 +0000</pubDate>
       
-      <guid>/tags/tidymodels/</guid>
+      <guid>https://www.bryanshalloway.com/tags/readr/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rjson</title>
+      <link>https://www.bryanshalloway.com/tags/rjson/</link>
+      <pubDate>Mon, 11 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/rjson/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rstudioapi</title>
+      <link>https://www.bryanshalloway.com/tags/rstudioapi/</link>
+      <pubDate>Mon, 11 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/rstudioapi/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rtweet</title>
+      <link>https://www.bryanshalloway.com/tags/rtweet/</link>
+      <pubDate>Mon, 11 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/rtweet/</guid>
       <description></description>
     </item>
     
     <item>
       <title>tidyverse</title>
-      <link>/tags/tidyverse/</link>
+      <link>https://www.bryanshalloway.com/tags/tidyverse/</link>
+      <pubDate>Mon, 11 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/tidyverse/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>funspotr</title>
+      <link>https://www.bryanshalloway.com/tags/funspotr/</link>
+      <pubDate>Thu, 17 Mar 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/funspotr/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>here</title>
+      <link>https://www.bryanshalloway.com/tags/here/</link>
+      <pubDate>Tue, 18 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/here/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>yaml</title>
+      <link>https://www.bryanshalloway.com/tags/yaml/</link>
+      <pubDate>Tue, 18 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/yaml/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>broom</title>
+      <link>https://www.bryanshalloway.com/tags/broom/</link>
+      <pubDate>Fri, 17 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/broom/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>janitor</title>
+      <link>https://www.bryanshalloway.com/tags/janitor/</link>
+      <pubDate>Fri, 17 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/janitor/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rvest</title>
+      <link>https://www.bryanshalloway.com/tags/rvest/</link>
+      <pubDate>Fri, 17 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/rvest/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>digest</title>
+      <link>https://www.bryanshalloway.com/tags/digest/</link>
+      <pubDate>Mon, 10 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/digest/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mvtnorm</title>
+      <link>https://www.bryanshalloway.com/tags/mvtnorm/</link>
+      <pubDate>Mon, 10 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/mvtnorm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>readxl</title>
+      <link>https://www.bryanshalloway.com/tags/readxl/</link>
+      <pubDate>Mon, 10 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/readxl/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ggplot</title>
+      <link>https://www.bryanshalloway.com/tags/ggplot/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/ggplot/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pander</title>
+      <link>https://www.bryanshalloway.com/tags/pander/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/pander/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>workflows</title>
+      <link>https://www.bryanshalloway.com/tags/workflows/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/workflows/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>yardstick</title>
+      <link>https://www.bryanshalloway.com/tags/yardstick/</link>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/yardstick/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>AmesHousing</title>
+      <link>https://www.bryanshalloway.com/tags/ameshousing/</link>
+      <pubDate>Thu, 18 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/ameshousing/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>parsnip</title>
+      <link>https://www.bryanshalloway.com/tags/parsnip/</link>
+      <pubDate>Thu, 18 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/parsnip/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>recipes</title>
+      <link>https://www.bryanshalloway.com/tags/recipes/</link>
+      <pubDate>Thu, 18 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/recipes/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rsample</title>
+      <link>https://www.bryanshalloway.com/tags/rsample/</link>
+      <pubDate>Thu, 18 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/rsample/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>knitr</title>
+      <link>https://www.bryanshalloway.com/tags/knitr/</link>
+      <pubDate>Tue, 08 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/knitr/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>probably</title>
+      <link>https://www.bryanshalloway.com/tags/probably/</link>
+      <pubDate>Tue, 08 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/probably/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>modelr</title>
+      <link>https://www.bryanshalloway.com/tags/modelr/</link>
+      <pubDate>Mon, 23 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/modelr/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>econocharts</title>
+      <link>https://www.bryanshalloway.com/tags/econocharts/</link>
+      <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/econocharts/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>slider</title>
+      <link>https://www.bryanshalloway.com/tags/slider/</link>
       <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/tidyverse/</guid>
+      <guid>https://www.bryanshalloway.com/tags/slider/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>collective action problem</title>
-      <link>/tags/collective-action-problem/</link>
+      <title>tune</title>
+      <link>https://www.bryanshalloway.com/tags/tune/</link>
+      <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/tune/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pins</title>
+      <link>https://www.bryanshalloway.com/tags/pins/</link>
       <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/collective-action-problem/</guid>
+      <guid>https://www.bryanshalloway.com/tags/pins/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>data journalism</title>
-      <link>/tags/data-journalism/</link>
-      <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/data-journalism/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>electoral college</title>
-      <link>/tags/electoral-college/</link>
-      <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/electoral-college/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>popular vote</title>
-      <link>/tags/popular-vote/</link>
-      <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/popular-vote/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>hedonic modeling</title>
-      <link>/tags/hedonic-modeling/</link>
+      <title>equatiomatic</title>
+      <link>https://www.bryanshalloway.com/tags/equatiomatic/</link>
       <pubDate>Mon, 17 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/hedonic-modeling/</guid>
+      <guid>https://www.bryanshalloway.com/tags/equatiomatic/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>pricing</title>
-      <link>/tags/pricing/</link>
-      <pubDate>Mon, 17 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/pricing/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>animation</title>
-      <link>/tags/animation/</link>
+      <title>chrome-api</title>
+      <link>https://www.bryanshalloway.com/tags/chrome-api/</link>
       <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/animation/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>chrome</title>
-      <link>/tags/chrome/</link>
-      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/chrome/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>image-recognition</title>
-      <link>/tags/image-recognition/</link>
-      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/image-recognition/</guid>
+      <guid>https://www.bryanshalloway.com/tags/chrome-api/</guid>
       <description></description>
     </item>
     
     <item>
       <title>javascript</title>
-      <link>/tags/javascript/</link>
+      <link>https://www.bryanshalloway.com/tags/javascript/</link>
       <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/javascript/</guid>
+      <guid>https://www.bryanshalloway.com/tags/javascript/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>reproducibility</title>
-      <link>/tags/reproducibility/</link>
+      <title>animatrixr</title>
+      <link>https://www.bryanshalloway.com/tags/animatrixr/</link>
       <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/reproducibility/</guid>
+      <guid>https://www.bryanshalloway.com/tags/animatrixr/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>geometry</title>
-      <link>/tags/geometry/</link>
-      <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
+      <title>emo</title>
+      <link>https://www.bryanshalloway.com/tags/emo/</link>
+      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/geometry/</guid>
+      <guid>https://www.bryanshalloway.com/tags/emo/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>math</title>
-      <link>/tags/math/</link>
-      <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
+      <title>flair</title>
+      <link>https://www.bryanshalloway.com/tags/flair/</link>
+      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/math/</guid>
+      <guid>https://www.bryanshalloway.com/tags/flair/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>r</title>
-      <link>/tags/r/</link>
-      <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
+      <title>flipbookr</title>
+      <link>https://www.bryanshalloway.com/tags/flipbookr/</link>
+      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/r/</guid>
+      <guid>https://www.bryanshalloway.com/tags/flipbookr/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>riddles</title>
-      <link>/tags/riddles/</link>
+      <title>ggbeeswarm</title>
+      <link>https://www.bryanshalloway.com/tags/ggbeeswarm/</link>
+      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/ggbeeswarm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>magick</title>
+      <link>https://www.bryanshalloway.com/tags/magick/</link>
+      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/magick/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>officer</title>
+      <link>https://www.bryanshalloway.com/tags/officer/</link>
+      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/officer/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pagedown</title>
+      <link>https://www.bryanshalloway.com/tags/pagedown/</link>
+      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/pagedown/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pdftools</title>
+      <link>https://www.bryanshalloway.com/tags/pdftools/</link>
+      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/pdftools/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rlang</title>
+      <link>https://www.bryanshalloway.com/tags/rlang/</link>
+      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/rlang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>corrr</title>
+      <link>https://www.bryanshalloway.com/tags/corrr/</link>
+      <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/corrr/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>weights</title>
+      <link>https://www.bryanshalloway.com/tags/weights/</link>
+      <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/tags/weights/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ggforce</title>
+      <link>https://www.bryanshalloway.com/tags/ggforce/</link>
       <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/riddles/</guid>
+      <guid>https://www.bryanshalloway.com/tags/ggforce/</guid>
       <description></description>
     </item>
     
     <item>
       <title>gganimate</title>
-      <link>/tags/gganimate/</link>
-      <pubDate>Mon, 24 Feb 2020 00:00:00 +0000</pubDate>
+      <link>https://www.bryanshalloway.com/tags/gganimate/</link>
+      <pubDate>Thu, 20 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/gganimate/</guid>
+      <guid>https://www.bryanshalloway.com/tags/gganimate/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>linear algebra</title>
-      <link>/tags/linear-algebra/</link>
-      <pubDate>Mon, 24 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/linear-algebra/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>combinatorics</title>
-      <link>/tags/combinatorics/</link>
+      <title>stringi</title>
+      <link>https://www.bryanshalloway.com/tags/stringi/</link>
       <pubDate>Thu, 13 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/combinatorics/</guid>
+      <guid>https://www.bryanshalloway.com/tags/stringi/</guid>
       <description></description>
     </item>
     
     <item>
       <title>iceland</title>
-      <link>/tags/iceland/</link>
+      <link>https://www.bryanshalloway.com/tags/iceland/</link>
       <pubDate>Wed, 01 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/iceland/</guid>
+      <guid>https://www.bryanshalloway.com/tags/iceland/</guid>
       <description></description>
     </item>
     
     <item>
       <title>travel</title>
-      <link>/tags/travel/</link>
+      <link>https://www.bryanshalloway.com/tags/travel/</link>
       <pubDate>Wed, 01 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/travel/</guid>
+      <guid>https://www.bryanshalloway.com/tags/travel/</guid>
       <description></description>
     </item>
     

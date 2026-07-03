@@ -2,28 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>modeling on Bryan Shalloway&#39;s Blog</title>
-    <link>/categories/modeling/</link>
+    <link>https://www.bryanshalloway.com/categories/modeling/</link>
     <description>Recent content in modeling on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 23 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="/categories/modeling/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 23 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://www.bryanshalloway.com/categories/modeling/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Undersampling Will Change the Base Rates of Your Model&#39;s Predictions</title>
-      <link>/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/</link>
+      <link>https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/</link>
       <pubDate>Mon, 23 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/</guid>
+      <guid>https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#create-data&#34;&gt;Create Data&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#association-of-feature-and-target&#34;&gt;Association of ‘feature’ and ‘target’&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#association-of-feature-and-target&#34;&gt;Association of ‘feature’ and ‘target’&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#resample&#34;&gt;Resample&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#build-models&#34;&gt;Build Models&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#rescale-predictions-to-predicted-probabilities&#34;&gt;Rescale Predictions to Predicted Probabilities&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#density-plots&#34;&gt;Density Plots&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#lift-plot&#34;&gt;Lift Plot&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#comparing-scaling-methods&#34;&gt;Comparing Scaling Methods&lt;/a&gt;&lt;/li&gt;
@@ -114,7 +117,7 @@ test &amp;lt;- example %&amp;gt;%
   geom_histogram()+
   labs(title = &amp;quot;Distribution of values of &amp;#39;feature&amp;#39;&amp;quot;,
        subtitle = &amp;quot;Greater values of &amp;#39;feature&amp;#39; associate with higher likelihood &amp;#39;target&amp;#39; = TRUE&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;div id=&#34;resample&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Resample&lt;/h2&gt;
 &lt;p&gt;Make a new sample &lt;code&gt;train_downsamp&lt;/code&gt; that keeps all positive cases in the training set and an equal number of randomly sampled negative cases so that the split is no longer 5-95 but becomes 50-50.&lt;/p&gt;
@@ -132,7 +135,7 @@ train_downsamp &amp;lt;- train %&amp;gt;%
   geom_histogram()+
   labs(title = &amp;quot;Distribution of values of &amp;#39;feature&amp;#39; (down-sampled)&amp;quot;,
        subtitle = &amp;quot;Greater values of &amp;#39;feature&amp;#39; associate with higher likelihood &amp;#39;target&amp;#39; = TRUE&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;build-models&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Build Models&lt;/h2&gt;
@@ -149,7 +152,7 @@ train_downsamp &amp;lt;- train %&amp;gt;%
   ggplot(aes(x = pred_prob, fill = target))+
   geom_histogram()+
   facet_wrap(~model, ncol = 1)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;The predicted probabilities for the model built with the down-sampled 50-50 dataset are much higher than those built with the original 5-95 dataset. For example, let’s look at the predictions between these models for a particular observation:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;test_with_preds %&amp;gt;% 
   filter(id == 1828) %&amp;gt;%
@@ -204,7 +207,7 @@ test_with_preds_adjusted %&amp;gt;%
   ggplot(aes(x = pred_prob, fill = target))+
   geom_histogram()+
   facet_wrap(~model, ncol = 1)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Now that the predictions have been calibrated according to their underlying base rate, you can see the distributions of the predictions between the models are essentially the same.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -217,12 +220,12 @@ test_with_preds_adjusted %&amp;gt;%
   ggplot(aes(x = pred_prob, fill = target))+
   geom_density(alpha = 0.3)+
   facet_wrap(~model, ncol = 1)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;test_with_preds_adjusted %&amp;gt;% 
   ggplot(aes(x = pred_prob, fill = target))+
   geom_density(alpha = 0.3)+
   facet_wrap(~model, ncol = 1)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-15-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-15-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;lift-plot&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Lift Plot&lt;/h2&gt;
@@ -231,7 +234,7 @@ test_with_preds_adjusted %&amp;gt;%
   filter(model == &amp;quot;mod_5_95&amp;quot;) %&amp;gt;%
   yardstick::lift_curve(target, pred) %&amp;gt;% 
   autoplot()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-16-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-16-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;comparing-scaling-methods&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Comparing Scaling Methods&lt;/h2&gt;
@@ -243,22 +246,22 @@ test_with_preds_adjusted %&amp;gt;%
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;In the title I just mention Undersamping for brevities sake. Upsampling and downsampling are synonyms you may hear as well&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;I expect the audience for this post may be rather limited.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I wrote this example After having conversations related to this a few times (and participants not grasping points that would become clear with demonstration).&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;before I started using &lt;a href=&#34;https://www.tidymodels.org/&#34;&gt;tidymodels&lt;/a&gt;&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;or any of a myriad of topics related to this.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;There are often pretty easy built-in ways to accommodate this.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;There are also other reasons you may not want to rescale your predictions… but in many cases you will want to.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;Could have been more precise here…&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;no need for validation for this example&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;The higher incidence of TRUE values in the target at higher scores demonstrates the features predictive value.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;One built with 5-95 split the other with a downsampled 50-50 split.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Of course you could just use different decision thresholds for the predictions as well.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Decision tree based approach&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Logistic regression based approach&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;E.g. when using Support Vector Machines&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;In this case we are starting with a linear model hence we could also have just changed the intercept value to get the same affect. Rescaling methods act on the &lt;em&gt;predictions&lt;/em&gt; rather than the model parameters. Hence these scaling methods have the advantage of being generalizable as they are agnostic to model type.&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;In the title I just mention Undersamping for brevities sake. Upsampling and downsampling are synonyms you may hear as well&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;I expect the audience for this post may be rather limited.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I wrote this example After having conversations related to this a few times (and participants not grasping points that would become clear with demonstration).&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;before I started using &lt;a href=&#34;https://www.tidymodels.org/&#34;&gt;tidymodels&lt;/a&gt;&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;or any of a myriad of topics related to this.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;There are often pretty easy built-in ways to accommodate this.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;There are also other reasons you may not want to rescale your predictions… but in many cases you will want to.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;Could have been more precise here…&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;no need for validation for this example&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;The higher incidence of TRUE values in the target at higher scores demonstrates the features predictive value.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;One built with 5-95 split the other with a downsampled 50-50 split.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Of course you could just use different decision thresholds for the predictions as well.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Decision tree based approach&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Logistic regression based approach&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;E.g. when using Support Vector Machines&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;In this case we are starting with a linear model hence we could also have just changed the intercept value to get the same affect. Rescaling methods act on the &lt;em&gt;predictions&lt;/em&gt; rather than the model parameters. Hence these scaling methods have the advantage of being generalizable as they are agnostic to model type.&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>

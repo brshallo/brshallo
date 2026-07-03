@@ -2,18 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>visualization on Bryan Shalloway&#39;s Blog</title>
-    <link>/categories/visualization/</link>
+    <link>https://www.bryanshalloway.com/categories/visualization/</link>
     <description>Recent content in visualization on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 20 Jul 2020 00:00:00 +0000</lastBuildDate><atom:link href="/categories/visualization/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 20 Jul 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://www.bryanshalloway.com/categories/visualization/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Animate interactive objects with Face Detection, JavaScript and Chrome Browser</title>
-      <link>/2020/07/20/animate-interactive-objects-with-face-detection-javascript-and-chrome-browser/</link>
+      <link>https://www.bryanshalloway.com/2020/07/20/animate-interactive-objects-with-face-detection-javascript-and-chrome-browser/</link>
       <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/07/20/animate-interactive-objects-with-face-detection-javascript-and-chrome-browser/</guid>
+      <guid>https://www.bryanshalloway.com/2020/07/20/animate-interactive-objects-with-face-detection-javascript-and-chrome-browser/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
@@ -23,7 +24,8 @@
 &lt;li&gt;&lt;a href=&#34;#next-steps&#34;&gt;Next steps&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#learning-path-and-resources&#34;&gt;Learning path and resources&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#closing-thoughts&#34;&gt;Closing thoughts&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#additional-actions&#34;&gt;Additional actions&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -36,11 +38,11 @@
 &lt;p&gt;Try to recall that creepy sensation you get when someone or something is looking at you. Now imagine having that all of the time. That is the unsettled feeling I want to evoke. A few ideas:&lt;/p&gt;
 Poster for a new Lord of the Rings movie that has an Eye of Sauron that follows you as you walk into the cinema&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.
 &lt;center&gt;
-&lt;img src=&#34;https://i.insider.com/5aec114a19ee861f008b4855?width=1200&amp;amp;format=jpeg&amp;amp;auto=webp&#34; title=&#34;fig:&#34; alt=&#34;Eye of Sauron&#34; style=&#34;width:50.0%&#34; /&gt;
+&lt;img src=&#34;https://i.insider.com/5aec114a19ee861f008b4855?width=1200&amp;amp;format=jpeg&amp;amp;auto=webp&#34; title=&#34;fig:&#34; style=&#34;width:50.0%&#34; alt=&#34;Eye of Sauron&#34; /&gt;
 &lt;/center&gt;
 An army recruiter with an “I want you” Uncle Sam poster behind him whose finger points at you as you walk by.
 &lt;center&gt;
-&lt;img src=&#34;https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Unclesamwantyou.jpg/440px-Unclesamwantyou.jpg&#34; title=&#34;fig:&#34; alt=&#34;Uncle Sam&#34; style=&#34;width:50.0%&#34; /&gt;
+&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-07-20-animate-interactive-objects-with-face-detection-javascript-and-chrome-browser_files/uncle-sam.jpg&#34; title=&#34;fig:&#34; style=&#34;width:50.0%&#34; alt=&#34;Uncle Sam&#34; /&gt;
 &lt;/center&gt;
 &lt;p&gt;Someone at the grocery store (during COVID19) whose shirt beeps and flashes red if you get within 6 feet of them.&lt;/p&gt;
 &lt;p&gt;I intentionally made these examples somewhat dystopian. There is an important societal reckoning taking place right now regarding tracking technologies (particularly in regard to its impacts on communities of color). I wanted to work on something that, while playful, would call to mind concerns of a ‘Big Brother’ or ‘watchful eye’ like figure.&lt;/p&gt;
@@ -77,7 +79,7 @@ An army recruiter with an “I want you” Uncle Sam poster behind him whose fin
 &lt;p&gt;&lt;strong&gt;Improve position mapping:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Using estimates of the length of facial landmarks, you can estimate the distance someone is from the screen. See relevant project on &lt;a href=&#34;https://github.com/philiiiiiipp/Android-Screen-to-Face-Distance-Measurement&#34;&gt;github&lt;/a&gt;&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;. Once you have an estimate of someone’s position, you can more accurately adjust the animation so that the eye looks like it is following the user through space&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;. Here is a ‘back of the napkin’ sketch of my mental model for the problem:&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2020-07-20-animate-interactive-objects-with-face-detection-javascript-and-chrome-browser_files/back-of-napkin-eyeball.jpg&#34; alt=&#34;Diagram of key location points for animating eyeball with reference to a user.&#34; /&gt;
+&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-07-20-animate-interactive-objects-with-face-detection-javascript-and-chrome-browser_files/back-of-napkin-eyeball.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;Diagram of key location points for animating eyeball with reference to a user.&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;Once you have an estimate of the distance a face is from the camera, the important points for the projection of the eye to a 2d animation can be filled-in (with just a little bit of trigonometry). Ultimately I’d love to do something like can be found at this &lt;a href=&#34;https://github.com/evermeer/EVFaceTracker&#34;&gt;github repo&lt;/a&gt;:&lt;/p&gt;
@@ -141,20 +143,20 @@ New addition to the livingroom, giant eyeball that follows you around when you l
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Maybe also Peloton, car display, watch, Mirror… (if you’re fancy).&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Similarly, picture a portrait whose eyes follow you as you walk-by – similar to Mark Rober’s [video] (&lt;a href=&#34;https://www.youtube.com/watch?v=sPgKu2E-jdw&#34; class=&#34;uri&#34;&gt;https://www.youtube.com/watch?v=sPgKu2E-jdw&lt;/a&gt;), but tracking you automatically.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;And that could be easily shared across devices.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;This is my first project using JavaScript (don’t expect much when it comes to code quality).&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;There are errors and most of the math here is almost nonsensical.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;For my use-case though I may use face height rather than (or in addition to) face width – as cannot trust that people will be turned towards my camera and figure it is less likely they will tilt their head.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Though may be somewhat limited as a user has two eyes, not just one, so depth illusion might not work perfectly.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;Afterall, we’re not working with holograms or special glasses.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;The animation would become distorted for users other than the individual the animation is tracking.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;But wanted to at least post this first draft&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Open Computer Vision&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Or some python animation library I might be able to find.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Again, don’t expect much when it comes to code quality.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Perhaps will fix / improve in future.&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Maybe also Peloton, car display, watch, Mirror… (if you’re fancy).&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Similarly, picture a portrait whose eyes follow you as you walk-by – similar to Mark Rober’s [video] (&lt;a href=&#34;https://www.youtube.com/watch?v=sPgKu2E-jdw&#34; class=&#34;uri&#34;&gt;https://www.youtube.com/watch?v=sPgKu2E-jdw&lt;/a&gt;), but tracking you automatically.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;And that could be easily shared across devices.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;This is my first project using JavaScript (don’t expect much when it comes to code quality).&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;There are errors and most of the math here is almost nonsensical.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;For my use-case though I may use face height rather than (or in addition to) face width – as cannot trust that people will be turned towards my camera and figure it is less likely they will tilt their head.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Though may be somewhat limited as a user has two eyes, not just one, so depth illusion might not work perfectly.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;Afterall, we’re not working with holograms or special glasses.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;The animation would become distorted for users other than the individual the animation is tracking.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;But wanted to at least post this first draft&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Open Computer Vision&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Or some python animation library I might be able to find.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Again, don’t expect much when it comes to code quality.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Perhaps will fix / improve in future.&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
@@ -162,17 +164,19 @@ New addition to the livingroom, giant eyeball that follows you around when you l
     
     <item>
       <title>Riddler Solutions: Pedestrian Puzzles</title>
-      <link>/2020/03/04/riddler-solutions-pedestrian-puzzles/</link>
+      <link>https://www.bryanshalloway.com/2020/03/04/riddler-solutions-pedestrian-puzzles/</link>
       <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/03/04/riddler-solutions-pedestrian-puzzles/</guid>
+      <guid>https://www.bryanshalloway.com/2020/03/04/riddler-solutions-pedestrian-puzzles/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#riddler-express&#34;&gt;Riddler express&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#riddler-classic&#34;&gt;Riddler classic&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#time-to-center&#34;&gt;Time to center&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#transform-grid-rotate-first&#34;&gt;Transform grid, rotate first&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#transform-city-pretty&#34;&gt;Transform city, pretty&lt;/a&gt;&lt;/li&gt;
@@ -209,7 +213,7 @@ df_start &amp;lt;- crossing(x = -radius:radius, y = -radius:radius) %&amp;gt;%
 &lt;p&gt;&lt;em&gt;II. Calculate Manhattan Distances&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;For both scenarios, we need to calculate the &lt;a href=&#34;https://en.wikipedia.org/wiki/Taxicab_geometry&#34;&gt;Manhattan length&lt;/a&gt;&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt; between the origin and every point. To calculate the Manhattan length on the new scenario, we first need to find what the residence’s coordinates would be in the new sidewalk grid. The new coordinate system could be thought of simply as a rotated and shrunken version of the existing grid&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;, which can be represented as applying the matrix transformation:&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ M = \left(\begin{array}{cc} 0.5 &amp;amp; -0.5\\0.5  &amp;amp; 0.5 \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;(See &lt;a href=&#34;#transform-city-pretty&#34;&gt;Transform city, pretty&lt;/a&gt; in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; to view the code used to create the above visualization.)&lt;/p&gt;
 &lt;p&gt;Our residences are not changing locations, they would just have different coordinates specific to the new sidewalks – hence we will actually apply the inverse&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt; of this transformation to our starting coordinates. This will give us the position of our residences on the new (transformed) coordinate grid.&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ M^{-1} = \left(\begin{array}{cc} 1 &amp;amp; 1\\-1  &amp;amp; 1 \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
@@ -253,7 +257,7 @@ df_start &amp;lt;- crossing(x = -radius:radius, y = -radius:radius) %&amp;gt;%
   geom_point(aes(colour = diagonal_faster))+
   coord_fixed()+
   ggforce::theme_no_axes()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;riddler-classic&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Riddler classic&lt;/h1&gt;
@@ -269,7 +273,7 @@ Under this second proposal, now what fraction of the employees would have a shor
 &lt;p&gt;&lt;strong&gt;My approach:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;The Barcelona distance is just a combination of the Manhattan lengths of both the original and diagonal sidewalk grids (though with the unit lengths scaled differently)&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;. The unit lengths&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt; for the horizontal and diagonal components will depend on what proportion&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt; of a side is horizontal vs diagonal (corresponding with the original vs transformed grid from the &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; solution)&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;We can define our relevant side lengths as a function of x:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/barcelona_dist.jpg&#34; style=&#34;width:50.0%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/barcelona_dist.jpg&#34; style=&#34;width:50.0%&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[x : \frac{inverse\;of\;proportion\;horizontal}{2},\]&lt;/span&gt;
 &lt;span class=&#34;math display&#34;&gt;\[0 &amp;lt; x &amp;lt; 0.5\]&lt;/span&gt;
 &lt;span class=&#34;math display&#34;&gt;\[diagonal\;length = \sqrt{2}x\]&lt;/span&gt;
@@ -307,7 +311,7 @@ df_dists_abc &amp;lt;- df_dists %&amp;gt;%
   geom_point(aes(colour = barcelona_faster))+
   coord_fixed()+
   ggforce::theme_no_axes()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;We need to verify that ‘50% have a shorter walk’ is our solution regardless of what we set for x.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;To accomplish this, I wrote a function &lt;code&gt;summarise_proportion()&lt;/code&gt;, that will output the ‘Proportion Barcelona sidewalk distance is shorter’ across any given x between 0 and 0.5 (the possible values of x).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;summarise_proportion &amp;lt;- function(x, df_start = df_dists, out_data = FALSE){
@@ -415,7 +419,7 @@ df_summary %&amp;gt;%
   geom_point()+
   facet_wrap(~grid)+
   coord_fixed()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;This suggests that if the city were square shaped (rather than a circle) that the transformed (diagonal and Barcelona) sidewalks would have greater than 50% of the residents with a shorter travel distance to the center of the city.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;transform-grid-rotate-first&#34; class=&#34;section level2&#34;&gt;
@@ -424,7 +428,7 @@ df_summary %&amp;gt;%
   m = matrix(c(0.5, 0.5,-0.5, 0.5), nrow = 2), 
   seq_fun = seq_matrix_rotate_first) %&amp;gt;% 
   animate_matrix()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_rotate_shrink.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_rotate_shrink.gif&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;transform-city-pretty&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Transform city, pretty&lt;/h2&gt;
@@ -457,25 +461,25 @@ p_pretty &amp;lt;- bind_rows(start_grid, end_grid) %&amp;gt;%
 
 p_pretty + 
   gganimate::transition_states(time)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;And wrote a couple preliminary posts on animating matrix transformations that can be found &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/&#34;&gt;here&lt;/a&gt;&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Is large enough to get a reasonable approximation for the answer.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I.e. straight line distance.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;The Manhattan Length is just the shortest number of city blocks between points.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;I highly recommend the Essence of Linear Algebra video series, particularly chapter 3 (on Matrix Transformations) and &lt;a href=&#34;https://www.youtube.com/watch?v=P2LTAUO1TdA&#34;&gt;13&lt;/a&gt; (on Change of basis).&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;In R, you can use the &lt;code&gt;solve()&lt;/code&gt; function to give you the inverse of a matrix.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;We have already done most of the computations we’ll need and can follow similar steps to those taken in the &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; solution.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;I.e. length of an individual city block, or in this case, component of a city block.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;In the diagram below, we will actually have it be a function of one-half of the inverse of the proportion – this is because there are two diagonals adjoining each horizontal component.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, &lt;em&gt;x&lt;/em&gt;, of a triangle created by a diagonal.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Note that if we were to set x = 0, the distance from each location would be equivalent to the distances in our starting (horizontal) grid, and if we set x = 0.5, the distances would be equal to those in our transformed (diagonal) grid.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Note that we are not taking into account the tiny differences that emerge regarding starting location for each resident (i.e. which point within a Barcelona square should they start). If we make the grid arbitrarily large, these differences become inconsequential – hence we can ignore them.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;The origin of our coordinate systems.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;And wrote a couple preliminary posts on animating matrix transformations that can be found &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/&#34;&gt;here&lt;/a&gt;&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Is large enough to get a reasonable approximation for the answer.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I.e. straight line distance.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;The Manhattan Length is just the shortest number of city blocks between points.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;I highly recommend the Essence of Linear Algebra video series, particularly chapter 3 (on Matrix Transformations) and &lt;a href=&#34;https://www.youtube.com/watch?v=P2LTAUO1TdA&#34;&gt;13&lt;/a&gt; (on Change of basis).&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;In R, you can use the &lt;code&gt;solve()&lt;/code&gt; function to give you the inverse of a matrix.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;We have already done most of the computations we’ll need and can follow similar steps to those taken in the &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; solution.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;I.e. length of an individual city block, or in this case, component of a city block.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;In the diagram below, we will actually have it be a function of one-half of the inverse of the proportion – this is because there are two diagonals adjoining each horizontal component.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, &lt;em&gt;x&lt;/em&gt;, of a triangle created by a diagonal.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Note that if we were to set x = 0, the distance from each location would be equivalent to the distances in our starting (horizontal) grid, and if we set x = 0.5, the distances would be equal to those in our transformed (diagonal) grid.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Note that we are not taking into account the tiny differences that emerge regarding starting location for each resident (i.e. which point within a Barcelona square should they start). If we make the grid arbitrarily large, these differences become inconsequential – hence we can ignore them.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;The origin of our coordinate systems.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
@@ -483,11 +487,12 @@ p_pretty +
     
     <item>
       <title>animatrixr &amp; Visualizing Matrix Transformations pt. 2</title>
-      <link>/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</link>
+      <link>https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</link>
       <pubDate>Mon, 24 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</guid>
+      <guid>https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;This post is a continuation on my post from last week on &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/&#34;&gt;Visualizing Matrix Transformations with gganimate&lt;/a&gt;. Both posts are largely inspired by &lt;a href=&#34;https://twitter.com/3blue1brown&#34;&gt;Grant Sanderson’s&lt;/a&gt; beautiful video series &lt;a href=&#34;https://www.youtube.com/watch?v=kYB8IZa5AuE&amp;amp;list=PL_w8oSr1JpVCZ5pKXHKz6PkjGCbPbSBYv&amp;amp;index=4&#34;&gt;The Essence of Linear Algebra&lt;/a&gt; and wanting to continue messing around with &lt;a href=&#34;https://github.com/thomasp85/gganimate&#34;&gt;Thomas Lin Peterson’s&lt;/a&gt; fantastic &lt;a href=&#34;https://github.com/thomasp85/gganimate&#34;&gt;gganimate&lt;/a&gt; package in R.&lt;/p&gt;
@@ -533,7 +538,7 @@ reflect_x &amp;lt;- tribble(~ x, ~ y,
                      seq_fun = animatrixr::seq_matrix_l,
                      n_frames = 40) %&amp;gt;% 
   animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/vsheer-hsheer-reflect-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/vsheer-hsheer-reflect-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;add_transformation()&lt;/code&gt; explicitly creates in-between frames for a given transformation. The &lt;code&gt;seq_fun&lt;/code&gt; argument allows you to define the interpolation method, for example whether the coordinates should (during the animation) follow a linear path (default) or the angle of a rotation.&lt;/p&gt;
 &lt;p&gt;It would be nice to add-in functionality where the final transformation object could then be added to layers of a ggplot (though I’ve done nothing towards this except add an argument in &lt;code&gt;animatrixr::animate_matrix()&lt;/code&gt; for displaying the &lt;a href=&#34;https://github.com/lockedata/datasauRus&#34;&gt;datasauRus&lt;/a&gt;).&lt;/p&gt;
 &lt;p&gt;(Warning: &lt;code&gt;animatrixr&lt;/code&gt; is severely limited, as discussed in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; and in package documentation. However you can find it at the “brshallo/animatrixr” repo on &lt;a href=&#34;https://github.com/brshallo/animatrixr&#34;&gt;my github page&lt;/a&gt;.)&lt;/p&gt;
@@ -550,13 +555,13 @@ reflect_x &amp;lt;- tribble(~ x, ~ y,
 matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
   add_transformation(rotate_90) %&amp;gt;% 
   animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-linear-1.gif&#34; width=&#34;71%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-linear-1.gif&#34; width=&#34;71%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Linear interpolation makes the rotation transformation appear scrunched during the animation (from how we intuitively think of a rotation) as the coordinate points take a straight line path to their positions after applying the transformation&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;To make the in-between coordinates instead follow the angle of rotation we could change the &lt;code&gt;seq_fun&lt;/code&gt; from &lt;code&gt;animatrixr::seq_matrix_l&lt;/code&gt; to &lt;code&gt;animatrixr::seq_matrix_lp&lt;/code&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
   add_transformation(rotate_90, seq_fun = animatrixr::seq_matrix_lp) %&amp;gt;% 
   animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-polar-sheer-linear-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-polar-sheer-linear-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;During the rotation portion of the animation &lt;code&gt;gganimate&lt;/code&gt; is still tweening images linearly, however the frames &lt;code&gt;add_transformation()&lt;/code&gt; creates are now following along the angle of rotation of the transformation. Hence the animation ends-up approximating a curved path.&lt;/p&gt;
 &lt;p&gt;However, &lt;code&gt;seq_matrix_lp()&lt;/code&gt; needs improvement and was just set-up to work for toy examples – it really only looks ‘right’ if doing rotations off of &lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} 1 &amp;amp; 0\\0  &amp;amp; 1 \end{array}\right)\]&lt;/span&gt; See &lt;a href=&#34;#showing-rotations&#34;&gt;Showing rotations&lt;/a&gt; in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; for additional detail on how this is set-up and the various limitations with &lt;code&gt;animatrixr&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Happy animatrixing!&lt;/p&gt;
@@ -568,7 +573,7 @@ matrix(c(1,0,0,1), nrow = 2) %&amp;gt;%
   add_transformation(matrix(c(1, 0.5, 0, 1), nrow = 2)) %&amp;gt;% 
   add_transformation(matrix(c(1, 0, 0, -1), nrow = 2)) %&amp;gt;% 
   animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/unnamed-chunk-1-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/unnamed-chunk-1-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Appendix&lt;/h1&gt;
@@ -613,7 +618,7 @@ matrix(c(1,0,0,1), nrow = 2) %&amp;gt;%
 matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
   add_transformation(transformation_matrix, seq_fun = seq_matrix_rotate_first) %&amp;gt;% 
   animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-sheer-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-sheer-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;There are (especially) a lot of problems with this function currently and I don’t recommend using it e.g.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;only works (at all correctly) if starting from standard unit vectors (hence cannot really be combined into a chain of matrix transformations)&lt;/li&gt;
@@ -627,15 +632,15 @@ E.g. if M = {rotation}{vertical sheer} vs. M = {rotation}{horizontal sheer} –
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Provides a cleaner approach for doing this compared to the clunky method I walked through in my post last week.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;All visualizations from last week used this linear interpolation method.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I discuss this at more length in my previous post – see the sub-section in the “Appendix”, “Problem of squeezing during rotation”.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;However I also hadn’t planned on writing a follow-up post… so who knows…&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;See &lt;a href=&#34;https://computergraphics.stackexchange.com/questions/3932/animating-a-smooth-linear-transformation&#34;&gt;post&lt;/a&gt; referencing this.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Provides a cleaner approach for doing this compared to the clunky method I walked through in my post last week.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;All visualizations from last week used this linear interpolation method.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I discuss this at more length in my previous post – see the sub-section in the “Appendix”, “Problem of squeezing during rotation”.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;However I also hadn’t planned on writing a follow-up post… so who knows…&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;See &lt;a href=&#34;https://computergraphics.stackexchange.com/questions/3932/animating-a-smooth-linear-transformation&#34;&gt;post&lt;/a&gt; referencing this.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;To find the ‘other’ component of a matrix transformation… say &lt;em&gt;M&lt;/em&gt; represents the overall matrix transformation, in &lt;a href=&#34;#showing-rotations&#34;&gt;Showing rotations&lt;/a&gt; I described how to calculate &lt;em&gt;R&lt;/em&gt; (the rotation component), hence to calculate &lt;em&gt;A&lt;/em&gt;, ‘other’, I do:&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AR = M\]&lt;/span&gt;
 &lt;span class=&#34;math display&#34;&gt;\[ARR^{-1} = MR^{-1}\]&lt;/span&gt;
-&lt;span class=&#34;math display&#34;&gt;\[A = MR^{-1}\]&lt;/span&gt;&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;span class=&#34;math display&#34;&gt;\[A = MR^{-1}\]&lt;/span&gt;&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
@@ -643,11 +648,12 @@ E.g. if M = {rotation}{vertical sheer} vs. M = {rotation}{horizontal sheer} –
     
     <item>
       <title>Visualizing Matrix Transformations</title>
-      <link>/2020/02/20/visualizing-matrix-transformations-with-gganimate/</link>
+      <link>https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/</link>
       <pubDate>Thu, 20 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/02/20/visualizing-matrix-transformations-with-gganimate/</guid>
+      <guid>https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;I highly recommend the fantastic video series &lt;a href=&#34;https://www.youtube.com/watch?v=fNk_zzaMoSs&amp;amp;list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab&#34;&gt;Essence of Linear Algebra&lt;/a&gt; by &lt;a href=&#34;https://twitter.com/3blue1brown&#34;&gt;Grant Sanderson&lt;/a&gt;. In this post I’ll walk through how you can use &lt;code&gt;gganimate&lt;/code&gt; and the &lt;code&gt;tidyverse&lt;/code&gt; to (very loosely) recreate some of the visualizations shown in that series. Specifically those on matrix transformations and changing the basis vectors&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
@@ -672,7 +678,7 @@ I do not. Would love to see it, though🙂
 devtools::source_gist(&amp;quot;https://gist.github.com/brshallo/6a125f9c96dac5445cebb97cc62bfc9c&amp;quot;)
 
 animate_matrix_transformation(m = matrix(c(0.5, 0.5, 0.5, -0.25), nrow = 2))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/unnamed-chunk-13-1.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/unnamed-chunk-13-1.gif&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Over the next several sections I’ll walk through the thinking behind this code (culminating in the &lt;a href=&#34;#visualizations&#34;&gt;Visualizations&lt;/a&gt; section, where this animation will be shown again). Sections in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; contain variations on this animation that add-on additional simple transformations and layers.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;helper-functions&#34; class=&#34;section level1&#34;&gt;
@@ -699,7 +705,7 @@ animate_matrix_transformation(m = matrix(c(0.5, 0.5, 0.5, -0.25), nrow = 2))&lt;
   coord_fixed()+
   ggforce::theme_no_axes()+
   theme(panel.border = element_blank())&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;transform_df_coords()&lt;/code&gt;: Given dataframe, column names of coordinates&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;, and a transformation matrix, return dataframe with transformed coordinates.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;transform_df_coords &amp;lt;- function(df, ..., m = diag(length(df))){
   
@@ -876,10 +882,10 @@ y_breaks &amp;lt;- unique(grid_start$y)&lt;/code&gt;&lt;/pre&gt;
 &lt;h2&gt;Visualizations&lt;/h2&gt;
 &lt;p&gt;&lt;em&gt;Static image:&lt;/em&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Animation&lt;/em&gt;&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt;:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p + gganimate::transition_states(time, wrap = FALSE)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-14-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-14-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;And there it is. To view a different matrix transformation, simply change the &lt;code&gt;transformation_matrix&lt;/code&gt; defined above and re-run the code chunks&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt; or see the &lt;a href=&#34;#quick-start&#34;&gt;Quick start&lt;/a&gt; section.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -971,11 +977,11 @@ basis_all &amp;lt;- bind_rows(
         legend.position = &amp;quot;none&amp;quot;) &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;em&gt;Static image:&lt;/em&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p_mult &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-19-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-19-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Animation:&lt;/em&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p_mult + 
   gganimate::transition_states(time, wrap = FALSE) &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-20-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-20-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;Notice that we see the transformations done sequentially. We could also have just inputted the single (simplified) matrix transformation:&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[\begin{bmatrix}
 -0.5 &amp;amp; -1\\
@@ -1005,7 +1011,7 @@ p_rotation &amp;lt;- ggplot(aes(), data = filter(grid_all, time &amp;lt;= 2))+
         legend.position = &amp;quot;none&amp;quot;)
 
 p_rotation + gganimate::transition_states(time, wrap = FALSE) &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-21-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-21-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;However we can see this doesn’t happen (the grid scrunches up and the exterior segments cut into the circle). The reason this occurs is that during the animation the coordinates follow a straight line path to their new location as explained:&lt;/p&gt;
 &lt;blockquote class=&#34;twitter-tweet&#34;&gt;
 &lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
@@ -1016,7 +1022,7 @@ The problem is that coords are tweened linearly which doesn&#39;t match a rotati
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 &lt;p&gt;Transformations that you &lt;em&gt;could&lt;/em&gt; conceptualize of as rotations will be animated as linear changes to coordinates. As a more extreme example, see animation of a matrix transformation for a &lt;span class=&#34;math inline&#34;&gt;\(180^\circ\)&lt;/span&gt; rotation:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;animate_matrix_transformation(m = matrix(c(-1, 0, 0, 1), nrow = 2))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/transform_180degrees.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/transform_180degrees.gif&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;One fix (irrespective of tweening method in &lt;code&gt;gganimate&lt;/code&gt;) could be to set specific coordinates at each frame (so that the lack of a true rotation wouldn’t be noticable)&lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;problem-of-jittery-points-during-rotation&#34; class=&#34;section level3&#34;&gt;
@@ -1044,7 +1050,7 @@ p_points &amp;lt;- p_rotation +
   geom_point(aes(x, y), data = points_all, colour = &amp;quot;royalblue3&amp;quot;)
 
 p_points + gganimate::transition_states(time, wrap = FALSE) &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-23-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-23-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;miscellaneous-notes&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Miscellaneous notes&lt;/h3&gt;
@@ -1083,20 +1089,20 @@ y_breaks &amp;lt;-
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Which are shown throughout the series and most notably in chapters 3 and 13.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;See section [Problems and potential improvements] for notes on a couple potential updates I’ll make… not positive I’ll keep the gist code updated.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;And may not care about understanding how to do multiple transformations, adding additional layers, etc.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;/ vectors&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;I’m guessing there is a better / more elegant function already out there for ‘tidy matrix multiplication’ or something… but couldn’t immediately think of anything.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;You could add additional objects to the image – just need to ensure you create &lt;em&gt;start&lt;/em&gt; and &lt;em&gt;transformed&lt;/em&gt; versions of each object.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Creating these is not needed if you just wanted to create static images for the below examples.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;No real reason for choosing this transformation, just thought it looked cool.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;If wrap = TRUE (default) the reverse looping of the image is inaccurate as the transformation back to the original basis actually represents a transformation by the inverse of the &lt;code&gt;transformation matrix&lt;/code&gt;. Though leaving it in would look cooler.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;Could functionalize more… or make a shiny app, or do more with, see [Problems and potential improvements] for notes…&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Can largely skim over&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Though this gets into decomposing the rotation, etc. components of the matrix transformation of interest for each frame.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Seems issue has to do with &lt;code&gt;group&lt;/code&gt; needing to apply both to the polygon at a given time as well as points on the polygon across time.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Would require latex title which I don’t know if is supported by &lt;code&gt;gganimate&lt;/code&gt;&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Which are shown throughout the series and most notably in chapters 3 and 13.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;See section [Problems and potential improvements] for notes on a couple potential updates I’ll make… not positive I’ll keep the gist code updated.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;And may not care about understanding how to do multiple transformations, adding additional layers, etc.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;/ vectors&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;I’m guessing there is a better / more elegant function already out there for ‘tidy matrix multiplication’ or something… but couldn’t immediately think of anything.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;You could add additional objects to the image – just need to ensure you create &lt;em&gt;start&lt;/em&gt; and &lt;em&gt;transformed&lt;/em&gt; versions of each object.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Creating these is not needed if you just wanted to create static images for the below examples.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;No real reason for choosing this transformation, just thought it looked cool.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;If wrap = TRUE (default) the reverse looping of the image is inaccurate as the transformation back to the original basis actually represents a transformation by the inverse of the &lt;code&gt;transformation matrix&lt;/code&gt;. Though leaving it in would look cooler.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;Could functionalize more… or make a shiny app, or do more with, see [Problems and potential improvements] for notes…&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Can largely skim over&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Though this gets into decomposing the rotation, etc. components of the matrix transformation of interest for each frame.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Seems issue has to do with &lt;code&gt;group&lt;/code&gt; needing to apply both to the polygon at a given time as well as points on the polygon across time.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Would require latex title which I don’t know if is supported by &lt;code&gt;gganimate&lt;/code&gt;&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>

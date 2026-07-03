@@ -2,28 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>programming on Bryan Shalloway&#39;s Blog</title>
-    <link>/categories/programming/</link>
+    <link>https://www.bryanshalloway.com/categories/programming/</link>
     <description>Recent content in programming on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 23 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="/categories/programming/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 23 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://www.bryanshalloway.com/categories/programming/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Undersampling Will Change the Base Rates of Your Model&#39;s Predictions</title>
-      <link>/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/</link>
+      <link>https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/</link>
       <pubDate>Mon, 23 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/</guid>
+      <guid>https://www.bryanshalloway.com/2020/11/23/remember-resampling-techniques-change-the-base-rates-of-your-predictions/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#create-data&#34;&gt;Create Data&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#association-of-feature-and-target&#34;&gt;Association of ‘feature’ and ‘target’&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#association-of-feature-and-target&#34;&gt;Association of ‘feature’ and ‘target’&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#resample&#34;&gt;Resample&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#build-models&#34;&gt;Build Models&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#rescale-predictions-to-predicted-probabilities&#34;&gt;Rescale Predictions to Predicted Probabilities&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#density-plots&#34;&gt;Density Plots&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#lift-plot&#34;&gt;Lift Plot&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#comparing-scaling-methods&#34;&gt;Comparing Scaling Methods&lt;/a&gt;&lt;/li&gt;
@@ -114,7 +117,7 @@ test &amp;lt;- example %&amp;gt;%
   geom_histogram()+
   labs(title = &amp;quot;Distribution of values of &amp;#39;feature&amp;#39;&amp;quot;,
        subtitle = &amp;quot;Greater values of &amp;#39;feature&amp;#39; associate with higher likelihood &amp;#39;target&amp;#39; = TRUE&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;div id=&#34;resample&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Resample&lt;/h2&gt;
 &lt;p&gt;Make a new sample &lt;code&gt;train_downsamp&lt;/code&gt; that keeps all positive cases in the training set and an equal number of randomly sampled negative cases so that the split is no longer 5-95 but becomes 50-50.&lt;/p&gt;
@@ -132,7 +135,7 @@ train_downsamp &amp;lt;- train %&amp;gt;%
   geom_histogram()+
   labs(title = &amp;quot;Distribution of values of &amp;#39;feature&amp;#39; (down-sampled)&amp;quot;,
        subtitle = &amp;quot;Greater values of &amp;#39;feature&amp;#39; associate with higher likelihood &amp;#39;target&amp;#39; = TRUE&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;build-models&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Build Models&lt;/h2&gt;
@@ -149,7 +152,7 @@ train_downsamp &amp;lt;- train %&amp;gt;%
   ggplot(aes(x = pred_prob, fill = target))+
   geom_histogram()+
   facet_wrap(~model, ncol = 1)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;The predicted probabilities for the model built with the down-sampled 50-50 dataset are much higher than those built with the original 5-95 dataset. For example, let’s look at the predictions between these models for a particular observation:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;test_with_preds %&amp;gt;% 
   filter(id == 1828) %&amp;gt;%
@@ -204,7 +207,7 @@ test_with_preds_adjusted %&amp;gt;%
   ggplot(aes(x = pred_prob, fill = target))+
   geom_histogram()+
   facet_wrap(~model, ncol = 1)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Now that the predictions have been calibrated according to their underlying base rate, you can see the distributions of the predictions between the models are essentially the same.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -217,12 +220,12 @@ test_with_preds_adjusted %&amp;gt;%
   ggplot(aes(x = pred_prob, fill = target))+
   geom_density(alpha = 0.3)+
   facet_wrap(~model, ncol = 1)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;test_with_preds_adjusted %&amp;gt;% 
   ggplot(aes(x = pred_prob, fill = target))+
   geom_density(alpha = 0.3)+
   facet_wrap(~model, ncol = 1)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-15-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-15-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;lift-plot&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Lift Plot&lt;/h2&gt;
@@ -231,7 +234,7 @@ test_with_preds_adjusted %&amp;gt;%
   filter(model == &amp;quot;mod_5_95&amp;quot;) %&amp;gt;%
   yardstick::lift_curve(target, pred) %&amp;gt;% 
   autoplot()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-16-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-11-23-remember-resampling-techniques-change-the-base-rates-of-your-predictions_files/figure-html/unnamed-chunk-16-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;comparing-scaling-methods&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Comparing Scaling Methods&lt;/h2&gt;
@@ -243,22 +246,22 @@ test_with_preds_adjusted %&amp;gt;%
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;In the title I just mention Undersamping for brevities sake. Upsampling and downsampling are synonyms you may hear as well&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;I expect the audience for this post may be rather limited.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I wrote this example After having conversations related to this a few times (and participants not grasping points that would become clear with demonstration).&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;before I started using &lt;a href=&#34;https://www.tidymodels.org/&#34;&gt;tidymodels&lt;/a&gt;&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;or any of a myriad of topics related to this.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;There are often pretty easy built-in ways to accommodate this.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;There are also other reasons you may not want to rescale your predictions… but in many cases you will want to.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;Could have been more precise here…&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;no need for validation for this example&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;The higher incidence of TRUE values in the target at higher scores demonstrates the features predictive value.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;One built with 5-95 split the other with a downsampled 50-50 split.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Of course you could just use different decision thresholds for the predictions as well.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Decision tree based approach&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Logistic regression based approach&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;E.g. when using Support Vector Machines&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;In this case we are starting with a linear model hence we could also have just changed the intercept value to get the same affect. Rescaling methods act on the &lt;em&gt;predictions&lt;/em&gt; rather than the model parameters. Hence these scaling methods have the advantage of being generalizable as they are agnostic to model type.&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;In the title I just mention Undersamping for brevities sake. Upsampling and downsampling are synonyms you may hear as well&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;I expect the audience for this post may be rather limited.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I wrote this example After having conversations related to this a few times (and participants not grasping points that would become clear with demonstration).&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;before I started using &lt;a href=&#34;https://www.tidymodels.org/&#34;&gt;tidymodels&lt;/a&gt;&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;or any of a myriad of topics related to this.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;There are often pretty easy built-in ways to accommodate this.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;There are also other reasons you may not want to rescale your predictions… but in many cases you will want to.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;Could have been more precise here…&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;no need for validation for this example&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;The higher incidence of TRUE values in the target at higher scores demonstrates the features predictive value.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;One built with 5-95 split the other with a downsampled 50-50 split.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Of course you could just use different decision thresholds for the predictions as well.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Decision tree based approach&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Logistic regression based approach&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;E.g. when using Support Vector Machines&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;In this case we are starting with a linear model hence we could also have just changed the intercept value to get the same affect. Rescaling methods act on the &lt;em&gt;predictions&lt;/em&gt; rather than the model parameters. Hence these scaling methods have the advantage of being generalizable as they are agnostic to model type.&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
@@ -266,23 +269,26 @@ test_with_preds_adjusted %&amp;gt;%
     
     <item>
       <title>Feature Engineering with Sliding Windows and Lagged Inputs</title>
-      <link>/2020/10/12/window-functions-for-resampling/</link>
+      <link>https://www.bryanshalloway.com/2020/10/12/window-functions-for-resampling/</link>
       <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/10/12/window-functions-for-resampling/</guid>
+      <guid>https://www.bryanshalloway.com/2020/10/12/window-functions-for-resampling/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#load-data&#34;&gt;Load data&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#feature-engineering-data-splits&#34;&gt;Feature Engineering &amp;amp; Data Splits&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#feature-engineering-data-splits&#34;&gt;Feature Engineering &amp;amp; Data Splits&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#lag-based-features-before-split-use-dplyr-or-similar&#34;&gt;Lag Based Features (Before Split, use &lt;code&gt;dplyr&lt;/code&gt; or similar)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#data-splits&#34;&gt;Data Splits&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#other-features-after-split-use-recipes&#34;&gt;Other Features (After Split, use &lt;code&gt;recipes&lt;/code&gt;)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#model-specification-and-training&#34;&gt;Model Specification and Training&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#model-evaluation&#34;&gt;Model Evaluation&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#model-building-with-hyperparameter-tuning&#34;&gt;Model Building with Hyperparameter Tuning&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#resources&#34;&gt;Resources&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
@@ -346,14 +352,14 @@ restauraunts &amp;lt;- restauraunts %&amp;gt;%
   select(-c(NAME, contains(&amp;quot;ADDRESS&amp;quot;), CITY, STATE, POSTALCODE, PHONENUMBER, X, Y, GEOCODESTATUS))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;inspections_restaurants %&amp;gt;% 
   glimpse()&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Rows: 24,294
+&lt;pre&gt;&lt;code&gt;## Rows: 30,273
 ## Columns: 6
-## $ HSISID             &amp;lt;chr&amp;gt; &amp;quot;04092017542&amp;quot;, &amp;quot;04092017542&amp;quot;, &amp;quot;04092017542&amp;quot;, &amp;quot;04...
-## $ SCORE              &amp;lt;dbl&amp;gt; 94.5, 92.0, 95.0, 93.5, 93.0, 93.5, 92.5, 94.0, ...
-## $ TYPE               &amp;lt;chr&amp;gt; &amp;quot;Inspection&amp;quot;, &amp;quot;Inspection&amp;quot;, &amp;quot;Inspection&amp;quot;, &amp;quot;Inspe...
-## $ INSPECTOR          &amp;lt;chr&amp;gt; &amp;quot;Anne-Kathrin Bartoli&amp;quot;, &amp;quot;Laura McNeill&amp;quot;, &amp;quot;Laura ...
-## $ date               &amp;lt;date&amp;gt; 2017-04-07, 2017-11-08, 2018-03-23, 2018-09-07,...
-## $ RESTAURANTOPENDATE &amp;lt;date&amp;gt; 2017-03-01, 2017-03-01, 2017-03-01, 2017-03-01,...&lt;/code&gt;&lt;/pre&gt;
+## $ HSISID             &amp;lt;chr&amp;gt; &amp;quot;04092017542&amp;quot;, &amp;quot;04092017542&amp;quot;, &amp;quot;04092017542&amp;quot;, &amp;quot;04092~
+## $ SCORE              &amp;lt;dbl&amp;gt; 94.5, 92.0, 95.0, 93.5, 93.0, 93.5, 92.5, 94.0, 94.~
+## $ TYPE               &amp;lt;chr&amp;gt; &amp;quot;Inspection&amp;quot;, &amp;quot;Inspection&amp;quot;, &amp;quot;Inspection&amp;quot;, &amp;quot;Inspecti~
+## $ INSPECTOR          &amp;lt;chr&amp;gt; &amp;quot;Anne-Kathrin Bartoli&amp;quot;, &amp;quot;Laura McNeill&amp;quot;, &amp;quot;Laura McN~
+## $ date               &amp;lt;date&amp;gt; 2017-04-07, 2017-11-08, 2018-03-23, 2018-09-07, 20~
+## $ RESTAURANTOPENDATE &amp;lt;date&amp;gt; 2017-03-01, 2017-03-01, 2017-03-01, 2017-03-01, 20~&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;feature-engineering-data-splits&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Feature Engineering &amp;amp; Data Splits&lt;/h1&gt;
@@ -427,22 +433,17 @@ resamples  %&amp;gt;%
   extract_dates_rset() %&amp;gt;% 
   print() %&amp;gt;% 
   plot_dates_rset() &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 12 x 6
-##    splits         id     analysis_min analysis_max assessment_min assessment_max
-##    &amp;lt;list&amp;gt;         &amp;lt;chr&amp;gt;  &amp;lt;date&amp;gt;       &amp;lt;date&amp;gt;       &amp;lt;date&amp;gt;         &amp;lt;date&amp;gt;        
-##  1 &amp;lt;split [6.2K/~ Slice~ 2013-10-09   2016-10-31   2016-11-01     2017-01-31    
-##  2 &amp;lt;split [6.3K/~ Slice~ 2014-01-02   2017-01-31   2017-02-01     2017-04-28    
-##  3 &amp;lt;split [6.6K/~ Slice~ 2014-04-01   2017-04-28   2017-05-01     2017-07-31    
-##  4 &amp;lt;split [7.1K/~ Slice~ 2014-07-01   2017-07-31   2017-08-01     2017-10-31    
-##  5 &amp;lt;split [7.5K/~ Slice~ 2014-10-01   2017-10-31   2017-11-01     2018-01-31    
-##  6 &amp;lt;split [7.9K/~ Slice~ 2015-01-02   2018-01-31   2018-02-01     2018-04-30    
-##  7 &amp;lt;split [8.3K/~ Slice~ 2015-04-01   2018-04-30   2018-05-01     2018-07-31    
-##  8 &amp;lt;split [8.6K/~ Slice~ 2015-07-01   2018-07-31   2018-08-01     2018-10-31    
-##  9 &amp;lt;split [9K/1K~ Slice~ 2015-10-01   2018-10-31   2018-11-01     2019-01-31    
-## 10 &amp;lt;split [9.5K/~ Slice~ 2016-01-04   2019-01-31   2019-02-01     2019-04-30    
-## 11 &amp;lt;split [9.9K/~ Slice~ 2016-04-01   2019-04-30   2019-05-01     2019-07-31    
-## 12 &amp;lt;split [10.4K~ Slice~ 2016-07-01   2019-07-31   2019-08-01     2019-10-31&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-12-window-functions-for-resampling_files/figure-html/check-resampling-splits-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 7 x 6
+##   splits           id    analysis_min analysis_max assessment_min assessment_max
+##   &amp;lt;list&amp;gt;           &amp;lt;chr&amp;gt; &amp;lt;date&amp;gt;       &amp;lt;date&amp;gt;       &amp;lt;date&amp;gt;         &amp;lt;date&amp;gt;        
+## 1 &amp;lt;split [7789/92~ Slic~ 2015-02-10   2018-02-28   2018-03-01     2018-05-31    
+## 2 &amp;lt;split [8196/88~ Slic~ 2015-05-01   2018-05-31   2018-06-01     2018-08-31    
+## 3 &amp;lt;split [8547/90~ Slic~ 2015-08-03   2018-08-31   2018-09-04     2018-11-30    
+## 4 &amp;lt;split [8848/10~ Slic~ 2015-11-02   2018-11-30   2018-12-03     2019-02-28    
+## 5 &amp;lt;split [9370/98~ Slic~ 2016-02-01   2019-02-28   2019-03-01     2019-05-31    
+## 6 &amp;lt;split [9704/99~ Slic~ 2016-05-02   2019-05-31   2019-06-03     2019-08-30    
+## 7 &amp;lt;split [10216/9~ Slic~ 2016-08-01   2019-08-30   2019-09-03     2019-11-27&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-10-12-window-functions-for-resampling_files/figure-html/check-resampling-splits-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;For purposes of overall &lt;a href=&#34;#model-evaluation&#34;&gt;Model Evaluation&lt;/a&gt;, performance across each period will be weighted equally (regardless of number of observations in a period)&lt;a href=&#34;#fn19&#34; class=&#34;footnote-ref&#34; id=&#34;fnref19&#34;&gt;&lt;sup&gt;19&lt;/sup&gt;&lt;/a&gt; &lt;a href=&#34;#fn20&#34; class=&#34;footnote-ref&#34; id=&#34;fnref20&#34;&gt;&lt;sup&gt;20&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;other-features-after-split-use-recipes&#34; class=&#34;section level2&#34;&gt;
@@ -471,20 +472,20 @@ resamples  %&amp;gt;%
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;prep(rec_general, data = train) %&amp;gt;% 
   juice() %&amp;gt;% 
   glimpse() &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Rows: 17,048
+&lt;pre&gt;&lt;code&gt;## Rows: 14,594
 ## Columns: 12
-## $ HSISID           &amp;lt;fct&amp;gt; 04092016152, 04092014520, 04092014483, 04092012102...
-## $ TYPE             &amp;lt;fct&amp;gt; Inspection, Inspection, Inspection, Inspection, In...
-## $ INSPECTOR        &amp;lt;fct&amp;gt; David Adcock, Naterra McQueen, Andrea Anover, othe...
-## $ date             &amp;lt;date&amp;gt; 2013-10-09, 2013-10-09, 2013-10-09, 2013-10-09, 2...
-## $ SCORE_yr_overall &amp;lt;dbl&amp;gt; 96.22766, 96.22766, 96.22766, 96.22766, 96.22766, ...
-## $ SCORE_lag        &amp;lt;dbl&amp;gt; 96.0, 95.5, 97.0, 94.5, 97.5, 99.0, 96.0, 96.0, 10...
-## $ SCORE_recent     &amp;lt;dbl&amp;gt; 96.75000, 95.75000, 97.50000, 95.25000, 96.75000, ...
-## $ days_since_open  &amp;lt;dbl&amp;gt; 6.410175, 7.926964, 7.959276, 8.682029, 8.970432, ...
-## $ days_since_last  &amp;lt;dbl&amp;gt; 4.709530, 4.941642, 4.934474, 4.875197, 5.117994, ...
-## $ SCORE            &amp;lt;dbl&amp;gt; 98.5, 96.0, 96.0, 93.0, 95.0, 93.5, 95.0, 92.0, 98...
-## $ date_dow         &amp;lt;fct&amp;gt; Wed, Wed, Wed, Wed, Wed, Wed, Wed, Wed, Wed, Thu, ...
-## $ date_month       &amp;lt;fct&amp;gt; Oct, Oct, Oct, Oct, Oct, Oct, Oct, Oct, Oct, Oct, ...&lt;/code&gt;&lt;/pre&gt;
+## $ HSISID           &amp;lt;fct&amp;gt; 04092013767, 04092014115, 04092014155, 04092015493, 0~
+## $ TYPE             &amp;lt;fct&amp;gt; Inspection, Inspection, Inspection, Inspection, Inspe~
+## $ INSPECTOR        &amp;lt;fct&amp;gt; Johanna Hill, Jennifer Edwards, Angela Myers, Angela ~
+## $ date             &amp;lt;date&amp;gt; 2015-02-10, 2015-02-10, 2015-02-10, 2015-02-10, 2015~
+## $ SCORE_yr_overall &amp;lt;dbl&amp;gt; 95.59897, 95.59897, 95.59897, 95.59897, 95.59845, 95.~
+## $ SCORE_lag        &amp;lt;dbl&amp;gt; 98.0, 98.5, 94.5, 96.5, 90.5, 97.5, 93.0, 93.5, 91.0,~
+## $ SCORE_recent     &amp;lt;dbl&amp;gt; 98.40000, 98.87500, 97.37500, 92.50000, 94.25000, 95.~
+## $ days_since_open  &amp;lt;dbl&amp;gt; 8.383662, 8.248529, 8.235626, 7.568896, 6.723832, 8.0~
+## $ days_since_last  &amp;lt;dbl&amp;gt; 4.890349, 5.407172, 5.187386, 5.081404, 5.749393, 4.6~
+## $ SCORE            &amp;lt;dbl&amp;gt; 98.0, 98.5, 98.0, 87.0, 94.5, 95.5, 95.5, 90.0, 94.0,~
+## $ date_dow         &amp;lt;fct&amp;gt; Tue, Tue, Tue, Tue, Wed, Wed, Wed, Wed, Wed, Wed, Wed~
+## $ date_month       &amp;lt;fct&amp;gt; Feb, Feb, Feb, Feb, Feb, Feb, Feb, Feb, Feb, Feb, Feb~&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;model-specification-and-training&#34; class=&#34;section level1&#34;&gt;
@@ -558,7 +559,7 @@ splits_perf &amp;lt;-
   xlim(c(0, NA))+
   theme_bw()+
   labs(caption = &amp;quot;Vertical lines are average performance as captured by `tune::collect_metrics()`&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-12-window-functions-for-resampling_files/figure-html/plot-performance-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-10-12-window-functions-for-resampling_files/figure-html/plot-performance-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;We could use a paired sample t-test to formally compare the random forest and linear models’ out-of-sample RMSE performance.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;t.test(
   filter(splits_perf, source == &amp;quot;lm&amp;quot;, .metric == &amp;quot;rmse&amp;quot;) %&amp;gt;% pull(.estimate),
@@ -583,12 +584,12 @@ splits_perf &amp;lt;-
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;right&#34;&gt;-0.0839&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-3.7277&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.0033&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;11&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.1334&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.0343&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.0707&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-4.3075&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.0051&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.1109&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.0305&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;Paired t-test&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;two.sided&lt;/td&gt;
 &lt;/tr&gt;
@@ -659,19 +660,19 @@ rf_tune &amp;lt;- tune_grid(rf_workflow,
 &lt;li&gt;&lt;code&gt;sliding_period()&lt;/code&gt;: slide according to an index and set k split points based on period (and other function arguments)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;code&gt;rsample::sliding_index()&lt;/code&gt; and &lt;code&gt;rsample::sliding_period()&lt;/code&gt; are maybe the most useful additions as they allow you to do resampling based on a date/time index. For &lt;code&gt;sliding_index()&lt;/code&gt;, you usually want to make use of the &lt;code&gt;step&lt;/code&gt; argument (otherwise it defaults to having a split for every observation).&lt;/p&gt;
-&lt;p&gt;I found &lt;code&gt;rsample::sliding_period()&lt;/code&gt; easier to get acquantied with than &lt;code&gt;rsample::sliding_index()&lt;/code&gt;. However within the &lt;code&gt;slider&lt;/code&gt; package I found &lt;code&gt;slider::sliding_index()&lt;/code&gt; easier to use than &lt;code&gt;slider::sliding_period()&lt;/code&gt;. Perhaps this makes sense as when setting sampling windows you are usually trying to return an object with far fewer rows, that is, collapsed to k number of rows (unless you are doing Leave-One-Out cross-validation). On the other hand, the &lt;code&gt;slider&lt;/code&gt; package is often used in a &lt;code&gt;mutate()&lt;/code&gt; step where you often want to output the same number of observations as are inputted. Perhaps then it is unsurprising the different scenarios when the &lt;code&gt;index&lt;/code&gt; vs &lt;code&gt;period&lt;/code&gt; approach feels more intuitive.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Previously users would have needed to use &lt;code&gt;rsample::rolling_origin()&lt;/code&gt;.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;As opposed to a more specialized time-series modeling approach.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;This dataset is updated on an ongoing basis as Food Inspections are conducted. This makes it a poor choice as an example dataset (because results will vary if running in the future when more data has been collected). I used it because I am familiar with the dataset, it made for a good example, and because I wanted a publicly documented example of pulling in data using an API (even a simple one).&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;There is also “violations” dataset available, which may have additional useful features, but which I will ignore for this example.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;For this example I’m pretending that we only care about predicting &lt;code&gt;SCORE&lt;/code&gt; for restaurants… as opposed to food trucks or other entities that may receive inspections.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Or at least cases where historical data is claiming there were multiple inspections on the same day.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;In some cases you may need to be more careful than this and exclude information that are proxies for inappropriate fields as well. For example, pretend that the &lt;code&gt;INSPECTOR&lt;/code&gt;s are assigned based on region. In this case, &lt;code&gt;INSPECTOR&lt;/code&gt; would be a proxy for geographic information and perhaps warranting exclusion as well (in certain cases).&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;Into training / testing sets or analysis / assessment sets.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;As discussed by Davis Vaughn at the end of this &lt;a href=&#34;https://gist.github.com/DavisVaughan/433dbdceb439c9be30ddcc78d836450d&#34;&gt;gist&lt;/a&gt;.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;An “Analysis” / “Assessment” split is similar to a “training” / “testing” split but within the training dataset (and typically multiple of these are created on the same training dataset). See section 3.4 of &lt;a href=&#34;http://www.feat.engineering/resampling.html&#34;&gt;Feature Engineering and Selection…&lt;/a&gt; for further explanation.]&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;It is important that these features be created in a way that does not cause data leakage.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Which would not be available at the time of prediction.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;I found &lt;code&gt;rsample::sliding_period()&lt;/code&gt; easier to get acquantied with than &lt;code&gt;rsample::sliding_index()&lt;/code&gt;. However within the &lt;code&gt;slider&lt;/code&gt; package I found &lt;code&gt;slider::sliding_index()&lt;/code&gt; easier to use than &lt;code&gt;slider::sliding_period()&lt;/code&gt;. Perhaps this makes sense as when setting sampling windows you are usually trying to return an object with far fewer rows, that is, collapsed to k number of rows (unless you are doing Leave-One-Out cross-validation). On the other hand, the &lt;code&gt;slider&lt;/code&gt; package is often used in a &lt;code&gt;mutate()&lt;/code&gt; step where you often want to output the same number of observations as are inputted. Perhaps then it is unsurprising the different scenarios when the &lt;code&gt;index&lt;/code&gt; vs &lt;code&gt;period&lt;/code&gt; approach feels more intuitive.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Previously users would have needed to use &lt;code&gt;rsample::rolling_origin()&lt;/code&gt;.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;As opposed to a more specialized time-series modeling approach.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;This dataset is updated on an ongoing basis as Food Inspections are conducted. This makes it a poor choice as an example dataset (because results will vary if running in the future when more data has been collected). I used it because I am familiar with the dataset, it made for a good example, and because I wanted a publicly documented example of pulling in data using an API (even a simple one).&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;There is also “violations” dataset available, which may have additional useful features, but which I will ignore for this example.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;For this example I’m pretending that we only care about predicting &lt;code&gt;SCORE&lt;/code&gt; for restaurants… as opposed to food trucks or other entities that may receive inspections.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Or at least cases where historical data is claiming there were multiple inspections on the same day.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;In some cases you may need to be more careful than this and exclude information that are proxies for inappropriate fields as well. For example, pretend that the &lt;code&gt;INSPECTOR&lt;/code&gt;s are assigned based on region. In this case, &lt;code&gt;INSPECTOR&lt;/code&gt; would be a proxy for geographic information and perhaps warranting exclusion as well (in certain cases).&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;Into training / testing sets or analysis / assessment sets.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;As discussed by Davis Vaughn at the end of this &lt;a href=&#34;https://gist.github.com/DavisVaughan/433dbdceb439c9be30ddcc78d836450d&#34;&gt;gist&lt;/a&gt;.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;An “Analysis” / “Assessment” split is similar to a “training” / “testing” split but within the training dataset (and typically multiple of these are created on the same training dataset). See section 3.4 of &lt;a href=&#34;http://www.feat.engineering/resampling.html&#34;&gt;Feature Engineering and Selection…&lt;/a&gt; for further explanation.]&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;It is important that these features be created in a way that does not cause data leakage.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Which would not be available at the time of prediction.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;I’m a fan of the ability to use negative values in the &lt;code&gt;.after&lt;/code&gt; argument:&lt;/p&gt;
 &lt;blockquote class=&#34;twitter-tweet&#34;&gt;
 &lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
@@ -680,15 +681,15 @@ This is a fairly obscure feature in {slider}, but I love it. Don’t want the cu
 — Davis Vaughan (&lt;span class=&#34;citation&#34;&gt;@dvaughan32&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/dvaughan32/status/1233116713010573312?ref_src=twsrc%5Etfw&#34;&gt;February 27, 2020&lt;/a&gt;
 &lt;/blockquote&gt;
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
-&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;If I did not make this assumption, I would need to impute the time based features at this point.&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;If I did not make this assumption, I would need to impute the time based features at this point.&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;Two helpful resources for understanding time series cross-validation:&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;From &lt;a href=&#34;https://eng.uber.com/forecasting-introduction/&#34;&gt;uber engineering&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;From &lt;a href=&#34;https://otexts.com/fpp3/tscv.html&#34;&gt;Forecasting Principles and Practices&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;An “Analysis” / “Assessment” split is similar to a “training” / “testing” split but within the training dataset (and typically multiple of these are created on the same training dataset). See section 3.4 of &lt;a href=&#34;http://www.feat.engineering/resampling.html&#34;&gt;Feature Engineering and Selection…&lt;/a&gt; for further explanation.]&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;An “Analysis” / “Assessment” split is similar to a “training” / “testing” split but within the training dataset (and typically multiple of these are created on the same training dataset). See section 3.4 of &lt;a href=&#34;http://www.feat.engineering/resampling.html&#34;&gt;Feature Engineering and Selection…&lt;/a&gt; for further explanation.]&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn18&#34;&gt;&lt;p&gt;I’ve tweeted previously about helper functions for reviewing your resampling scheme:&lt;/p&gt;
 &lt;blockquote class=&#34;twitter-tweet&#34;&gt;
 &lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
@@ -697,18 +698,18 @@ This is a fairly obscure feature in {slider}, but I love it. Don’t want the cu
 — Bryan Shalloway (&lt;span class=&#34;citation&#34;&gt;@brshallo&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/brshallo/status/1314720234373287937?ref_src=twsrc%5Etfw&#34;&gt;October 10, 2020&lt;/a&gt;
 &lt;/blockquote&gt;
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
-&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;Note that using &lt;code&gt;rsample::sliding_period()&lt;/code&gt; is likely to produce different numbers of observations between splits.&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn20&#34;&gt;&lt;p&gt;It could also make sense to weight performance metrics by number of observations. One way to do this, would be to use a control function to extract the predictions, and then evaluate the performance across the predictions. In my examples below I do keep the predictions, but end-up not doing anything with them. Alternatively you could weight the performance metric by number of observations. The justification for weighting periods of different number of observations equally is that noise may vary consistently across time windows – weighting by observations may allow an individual time period too much influence (simply because it happened to be that there were a greater proportion of inspections at that period).&lt;a href=&#34;#fnref20&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn21&#34;&gt;&lt;p&gt;For each split, this will then build the features for the assessment set based on each analysis set.&lt;a href=&#34;#fnref21&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn22&#34;&gt;&lt;p&gt;Although I just do a simple &lt;code&gt;step_log()&lt;/code&gt; transform below, more sophisticated steps on lag based inputs would also be kosher, e.g. &lt;code&gt;step_pca()&lt;/code&gt;. However there is a good argument that many of these should be done prior to a &lt;code&gt;recipes&lt;/code&gt; step. For example, say you have missing values for some of the lag based inputs – in that case it may make sense to use a lag based method for imputation, which may work better than say a mean imputation using the training set. So, like many things, just be thoughtful and constantly ask youself what will be the ideal method while &lt;em&gt;being careful&lt;/em&gt; that, to the question of “will this data be available prior to the prediction?” that you can answer in the affirmitive.&lt;a href=&#34;#fnref22&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn23&#34;&gt;&lt;p&gt;Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties. While working interactively, I did not see any substantive difference in performance.&lt;a href=&#34;#fnref23&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;Remember that this is not weighted by observations, so each assessment set impacts the overall performance equally, regardless of small differences in number of observations.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;There is no baseline performance for Rsquared because the metric itself is based off amount of variance that is explained compared to the baseline (i.e. the mean).&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn26&#34;&gt;&lt;p&gt;You would likely iterate on the model building process (e.g. perform exploratory data analysis, review outliers in initial models, etc.) and eventually get to a final set of models to evaluate on the test set.&lt;a href=&#34;#fnref26&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn27&#34;&gt;&lt;p&gt;I added a few other links to the &lt;a href=&#34;#resources&#34;&gt;Resources&lt;/a&gt; section in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;a href=&#34;#fnref27&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn28&#34;&gt;&lt;p&gt;Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties.&lt;a href=&#34;#fnref28&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn29&#34;&gt;&lt;p&gt;This was taking a &lt;em&gt;long&lt;/em&gt; time and is part of why I decided to move the tuned examples to the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;.&lt;a href=&#34;#fnref29&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;Note that using &lt;code&gt;rsample::sliding_period()&lt;/code&gt; is likely to produce different numbers of observations between splits.&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn20&#34;&gt;&lt;p&gt;It could also make sense to weight performance metrics by number of observations. One way to do this, would be to use a control function to extract the predictions, and then evaluate the performance across the predictions. In my examples below I do keep the predictions, but end-up not doing anything with them. Alternatively you could weight the performance metric by number of observations. The justification for weighting periods of different number of observations equally is that noise may vary consistently across time windows – weighting by observations may allow an individual time period too much influence (simply because it happened to be that there were a greater proportion of inspections at that period).&lt;a href=&#34;#fnref20&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn21&#34;&gt;&lt;p&gt;For each split, this will then build the features for the assessment set based on each analysis set.&lt;a href=&#34;#fnref21&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn22&#34;&gt;&lt;p&gt;Although I just do a simple &lt;code&gt;step_log()&lt;/code&gt; transform below, more sophisticated steps on lag based inputs would also be kosher, e.g. &lt;code&gt;step_pca()&lt;/code&gt;. However there is a good argument that many of these should be done prior to a &lt;code&gt;recipes&lt;/code&gt; step. For example, say you have missing values for some of the lag based inputs – in that case it may make sense to use a lag based method for imputation, which may work better than say a mean imputation using the training set. So, like many things, just be thoughtful and constantly ask youself what will be the ideal method while &lt;em&gt;being careful&lt;/em&gt; that, to the question of “will this data be available prior to the prediction?” that you can answer in the affirmitive.&lt;a href=&#34;#fnref22&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn23&#34;&gt;&lt;p&gt;Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties. While working interactively, I did not see any substantive difference in performance.&lt;a href=&#34;#fnref23&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;Remember that this is not weighted by observations, so each assessment set impacts the overall performance equally, regardless of small differences in number of observations.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;There is no baseline performance for Rsquared because the metric itself is based off amount of variance that is explained compared to the baseline (i.e. the mean).&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn26&#34;&gt;&lt;p&gt;You would likely iterate on the model building process (e.g. perform exploratory data analysis, review outliers in initial models, etc.) and eventually get to a final set of models to evaluate on the test set.&lt;a href=&#34;#fnref26&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn27&#34;&gt;&lt;p&gt;I added a few other links to the &lt;a href=&#34;#resources&#34;&gt;Resources&lt;/a&gt; section in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;a href=&#34;#fnref27&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn28&#34;&gt;&lt;p&gt;Our number of observations is relatively high compared to the number of features, so there is a good chance we will have relatively low penalties.&lt;a href=&#34;#fnref28&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn29&#34;&gt;&lt;p&gt;This was taking a &lt;em&gt;long&lt;/em&gt; time and is part of why I decided to move the tuned examples to the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;.&lt;a href=&#34;#fnref29&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
@@ -716,11 +717,12 @@ This is a fairly obscure feature in {slider}, but I love it. Don’t want the cu
     
     <item>
       <title>Short Examples of Best Practices When Writing Functions That Call dplyr Verbs</title>
-      <link>/2020/06/25/using-across-to-build-functions-with-dplyr-with-notes-on-legacy-approaches/</link>
+      <link>https://www.bryanshalloway.com/2020/06/25/using-across-to-build-functions-with-dplyr-with-notes-on-legacy-approaches/</link>
       <pubDate>Thu, 25 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/06/25/using-across-to-build-functions-with-dplyr-with-notes-on-legacy-approaches/</guid>
+      <guid>https://www.bryanshalloway.com/2020/06/25/using-across-to-build-functions-with-dplyr-with-notes-on-legacy-approaches/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
@@ -825,10 +827,10 @@ This is a fairly obscure feature in {slider}, but I love it. Don’t want the cu
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;&lt;code&gt;dplyr&lt;/code&gt; 1.0.0 also now has &lt;a href=&#34;https://www.tidyverse.org/blog/2020/02/glue-strings-and-tidy-eval/&#34;&gt;support for using the glue&lt;/a&gt; package syntax for modifying variable names.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Doing this doesn’t require any tidy evaluation knowledge&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;There is also the &lt;code&gt;rlang::enquos()&lt;/code&gt; and &lt;code&gt;!!!&lt;/code&gt; operator for when the input has length greater than one.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;A niche function specific to tidy evaluation (which users might not think of).&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;&lt;code&gt;dplyr&lt;/code&gt; 1.0.0 also now has &lt;a href=&#34;https://www.tidyverse.org/blog/2020/02/glue-strings-and-tidy-eval/&#34;&gt;support for using the glue&lt;/a&gt; package syntax for modifying variable names.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Doing this doesn’t require any tidy evaluation knowledge&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;There is also the &lt;code&gt;rlang::enquos()&lt;/code&gt; and &lt;code&gt;!!!&lt;/code&gt; operator for when the input has length greater than one.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;A niche function specific to tidy evaluation (which users might not think of).&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
@@ -836,11 +838,12 @@ This is a fairly obscure feature in {slider}, but I love it. Don’t want the cu
     
     <item>
       <title>Use Flipbooks to Explain Your Code and Thought Process</title>
-      <link>/2020/06/24/use-flipbooks-to-explain-your-code-and-thought-process/</link>
+      <link>https://www.bryanshalloway.com/2020/06/24/use-flipbooks-to-explain-your-code-and-thought-process/</link>
       <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/06/24/use-flipbooks-to-explain-your-code-and-thought-process/</guid>
+      <guid>https://www.bryanshalloway.com/2020/06/24/use-flipbooks-to-explain-your-code-and-thought-process/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;div id=&#34;learning-rs&#34; class=&#34;section level1&#34;&gt;
@@ -875,7 +878,7 @@ What is your &lt;a href=&#34;https://twitter.com/hashtag/tidyverse?src=hash&amp;
 &lt;p&gt;When I started writing this post, I planned to call this type of output a “&lt;strong&gt;LEXPREX&lt;/strong&gt;” for “&lt;strong&gt;L&lt;/strong&gt;ine-by-line &lt;strong&gt;EX&lt;/strong&gt;ecution with &lt;strong&gt;PR&lt;/strong&gt;inted &lt;strong&gt;EX&lt;/strong&gt;amples” (and a name evocative of the inspiring &lt;a href=&#34;https://github.com/tidyverse/reprex&#34;&gt;reprex&lt;/a&gt; package by &lt;a href=&#34;https://twitter.com/JennyBryan%5D&#34;&gt;Jenny Bryan&lt;/a&gt;&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;). But, thankfully, an excellent solution containing thorough explanations (and a much better name) already existed, &lt;em&gt;flipbooks&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;As described in the &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;flipbookr documentation&lt;/a&gt;, “flipbooks are tools that present side-by-side, aligned, incremental code-output.”&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-r4ds.gif?raw=true&#34; alt=&#34;(Example inspired by ‘Many Models’ chapter of ‘R For Data Science’ by Grolemund &amp;amp; Wickham.)&#34; /&gt;
+&lt;img src=&#34;https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-r4ds.gif?raw=true&#34; alt=&#34;&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;(Example inspired by ‘Many Models’ chapter of ‘R For Data Science’ by Grolemund &amp;amp; Wickham.)&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;At this point you should stop reading this blog and instead go learn about &lt;a href=&#34;https://github.com/EvaMaeRey/flipbookr&#34;&gt;flipbookr&lt;/a&gt;. My post was largely written before I learned about this package. Hence, starting at &lt;a href=&#34;https://rstudio.com/resources/rstudioconf-2020/flipbooks-evangeline-reynolds/&#34;&gt;this presentation&lt;/a&gt; by &lt;a href=&#34;https://twitter.com/EvaMaeRey&#34;&gt;Gina Reynolds&lt;/a&gt; or &lt;code&gt;flipbookr&lt;/code&gt;’s &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;about page&lt;/a&gt; will generally be a more productive use of your time. The remainder of this post discusses either tools adjacent to flipbooks or describes workflows that can also be found within &lt;code&gt;flipbookr&lt;/code&gt; documentation.&lt;/p&gt;
@@ -896,7 +899,7 @@ What is your &lt;a href=&#34;https://twitter.com/hashtag/tidyverse?src=hash&amp;
 &lt;h1&gt;Animating a flipbook&lt;/h1&gt;
 &lt;p&gt;I sometimes want to convert a flipbook into a gif, e.g. when sharing an example in a README or a snippet of a concept on social media. If you ignored my prior entreaty, this is a second reminder to stop and go read about &lt;code&gt;flipbookr&lt;/code&gt;. The &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;template file&lt;/a&gt; now shows how to create gifs using &lt;code&gt;flipbookr&lt;/code&gt; (html) –&amp;gt; &lt;code&gt;pagedown&lt;/code&gt; (pdf) –&amp;gt; &lt;code&gt;magick&lt;/code&gt; (gif). I also describe this workflow and provide examples &lt;a href=&#34;https://github.com/brshallo/flipbookr-gifs-examples&#34;&gt;here&lt;/a&gt;, e.g.&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-riddler-solution.gif&#34; alt=&#34;(Example from a prior blog post, “Riddler Solutions: Pedestrian Puzzles”)&#34; /&gt;
+&lt;img src=&#34;https://github.com/brshallo/flipbookr-gifs-examples/raw/master/example-riddler-solution.gif&#34; alt=&#34;&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;(Example from a prior blog post, “Riddler Solutions: Pedestrian Puzzles”)&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -904,7 +907,7 @@ What is your &lt;a href=&#34;https://twitter.com/hashtag/tidyverse?src=hash&amp;
 &lt;h1&gt;Closing note&lt;/h1&gt;
 &lt;p&gt;I recommend exploring the &lt;a href=&#34;https://education.rstudio.com/blog/&#34;&gt;Rstudio Education blog&lt;/a&gt;. The site contains helpful resources for improving your technical communication. It was here that I stumbled on the post &lt;a href=&#34;https://education.rstudio.com/blog/2020/05/flair/&#34;&gt;Decorate your R code with flair&lt;/a&gt;. Reading this inspired me to make a first attempt at building a reproducible animation of line-by-line execution of R code (something I’d been wanting to do for ages). The positive response &amp;amp; feedback to my initial tweet led me to learn about &lt;code&gt;flipbookr&lt;/code&gt; and motivated additional actions (described in &lt;a href=&#34;#engagement-contributions&#34;&gt;Engagement &amp;amp; contributions&lt;/a&gt;) including the review and completion of this blog post.&lt;/p&gt;
 &lt;p&gt;Finally, please go enjoy the beautiful examples you can find at the &lt;code&gt;flipbookr&lt;/code&gt; &lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;about page&lt;/a&gt;:&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;&lt;img src=&#34;/post/2020-06-16-use-flipbooks-to-explain-your-code-and-thought-process_files/flipbookr-example.gif&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://evamaerey.github.io/flipbooks/about&#34;&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-06-16-use-flipbooks-to-explain-your-code-and-thought-process_files/flipbookr-example.gif&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Appendix&lt;/h1&gt;
@@ -955,9 +958,9 @@ Big thanks to &lt;a href=&#34;https://twitter.com/grrrck?ref_src=twsrc%5Etfw&#34
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;See my notes and solutions &lt;a href=&#34;https://brshallo.github.io/r4ds_solutions/&#34;&gt;here&lt;/a&gt;.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;I also considered names such as &lt;code&gt;pexprex&lt;/code&gt;, &lt;code&gt;sexprex&lt;/code&gt;, &lt;code&gt;pripex&lt;/code&gt;, … I’ll let the reader guess at the acronyms.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Which I prefer over the alternatives of using the leading &lt;code&gt;*&lt;/code&gt; or wrapping the message in&lt;code&gt;{{}}&lt;/code&gt;.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;See my notes and solutions &lt;a href=&#34;https://brshallo.github.io/r4ds_solutions/&#34;&gt;here&lt;/a&gt;.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;I also considered names such as &lt;code&gt;pexprex&lt;/code&gt;, &lt;code&gt;sexprex&lt;/code&gt;, &lt;code&gt;pripex&lt;/code&gt;, … I’ll let the reader guess at the acronyms.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Which I prefer over the alternatives of using the leading &lt;code&gt;*&lt;/code&gt; or wrapping the message in&lt;code&gt;{{}}&lt;/code&gt;.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
@@ -965,15 +968,18 @@ Big thanks to &lt;a href=&#34;https://twitter.com/grrrck?ref_src=twsrc%5Etfw&#34
     
     <item>
       <title>Tidy Pairwise Operations</title>
-      <link>/2020/06/03/tidy-2-way-column-combinations/</link>
+      <link>https://www.bryanshalloway.com/2020/06/03/tidy-2-way-column-combinations/</link>
       <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/06/03/tidy-2-way-column-combinations/</guid>
+      <guid>https://www.bryanshalloway.com/2020/06/03/tidy-2-way-column-combinations/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#overview&#34;&gt;Overview&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#update&#34;&gt;UPDATE&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#overview&#34;&gt;Overview&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#i.-nest-and-pivot&#34;&gt;I. Nest and pivot&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#ii.-expand-combinations&#34;&gt;II. Expand combinations&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#iii.-filter-redundancies&#34;&gt;III. Filter redundancies&lt;/a&gt;&lt;/li&gt;
@@ -984,7 +990,8 @@ Big thanks to &lt;a href=&#34;https://twitter.com/grrrck?ref_src=twsrc%5Etfw&#34
 &lt;li&gt;&lt;a href=&#34;#functionalize&#34;&gt;Functionalize&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#example-creating-evaluating-features&#34;&gt;Example creating &amp;amp; evaluating features&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#when-is-this-approach-inappropriate&#34;&gt;When is this approach inappropriate?&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#interactions-example-tidymodels&#34;&gt;Interactions example, tidymodels&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#expand-via-join&#34;&gt;Expand via join&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#nested-tibbles&#34;&gt;Nested tibbles&lt;/a&gt;&lt;/li&gt;
@@ -995,6 +1002,10 @@ Big thanks to &lt;a href=&#34;https://twitter.com/grrrck?ref_src=twsrc%5Etfw&#34
 &lt;/ul&gt;
 &lt;/div&gt;
 
+&lt;div id=&#34;update&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;UPDATE&lt;/h1&gt;
+&lt;p&gt;In May of 2021 I co-wrote &lt;a href=&#34;https://github.com/brshallo/pwiser&#34;&gt;pwiser&lt;/a&gt; a package for doing pairwise operations in {dplyr} that provides a much smoother approach than the one I build-up to in this post.&lt;/p&gt;
+&lt;/div&gt;
 &lt;div id=&#34;overview&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Overview&lt;/h1&gt;
 &lt;p&gt;Say you want to map an operation or list of operations across all two-way&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt; combinations of a set of variables/columns in a dataframe. For example, you may be doing feature engineering and want to create a set of interaction terms, ratios, etc&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;. You may be interested in computing a summary statistic across all pairwise combinations of a given set of variables&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;. In some cases there may be a pairwise implementation already available, e.g. R’s &lt;code&gt;cor()&lt;/code&gt; function for computing correlations&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;. In other cases one may not exist or is not easy to use&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;. In this post I’ll walk through an example&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt; explaining code and steps for setting-up arbitrary pairwise operations across sets of variables.&lt;/p&gt;
@@ -1066,7 +1077,7 @@ ames_subset &amp;lt;- select(ames, ames_cols) %&amp;gt;%
   summarise(Sale_Price = list(Sale_Price)) &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 12 x 2
 ##    Mo_Sold Sale_Price 
-##  *   &amp;lt;int&amp;gt; &amp;lt;list&amp;gt;     
+##      &amp;lt;int&amp;gt; &amp;lt;list&amp;gt;     
 ##  1       1 &amp;lt;int [123]&amp;gt;
 ##  2       2 &amp;lt;int [133]&amp;gt;
 ##  3       3 &amp;lt;int [232]&amp;gt;
@@ -1116,18 +1127,18 @@ ames_subset &amp;lt;- select(ames, ames_cols) %&amp;gt;%
   select(contains(&amp;quot;var&amp;quot;), everything()) %&amp;gt;% 
   print()&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 90 x 5
-##    var          var2           vars                    vector       vector2     
-##    &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;          &amp;lt;chr&amp;gt;                   &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;      
-##  1 Fireplaces   First_Flr_SF   Fireplaces.First_Flr_SF &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
-##  2 Fireplaces   Full_Bath      Fireplaces.Full_Bath    &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
-##  3 Fireplaces   Garage_Area    Fireplaces.Garage_Area  &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
-##  4 Fireplaces   Garage_Cars    Fireplaces.Garage_Cars  &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
-##  5 Fireplaces   Gr_Liv_Area    Fireplaces.Gr_Liv_Area  &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
-##  6 Fireplaces   Total_Bsmt_SF  Fireplaces.Total_Bsmt_~ &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
-##  7 Fireplaces   TotRms_AbvGrd  Fireplaces.TotRms_AbvG~ &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
-##  8 Fireplaces   Year_Built     Fireplaces.Year_Built   &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
-##  9 Fireplaces   Year_Remod_Add Fireplaces.Year_Remod_~ &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
-## 10 First_Flr_SF Fireplaces     First_Flr_SF.Fireplaces &amp;lt;dbl [2,930~ &amp;lt;dbl [2,930~
+##    var          var2           vars                      vector        vector2  
+##    &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;          &amp;lt;chr&amp;gt;                     &amp;lt;list&amp;gt;        &amp;lt;list&amp;gt;   
+##  1 Fireplaces   First_Flr_SF   Fireplaces.First_Flr_SF   &amp;lt;dbl [2,930]&amp;gt; &amp;lt;dbl [2,~
+##  2 Fireplaces   Full_Bath      Fireplaces.Full_Bath      &amp;lt;dbl [2,930]&amp;gt; &amp;lt;dbl [2,~
+##  3 Fireplaces   Garage_Area    Fireplaces.Garage_Area    &amp;lt;dbl [2,930]&amp;gt; &amp;lt;dbl [2,~
+##  4 Fireplaces   Garage_Cars    Fireplaces.Garage_Cars    &amp;lt;dbl [2,930]&amp;gt; &amp;lt;dbl [2,~
+##  5 Fireplaces   Gr_Liv_Area    Fireplaces.Gr_Liv_Area    &amp;lt;dbl [2,930]&amp;gt; &amp;lt;dbl [2,~
+##  6 Fireplaces   Total_Bsmt_SF  Fireplaces.Total_Bsmt_SF  &amp;lt;dbl [2,930]&amp;gt; &amp;lt;dbl [2,~
+##  7 Fireplaces   TotRms_AbvGrd  Fireplaces.TotRms_AbvGrd  &amp;lt;dbl [2,930]&amp;gt; &amp;lt;dbl [2,~
+##  8 Fireplaces   Year_Built     Fireplaces.Year_Built     &amp;lt;dbl [2,930]&amp;gt; &amp;lt;dbl [2,~
+##  9 Fireplaces   Year_Remod_Add Fireplaces.Year_Remod_Add &amp;lt;dbl [2,930]&amp;gt; &amp;lt;dbl [2,~
+## 10 First_Flr_SF Fireplaces     First_Flr_SF.Fireplaces   &amp;lt;dbl [2,930]&amp;gt; &amp;lt;dbl [2,~
 ## # ... with 80 more rows&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;If your operation of interest is associative&lt;a href=&#34;#fn15&#34; class=&#34;footnote-ref&#34; id=&#34;fnref15&#34;&gt;&lt;sup&gt;15&lt;/sup&gt;&lt;/a&gt;, apply a filter to remove additional redundant combinations.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;c_sort_collapse &amp;lt;- function(...){
@@ -1153,18 +1164,18 @@ df_lists_comb_as &amp;lt;- df_lists_comb %&amp;gt;%
   arrange(cor_pvalue) %&amp;gt;% 
   print()&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 45 x 6
-##    var        var2         vars                vector     vector2     cor_pvalue
-##    &amp;lt;chr&amp;gt;      &amp;lt;chr&amp;gt;        &amp;lt;fct&amp;gt;               &amp;lt;list&amp;gt;     &amp;lt;list&amp;gt;           &amp;lt;dbl&amp;gt;
-##  1 First_Flr~ Total_Bsmt_~ First_Flr_SF.Total~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  0.       
-##  2 Full_Bath  Gr_Liv_Area  Full_Bath.Gr_Liv_A~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  0.       
-##  3 Garage_Ar~ Garage_Cars  Garage_Area.Garage~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  0.       
-##  4 Gr_Liv_Ar~ TotRms_AbvG~ Gr_Liv_Area.TotRms~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  0.       
-##  5 Year_Built Year_Remod_~ Year_Built.Year_Re~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  7.85e-301
-##  6 First_Flr~ Gr_Liv_Area  First_Flr_SF.Gr_Li~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  8.17e-244
-##  7 Garage_Ca~ Year_Built   Garage_Cars.Year_B~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  1.57e-219
-##  8 Full_Bath  TotRms_AbvG~ Full_Bath.TotRms_A~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  1.24e-210
-##  9 First_Flr~ Garage_Area  First_Flr_SF.Garag~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  8.16e-178
-## 10 Garage_Ca~ Gr_Liv_Area  Garage_Cars.Gr_Liv~ &amp;lt;dbl [2,9~ &amp;lt;dbl [2,93~  4.80e-175
+##    var          var2           vars              vector    vector2    cor_pvalue
+##    &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;          &amp;lt;fct&amp;gt;             &amp;lt;list&amp;gt;    &amp;lt;list&amp;gt;          &amp;lt;dbl&amp;gt;
+##  1 First_Flr_SF Total_Bsmt_SF  First_Flr_SF.Tot~ &amp;lt;dbl [2,~ &amp;lt;dbl [2,9~  0        
+##  2 Full_Bath    Gr_Liv_Area    Full_Bath.Gr_Liv~ &amp;lt;dbl [2,~ &amp;lt;dbl [2,9~  0        
+##  3 Garage_Area  Garage_Cars    Garage_Area.Gara~ &amp;lt;dbl [2,~ &amp;lt;dbl [2,9~  0        
+##  4 Gr_Liv_Area  TotRms_AbvGrd  Gr_Liv_Area.TotR~ &amp;lt;dbl [2,~ &amp;lt;dbl [2,9~  0        
+##  5 Year_Built   Year_Remod_Add Year_Built.Year_~ &amp;lt;dbl [2,~ &amp;lt;dbl [2,9~  7.85e-301
+##  6 First_Flr_SF Gr_Liv_Area    First_Flr_SF.Gr_~ &amp;lt;dbl [2,~ &amp;lt;dbl [2,9~  8.17e-244
+##  7 Garage_Cars  Year_Built     Garage_Cars.Year~ &amp;lt;dbl [2,~ &amp;lt;dbl [2,9~  1.57e-219
+##  8 Full_Bath    TotRms_AbvGrd  Full_Bath.TotRms~ &amp;lt;dbl [2,~ &amp;lt;dbl [2,9~  1.24e-210
+##  9 First_Flr_SF Garage_Area    First_Flr_SF.Gar~ &amp;lt;dbl [2,~ &amp;lt;dbl [2,9~  8.16e-178
+## 10 Garage_Cars  Gr_Liv_Area    Garage_Cars.Gr_L~ &amp;lt;dbl [2,~ &amp;lt;dbl [2,9~  4.80e-175
 ## # ... with 35 more rows&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;For fun, let’s plot the most significant associations onto a bar graph.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pairs_cor_pvalues %&amp;gt;% 
@@ -1181,7 +1192,7 @@ df_lists_comb_as &amp;lt;- df_lists_comb %&amp;gt;%
        x = &amp;quot;Variable combinations&amp;quot;,
        fill = &amp;quot;Too high to\nmeaningfully\ndifferentiate:&amp;quot;)+
   theme(plot.title.position = &amp;quot;plot&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;You could use this approach to calculate any pairwise summary statistic. For example, see &lt;a href=&#34;https://gist.github.com/brshallo/dc3c1f2f34519ca2a8a68024bc3a22e5&#34;&gt;gist&lt;/a&gt; where I calculate the K-S statistic across each combination of a group of distributions.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;If you only care about computing summary statistics on your pairwise combinations, (and not adding new columns onto your original dataframe) you can stop here.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Example with transformations&lt;a href=&#34;#fn18&#34; class=&#34;footnote-ref&#34; id=&#34;fnref18&#34;&gt;&lt;sup&gt;18&lt;/sup&gt;&lt;/a&gt;:&lt;/strong&gt;&lt;/p&gt;
@@ -1228,7 +1239,6 @@ df_lists_comb_as &amp;lt;- df_lists_comb %&amp;gt;%
 &lt;h1&gt;Functionalize&lt;/h1&gt;
 &lt;p&gt;I put these steps into a few (unpolished) functions found at &lt;a href=&#34;https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1&#34;&gt;this gist&lt;/a&gt;&lt;a href=&#34;#fn20&#34; class=&#34;footnote-ref&#34; id=&#34;fnref20&#34;&gt;&lt;sup&gt;20&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::source_gist(&amp;quot;https://gist.github.com/brshallo/f92a5820030e21cfed8f823a6e1d56e1&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Error in get(genname, envir = envir) : object &amp;#39;testthat_print&amp;#39; not found&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;code&gt;mutate_pairwise()&lt;/code&gt; takes in your dataframe, the set of numeric columns to create pairwise combinations from, and a list of functions&lt;a href=&#34;#fn21&#34; class=&#34;footnote-ref&#34; id=&#34;fnref21&#34;&gt;&lt;sup&gt;21&lt;/sup&gt;&lt;/a&gt; to apply.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;example-creating-evaluating-features&#34; class=&#34;section level1&#34;&gt;
@@ -1261,7 +1271,7 @@ ames_data_features_example %&amp;gt;%
   labs(title = &amp;quot;Distribution of correlations with Sale_Price&amp;quot;,
        subtitle = &amp;quot;Weighted by Lot Area&amp;quot;,
        x = &amp;quot;Weighted correlation coefficient&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-18-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-05-31-tidy-2-way-column-combinations_files/figure-html/unnamed-chunk-18-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;If doing predictive modeling or inference you may want to fit any transformations and analysis into a &lt;code&gt;tidymodels&lt;/code&gt; pipeline or other framework. For some brief notes on this see &lt;a href=&#34;#interactions-example-tidymodels&#34;&gt;Interactions example, tidymodels&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;when-is-this-approach-inappropriate&#34; class=&#34;section level1&#34;&gt;
@@ -1346,7 +1356,7 @@ ames_data_features_example %&amp;gt;%
                         Price2, 
                         stats::ks.test) %&amp;gt;% map_dbl(&amp;quot;p.value&amp;quot;)
   )&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-05-31-tidy-2-way-column-combinations_files/pairwise-comparison-gif-edit.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-05-31-tidy-2-way-column-combinations_files/pairwise-comparison-gif-edit.gif&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Actual gif was created by embedding above code into a presentation and exporting it as a gif and then making a few minor edits.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;tweets&#34; class=&#34;section level2&#34;&gt;
@@ -1410,46 +1420,46 @@ How you can use &lt;code&gt;dplyr::mutate()&lt;/code&gt; to return a dataframe c
 &lt;li&gt;I’d need to make some functions that make it so I can remove all the places where I have &lt;code&gt;var&lt;/code&gt; and &lt;code&gt;var2&lt;/code&gt; type column names hard-coded&lt;/li&gt;
 &lt;li&gt;Alternatively, I might shift approaches and make better use of &lt;code&gt;combn()&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Though this “throw everything and the kitchen-sink” approach may not always be a good idea.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I’ve done this type of operation in a variety of ways. Sometimes without any really good reason as to why I used one approach or another. It isn’t completely clear (at least to me) the recommended way of doing these type of operations within the tidyverse – hence the diversity of my approaches in the past and deciding to document the typical steps in the approach I take… via writing this post.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;Or the tidymodels implementation &lt;code&gt;corrr::correlate()&lt;/code&gt; in the &lt;a href=&#34;https://corrr.tidymodels.org/&#34;&gt;corrr&lt;/a&gt; package.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;or is not in a style you prefer&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;I’ll also reference related approaches / small tweaks (putting those materials in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;. This is by no means an exhaustive list (e.g. don’t have an example with a &lt;code&gt;for&lt;/code&gt; loop or with a &lt;code&gt;%do%&lt;/code&gt; operator). The source code of my post on &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/&#34;&gt;Ambiguous Absolute Value&lt;/a&gt; signs shows a related but more complex / messy approach on a combinatorics problem.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;In particular, the chapters on “Iteration” and “Many Models” in &lt;a href=&#34;https://r4ds.had.co.nz/iteration.html&#34;&gt;R for Data Science&lt;/a&gt;. I would also recommend Rebecca Barter’s &lt;a href=&#34;http://www.rebeccabarter.com/blog/2019-08-19_purrr/&#34;&gt;Learn to purrr&lt;/a&gt; blog post.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Though this “throw everything and the kitchen-sink” approach may not always be a good idea.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I’ve done this type of operation in a variety of ways. Sometimes without any really good reason as to why I used one approach or another. It isn’t completely clear (at least to me) the recommended way of doing these type of operations within the tidyverse – hence the diversity of my approaches in the past and deciding to document the typical steps in the approach I take… via writing this post.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;Or the tidymodels implementation &lt;code&gt;corrr::correlate()&lt;/code&gt; in the &lt;a href=&#34;https://corrr.tidymodels.org/&#34;&gt;corrr&lt;/a&gt; package.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;or is not in a style you prefer&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;I’ll also reference related approaches / small tweaks (putting those materials in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;. This is by no means an exhaustive list (e.g. don’t have an example with a &lt;code&gt;for&lt;/code&gt; loop or with a &lt;code&gt;%do%&lt;/code&gt; operator). The source code of my post on &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/&#34;&gt;Ambiguous Absolute Value&lt;/a&gt; signs shows a related but more complex / messy approach on a combinatorics problem.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;In particular, the chapters on “Iteration” and “Many Models” in &lt;a href=&#34;https://r4ds.had.co.nz/iteration.html&#34;&gt;R for Data Science&lt;/a&gt;. I would also recommend Rebecca Barter’s &lt;a href=&#34;http://www.rebeccabarter.com/blog/2019-08-19_purrr/&#34;&gt;Learn to purrr&lt;/a&gt; blog post.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;The new &lt;code&gt;dplyr&lt;/code&gt; 1.0.0. contains new functions that would have been potentially useful for several of these operations. I highly recommend checking these updates out in the various &lt;a href=&#34;https://www.tidyverse.org/tags/dplyr-1-0-0/&#34;&gt;recent posts&lt;/a&gt; by Hadley Wickham. Some of the major updates (potentially relevant to the types of operations I’ll be discussing in my post):&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;new approach for across-column operations (replacing &lt;code&gt;_at()&lt;/code&gt;, &lt;code&gt;_if()&lt;/code&gt;, &lt;code&gt;_all()&lt;/code&gt; variants with &lt;code&gt;across()&lt;/code&gt; function)&lt;/li&gt;
 &lt;li&gt;brought-back rowwise operations&lt;/li&gt;
 &lt;li&gt;emphasize ability to output tibbles / multiple columns in core &lt;code&gt;dplyr&lt;/code&gt; verbs. This is something I had only taken advantage of occassionally in the past (&lt;a href=&#34;https://stackoverflow.com/a/54725732/9059865&#34;&gt;example&lt;/a&gt;), but will look to use more going forward.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;f I’d spotted this issue initially I’m not sure I would have written this post. However what this post offers is a more verbose treatment of the problem which may be useful for people newer to pairwise operations or the tidyverse.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;For technical reasons, I also converted all integer types to doubles – was getting integer overflow problems in later operations before changing. &lt;a href=&#34;https://stackoverflow.com/questions/8804779/what-is-integer-overflow-in-r-and-how-can-it-happen&#34;&gt;Thread&lt;/a&gt; on integer overflow in R. In this post I’m not taking a disciplined approach to feature engineering. For example it may make sense to normalize the variables so that variable combinations would be starting on a similar scale. This could be done using &lt;code&gt;recipes::step_normalize()&lt;/code&gt; or with code like &lt;code&gt;dplyr::mutate_all(df, ~(. - mean(.)) / sd(.))&lt;/code&gt; .&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Note that this part of the problem is one where I actually find using &lt;code&gt;tidyr::gather()&lt;/code&gt; easier – but I’ve been forcing myself to switch over to using the &lt;code&gt;pivot_()&lt;/code&gt; functions over &lt;code&gt;spread()&lt;/code&gt; and &lt;code&gt;gather()&lt;/code&gt;.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;The more common approach.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;If your variables are across rows you are likely concerned with getting summary metrics rather than creating new features – as if your data is across rows there is nothing guaranteeing you have the same number of observations or that they are lined-up appropriately. If you &lt;em&gt;are&lt;/em&gt; interested in creating new features, you should probably have first reshaped your data to ensure each column represented a variable.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;As switching these would be more computationally efficient – see &lt;a href=&#34;#when-is-this-approach-inappropriate&#34;&gt;When is this approach inappropriate?&lt;/a&gt; for notes related to this. Switching the order here would suggest using approaches with the&lt;code&gt;combn()&lt;/code&gt; function.&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;I.e. has the same output regardless of the order of the variables. E.g. multiplication or addition but not subtraction or division.&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;Function(s) that output vectors of length 1 (or less than length of input vectors).&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;Note that the pairwise implementation &lt;code&gt;psych::corr.test()&lt;/code&gt; could have been used on your original subsetted dataframe, see &lt;a href=&#34;https://stackoverflow.com/questions/13112238/a-matrix-version-of-cor-test&#34;&gt;stack overflow thread&lt;/a&gt;.&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn18&#34;&gt;&lt;p&gt;Function(s) that output vector of length equal to length of input vectors.&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;Did not print this output because cluttered-up page with so many column names.&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn20&#34;&gt;&lt;p&gt;Steps I - III and V &amp;amp; VI are essentially direct copies of the code above. The approach I took with Step IV may take more effort to follow as it requires understanding a little &lt;code&gt;rlang&lt;/code&gt; and could likely have been done more simply.&lt;a href=&#34;#fnref20&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn21&#34;&gt;&lt;p&gt;Must have two vectors as input, but do not need to be infix functions.&lt;a href=&#34;#fnref21&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn22&#34;&gt;&lt;p&gt;Non-technical article discussing combinatorial explosion in context of company user growth targets: &lt;a href=&#34;https://medium.com/@TorBair/exponential-growth-isn-t-cool-combinatorial-growth-is-85a0b1fdb6a5&#34;&gt;Exponential Growth Isn’t Cool. Combinatorial Growth Is.&lt;/a&gt;.&lt;a href=&#34;#fnref22&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn23&#34;&gt;&lt;p&gt;E.g. &lt;a href=&#34;https://github.com/Rdatatable/data.table&#34;&gt;data.table&lt;/a&gt; dataframes&lt;a href=&#34;#fnref23&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;Hence, if you are doing operations across combinations of lots of variables it may not make sense to do the operations directly within dataframes.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;Much (if not most) of the &lt;code&gt;tidyverse&lt;/code&gt; (and the R programming language generally) is about creating a smooth interface between the analyst/scientist and the back-end complexity of the operations they are performing. Projects like &lt;a href=&#34;https://spark.rstudio.com/&#34;&gt;sparklyr&lt;/a&gt;, &lt;a href=&#34;https://db.rstudio.com/dbi/&#34;&gt;DBI&lt;/a&gt;, &lt;a href=&#34;https://github.com/rstudio/reticulate&#34;&gt;reticulate&lt;/a&gt;, &lt;a href=&#34;https://www.tidymodels.org/&#34;&gt;tidymodels&lt;/a&gt;, and &lt;a href=&#34;https://github.com/paul-buerkner/brms&#34;&gt;brms&lt;/a&gt; (to name a few) represent cases where this &lt;em&gt;interface&lt;/em&gt; role of R is most apparent.&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn26&#34;&gt;&lt;p&gt;For tidyverse packages, this is often returned into or in the form of a dataframe.&lt;a href=&#34;#fnref26&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn27&#34;&gt;&lt;p&gt;Could make better use of &lt;code&gt;combn()&lt;/code&gt; function to help.&lt;a href=&#34;#fnref27&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn28&#34;&gt;&lt;p&gt;Depending on the complexity may just need to brush-up on your linear algebra.&lt;a href=&#34;#fnref28&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn29&#34;&gt;&lt;p&gt;&lt;code&gt;corrr&lt;/code&gt; can also be used to run the operation on databases that may have larger data than you could fit on your computer.&lt;a href=&#34;#fnref29&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn30&#34;&gt;&lt;p&gt;Likely more common for many, if not most, analysts and data scientists.&lt;a href=&#34;#fnref30&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn31&#34;&gt;&lt;p&gt;I.e. multiplying two variables together&lt;a href=&#34;#fnref31&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn32&#34;&gt;&lt;p&gt;Created upon the recipe being &lt;em&gt;baked&lt;/em&gt; or &lt;em&gt;juiced&lt;/em&gt; – if you have not checked it out, &lt;a href=&#34;https://github.com/tidymodels/recipes&#34;&gt;recipes&lt;/a&gt; is AWESOME!&lt;a href=&#34;#fnref32&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn33&#34;&gt;&lt;p&gt;Maybe at a future date I’ll make a post writing out the example here using the newer approaches now available in &lt;code&gt;tidymodels&lt;/code&gt;. &lt;a href=&#34;https://gist.github.com/brshallo/674ff06608c1a55fefb8d5dc49896d65&#34;&gt;Gist&lt;/a&gt; of &lt;code&gt;combn_ttible()&lt;/code&gt;… starting place for if I ever get to that write-up.&lt;a href=&#34;#fnref33&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn34&#34;&gt;&lt;p&gt;Could also have used &lt;code&gt;right_join()&lt;/code&gt; or &lt;code&gt;full_join()&lt;/code&gt;.&lt;a href=&#34;#fnref34&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;f I’d spotted this issue initially I’m not sure I would have written this post. However what this post offers is a more verbose treatment of the problem which may be useful for people newer to pairwise operations or the tidyverse.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;For technical reasons, I also converted all integer types to doubles – was getting integer overflow problems in later operations before changing. &lt;a href=&#34;https://stackoverflow.com/questions/8804779/what-is-integer-overflow-in-r-and-how-can-it-happen&#34;&gt;Thread&lt;/a&gt; on integer overflow in R. In this post I’m not taking a disciplined approach to feature engineering. For example it may make sense to normalize the variables so that variable combinations would be starting on a similar scale. This could be done using &lt;code&gt;recipes::step_normalize()&lt;/code&gt; or with code like &lt;code&gt;dplyr::mutate_all(df, ~(. - mean(.)) / sd(.))&lt;/code&gt; .&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Note that this part of the problem is one where I actually find using &lt;code&gt;tidyr::gather()&lt;/code&gt; easier – but I’ve been forcing myself to switch over to using the &lt;code&gt;pivot_()&lt;/code&gt; functions over &lt;code&gt;spread()&lt;/code&gt; and &lt;code&gt;gather()&lt;/code&gt;.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;The more common approach.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;If your variables are across rows you are likely concerned with getting summary metrics rather than creating new features – as if your data is across rows there is nothing guaranteeing you have the same number of observations or that they are lined-up appropriately. If you &lt;em&gt;are&lt;/em&gt; interested in creating new features, you should probably have first reshaped your data to ensure each column represented a variable.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;As switching these would be more computationally efficient – see &lt;a href=&#34;#when-is-this-approach-inappropriate&#34;&gt;When is this approach inappropriate?&lt;/a&gt; for notes related to this. Switching the order here would suggest using approaches with the&lt;code&gt;combn()&lt;/code&gt; function.&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;I.e. has the same output regardless of the order of the variables. E.g. multiplication or addition but not subtraction or division.&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;Function(s) that output vectors of length 1 (or less than length of input vectors).&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;Note that the pairwise implementation &lt;code&gt;psych::corr.test()&lt;/code&gt; could have been used on your original subsetted dataframe, see &lt;a href=&#34;https://stackoverflow.com/questions/13112238/a-matrix-version-of-cor-test&#34;&gt;stack overflow thread&lt;/a&gt;.&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn18&#34;&gt;&lt;p&gt;Function(s) that output vector of length equal to length of input vectors.&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;Did not print this output because cluttered-up page with so many column names.&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn20&#34;&gt;&lt;p&gt;Steps I - III and V &amp;amp; VI are essentially direct copies of the code above. The approach I took with Step IV may take more effort to follow as it requires understanding a little &lt;code&gt;rlang&lt;/code&gt; and could likely have been done more simply.&lt;a href=&#34;#fnref20&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn21&#34;&gt;&lt;p&gt;Must have two vectors as input, but do not need to be infix functions.&lt;a href=&#34;#fnref21&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn22&#34;&gt;&lt;p&gt;Non-technical article discussing combinatorial explosion in context of company user growth targets: &lt;a href=&#34;https://medium.com/@TorBair/exponential-growth-isn-t-cool-combinatorial-growth-is-85a0b1fdb6a5&#34;&gt;Exponential Growth Isn’t Cool. Combinatorial Growth Is.&lt;/a&gt;.&lt;a href=&#34;#fnref22&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn23&#34;&gt;&lt;p&gt;E.g. &lt;a href=&#34;https://github.com/Rdatatable/data.table&#34;&gt;data.table&lt;/a&gt; dataframes&lt;a href=&#34;#fnref23&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;Hence, if you are doing operations across combinations of lots of variables it may not make sense to do the operations directly within dataframes.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;Much (if not most) of the &lt;code&gt;tidyverse&lt;/code&gt; (and the R programming language generally) is about creating a smooth interface between the analyst/scientist and the back-end complexity of the operations they are performing. Projects like &lt;a href=&#34;https://spark.rstudio.com/&#34;&gt;sparklyr&lt;/a&gt;, &lt;a href=&#34;https://db.rstudio.com/dbi/&#34;&gt;DBI&lt;/a&gt;, &lt;a href=&#34;https://github.com/rstudio/reticulate&#34;&gt;reticulate&lt;/a&gt;, &lt;a href=&#34;https://www.tidymodels.org/&#34;&gt;tidymodels&lt;/a&gt;, and &lt;a href=&#34;https://github.com/paul-buerkner/brms&#34;&gt;brms&lt;/a&gt; (to name a few) represent cases where this &lt;em&gt;interface&lt;/em&gt; role of R is most apparent.&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn26&#34;&gt;&lt;p&gt;For tidyverse packages, this is often returned into or in the form of a dataframe.&lt;a href=&#34;#fnref26&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn27&#34;&gt;&lt;p&gt;Could make better use of &lt;code&gt;combn()&lt;/code&gt; function to help.&lt;a href=&#34;#fnref27&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn28&#34;&gt;&lt;p&gt;Depending on the complexity may just need to brush-up on your linear algebra.&lt;a href=&#34;#fnref28&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn29&#34;&gt;&lt;p&gt;&lt;code&gt;corrr&lt;/code&gt; can also be used to run the operation on databases that may have larger data than you could fit on your computer.&lt;a href=&#34;#fnref29&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn30&#34;&gt;&lt;p&gt;Likely more common for many, if not most, analysts and data scientists.&lt;a href=&#34;#fnref30&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn31&#34;&gt;&lt;p&gt;I.e. multiplying two variables together&lt;a href=&#34;#fnref31&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn32&#34;&gt;&lt;p&gt;Created upon the recipe being &lt;em&gt;baked&lt;/em&gt; or &lt;em&gt;juiced&lt;/em&gt; – if you have not checked it out, &lt;a href=&#34;https://github.com/tidymodels/recipes&#34;&gt;recipes&lt;/a&gt; is AWESOME!&lt;a href=&#34;#fnref32&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn33&#34;&gt;&lt;p&gt;Maybe at a future date I’ll make a post writing out the example here using the newer approaches now available in &lt;code&gt;tidymodels&lt;/code&gt;. &lt;a href=&#34;https://gist.github.com/brshallo/674ff06608c1a55fefb8d5dc49896d65&#34;&gt;Gist&lt;/a&gt; of &lt;code&gt;combn_ttible()&lt;/code&gt;… starting place for if I ever get to that write-up.&lt;a href=&#34;#fnref33&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn34&#34;&gt;&lt;p&gt;Could also have used &lt;code&gt;right_join()&lt;/code&gt; or &lt;code&gt;full_join()&lt;/code&gt;.&lt;a href=&#34;#fnref34&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
@@ -1457,11 +1467,12 @@ How you can use &lt;code&gt;dplyr::mutate()&lt;/code&gt; to return a dataframe c
     
     <item>
       <title>animatrixr &amp; Visualizing Matrix Transformations pt. 2</title>
-      <link>/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</link>
+      <link>https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</link>
       <pubDate>Mon, 24 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</guid>
+      <guid>https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;This post is a continuation on my post from last week on &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/&#34;&gt;Visualizing Matrix Transformations with gganimate&lt;/a&gt;. Both posts are largely inspired by &lt;a href=&#34;https://twitter.com/3blue1brown&#34;&gt;Grant Sanderson’s&lt;/a&gt; beautiful video series &lt;a href=&#34;https://www.youtube.com/watch?v=kYB8IZa5AuE&amp;amp;list=PL_w8oSr1JpVCZ5pKXHKz6PkjGCbPbSBYv&amp;amp;index=4&#34;&gt;The Essence of Linear Algebra&lt;/a&gt; and wanting to continue messing around with &lt;a href=&#34;https://github.com/thomasp85/gganimate&#34;&gt;Thomas Lin Peterson’s&lt;/a&gt; fantastic &lt;a href=&#34;https://github.com/thomasp85/gganimate&#34;&gt;gganimate&lt;/a&gt; package in R.&lt;/p&gt;
@@ -1507,7 +1518,7 @@ reflect_x &amp;lt;- tribble(~ x, ~ y,
                      seq_fun = animatrixr::seq_matrix_l,
                      n_frames = 40) %&amp;gt;% 
   animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/vsheer-hsheer-reflect-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/vsheer-hsheer-reflect-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;add_transformation()&lt;/code&gt; explicitly creates in-between frames for a given transformation. The &lt;code&gt;seq_fun&lt;/code&gt; argument allows you to define the interpolation method, for example whether the coordinates should (during the animation) follow a linear path (default) or the angle of a rotation.&lt;/p&gt;
 &lt;p&gt;It would be nice to add-in functionality where the final transformation object could then be added to layers of a ggplot (though I’ve done nothing towards this except add an argument in &lt;code&gt;animatrixr::animate_matrix()&lt;/code&gt; for displaying the &lt;a href=&#34;https://github.com/lockedata/datasauRus&#34;&gt;datasauRus&lt;/a&gt;).&lt;/p&gt;
 &lt;p&gt;(Warning: &lt;code&gt;animatrixr&lt;/code&gt; is severely limited, as discussed in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; and in package documentation. However you can find it at the “brshallo/animatrixr” repo on &lt;a href=&#34;https://github.com/brshallo/animatrixr&#34;&gt;my github page&lt;/a&gt;.)&lt;/p&gt;
@@ -1524,13 +1535,13 @@ reflect_x &amp;lt;- tribble(~ x, ~ y,
 matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
   add_transformation(rotate_90) %&amp;gt;% 
   animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-linear-1.gif&#34; width=&#34;71%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-linear-1.gif&#34; width=&#34;71%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Linear interpolation makes the rotation transformation appear scrunched during the animation (from how we intuitively think of a rotation) as the coordinate points take a straight line path to their positions after applying the transformation&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;To make the in-between coordinates instead follow the angle of rotation we could change the &lt;code&gt;seq_fun&lt;/code&gt; from &lt;code&gt;animatrixr::seq_matrix_l&lt;/code&gt; to &lt;code&gt;animatrixr::seq_matrix_lp&lt;/code&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
   add_transformation(rotate_90, seq_fun = animatrixr::seq_matrix_lp) %&amp;gt;% 
   animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-polar-sheer-linear-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-polar-sheer-linear-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;During the rotation portion of the animation &lt;code&gt;gganimate&lt;/code&gt; is still tweening images linearly, however the frames &lt;code&gt;add_transformation()&lt;/code&gt; creates are now following along the angle of rotation of the transformation. Hence the animation ends-up approximating a curved path.&lt;/p&gt;
 &lt;p&gt;However, &lt;code&gt;seq_matrix_lp()&lt;/code&gt; needs improvement and was just set-up to work for toy examples – it really only looks ‘right’ if doing rotations off of &lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} 1 &amp;amp; 0\\0  &amp;amp; 1 \end{array}\right)\]&lt;/span&gt; See &lt;a href=&#34;#showing-rotations&#34;&gt;Showing rotations&lt;/a&gt; in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; for additional detail on how this is set-up and the various limitations with &lt;code&gt;animatrixr&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Happy animatrixing!&lt;/p&gt;
@@ -1542,7 +1553,7 @@ matrix(c(1,0,0,1), nrow = 2) %&amp;gt;%
   add_transformation(matrix(c(1, 0.5, 0, 1), nrow = 2)) %&amp;gt;% 
   add_transformation(matrix(c(1, 0, 0, -1), nrow = 2)) %&amp;gt;% 
   animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/unnamed-chunk-1-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/unnamed-chunk-1-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Appendix&lt;/h1&gt;
@@ -1587,7 +1598,7 @@ matrix(c(1,0,0,1), nrow = 2) %&amp;gt;%
 matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
   add_transformation(transformation_matrix, seq_fun = seq_matrix_rotate_first) %&amp;gt;% 
   animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-sheer-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-sheer-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;There are (especially) a lot of problems with this function currently and I don’t recommend using it e.g.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;only works (at all correctly) if starting from standard unit vectors (hence cannot really be combined into a chain of matrix transformations)&lt;/li&gt;
@@ -1601,15 +1612,15 @@ E.g. if M = {rotation}{vertical sheer} vs. M = {rotation}{horizontal sheer} –
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Provides a cleaner approach for doing this compared to the clunky method I walked through in my post last week.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;All visualizations from last week used this linear interpolation method.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I discuss this at more length in my previous post – see the sub-section in the “Appendix”, “Problem of squeezing during rotation”.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;However I also hadn’t planned on writing a follow-up post… so who knows…&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;See &lt;a href=&#34;https://computergraphics.stackexchange.com/questions/3932/animating-a-smooth-linear-transformation&#34;&gt;post&lt;/a&gt; referencing this.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Provides a cleaner approach for doing this compared to the clunky method I walked through in my post last week.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;All visualizations from last week used this linear interpolation method.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I discuss this at more length in my previous post – see the sub-section in the “Appendix”, “Problem of squeezing during rotation”.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;However I also hadn’t planned on writing a follow-up post… so who knows…&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;See &lt;a href=&#34;https://computergraphics.stackexchange.com/questions/3932/animating-a-smooth-linear-transformation&#34;&gt;post&lt;/a&gt; referencing this.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;To find the ‘other’ component of a matrix transformation… say &lt;em&gt;M&lt;/em&gt; represents the overall matrix transformation, in &lt;a href=&#34;#showing-rotations&#34;&gt;Showing rotations&lt;/a&gt; I described how to calculate &lt;em&gt;R&lt;/em&gt; (the rotation component), hence to calculate &lt;em&gt;A&lt;/em&gt;, ‘other’, I do:&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AR = M\]&lt;/span&gt;
 &lt;span class=&#34;math display&#34;&gt;\[ARR^{-1} = MR^{-1}\]&lt;/span&gt;
-&lt;span class=&#34;math display&#34;&gt;\[A = MR^{-1}\]&lt;/span&gt;&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;span class=&#34;math display&#34;&gt;\[A = MR^{-1}\]&lt;/span&gt;&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>

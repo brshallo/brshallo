@@ -5,12 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Hugo 0.75.0" />
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
 
 <title>Riddler Solutions: Pedestrian Puzzles - Bryan Shalloway&#39;s Blog</title>
 <meta property="og:title" content="Riddler Solutions: Pedestrian Puzzles - Bryan Shalloway&#39;s Blog">
 
 
-  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='https://www.bryanshalloway.com/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -30,6 +32,17 @@
 <link rel="stylesheet" href="/css/fonts.css" media="all">
 <link rel="stylesheet" href="/css/main.css" media="all">
 
+<script async src="https://use.fontawesome.com/32c3d13def.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <link rel="stylesheet" href="/css/custom.css" />
+
+
+
+
+  <script src="/js/collapse.js"></script>
+  <script src="/js/dropdown.js"></script>
+  <script src="/js/transition.js"></script>
 
 
   </head>
@@ -41,20 +54,20 @@
     <img src="/images/bryan_edit.jpg"
          width="60"
          height="60"
-         alt="Logo">
+         alt="Home">
   </a>
 
   <ul class="nav-links">
     
     <li><a href="/about/">About</a></li>
     
-    <li><a href="https://twitter.com/brshallo">Twitter</a></li>
+    <li><a href="/">Posts</a></li>
+    
+    <li><a href="https://www.youtube.com/watch?v=c9oU7ALJS3o&amp;list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95&amp;index=1">Presentations</a></li>
     
     <li><a href="https://github.com/brshallo">GitHub</a></li>
     
     <li><a href="https://www.linkedin.com/in/bryanshalloway/">LinkedIn</a></li>
-    
-    <li><a href="https://www.youtube.com/watch?v=gme4Fb9JVjk&amp;list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95">YouTube</a></li>
     
   </ul>
 </nav>
@@ -72,17 +85,58 @@
     <h1 class="article-title">Riddler Solutions: Pedestrian Puzzles</h1>
 
     
+    <p class="terms">
+      
+      
+      Tags:
+      
+      <a href='/tags/tidyr'>tidyr</a>
+      
+      <a href='/tags/dplyr'>dplyr</a>
+      
+      <a href='/tags/animatrixr'>animatrixr</a>
+      
+      <a href='/tags/knitr'>knitr</a>
+      
+      <a href='/tags/ggplot'>ggplot</a>
+      
+      <a href='/tags/ggforce'>ggforce</a>
+      
+      <a href='/tags/purrr'>purrr</a>
+      
+      <a href='/tags/forcats'>forcats</a>
+      
+      
+      
+    </p>
+    
     <span class="article-date">2020-03-04</span>
     
+    
+<div id="code-folding-buttons" class="btn-group pull-right">
+  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-_extension-text-contrast="">
+    <span>Show/Hide all code</span> 
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" style="min-width: 50px;">
+  <li><a id="rmd-show-all-code" href="#">Show All Code</a>
+  </li><li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+  </ul>
+</div>
 
+
+    
+    
     <div class="article-content">
       
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 <div id="TOC">
 <ul>
 <li><a href="#riddler-express">Riddler express</a></li>
 <li><a href="#riddler-classic">Riddler classic</a></li>
-<li><a href="#appendix">Appendix</a><ul>
+<li><a href="#appendix">Appendix</a>
+<ul>
 <li><a href="#time-to-center">Time to center</a></li>
 <li><a href="#transform-grid-rotate-first">Transform grid, rotate first</a></li>
 <li><a href="#transform-city-pretty">Transform city, pretty</a></li>
@@ -373,19 +427,19 @@ p_pretty +
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>And wrote a couple preliminary posts on animating matrix transformations that can be found <a href="https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/">here</a> and <a href="https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/">here</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>Is large enough to get a reasonable approximation for the answer.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>I.e. straight line distance.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>The Manhattan Length is just the shortest number of city blocks between points.<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>I highly recommend the Essence of Linear Algebra video series, particularly chapter 3 (on Matrix Transformations) and <a href="https://www.youtube.com/watch?v=P2LTAUO1TdA">13</a> (on Change of basis).<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>In R, you can use the <code>solve()</code> function to give you the inverse of a matrix.<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>We have already done most of the computations we’ll need and can follow similar steps to those taken in the <a href="#riddler-express">Riddler Express</a> solution.<a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>I.e. length of an individual city block, or in this case, component of a city block.<a href="#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p>In the diagram below, we will actually have it be a function of one-half of the inverse of the proportion – this is because there are two diagonals adjoining each horizontal component.<a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p>This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, <em>x</em>, of a triangle created by a diagonal.<a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p>Note that if we were to set x = 0, the distance from each location would be equivalent to the distances in our starting (horizontal) grid, and if we set x = 0.5, the distances would be equal to those in our transformed (diagonal) grid.<a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>Note that we are not taking into account the tiny differences that emerge regarding starting location for each resident (i.e. which point within a Barcelona square should they start). If we make the grid arbitrarily large, these differences become inconsequential – hence we can ignore them.<a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p>The origin of our coordinate systems.<a href="#fnref13" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>And wrote a couple preliminary posts on animating matrix transformations that can be found <a href="https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/">here</a> and <a href="https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/">here</a><a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Is large enough to get a reasonable approximation for the answer.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>I.e. straight line distance.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>The Manhattan Length is just the shortest number of city blocks between points.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>I highly recommend the Essence of Linear Algebra video series, particularly chapter 3 (on Matrix Transformations) and <a href="https://www.youtube.com/watch?v=P2LTAUO1TdA">13</a> (on Change of basis).<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>In R, you can use the <code>solve()</code> function to give you the inverse of a matrix.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>We have already done most of the computations we’ll need and can follow similar steps to those taken in the <a href="#riddler-express">Riddler Express</a> solution.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>I.e. length of an individual city block, or in this case, component of a city block.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>In the diagram below, we will actually have it be a function of one-half of the inverse of the proportion – this is because there are two diagonals adjoining each horizontal component.<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, <em>x</em>, of a triangle created by a diagonal.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>Note that if we were to set x = 0, the distance from each location would be equivalent to the distances in our starting (horizontal) grid, and if we set x = 0.5, the distances would be equal to those in our transformed (diagonal) grid.<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>Note that we are not taking into account the tiny differences that emerge regarding starting location for each resident (i.e. which point within a Barcelona square should they start). If we make the grid arbitrarily large, these differences become inconsequential – hence we can ignore them.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>The origin of our coordinate systems.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 
@@ -423,13 +477,28 @@ p_pretty +
       <footer class="footer">
         <ul class="footer-links">
           <li>
-            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+            <a href="/tags">Tags</a>
           </li>
           <li>
-            <a>Blogroll:</a><a href="https://www.r-bloggers.com/" class="footer-links-kudos">R-Bloggers</a><a href="https://rweekly.org/" class="footer-links-kudos">R-Weekly</a>
+            <a href="/categories">Categories</a>
+          </li>
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          
+          <li>
+            Blogroll:<a href="https://www.r-bloggers.com/" class="footer-links-kudos">R-Bloggers</a><a href="https://rweekly.org/" class="footer-links-kudos">R-Weekly</a>
           </li>
         </ul>
       </footer>
+
+ 
+  <script>
+  $(document).ready(function () {
+    window.initializeCodeFolding("show" === "show");
+  });
+  </script>
+  <script src="/js/codefolding.js"></script>
 
     </div>
     

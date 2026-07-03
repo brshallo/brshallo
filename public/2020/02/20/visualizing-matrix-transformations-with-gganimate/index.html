@@ -5,12 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Hugo 0.75.0" />
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
 
 <title>Visualizing Matrix Transformations - Bryan Shalloway&#39;s Blog</title>
 <meta property="og:title" content="Visualizing Matrix Transformations - Bryan Shalloway&#39;s Blog">
 
 
-  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='https://www.bryanshalloway.com/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -30,6 +32,17 @@
 <link rel="stylesheet" href="/css/fonts.css" media="all">
 <link rel="stylesheet" href="/css/main.css" media="all">
 
+<script async src="https://use.fontawesome.com/32c3d13def.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <link rel="stylesheet" href="/css/custom.css" />
+
+
+
+
+  <script src="/js/collapse.js"></script>
+  <script src="/js/dropdown.js"></script>
+  <script src="/js/transition.js"></script>
 
 
   </head>
@@ -41,20 +54,20 @@
     <img src="/images/bryan_edit.jpg"
          width="60"
          height="60"
-         alt="Logo">
+         alt="Home">
   </a>
 
   <ul class="nav-links">
     
     <li><a href="/about/">About</a></li>
     
-    <li><a href="https://twitter.com/brshallo">Twitter</a></li>
+    <li><a href="/">Posts</a></li>
+    
+    <li><a href="https://www.youtube.com/watch?v=c9oU7ALJS3o&amp;list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95&amp;index=1">Presentations</a></li>
     
     <li><a href="https://github.com/brshallo">GitHub</a></li>
     
     <li><a href="https://www.linkedin.com/in/bryanshalloway/">LinkedIn</a></li>
-    
-    <li><a href="https://www.youtube.com/watch?v=gme4Fb9JVjk&amp;list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95">YouTube</a></li>
     
   </ul>
 </nav>
@@ -72,11 +85,49 @@
     <h1 class="article-title">Visualizing Matrix Transformations</h1>
 
     
+    <p class="terms">
+      
+      
+      Tags:
+      
+      <a href='/tags/dplyr'>dplyr</a>
+      
+      <a href='/tags/tidyr'>tidyr</a>
+      
+      <a href='/tags/ggplot'>ggplot</a>
+      
+      <a href='/tags/ggforce'>ggforce</a>
+      
+      <a href='/tags/purrr'>purrr</a>
+      
+      <a href='/tags/knitr'>knitr</a>
+      
+      <a href='/tags/gganimate'>gganimate</a>
+      
+      
+      
+    </p>
+    
     <span class="article-date">2020-02-20</span>
     
+    
+<div id="code-folding-buttons" class="btn-group pull-right">
+  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-_extension-text-contrast="">
+    <span>Show/Hide all code</span> 
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" style="min-width: 50px;">
+  <li><a id="rmd-show-all-code" href="#">Show All Code</a>
+  </li><li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+  </ul>
+</div>
 
+
+    
+    
     <div class="article-content">
       
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p>I highly recommend the fantastic video series <a href="https://www.youtube.com/watch?v=fNk_zzaMoSs&amp;list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab">Essence of Linear Algebra</a> by <a href="https://twitter.com/3blue1brown">Grant Sanderson</a>. In this post I’ll walk through how you can use <code>gganimate</code> and the <code>tidyverse</code> to (very loosely) recreate some of the visualizations shown in that series. Specifically those on matrix transformations and changing the basis vectors<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
@@ -512,20 +563,20 @@ y_breaks &lt;-
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Which are shown throughout the series and most notably in chapters 3 and 13.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>See section [Problems and potential improvements] for notes on a couple potential updates I’ll make… not positive I’ll keep the gist code updated.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>And may not care about understanding how to do multiple transformations, adding additional layers, etc.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>/ vectors<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>I’m guessing there is a better / more elegant function already out there for ‘tidy matrix multiplication’ or something… but couldn’t immediately think of anything.<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>You could add additional objects to the image – just need to ensure you create <em>start</em> and <em>transformed</em> versions of each object.<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>Creating these is not needed if you just wanted to create static images for the below examples.<a href="#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>No real reason for choosing this transformation, just thought it looked cool.<a href="#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p>If wrap = TRUE (default) the reverse looping of the image is inaccurate as the transformation back to the original basis actually represents a transformation by the inverse of the <code>transformation matrix</code>. Though leaving it in would look cooler.<a href="#fnref9" class="footnote-back">↩</a></p></li>
-<li id="fn10"><p>Could functionalize more… or make a shiny app, or do more with, see [Problems and potential improvements] for notes…<a href="#fnref10" class="footnote-back">↩</a></p></li>
-<li id="fn11"><p>Can largely skim over<a href="#fnref11" class="footnote-back">↩</a></p></li>
-<li id="fn12"><p>Though this gets into decomposing the rotation, etc. components of the matrix transformation of interest for each frame.<a href="#fnref12" class="footnote-back">↩</a></p></li>
-<li id="fn13"><p>Seems issue has to do with <code>group</code> needing to apply both to the polygon at a given time as well as points on the polygon across time.<a href="#fnref13" class="footnote-back">↩</a></p></li>
-<li id="fn14"><p>Would require latex title which I don’t know if is supported by <code>gganimate</code><a href="#fnref14" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>Which are shown throughout the series and most notably in chapters 3 and 13.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>See section [Problems and potential improvements] for notes on a couple potential updates I’ll make… not positive I’ll keep the gist code updated.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>And may not care about understanding how to do multiple transformations, adding additional layers, etc.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>/ vectors<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>I’m guessing there is a better / more elegant function already out there for ‘tidy matrix multiplication’ or something… but couldn’t immediately think of anything.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>You could add additional objects to the image – just need to ensure you create <em>start</em> and <em>transformed</em> versions of each object.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>Creating these is not needed if you just wanted to create static images for the below examples.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>No real reason for choosing this transformation, just thought it looked cool.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>If wrap = TRUE (default) the reverse looping of the image is inaccurate as the transformation back to the original basis actually represents a transformation by the inverse of the <code>transformation matrix</code>. Though leaving it in would look cooler.<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>Could functionalize more… or make a shiny app, or do more with, see [Problems and potential improvements] for notes…<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>Can largely skim over<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>Though this gets into decomposing the rotation, etc. components of the matrix transformation of interest for each frame.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>Seems issue has to do with <code>group</code> needing to apply both to the polygon at a given time as well as points on the polygon across time.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p>Would require latex title which I don’t know if is supported by <code>gganimate</code><a href="#fnref14" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 
@@ -563,13 +614,28 @@ y_breaks &lt;-
       <footer class="footer">
         <ul class="footer-links">
           <li>
-            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+            <a href="/tags">Tags</a>
           </li>
           <li>
-            <a>Blogroll:</a><a href="https://www.r-bloggers.com/" class="footer-links-kudos">R-Bloggers</a><a href="https://rweekly.org/" class="footer-links-kudos">R-Weekly</a>
+            <a href="/categories">Categories</a>
+          </li>
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          
+          <li>
+            Blogroll:<a href="https://www.r-bloggers.com/" class="footer-links-kudos">R-Bloggers</a><a href="https://rweekly.org/" class="footer-links-kudos">R-Weekly</a>
           </li>
         </ul>
       </footer>
+
+ 
+  <script>
+  $(document).ready(function () {
+    window.initializeCodeFolding("show" === "show");
+  });
+  </script>
+  <script src="/js/codefolding.js"></script>
 
     </div>
     

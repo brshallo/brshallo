@@ -2,24 +2,26 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>math on Bryan Shalloway&#39;s Blog</title>
-    <link>/categories/math/</link>
+    <link>https://www.bryanshalloway.com/categories/math/</link>
     <description>Recent content in math on Bryan Shalloway&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 28 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="/categories/math/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 28 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://www.bryanshalloway.com/categories/math/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Gambling Where the House Almost Always Loses... but Still Wins</title>
-      <link>/2020/10/28/idea-for-casino-games-where-the-player-almost-always-win/</link>
+      <link>https://www.bryanshalloway.com/2020/10/28/idea-for-casino-games-where-the-player-almost-always-win/</link>
       <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/10/28/idea-for-casino-games-where-the-player-almost-always-win/</guid>
+      <guid>https://www.bryanshalloway.com/2020/10/28/idea-for-casino-games-where-the-player-almost-always-win/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#biases-in-value&#34;&gt;Biases in Value&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#implications-for-gambling&#34;&gt;Implications for Gambling&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#note-on-prospect-theory&#34;&gt;Note on Prospect Theory&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#wallet-roulette&#34;&gt;Wallet Roulette&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
@@ -35,17 +37,17 @@
 &lt;p&gt;There are a few psychological phenomena from the course that are important primers.&lt;/p&gt;
 &lt;p&gt;I. People tend to be &lt;em&gt;risk seeking&lt;/em&gt; when facing &lt;strong&gt;losses&lt;/strong&gt; but &lt;em&gt;risk averse&lt;/em&gt; when facing &lt;strong&gt;gains&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;An example in the course is that, faced with the scenario below, people will tend to go for the sure thing and win $50 rather than the chance at gaining $100 (even though each option has the same expected value).&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-29-idea-for-casino-games-where-the-player-almost-always-win_files/gain-example.PNG&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-10-29-idea-for-casino-games-where-the-player-almost-always-win_files/gain-example.PNG&#34; /&gt;
 &lt;em&gt;(all images in this section are screenshotted from the &lt;a href=&#34;https://www.coursera.org/learn/uva-darden-bcg-pricing-strategy-customer-value/home/week/4&#34;&gt;coursera materials&lt;/a&gt; created by the University of Virginia and Boston Consulting Group)&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;Though when facing potential losses, people prefer taking their chances and will tend to select the option with the risk of a greater loss (for the possibility of avoiding the loss entirely). They will choose a 50% chance of losing $100 (to avoid a guaranteed loss of $50).&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-29-idea-for-casino-games-where-the-player-almost-always-win_files/loss-example.PNG&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-10-29-idea-for-casino-games-where-the-player-almost-always-win_files/loss-example.PNG&#34; /&gt;&lt;/p&gt;
 &lt;ol start=&#34;2&#34; style=&#34;list-style-type: upper-roman&#34;&gt;
 &lt;li&gt;People tend to prefer &lt;em&gt;disaggregated&lt;/em&gt; &lt;strong&gt;gains&lt;/strong&gt; but &lt;em&gt;aggregated&lt;/em&gt; &lt;strong&gt;losses&lt;/strong&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;People prefer multiple small good events over a single (larger) good event (even if the total value is equal). For example, people will prefer winning two low value scratch cards over winning a single higher value scratch card:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-29-idea-for-casino-games-where-the-player-almost-always-win_files/aggregated-gains.PNG&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-10-29-idea-for-casino-games-where-the-player-almost-always-win_files/aggregated-gains.PNG&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;However people prefer taking losses in aggregated forms. As described in the course, they usually prefer receiving one large bill over multiple smaller bills:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-29-idea-for-casino-games-where-the-player-almost-always-win_files/aggregated-loss.PNG&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-10-29-idea-for-casino-games-where-the-player-almost-always-win_files/aggregated-loss.PNG&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Even though, as with the previous examples, the value of the events are equal&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;implications-for-gambling&#34; class=&#34;section level1&#34;&gt;
@@ -67,9 +69,9 @@
 &lt;/blockquote&gt;
 &lt;p&gt;This suggests that my assertions throughout later parts of this post regarding risk seeking behaviors are likely incorrect&lt;a href=&#34;#fn16&#34; class=&#34;footnote-ref&#34; id=&#34;fnref16&#34;&gt;&lt;sup&gt;16&lt;/sup&gt;&lt;/a&gt;. This misapplication however might not present as much of a problem for my references of people’s preference for aggregated losses and disaggregated gains. Hence at least part of my justification for hypothesizing a game like “Wallet Roulette” may be applicable&lt;a href=&#34;#fn17&#34; class=&#34;footnote-ref&#34; id=&#34;fnref17&#34;&gt;&lt;sup&gt;17&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;It remains possible that multiple gains may represent greater value than a single larger loss. The chart below shows a typical example of the asymmetric S-shaped value function associated with gains/losses in Prospect Theory. Even with its asymmetry (whereby losses are felt more intensely than gains) it is clear that three gains (i.e. wins) of $0.05 would more than offset a single loss of $0.15 (assuming the value derived from individual gains can be aggregated linearly). Hence the types of games I describe may still be worth exploring in gambling contexts.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Loss_Aversion.png/1024px-Loss_Aversion.png&#34; /&gt;
-&lt;em&gt;(Image from Wikipedia page on &lt;a href=&#34;https://en.wikipedia.org/wiki/Prospect_theory&#34;&gt;Prospect Theory&lt;/a&gt;)&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;One explanation for why people gamble at all is people’s tendency to overweight the likelihood of rare events&lt;a href=&#34;#fn18&#34; class=&#34;footnote-ref&#34; id=&#34;fnref18&#34;&gt;&lt;sup&gt;18&lt;/sup&gt;&lt;/a&gt;. While this explains participation in lotteries and sweepstakes it does not explain all forms of gambling. These other forms of gambling present additional challenges for Prospect Theory&lt;a href=&#34;#fn19&#34; class=&#34;footnote-ref&#34; id=&#34;fnref19&#34;&gt;&lt;sup&gt;19&lt;/sup&gt;&lt;/a&gt; to explain. Nick Barberis explains why a Prospect Theory agent may choose to gamble in &lt;a href=&#34;http://www.econ.yale.edu/~shiller/behfin/2009_03/barberis.pdf&#34;&gt;A Model of Casino Gambling&lt;/a&gt;, where he writes:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-10-28-idea-for-casino-games-where-the-player-almost-always-win_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;(Note that a previous version of this post had linked to a &lt;a href=&#34;https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Loss_Aversion.png/1024px-Loss_Aversion.png&#34;&gt;figure&lt;/a&gt; from &lt;a href=&#34;https://en.wikipedia.org/wiki/Prospect_theory&#34;&gt;Wikipedia&lt;/a&gt;. The current version was created using the &lt;code&gt;ptvalue()&lt;/code&gt; function for the “Prospect Theory Value Function” from the &lt;a href=&#34;https://github.com/R-CoderDotCom/econocharts&#34;&gt;econocharts&lt;/a&gt; package in R.&lt;a href=&#34;#fn18&#34; class=&#34;footnote-ref&#34; id=&#34;fnref18&#34;&gt;&lt;sup&gt;18&lt;/sup&gt;&lt;/a&gt;)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;One explanation for why people gamble at all is people’s tendency to overweight the likelihood of rare events&lt;a href=&#34;#fn19&#34; class=&#34;footnote-ref&#34; id=&#34;fnref19&#34;&gt;&lt;sup&gt;19&lt;/sup&gt;&lt;/a&gt;. While this explains participation in lotteries and sweepstakes it does not explain all forms of gambling. These other forms of gambling present additional challenges for Prospect Theory&lt;a href=&#34;#fn20&#34; class=&#34;footnote-ref&#34; id=&#34;fnref20&#34;&gt;&lt;sup&gt;20&lt;/sup&gt;&lt;/a&gt; to explain. Nick Barberis explains why a Prospect Theory agent may choose to gamble in &lt;a href=&#34;http://www.econ.yale.edu/~shiller/behfin/2009_03/barberis.pdf&#34;&gt;A Model of Casino Gambling&lt;/a&gt;, where he writes:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;“What is the intuition for why, in spite of loss aversion, a prospect theory agent might
 still be willing to enter a casino?… We show that, if the agent enters
@@ -77,22 +79,22 @@ the casino, his preferred plan is to gamble as long as possible if he is winning
 gambling and leave the casino if he starts accumulating losses.”&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;The games I describe may appeal to this particular type of agent in that the games would be designed for the player to accumulate wins.&lt;/p&gt;
-&lt;p&gt;The paper describes gamblers with different starting profiles. Variety in motivations and behaviors of gamblers opens the possibility that the types of games discussed in this blog post may appeal to a certain set of players (particularly those that are motivated by the feeling of winning rather than an overweighting of the tails of the probability distribution that likely motivates participation in lotteries and sweepstakes&lt;a href=&#34;#fn20&#34; class=&#34;footnote-ref&#34; id=&#34;fnref20&#34;&gt;&lt;sup&gt;20&lt;/sup&gt;&lt;/a&gt;). I would also suggest that there is ample room to improve the value players derive from slot machine like games&lt;a href=&#34;#fn21&#34; class=&#34;footnote-ref&#34; id=&#34;fnref21&#34;&gt;&lt;sup&gt;21&lt;/sup&gt;&lt;/a&gt; by applying ideas from Prospect Theory and other research into human behavior&lt;a href=&#34;#fn22&#34; class=&#34;footnote-ref&#34; id=&#34;fnref22&#34;&gt;&lt;sup&gt;22&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The paper describes gamblers with different starting profiles. Variety in motivations and behaviors of gamblers opens the possibility that the types of games discussed in this blog post may appeal to a certain set of players (particularly those that are motivated by the feeling of winning rather than an overweighting of the tails of the probability distribution that likely motivates participation in lotteries and sweepstakes&lt;a href=&#34;#fn21&#34; class=&#34;footnote-ref&#34; id=&#34;fnref21&#34;&gt;&lt;sup&gt;21&lt;/sup&gt;&lt;/a&gt;). I would also suggest that there is ample room to improve the value players derive from slot machine like games&lt;a href=&#34;#fn22&#34; class=&#34;footnote-ref&#34; id=&#34;fnref22&#34;&gt;&lt;sup&gt;22&lt;/sup&gt;&lt;/a&gt; by applying ideas from Prospect Theory and other research into human behavior&lt;a href=&#34;#fn23&#34; class=&#34;footnote-ref&#34; id=&#34;fnref23&#34;&gt;&lt;sup&gt;23&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;wallet-roulette&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Wallet Roulette&lt;/h2&gt;
-&lt;p&gt;&lt;em&gt;Below I will describe the rules for a game that I’ve come-up with called “Wallet Roulette&lt;a href=&#34;#fn23&#34; class=&#34;footnote-ref&#34; id=&#34;fnref23&#34;&gt;&lt;sup&gt;23&lt;/sup&gt;&lt;/a&gt;” that is designed to take advantage of the ideas described in the post above&lt;a href=&#34;#fn24&#34; class=&#34;footnote-ref&#34; id=&#34;fnref24&#34;&gt;&lt;sup&gt;24&lt;/sup&gt;&lt;/a&gt;. The game is set-up to look and feel somewhat similar to a slot machine but with a win / loss structure that is almost the &lt;a href=&#34;https://en.wikipedia.org/wiki/Complementary_event&#34;&gt;complement&lt;/a&gt; of that in slots&lt;a href=&#34;#fn25&#34; class=&#34;footnote-ref&#34; id=&#34;fnref25&#34;&gt;&lt;sup&gt;25&lt;/sup&gt;&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Below I will describe the rules for a game that I’ve come-up with called “Wallet Roulette&lt;a href=&#34;#fn24&#34; class=&#34;footnote-ref&#34; id=&#34;fnref24&#34;&gt;&lt;sup&gt;24&lt;/sup&gt;&lt;/a&gt;” that is designed to take advantage of the ideas described in the post above&lt;a href=&#34;#fn25&#34; class=&#34;footnote-ref&#34; id=&#34;fnref25&#34;&gt;&lt;sup&gt;25&lt;/sup&gt;&lt;/a&gt;. The game is set-up to look and feel somewhat similar to a slot machine but with a win / loss structure that is almost the &lt;a href=&#34;https://en.wikipedia.org/wiki/Complementary_event&#34;&gt;complement&lt;/a&gt; of that in slots&lt;a href=&#34;#fn26&#34; class=&#34;footnote-ref&#34; id=&#34;fnref26&#34;&gt;&lt;sup&gt;26&lt;/sup&gt;&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;The virtual game is set in a dingy bar-like setting with shady (though cartoonish) figures holding wads of cash in their hands and crowded at the edges of the screen. They stare at you expectantly. A sinister looking attendant standing behind the bar administers play.&lt;/p&gt;
-&lt;p&gt;The game begins when you take a wallet, fill it with money (your bet) and place it in front of you. A gun, a revolver, with six chambers in it is pointed at your wallet. The round starts when you fill one of the chambers with a bullet, spin the cylinder, wait for it to come to a rest, and pull the trigger. If the gun fires, your wallet explodes and the money flies out and is scooped up by the shady figures. If it clicks (having landed on an empty chamber) the attendant grimaces and slides some money to you from across the counter&lt;a href=&#34;#fn26&#34; class=&#34;footnote-ref&#34; id=&#34;fnref26&#34;&gt;&lt;sup&gt;26&lt;/sup&gt;&lt;/a&gt;. You then decide whether to play another round (filling a new wallet with money if your previous one had exploded) or you take out your money and leave.&lt;/p&gt;
-&lt;p&gt;For a six-shooter, a $30 wallet would need to payout less than $6 for the house to have an advantage. An expected value for the user of &lt;span class=&#34;math inline&#34;&gt;\(\frac{5}{6}\)&lt;/span&gt; to &lt;span class=&#34;math inline&#34;&gt;\(\frac{11}{12}\)&lt;/span&gt; on the dollar could be appropriate (~83.3 to ~91.7 cents for every dollar gambled)&lt;a href=&#34;#fn27&#34; class=&#34;footnote-ref&#34; id=&#34;fnref27&#34;&gt;&lt;sup&gt;27&lt;/sup&gt;&lt;/a&gt;. Hence for a wallet filled with $30 there would be a payout of between $5 and $5.50 for a miss.&lt;/p&gt;
+&lt;p&gt;The game begins when you take a wallet, fill it with money (your bet) and place it in front of you. A gun, a revolver, with six chambers in it is pointed at your wallet. The round starts when you fill one of the chambers with a bullet, spin the cylinder, wait for it to come to a rest, and pull the trigger. If the gun fires, your wallet explodes and the money flies out and is scooped up by the shady figures. If it clicks (having landed on an empty chamber) the attendant grimaces and slides some money to you from across the counter&lt;a href=&#34;#fn27&#34; class=&#34;footnote-ref&#34; id=&#34;fnref27&#34;&gt;&lt;sup&gt;27&lt;/sup&gt;&lt;/a&gt;. You then decide whether to play another round (filling a new wallet with money if your previous one had exploded) or you take out your money and leave.&lt;/p&gt;
+&lt;p&gt;For a six-shooter, a $30 wallet would need to payout less than $6 for the house to have an advantage. An expected value for the user of &lt;span class=&#34;math inline&#34;&gt;\(\frac{5}{6}\)&lt;/span&gt; to &lt;span class=&#34;math inline&#34;&gt;\(\frac{11}{12}\)&lt;/span&gt; on the dollar could be appropriate (~83.3 to ~91.7 cents for every dollar gambled)&lt;a href=&#34;#fn28&#34; class=&#34;footnote-ref&#34; id=&#34;fnref28&#34;&gt;&lt;sup&gt;28&lt;/sup&gt;&lt;/a&gt;. Hence for a wallet filled with $30 there would be a payout of between $5 and $5.50 for a miss.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Game Options:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;The game options below are some top-of-mind notes regarding features, options, and gameplay for “Wallet Roulette.” This is neither a necessary nor exhaustive list&lt;a href=&#34;#fn28&#34; class=&#34;footnote-ref&#34; id=&#34;fnref28&#34;&gt;&lt;sup&gt;28&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The game options below are some top-of-mind notes regarding features, options, and gameplay for “Wallet Roulette.” This is neither a necessary nor exhaustive list&lt;a href=&#34;#fn29&#34; class=&#34;footnote-ref&#34; id=&#34;fnref29&#34;&gt;&lt;sup&gt;29&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;When describing payout rates for particular game configurations, I stick with an ~83.3 to ~91.7 cent return on every dollar gambled for the player (so will usually report what the event would look like at each of these payout rates).&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;You may be able to add multiple bullets to the chambers, which will increase payouts (along with the risk the player is taking on).
 &lt;ul&gt;
 &lt;li&gt;For example, for the $30 wallet and a six shooter, adding a second bullet would change the payouts on a miss to be between $12.50 and $13.75 (using the previously described payout rates)&lt;/li&gt;
-&lt;li&gt;There are reasons not to allow for half or greater of the chambers to be filled&lt;a href=&#34;#fn29&#34; class=&#34;footnote-ref&#34; id=&#34;fnref29&#34;&gt;&lt;sup&gt;29&lt;/sup&gt;&lt;/a&gt;, but say this is allowed, the other payout rates on a $30 wallet with a six-shooter would be:
+&lt;li&gt;There are reasons not to allow for half or greater of the chambers to be filled&lt;a href=&#34;#fn30&#34; class=&#34;footnote-ref&#34; id=&#34;fnref30&#34;&gt;&lt;sup&gt;30&lt;/sup&gt;&lt;/a&gt;, but say this is allowed, the other payout rates on a $30 wallet with a six-shooter would be:
 &lt;ul&gt;
 &lt;li&gt;1 bullet: $5 to $5.50&lt;/li&gt;
 &lt;li&gt;2 bullets: $12.50 to $13.75&lt;/li&gt;
@@ -105,13 +107,13 @@ gambling and leave the casino if he starts accumulating losses.”&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;By default triggering a “money bullet” would double the size of the wallet.&lt;/li&gt;
 &lt;li&gt;This default behavior though represents a bad deal for the player. Two regular bullets and one “money bullet” in a six-shooter reduces the expected win rate for the player to 75 to 77.5 cents on the dollar (if the ‘miss’ payout rates are unchanged).&lt;/li&gt;
-&lt;li&gt;If we wanted to keep the dollar win rate the same when adding a “money bullet” the bullet would need to be worth more like &lt;span class=&#34;math inline&#34;&gt;\(\frac{7}{6}\)&lt;/span&gt; the value of the wallet (i.e. ~$35 rather than $30 in this case) alternatively the value of ‘misses’ could be increased&lt;a href=&#34;#fn30&#34; class=&#34;footnote-ref&#34; id=&#34;fnref30&#34;&gt;&lt;sup&gt;30&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;If we wanted to keep the dollar win rate the same when adding a “money bullet” the bullet would need to be worth more like &lt;span class=&#34;math inline&#34;&gt;\(\frac{7}{6}\)&lt;/span&gt; the value of the wallet (i.e. ~$35 rather than $30 in this case) alternatively the value of ‘misses’ could be increased&lt;a href=&#34;#fn31&#34; class=&#34;footnote-ref&#34; id=&#34;fnref31&#34;&gt;&lt;sup&gt;31&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;The bullet in the cylinder can either be shown or obscured (while it is spinning). Being able to see it makes the gameplay feel almost identical to roulette&lt;a href=&#34;#fn31&#34; class=&#34;footnote-ref&#34; id=&#34;fnref31&#34;&gt;&lt;sup&gt;31&lt;/sup&gt;&lt;/a&gt;. I slightly prefer the idea of not being able to see the bullet in the chamber, that way you only know the outcome once the trigger is pulled.&lt;/li&gt;
+&lt;li&gt;The bullet in the cylinder can either be shown or obscured (while it is spinning). Being able to see it makes the gameplay feel almost identical to roulette&lt;a href=&#34;#fn32&#34; class=&#34;footnote-ref&#34; id=&#34;fnref32&#34;&gt;&lt;sup&gt;32&lt;/sup&gt;&lt;/a&gt;. I slightly prefer the idea of not being able to see the bullet in the chamber, that way you only know the outcome once the trigger is pulled.&lt;/li&gt;
 &lt;li&gt;Playing with the bullet’s position obscured would allow for the player to add or take money away from the wallet up until &lt;em&gt;right before&lt;/em&gt; pulling the trigger (adding suspense and potentially some last second hand-wringing).&lt;/li&gt;
 &lt;li&gt;Keeping the bullet’s position obscured also provides the option to pull the trigger multiple times during a round. The payout rate would go up for each time you pulled the trigger in a round.
 &lt;ul&gt;
-&lt;li&gt;It may make sense to have a limitation on the number of times in a round that the trigger can be pulled&lt;a href=&#34;#fn32&#34; class=&#34;footnote-ref&#34; id=&#34;fnref32&#34;&gt;&lt;sup&gt;32&lt;/sup&gt;&lt;/a&gt;. If you do allow multiple trigger pulls, the items below show what the payout would be for each pull within a round&lt;a href=&#34;#fn33&#34; class=&#34;footnote-ref&#34; id=&#34;fnref33&#34;&gt;&lt;sup&gt;33&lt;/sup&gt;&lt;/a&gt;:
+&lt;li&gt;It may make sense to have a limitation on the number of times in a round that the trigger can be pulled&lt;a href=&#34;#fn33&#34; class=&#34;footnote-ref&#34; id=&#34;fnref33&#34;&gt;&lt;sup&gt;33&lt;/sup&gt;&lt;/a&gt;. If you do allow multiple trigger pulls, the items below show what the payout would be for each pull within a round&lt;a href=&#34;#fn34&#34; class=&#34;footnote-ref&#34; id=&#34;fnref34&#34;&gt;&lt;sup&gt;34&lt;/sup&gt;&lt;/a&gt;:
 &lt;ul&gt;
 &lt;li&gt;1st trigger pull: $5 to $5.50&lt;/li&gt;
 &lt;li&gt;2nd pull: $6.25 to $6.80&lt;/li&gt;
@@ -127,13 +129,13 @@ gambling and leave the casino if he starts accumulating losses.”&lt;/p&gt;
 &lt;li&gt;a nicer wallet&lt;/li&gt;
 &lt;li&gt;decals on your gear&lt;/li&gt;
 &lt;li&gt;Most of these player earned items wouldn’t change game outcomes but would simply provide different animations or game stylings.&lt;/li&gt;
-&lt;li&gt;however they may be able to earn things like “super money bullets” or other accelerators with better payouts than described in the default behavior (but not erasing the house advantage)&lt;a href=&#34;#fn34&#34; class=&#34;footnote-ref&#34; id=&#34;fnref34&#34;&gt;&lt;sup&gt;34&lt;/sup&gt;&lt;/a&gt;).&lt;/li&gt;
+&lt;li&gt;however they may be able to earn things like “super money bullets” or other accelerators with better payouts than described in the default behavior (but not erasing the house advantage)&lt;a href=&#34;#fn35&#34; class=&#34;footnote-ref&#34; id=&#34;fnref35&#34;&gt;&lt;sup&gt;35&lt;/sup&gt;&lt;/a&gt;).&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;I am debating whether payouts to the player should default to be payed directly to the player or to be added to their wallet. I lean towards having the payouts default to be given directly to the player&lt;a href=&#34;#fn35&#34; class=&#34;footnote-ref&#34; id=&#34;fnref35&#34;&gt;&lt;sup&gt;35&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;If the game is played in a casino, the dollars in the player’s account could be tied to a player card or account with the casino (which they use to fill their wallet for the game). If playing through an application or online it would be tied to their login. The same goes for any gear or other items they’ve earned as a part of playing&lt;a href=&#34;#fn36&#34; class=&#34;footnote-ref&#34; id=&#34;fnref36&#34;&gt;&lt;sup&gt;36&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;It may make sense to allow play with cylinders with different numbers of chambers in them, e.g. sizes of 5, 6, 10. Cylinders with more spots will generally have smaller payouts. My guess is 5 to 9 chambers would be the sweet-spot. People tend to overestimate the likelihood of very rare events, so a cylinder size of 20, 50, etc. would probably be too large&lt;a href=&#34;#fn37&#34; class=&#34;footnote-ref&#34; id=&#34;fnref37&#34;&gt;&lt;sup&gt;37&lt;/sup&gt;&lt;/a&gt; (as the smallness of payouts would not be commensurate with the &lt;em&gt;perceived&lt;/em&gt; risk the player is taking on).&lt;/li&gt;
-&lt;li&gt;At the start, the player may be able to choose between two types of guns: a standard revolver, or a nerf gun equivalent. Both would play the same&lt;a href=&#34;#fn38&#34; class=&#34;footnote-ref&#34; id=&#34;fnref38&#34;&gt;&lt;sup&gt;38&lt;/sup&gt;&lt;/a&gt;. The nerf gun option is just a way of providing an option for players with a distaste for guns.&lt;/li&gt;
-&lt;li&gt;For cases where the game is played at a physical casino (rather than through an application), there could be a crank bar or wheel that when interacted with initiates the spinning of the cylinder. Once the cylinder stops spinning, there could also be a physical trigger that a player pulls in order to play the round&lt;a href=&#34;#fn39&#34; class=&#34;footnote-ref&#34; id=&#34;fnref39&#34;&gt;&lt;sup&gt;39&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;I am debating whether payouts to the player should default to be payed directly to the player or to be added to their wallet. I lean towards having the payouts default to be given directly to the player&lt;a href=&#34;#fn36&#34; class=&#34;footnote-ref&#34; id=&#34;fnref36&#34;&gt;&lt;sup&gt;36&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;If the game is played in a casino, the dollars in the player’s account could be tied to a player card or account with the casino (which they use to fill their wallet for the game). If playing through an application or online it would be tied to their login. The same goes for any gear or other items they’ve earned as a part of playing&lt;a href=&#34;#fn37&#34; class=&#34;footnote-ref&#34; id=&#34;fnref37&#34;&gt;&lt;sup&gt;37&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;It may make sense to allow play with cylinders with different numbers of chambers in them, e.g. sizes of 5, 6, 10. Cylinders with more spots will generally have smaller payouts. My guess is 5 to 9 chambers would be the sweet-spot. People tend to overestimate the likelihood of very rare events, so a cylinder size of 20, 50, etc. would probably be too large&lt;a href=&#34;#fn38&#34; class=&#34;footnote-ref&#34; id=&#34;fnref38&#34;&gt;&lt;sup&gt;38&lt;/sup&gt;&lt;/a&gt; (as the smallness of payouts would not be commensurate with the &lt;em&gt;perceived&lt;/em&gt; risk the player is taking on).&lt;/li&gt;
+&lt;li&gt;At the start, the player may be able to choose between two types of guns: a standard revolver, or a nerf gun equivalent. Both would play the same&lt;a href=&#34;#fn39&#34; class=&#34;footnote-ref&#34; id=&#34;fnref39&#34;&gt;&lt;sup&gt;39&lt;/sup&gt;&lt;/a&gt;. The nerf gun option is just a way of providing an option for players with a distaste for guns.&lt;/li&gt;
+&lt;li&gt;For cases where the game is played at a physical casino (rather than through an application), there could be a crank bar or wheel that when interacted with initiates the spinning of the cylinder. Once the cylinder stops spinning, there could also be a physical trigger that a player pulls in order to play the round&lt;a href=&#34;#fn40&#34; class=&#34;footnote-ref&#34; id=&#34;fnref40&#34;&gt;&lt;sup&gt;40&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
 &lt;li&gt;One limitation with the game is that it doesn’t, as described, have the potential allure of a ‘jackpot’ which can be a highly motivating factor. Maybe there can be some imperceptible chance set that the bullet would hit a coin inside the wallet, deflect off, and hit the cashier where the attendant keeps the money, exploding that and thereby sending it to you (or some other contrivance to allow for the possibility of a jackpot).&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
@@ -141,46 +143,47 @@ gambling and leave the casino if he starts accumulating losses.”&lt;/p&gt;
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Picture the pattern of gains and losses in the stock market – where rises are typically more incremental compared to the steepness of drops.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Credit card roulette (whereby friends throw in their cards at the end of dinner to see who will end-up paying for it) perhaps provides an everyday example for the type of game I’m talking about.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;There is a decent chance I misapplied some concepts – particularly regarding the idea of risk seeking when it comes to losses (e.g. if it’s more about seeking uncertainty vs seeking riskiness…). What I describe also seems to run counter to the idea that sporadic positive events help drive repeat behaviors whereas sporadic negative shocks drive avoidance of the activity. Generally I would need to think about and read a little more…&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;A potential issue with my examples is with the ‘framing effect’ – I largely frame things in terms of ‘losses’ (particularly in the &lt;a href=&#34;#wallet-roulette&#34;&gt;Wallet Roulette&lt;/a&gt; game which may actually push players towards more risk-averse behavior. For example people’s tendency to underweight rare events and a closer consideration of the importance of reference points are just a few ideas that require closer consideration.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;As doing so goes against some of the psychological principles of the game (of keeping win-rates high) and risks making the payout rates for the player to be too explicit (when there is an equal likelihood of winning and losing it becomes obvious what the payout rate is… it may be to the houses advantage to keep this obscured). On the other hand, allowing this may be helpful in that it allows the player to set their risk threshold. On the whole I probably lean towards allowing the players to fill the gun with their wallets as it empowers them to pick their own risk level.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;I am also in the middle of reading Khaneman’s highly related seminal book “Thinking Fast and Slow”.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Ignore the particularities in the examples and focus on what they are designed to illustrate…&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;However they play at others. Casinos are master psychological manipulators. I imagine they have thoroughly tested the ideas discussed in this post.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;Picture a group of friends playing credit card roulette at the end of the night.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;one can of course edit the odds to set things appropriately&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;I imagine casinos have considered setting games like this up and that there are good reasons they don’t exist. For example, players have to put up a lot of money to win anything, so the dollars that go to the house per dollar bet is going to be much lower than other games that they could fill their floor space with. At least for the examples I go through in this post… I actually think a bit less of an imbalance would be better, as suggested by &lt;a href=&#34;#wallet-roulette&#34;&gt;Wallet Roulette&lt;/a&gt; as described in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;See &lt;a href=&#34;https://math.stackexchange.com/questions/1119872/on-average-how-many-times-must-i-roll-a-dice-until-i-get-a-6#:~:text=About%2014%20times%20it%20will,100%20and%20get%20%E2%89%886.&#34;&gt;thread&lt;/a&gt; for explanation.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Picture the pattern of gains and losses in the stock market – where rises are typically more incremental compared to the steepness of drops.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Credit card roulette (whereby friends throw in their cards at the end of dinner to see who will end-up paying for it) perhaps provides an everyday example for the type of game I’m talking about.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;There is a decent chance I misapplied some concepts – particularly regarding the idea of risk seeking when it comes to losses (e.g. if it’s more about seeking uncertainty vs seeking riskiness…). What I describe also seems to run counter to the idea that sporadic positive events help drive repeat behaviors whereas sporadic negative shocks drive avoidance of the activity. Generally I would need to think about and read a little more…&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;A potential issue with my examples is with the ‘framing effect’ – I largely frame things in terms of ‘losses’ (particularly in the &lt;a href=&#34;#wallet-roulette&#34;&gt;Wallet Roulette&lt;/a&gt; game which may actually push players towards more risk-averse behavior. For example people’s tendency to underweight rare events and a closer consideration of the importance of reference points are just a few ideas that require closer consideration.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;As doing so goes against some of the psychological principles of the game (of keeping win-rates high) and risks making the payout rates for the player to be too explicit (when there is an equal likelihood of winning and losing it becomes obvious what the payout rate is… it may be to the houses advantage to keep this obscured). On the other hand, allowing this may be helpful in that it allows the player to set their risk threshold. On the whole I probably lean towards allowing the players to fill the gun with their wallets as it empowers them to pick their own risk level.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;I am also in the middle of reading Khaneman’s highly related seminal book “Thinking Fast and Slow”.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Ignore the particularities in the examples and focus on what they are designed to illustrate…&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;However they play at others. Casinos are master psychological manipulators. I imagine they have thoroughly tested the ideas discussed in this post.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;Picture a group of friends playing credit card roulette at the end of the night.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;one can of course edit the odds to set things appropriately&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;I imagine casinos have considered setting games like this up and that there are good reasons they don’t exist. For example, players have to put up a lot of money to win anything, so the dollars that go to the house per dollar bet is going to be much lower than other games that they could fill their floor space with. At least for the examples I go through in this post… I actually think a bit less of an imbalance would be better, as suggested by &lt;a href=&#34;#wallet-roulette&#34;&gt;Wallet Roulette&lt;/a&gt; as described in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;See &lt;a href=&#34;https://math.stackexchange.com/questions/1119872/on-average-how-many-times-must-i-roll-a-dice-until-i-get-a-6#:~:text=About%2014%20times%20it%20will,100%20and%20get%20%E2%89%886.&#34;&gt;thread&lt;/a&gt; for explanation.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Many casino games could be redesigned in this manner – where you are likely to win but always face the risk of a large loss. You might picture a room in the casino that had an ‘Upside Down’ style feel where all the slots and similar games there were reconstructed accordingly.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://www.thesun.co.uk/wp-content/uploads/2017/11/tmp_6e95hn_8581834aa802f9b6_wv_publicity_post_launch_still_10-0000011.jpg&#34; /&gt;&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;It also could make sense to have bets be placed &lt;em&gt;across&lt;/em&gt; the number – this resemble a ‘place bet’ being made across multiple numbers in craps (where the player is crossing their fingers hoping against a seven being rolled).&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;As an example imagine a facsimile of a game where you search fantastical caves for treasure – you usually find small bits, but occasionally stumble upon a pack of dwarves that rob you. If the game points are translatable into money this represents the same thing. An app environment also helps to divorce the user from the sting of the extreme losses (that come from the design of this type of game).&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;As the psychological biases I describe do not apply to mixed environments where a player can achieve either a gain or a loss.&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;Though it may also be that the fear or a ‘ruining’ loss would discourage play.&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn18&#34;&gt;&lt;p&gt;I.e. they &lt;em&gt;think&lt;/em&gt; they have a better chance of winning that they do.&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;As well as other behavioral economic theories&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn20&#34;&gt;&lt;p&gt;This is also a more optimistic outlook on the value players stand to derive from gambling.&lt;a href=&#34;#fnref20&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn21&#34;&gt;&lt;p&gt;Which I typically find quite boring currently.&lt;a href=&#34;#fnref21&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn22&#34;&gt;&lt;p&gt;Including those principles I might have missed.&lt;a href=&#34;#fnref22&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn23&#34;&gt;&lt;p&gt;or &#34;Russian Wallet Roulette&#34; or some variation on this.&lt;a href=&#34;#fnref23&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;The game though does not reflect a complete embodiment of Prospect Theory applied to gambling. See footnotes from beginning of post for notes on this as well as the section &lt;a href=&#34;#note-on-prospect-theory&#34;&gt;Note on Prospect Theory&lt;/a&gt;. Obviously though this game is framed as a loss, which may run counter to the type of game that a Prospect Theory agent may want to play.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;I.e. the player typically has small wins followed by occasional large losses whereas slots tend to have small losses with occasionally larger wins (slots also feature small payouts, so this is speaking generally). In the “Game Options” I provide ways by which a player could set their own risk profile (e.g. by filling their gun with more bullets, changing the cylinder size, etc.). Hence I also envision the game having a bit more customizability compared to what is typical in slots.&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn26&#34;&gt;&lt;p&gt;This gets added to your account or can be added to the wallet, i.e. your bet.&lt;a href=&#34;#fnref26&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn27&#34;&gt;&lt;p&gt;Slot machines typically hover around a 10 cent on the dollar advantage for the house.&lt;a href=&#34;#fnref27&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn28&#34;&gt;&lt;p&gt;Some of these ideas enhance or modify play more than others. Many of these would need to be tested on players to determine the ideal options to set for the game.&lt;a href=&#34;#fnref28&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn29&#34;&gt;&lt;p&gt;As doing so goes against some of the psychological principles of the game (of keeping win-rates high) and risks making the payout rates for the player to be too explicit (when there is an equal likelihood of winning and losing it becomes obvious what the payout rate is… it may be to the houses advantage to keep this obscured). On the other hand, allowing this may be helpful in that it allows the player to set their risk threshold. On the whole I probably lean towards allowing the players to fill the gun with their wallets as it empowers them to pick their own risk level.&lt;a href=&#34;#fnref29&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn30&#34;&gt;&lt;p&gt;Though this approach seems less appealing.&lt;a href=&#34;#fnref30&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn31&#34;&gt;&lt;p&gt;An advantage with this is that it may reassure the player by making it appear more fair – as they can &lt;em&gt;see&lt;/em&gt; the bullet moving&lt;a href=&#34;#fnref31&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn32&#34;&gt;&lt;p&gt;As doing so goes against some of the psychological principles of the game (of keeping win-rates high) and risks making the payout rates for the player to be too explicit (when there is an equal likelihood of winning and losing it becomes obvious what the payout rate is… it may be to the houses advantage to keep this obscured). On the other hand, allowing this may be helpful in that it allows the player to set their risk threshold. On the whole I probably lean towards allowing the players to fill the gun with their wallets as it empowers them to pick their own risk level.&lt;a href=&#34;#fnref32&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn33&#34;&gt;&lt;p&gt;If keeping to previously described payout rates for a six shooter with one bullet in it.&lt;a href=&#34;#fnref33&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn34&#34;&gt;&lt;p&gt;These “super money bullets” may keep the win-rate near &lt;span class=&#34;math inline&#34;&gt;\(\frac{5}{6}\)&lt;/span&gt; rather than making it worse – as described in the bullet on default “money bullet” behavior above. Using Prospect Theory lingo, the default “money bullet” option becomes a “dominated” option.&lt;a href=&#34;#fnref34&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn35&#34;&gt;&lt;p&gt;The potential advantage of putting them in the wallet is that it increases their bet size. The downside is that if they lose the wallet, the player may be left feeling like they haven’t won anything. Hence leaning towards having the payout go to the players account directly.&lt;a href=&#34;#fnref35&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn36&#34;&gt;&lt;p&gt;So they keep items they’ve earned even if they return to play later.&lt;a href=&#34;#fnref36&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn37&#34;&gt;&lt;p&gt;The animation may also look awkward, as it would be a revolver with a tremendous number of bullets… a tommy gun would almost be more appropriate.&lt;a href=&#34;#fnref37&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn38&#34;&gt;&lt;p&gt;but may have slightly different animations when fired&lt;a href=&#34;#fnref38&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn39&#34;&gt;&lt;p&gt;For a phone or computer application, these parts of the game would be interacted with via touch screen or mouse.&lt;a href=&#34;#fnref39&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.thesun.co.uk/wp-content/uploads/2017/11/tmp_6e95hn_8581834aa802f9b6_wv_publicity_post_launch_still_10-0000011.jpg&#34; /&gt;&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;It also could make sense to have bets be placed &lt;em&gt;across&lt;/em&gt; the number – this resemble a ‘place bet’ being made across multiple numbers in craps (where the player is crossing their fingers hoping against a seven being rolled).&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn15&#34;&gt;&lt;p&gt;As an example imagine a facsimile of a game where you search fantastical caves for treasure – you usually find small bits, but occasionally stumble upon a pack of dwarves that rob you. If the game points are translatable into money this represents the same thing. An app environment also helps to divorce the user from the sting of the extreme losses (that come from the design of this type of game).&lt;a href=&#34;#fnref15&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn16&#34;&gt;&lt;p&gt;As the psychological biases I describe do not apply to mixed environments where a player can achieve either a gain or a loss.&lt;a href=&#34;#fnref16&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn17&#34;&gt;&lt;p&gt;Though it may also be that the fear or a ‘ruining’ loss would discourage play.&lt;a href=&#34;#fnref17&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn18&#34;&gt;&lt;p&gt;Of which I helped &lt;a href=&#34;https://github.com/R-CoderDotCom/econocharts/pull/10&#34;&gt;contribute&lt;/a&gt; to the development.&lt;a href=&#34;#fnref18&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn19&#34;&gt;&lt;p&gt;I.e. they &lt;em&gt;think&lt;/em&gt; they have a better chance of winning that they do.&lt;a href=&#34;#fnref19&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn20&#34;&gt;&lt;p&gt;As well as other behavioral economic theories&lt;a href=&#34;#fnref20&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn21&#34;&gt;&lt;p&gt;This is also a more optimistic outlook on the value players stand to derive from gambling.&lt;a href=&#34;#fnref21&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn22&#34;&gt;&lt;p&gt;Which I typically find quite boring currently.&lt;a href=&#34;#fnref22&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn23&#34;&gt;&lt;p&gt;Including those principles I might have missed.&lt;a href=&#34;#fnref23&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn24&#34;&gt;&lt;p&gt;or &#34;Russian Wallet Roulette&#34; or some variation on this.&lt;a href=&#34;#fnref24&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn25&#34;&gt;&lt;p&gt;The game though does not reflect a complete embodiment of Prospect Theory applied to gambling. See footnotes from beginning of post for notes on this as well as the section &lt;a href=&#34;#note-on-prospect-theory&#34;&gt;Note on Prospect Theory&lt;/a&gt;. Obviously though this game is framed as a loss, which may run counter to the type of game that a Prospect Theory agent may want to play.&lt;a href=&#34;#fnref25&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn26&#34;&gt;&lt;p&gt;I.e. the player typically has small wins followed by occasional large losses whereas slots tend to have small losses with occasionally larger wins (slots also feature small payouts, so this is speaking generally). In the “Game Options” I provide ways by which a player could set their own risk profile (e.g. by filling their gun with more bullets, changing the cylinder size, etc.). Hence I also envision the game having a bit more customizability compared to what is typical in slots.&lt;a href=&#34;#fnref26&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn27&#34;&gt;&lt;p&gt;This gets added to your account or can be added to the wallet, i.e. your bet.&lt;a href=&#34;#fnref27&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn28&#34;&gt;&lt;p&gt;Slot machines typically hover around a 10 cent on the dollar advantage for the house.&lt;a href=&#34;#fnref28&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn29&#34;&gt;&lt;p&gt;Some of these ideas enhance or modify play more than others. Many of these would need to be tested on players to determine the ideal options to set for the game.&lt;a href=&#34;#fnref29&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn30&#34;&gt;&lt;p&gt;As doing so goes against some of the psychological principles of the game (of keeping win-rates high) and risks making the payout rates for the player to be too explicit (when there is an equal likelihood of winning and losing it becomes obvious what the payout rate is… it may be to the houses advantage to keep this obscured). On the other hand, allowing this may be helpful in that it allows the player to set their risk threshold. On the whole I probably lean towards allowing the players to fill the gun with their wallets as it empowers them to pick their own risk level.&lt;a href=&#34;#fnref30&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn31&#34;&gt;&lt;p&gt;Though this approach seems less appealing.&lt;a href=&#34;#fnref31&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn32&#34;&gt;&lt;p&gt;An advantage with this is that it may reassure the player by making it appear more fair – as they can &lt;em&gt;see&lt;/em&gt; the bullet moving&lt;a href=&#34;#fnref32&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn33&#34;&gt;&lt;p&gt;As doing so goes against some of the psychological principles of the game (of keeping win-rates high) and risks making the payout rates for the player to be too explicit (when there is an equal likelihood of winning and losing it becomes obvious what the payout rate is… it may be to the houses advantage to keep this obscured). On the other hand, allowing this may be helpful in that it allows the player to set their risk threshold. On the whole I probably lean towards allowing the players to fill the gun with their wallets as it empowers them to pick their own risk level.&lt;a href=&#34;#fnref33&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn34&#34;&gt;&lt;p&gt;If keeping to previously described payout rates for a six shooter with one bullet in it.&lt;a href=&#34;#fnref34&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn35&#34;&gt;&lt;p&gt;These “super money bullets” may keep the win-rate near &lt;span class=&#34;math inline&#34;&gt;\(\frac{5}{6}\)&lt;/span&gt; rather than making it worse – as described in the bullet on default “money bullet” behavior above. Using Prospect Theory lingo, the default “money bullet” option becomes a “dominated” option.&lt;a href=&#34;#fnref35&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn36&#34;&gt;&lt;p&gt;The potential advantage of putting them in the wallet is that it increases their bet size. The downside is that if they lose the wallet, the player may be left feeling like they haven’t won anything. Hence leaning towards having the payout go to the players account directly.&lt;a href=&#34;#fnref36&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn37&#34;&gt;&lt;p&gt;So they keep items they’ve earned even if they return to play later.&lt;a href=&#34;#fnref37&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn38&#34;&gt;&lt;p&gt;The animation may also look awkward, as it would be a revolver with a tremendous number of bullets… a tommy gun would almost be more appropriate.&lt;a href=&#34;#fnref38&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn39&#34;&gt;&lt;p&gt;but may have slightly different animations when fired&lt;a href=&#34;#fnref39&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn40&#34;&gt;&lt;p&gt;For a phone or computer application, these parts of the game would be interacted with via touch screen or mouse.&lt;a href=&#34;#fnref40&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
@@ -188,17 +191,19 @@ gambling and leave the casino if he starts accumulating losses.”&lt;/p&gt;
     
     <item>
       <title>Riddler Solutions: Pedestrian Puzzles</title>
-      <link>/2020/03/04/riddler-solutions-pedestrian-puzzles/</link>
+      <link>https://www.bryanshalloway.com/2020/03/04/riddler-solutions-pedestrian-puzzles/</link>
       <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/03/04/riddler-solutions-pedestrian-puzzles/</guid>
+      <guid>https://www.bryanshalloway.com/2020/03/04/riddler-solutions-pedestrian-puzzles/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#riddler-express&#34;&gt;Riddler express&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#riddler-classic&#34;&gt;Riddler classic&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#time-to-center&#34;&gt;Time to center&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#transform-grid-rotate-first&#34;&gt;Transform grid, rotate first&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#transform-city-pretty&#34;&gt;Transform city, pretty&lt;/a&gt;&lt;/li&gt;
@@ -235,7 +240,7 @@ df_start &amp;lt;- crossing(x = -radius:radius, y = -radius:radius) %&amp;gt;%
 &lt;p&gt;&lt;em&gt;II. Calculate Manhattan Distances&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;For both scenarios, we need to calculate the &lt;a href=&#34;https://en.wikipedia.org/wiki/Taxicab_geometry&#34;&gt;Manhattan length&lt;/a&gt;&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt; between the origin and every point. To calculate the Manhattan length on the new scenario, we first need to find what the residence’s coordinates would be in the new sidewalk grid. The new coordinate system could be thought of simply as a rotated and shrunken version of the existing grid&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;, which can be represented as applying the matrix transformation:&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ M = \left(\begin{array}{cc} 0.5 &amp;amp; -0.5\\0.5  &amp;amp; 0.5 \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;(See &lt;a href=&#34;#transform-city-pretty&#34;&gt;Transform city, pretty&lt;/a&gt; in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; to view the code used to create the above visualization.)&lt;/p&gt;
 &lt;p&gt;Our residences are not changing locations, they would just have different coordinates specific to the new sidewalks – hence we will actually apply the inverse&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt; of this transformation to our starting coordinates. This will give us the position of our residences on the new (transformed) coordinate grid.&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ M^{-1} = \left(\begin{array}{cc} 1 &amp;amp; 1\\-1  &amp;amp; 1 \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
@@ -279,7 +284,7 @@ df_start &amp;lt;- crossing(x = -radius:radius, y = -radius:radius) %&amp;gt;%
   geom_point(aes(colour = diagonal_faster))+
   coord_fixed()+
   ggforce::theme_no_axes()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;riddler-classic&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Riddler classic&lt;/h1&gt;
@@ -295,7 +300,7 @@ Under this second proposal, now what fraction of the employees would have a shor
 &lt;p&gt;&lt;strong&gt;My approach:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;The Barcelona distance is just a combination of the Manhattan lengths of both the original and diagonal sidewalk grids (though with the unit lengths scaled differently)&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;. The unit lengths&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt; for the horizontal and diagonal components will depend on what proportion&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt; of a side is horizontal vs diagonal (corresponding with the original vs transformed grid from the &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; solution)&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;We can define our relevant side lengths as a function of x:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/barcelona_dist.jpg&#34; style=&#34;width:50.0%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/barcelona_dist.jpg&#34; style=&#34;width:50.0%&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[x : \frac{inverse\;of\;proportion\;horizontal}{2},\]&lt;/span&gt;
 &lt;span class=&#34;math display&#34;&gt;\[0 &amp;lt; x &amp;lt; 0.5\]&lt;/span&gt;
 &lt;span class=&#34;math display&#34;&gt;\[diagonal\;length = \sqrt{2}x\]&lt;/span&gt;
@@ -333,7 +338,7 @@ df_dists_abc &amp;lt;- df_dists %&amp;gt;%
   geom_point(aes(colour = barcelona_faster))+
   coord_fixed()+
   ggforce::theme_no_axes()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;We need to verify that ‘50% have a shorter walk’ is our solution regardless of what we set for x.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;To accomplish this, I wrote a function &lt;code&gt;summarise_proportion()&lt;/code&gt;, that will output the ‘Proportion Barcelona sidewalk distance is shorter’ across any given x between 0 and 0.5 (the possible values of x).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;summarise_proportion &amp;lt;- function(x, df_start = df_dists, out_data = FALSE){
@@ -441,7 +446,7 @@ df_summary %&amp;gt;%
   geom_point()+
   facet_wrap(~grid)+
   coord_fixed()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;This suggests that if the city were square shaped (rather than a circle) that the transformed (diagonal and Barcelona) sidewalks would have greater than 50% of the residents with a shorter travel distance to the center of the city.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;transform-grid-rotate-first&#34; class=&#34;section level2&#34;&gt;
@@ -450,7 +455,7 @@ df_summary %&amp;gt;%
   m = matrix(c(0.5, 0.5,-0.5, 0.5), nrow = 2), 
   seq_fun = seq_matrix_rotate_first) %&amp;gt;% 
   animate_matrix()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_rotate_shrink.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_rotate_shrink.gif&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;transform-city-pretty&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Transform city, pretty&lt;/h2&gt;
@@ -483,25 +488,186 @@ p_pretty &amp;lt;- bind_rows(start_grid, end_grid) %&amp;gt;%
 
 p_pretty + 
   gganimate::transition_states(time)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-03-04-riddler-solutions-pedestrian-puzzles_files/gif_city_pretty_grids.gif&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;And wrote a couple preliminary posts on animating matrix transformations that can be found &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/&#34;&gt;here&lt;/a&gt;&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Is large enough to get a reasonable approximation for the answer.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I.e. straight line distance.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;The Manhattan Length is just the shortest number of city blocks between points.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;I highly recommend the Essence of Linear Algebra video series, particularly chapter 3 (on Matrix Transformations) and &lt;a href=&#34;https://www.youtube.com/watch?v=P2LTAUO1TdA&#34;&gt;13&lt;/a&gt; (on Change of basis).&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;In R, you can use the &lt;code&gt;solve()&lt;/code&gt; function to give you the inverse of a matrix.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;We have already done most of the computations we’ll need and can follow similar steps to those taken in the &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; solution.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;I.e. length of an individual city block, or in this case, component of a city block.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;In the diagram below, we will actually have it be a function of one-half of the inverse of the proportion – this is because there are two diagonals adjoining each horizontal component.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, &lt;em&gt;x&lt;/em&gt;, of a triangle created by a diagonal.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Note that if we were to set x = 0, the distance from each location would be equivalent to the distances in our starting (horizontal) grid, and if we set x = 0.5, the distances would be equal to those in our transformed (diagonal) grid.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Note that we are not taking into account the tiny differences that emerge regarding starting location for each resident (i.e. which point within a Barcelona square should they start). If we make the grid arbitrarily large, these differences become inconsequential – hence we can ignore them.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;The origin of our coordinate systems.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;And wrote a couple preliminary posts on animating matrix transformations that can be found &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/&#34;&gt;here&lt;/a&gt;&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Is large enough to get a reasonable approximation for the answer.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I.e. straight line distance.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;The Manhattan Length is just the shortest number of city blocks between points.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;I highly recommend the Essence of Linear Algebra video series, particularly chapter 3 (on Matrix Transformations) and &lt;a href=&#34;https://www.youtube.com/watch?v=P2LTAUO1TdA&#34;&gt;13&lt;/a&gt; (on Change of basis).&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;In R, you can use the &lt;code&gt;solve()&lt;/code&gt; function to give you the inverse of a matrix.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;We have already done most of the computations we’ll need and can follow similar steps to those taken in the &lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt; solution.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;I.e. length of an individual city block, or in this case, component of a city block.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;In the diagram below, we will actually have it be a function of one-half of the inverse of the proportion – this is because there are two diagonals adjoining each horizontal component.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;This can also be thought of as the diagonal and the horizontal side lengths can be thought of as a function of the side-length, &lt;em&gt;x&lt;/em&gt;, of a triangle created by a diagonal.&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Note that if we were to set x = 0, the distance from each location would be equivalent to the distances in our starting (horizontal) grid, and if we set x = 0.5, the distances would be equal to those in our transformed (diagonal) grid.&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Note that we are not taking into account the tiny differences that emerge regarding starting location for each resident (i.e. which point within a Barcelona square should they start). If we make the grid arbitrarily large, these differences become inconsequential – hence we can ignore them.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;The origin of our coordinate systems.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>animatrixr &amp; Visualizing Matrix Transformations pt. 2</title>
+      <link>https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</link>
+      <pubDate>Mon, 24 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bryanshalloway.com/2020/02/24/animatrixr-visualizing-matrix-transformations-pt-2/</guid>
+      <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;This post is a continuation on my post from last week on &lt;a href=&#34;https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/&#34;&gt;Visualizing Matrix Transformations with gganimate&lt;/a&gt;. Both posts are largely inspired by &lt;a href=&#34;https://twitter.com/3blue1brown&#34;&gt;Grant Sanderson’s&lt;/a&gt; beautiful video series &lt;a href=&#34;https://www.youtube.com/watch?v=kYB8IZa5AuE&amp;amp;list=PL_w8oSr1JpVCZ5pKXHKz6PkjGCbPbSBYv&amp;amp;index=4&#34;&gt;The Essence of Linear Algebra&lt;/a&gt; and wanting to continue messing around with &lt;a href=&#34;https://github.com/thomasp85/gganimate&#34;&gt;Thomas Lin Peterson’s&lt;/a&gt; fantastic &lt;a href=&#34;https://github.com/thomasp85/gganimate&#34;&gt;gganimate&lt;/a&gt; package in R.&lt;/p&gt;
+&lt;p&gt;As with the last post, I’ll describe trying to (very loosely) recreate a &lt;em&gt;small&lt;/em&gt; part of the visualizations showing the geometry of matrix multiplication and changing basis vectors (using &lt;code&gt;gganimate&lt;/code&gt; in R). (Once again, just in the 2x2 case.)&lt;/p&gt;
+&lt;p&gt;If you are &lt;em&gt;really&lt;/em&gt; interested in building visualizations like the ones shown on 3Blue1Brown, you should check-out the associated &lt;a href=&#34;https://github.com/3b1b/manim&#34;&gt;manim&lt;/a&gt; project on github.&lt;/p&gt;
+&lt;div id=&#34;topics-to-cover&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Topics to cover&lt;/h1&gt;
+&lt;p&gt;I had two major sections in the Appendix of last week’s post:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;“Multiple matrix transformations”&lt;/li&gt;
+&lt;li&gt;“Potential improvements” (where I mostly describe limitations around visualizing rotations)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This post expands on these topics.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;animatrixr-and-multiple-matrix-transformations&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;code&gt;animatrixr&lt;/code&gt; and multiple matrix transformations&lt;/h1&gt;
+&lt;p&gt;Sanderson discusses the value in sometimes decomposing a matrix transformation and thinking of its parts sequentially. I created a &lt;strong&gt;toy&lt;/strong&gt; package &lt;code&gt;animatrixr&lt;/code&gt; for building chained matrix transformations that can then be animated using &lt;code&gt;gganimate&lt;/code&gt;&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The function &lt;code&gt;animatrixr::add_transformation()&lt;/code&gt; lets you chain together matrix transformations with R’s pipe operator &lt;code&gt;%&amp;gt;%&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;For example, let’s consider three matrix transformations: horizontal sheer –&amp;gt; vertical sheer –&amp;gt; reflection across x-axis:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)
+
+if (!requireNamespace(&amp;quot;animatrixr&amp;quot;)) devtools::install_github(&amp;#39;brshallo/animatrixr&amp;#39;)
+library(animatrixr)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sheer_horizontal &amp;lt;- tribble(~ x, ~ y,
+                      1, 0.5,
+                      0, 1) %&amp;gt;%
+  as.matrix()
+
+sheer_vertical &amp;lt;- tribble(~ x, ~ y,
+                      1, 0,
+                      0.5, 1) %&amp;gt;%
+  as.matrix()
+
+reflect_x &amp;lt;- tribble(~ x, ~ y,
+                      1, 0,
+                      0, -1) %&amp;gt;%
+  as.matrix() &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now let’s visualize the transformations being applied sequentially:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
+  add_transformation(sheer_horizontal) %&amp;gt;% 
+  add_transformation(sheer_vertical) %&amp;gt;% 
+  add_transformation(reflect_x, 
+                     seq_fun = animatrixr::seq_matrix_l,
+                     n_frames = 40) %&amp;gt;% 
+  animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/vsheer-hsheer-reflect-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;add_transformation()&lt;/code&gt; explicitly creates in-between frames for a given transformation. The &lt;code&gt;seq_fun&lt;/code&gt; argument allows you to define the interpolation method, for example whether the coordinates should (during the animation) follow a linear path (default) or the angle of a rotation.&lt;/p&gt;
+&lt;p&gt;It would be nice to add-in functionality where the final transformation object could then be added to layers of a ggplot (though I’ve done nothing towards this except add an argument in &lt;code&gt;animatrixr::animate_matrix()&lt;/code&gt; for displaying the &lt;a href=&#34;https://github.com/lockedata/datasauRus&#34;&gt;datasauRus&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;(Warning: &lt;code&gt;animatrixr&lt;/code&gt; is severely limited, as discussed in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; and in package documentation. However you can find it at the “brshallo/animatrixr” repo on &lt;a href=&#34;https://github.com/brshallo/animatrixr&#34;&gt;my github page&lt;/a&gt;.)&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visualizing-rotations&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Visualizing rotations&lt;/h1&gt;
+&lt;p&gt;The &lt;code&gt;seq_fun&lt;/code&gt; argument within &lt;code&gt;add_transformation()&lt;/code&gt; specifies frames in-between the start and end states after a matrix transformation. By default it uses &lt;code&gt;animatrixr::seq_matrix_l&lt;/code&gt; which changes in-between coordinates linearly (as does &lt;code&gt;gganimate&lt;/code&gt;&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;Let’s look at a rotation where the in-between coordinates are interpolated linearly:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rotate_90 &amp;lt;- tribble(~ x, ~ y,
+                        cos(pi / 2), -sin(pi / 2),
+                        sin(pi / 2), cos(pi / 2)) %&amp;gt;%
+  as.matrix()
+
+matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
+  add_transformation(rotate_90) %&amp;gt;% 
+  animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-linear-1.gif&#34; width=&#34;71%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Linear interpolation makes the rotation transformation appear scrunched during the animation (from how we intuitively think of a rotation) as the coordinate points take a straight line path to their positions after applying the transformation&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;To make the in-between coordinates instead follow the angle of rotation we could change the &lt;code&gt;seq_fun&lt;/code&gt; from &lt;code&gt;animatrixr::seq_matrix_l&lt;/code&gt; to &lt;code&gt;animatrixr::seq_matrix_lp&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
+  add_transformation(rotate_90, seq_fun = animatrixr::seq_matrix_lp) %&amp;gt;% 
+  animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-polar-sheer-linear-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;During the rotation portion of the animation &lt;code&gt;gganimate&lt;/code&gt; is still tweening images linearly, however the frames &lt;code&gt;add_transformation()&lt;/code&gt; creates are now following along the angle of rotation of the transformation. Hence the animation ends-up approximating a curved path.&lt;/p&gt;
+&lt;p&gt;However, &lt;code&gt;seq_matrix_lp()&lt;/code&gt; needs improvement and was just set-up to work for toy examples – it really only looks ‘right’ if doing rotations off of &lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} 1 &amp;amp; 0\\0  &amp;amp; 1 \end{array}\right)\]&lt;/span&gt; See &lt;a href=&#34;#showing-rotations&#34;&gt;Showing rotations&lt;/a&gt; in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; for additional detail on how this is set-up and the various limitations with &lt;code&gt;animatrixr&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Happy animatrixing!&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# animatrixr::rotation_matrix() is helper function for creating matrix
+# transformations of rotations
+matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
+  add_transformation(animatrixr::rotation_matrix(pi / 2),
+                     seq_fun = animatrixr::seq_matrix_lp) %&amp;gt;% 
+  add_transformation(matrix(c(1, 0.5, 0, 1), nrow = 2)) %&amp;gt;% 
+  add_transformation(matrix(c(1, 0, 0, -1), nrow = 2)) %&amp;gt;% 
+  animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/unnamed-chunk-1-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Appendix&lt;/h1&gt;
+&lt;div id=&#34;using-animatrixr&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Using &lt;code&gt;animatrixr&lt;/code&gt;?&lt;/h2&gt;
+&lt;p&gt;This is a toy package (very hastily written). I have not put effort into thinking about making it usable for others. Also, some parts just don’t really work or aren’t set-up quite right… (as noted in the README and elsewhere in the package). But feel free to check-it out / improve it / make something better! Let me know if you do!&lt;/p&gt;
+&lt;p&gt;This has been a fun dabble into thinking (at least surface level) about animation. Though I don’t have any plans to add onto this (or write any more posts on this topic). If I do add anything, it will most likely just be cleaning-up the decomposition methods in the &lt;code&gt;seq_matrix*()&lt;/code&gt; functions. But no plans&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;notes-on-seq-functions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Notes on seq functions&lt;/h2&gt;
+&lt;p&gt;Below are additional notes on the &lt;code&gt;animatrixr::seq_matrix*&lt;/code&gt; functions. They need some work, but here is a description of how they are currently set-up.&lt;/p&gt;
+&lt;div id=&#34;showing-rotations&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Showing rotations&lt;/h3&gt;
+&lt;p&gt;To animate the rotation of a transformation, &lt;code&gt;add_transformation(m = matrix(c(0, 1, -1, 0), nrow = 2), seq_fun = seq_matrix_lp)&lt;/code&gt; explicitly creates in-between frames on the path the points would follow if they were instead following polar coordinates along the angle of rotation. In the next few sections I’ll discuss the process for doing this (again, this is not necessarily an ideal set-up).&lt;/p&gt;
+&lt;p&gt;Given any 2x2 matrix:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} a &amp;amp; b\\ c &amp;amp; d \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;you can use the equation &lt;code&gt;atan2(c, a)&lt;/code&gt; to extract the angle of rotation from the matrix&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt; and then create a sequence from the starting angle of rotation to the final angle of rotation.&lt;/p&gt;
+&lt;p&gt;For example, if my start angle is &lt;span class=&#34;math inline&#34;&gt;\(0^\circ\)&lt;/span&gt;, and final angle of rotation is at &lt;span class=&#34;math inline&#34;&gt;\(38^\circ\)&lt;/span&gt; and I have 20 frames, then my sequence would be:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[0^\circ, 2^\circ, ... 38^\circ\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;A rotation matrix is defined as:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} cos(\theta) &amp;amp; -sin(\theta)\\ sin(\theta) &amp;amp; cos(\theta) \end{array}\right)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Hence I can convert my sequence of angles into a sequence of matrices that define the rotations applied for each explicit in-between frame.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+\left(\begin{array}{cc} cos(0^\circ) &amp;amp; -sin(0^\circ)\\ sin(0^\circ) &amp;amp; cos(0^\circ) \end{array}\right), 
+\left(\begin{array}{cc} cos(2^\circ) &amp;amp; -sin(2^\circ)\\ sin(2^\circ) &amp;amp; cos(2^\circ) \end{array}\right)...
+\left(\begin{array}{cc} cos(28^\circ) &amp;amp; -sin(28^\circ)\\ sin(28^\circ) &amp;amp; cos(28^\circ) \end{array}\right)
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;seq_matrix_lp-applied-on-non-standard-unit-basis-vectors&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;code&gt;seq_matrix_lp&lt;/code&gt; applied on non-standard unit basis vectors&lt;/h3&gt;
+&lt;p&gt;If you input a matrix transformation into &lt;code&gt;seq_matrix_lp&lt;/code&gt; that is not a pure rotation from the unit vectors it will decompose the matrix into a &lt;em&gt;rotation&lt;/em&gt; component and &lt;em&gt;other&lt;/em&gt; component&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;, the &lt;em&gt;other&lt;/em&gt; component creates a sequence of matrices that have the in-between frames interpolated linearly. The sequence of &lt;em&gt;rotation&lt;/em&gt; and &lt;em&gt;other&lt;/em&gt; matrices are then recomposed to provide the final sequence.&lt;/p&gt;
+&lt;p&gt;This approach means that non-pure rotations on the unit vectors, etc. will not really look like rotations. I would need to factor in other components (e.g. scale) to improve this.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;show-rotation-first&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Show rotation first&lt;/h3&gt;
+&lt;p&gt;Beyond &lt;code&gt;seq_matrip_l()&lt;/code&gt; and &lt;code&gt;seq_matrix_lp()&lt;/code&gt;, I made another seq_matrix* function: &lt;code&gt;seq_matrix_rotate_first&lt;/code&gt; which (like &lt;code&gt;seq_matrix_lp&lt;/code&gt;) also decomposes a matrix into rotation and other components. Rather than interpolating these separately and then recomposing them (as &lt;code&gt;seq_matrix_lp&lt;/code&gt; does) &lt;code&gt;seq_matrix_rotate_first&lt;/code&gt; works by interpolating them separately and then applying the decomposed sequences sequentially – so the entire rotation component of the transformation will be animated and then the ‘other’ component will be animated (this makes for twice as many frames when there is a ‘rotation’ and ‘other’ component in the transformation matrix).&lt;/p&gt;
+&lt;p&gt;I.e. starting from our identity matrix and applying a single matrix transformation, it will automatically decompose this and animate the decomposed parts in two steps, &lt;span class=&#34;math inline&#34;&gt;\(I\)&lt;/span&gt; –&amp;gt; &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; and then from &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; –&amp;gt; &lt;span class=&#34;math inline&#34;&gt;\(M\)&lt;/span&gt;. Below is an example of the animation for the transformation matrix:
+&lt;span class=&#34;math display&#34;&gt;\[ \left(\begin{array}{cc} 0 &amp;amp; -1\\1  &amp;amp; -0.5 \end{array}\right)\]&lt;/span&gt;
+(which could be decomposed into a rotation and a sheer part).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;transformation_matrix &amp;lt;- sheer_vertical %*% animatrixr::rotation_matrix(pi/4)
+
+matrix(c(1,0,0,1), nrow = 2) %&amp;gt;% 
+  add_transformation(transformation_matrix, seq_fun = seq_matrix_rotate_first) %&amp;gt;% 
+  animate_matrix(datasaurus = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-24-animatrixr-visualizing-matrix-transformations-pt-2_files/figure-html/rotate-sheer-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;There are (especially) a lot of problems with this function currently and I don’t recommend using it e.g.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;only works (at all correctly) if starting from standard unit vectors (hence cannot really be combined into a chain of matrix transformations)&lt;/li&gt;
+&lt;li&gt;rotation component extracted will vary depending on what ‘other’ is within M
+E.g. if M = {rotation}{vertical sheer} vs. M = {rotation}{horizontal sheer} – rotation component will look different&lt;/li&gt;
+&lt;li&gt;I defaulted the amount of frames given to the rotation component to be the same as the amount of frames given to other component. If the size of the rotation is small relative to the other part of the transformation (or vice versa) the timing will feel slow/jumpy.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Provides a cleaner approach for doing this compared to the clunky method I walked through in my post last week.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;All visualizations from last week used this linear interpolation method.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I discuss this at more length in my previous post – see the sub-section in the “Appendix”, “Problem of squeezing during rotation”.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;However I also hadn’t planned on writing a follow-up post… so who knows…&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;See &lt;a href=&#34;https://computergraphics.stackexchange.com/questions/3932/animating-a-smooth-linear-transformation&#34;&gt;post&lt;/a&gt; referencing this.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;To find the ‘other’ component of a matrix transformation… say &lt;em&gt;M&lt;/em&gt; represents the overall matrix transformation, in &lt;a href=&#34;#showing-rotations&#34;&gt;Showing rotations&lt;/a&gt; I described how to calculate &lt;em&gt;R&lt;/em&gt; (the rotation component), hence to calculate &lt;em&gt;A&lt;/em&gt;, ‘other’, I do:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AR = M\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[ARR^{-1} = MR^{-1}\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[A = MR^{-1}\]&lt;/span&gt;&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
@@ -509,11 +675,12 @@ p_pretty +
     
     <item>
       <title>Visualizing Matrix Transformations</title>
-      <link>/2020/02/20/visualizing-matrix-transformations-with-gganimate/</link>
+      <link>https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/</link>
       <pubDate>Thu, 20 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/02/20/visualizing-matrix-transformations-with-gganimate/</guid>
+      <guid>https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;I highly recommend the fantastic video series &lt;a href=&#34;https://www.youtube.com/watch?v=fNk_zzaMoSs&amp;amp;list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab&#34;&gt;Essence of Linear Algebra&lt;/a&gt; by &lt;a href=&#34;https://twitter.com/3blue1brown&#34;&gt;Grant Sanderson&lt;/a&gt;. In this post I’ll walk through how you can use &lt;code&gt;gganimate&lt;/code&gt; and the &lt;code&gt;tidyverse&lt;/code&gt; to (very loosely) recreate some of the visualizations shown in that series. Specifically those on matrix transformations and changing the basis vectors&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
@@ -538,7 +705,7 @@ I do not. Would love to see it, though🙂
 devtools::source_gist(&amp;quot;https://gist.github.com/brshallo/6a125f9c96dac5445cebb97cc62bfc9c&amp;quot;)
 
 animate_matrix_transformation(m = matrix(c(0.5, 0.5, 0.5, -0.25), nrow = 2))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/unnamed-chunk-13-1.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/unnamed-chunk-13-1.gif&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Over the next several sections I’ll walk through the thinking behind this code (culminating in the &lt;a href=&#34;#visualizations&#34;&gt;Visualizations&lt;/a&gt; section, where this animation will be shown again). Sections in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; contain variations on this animation that add-on additional simple transformations and layers.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;helper-functions&#34; class=&#34;section level1&#34;&gt;
@@ -565,7 +732,7 @@ animate_matrix_transformation(m = matrix(c(0.5, 0.5, 0.5, -0.25), nrow = 2))&lt;
   coord_fixed()+
   ggforce::theme_no_axes()+
   theme(panel.border = element_blank())&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;transform_df_coords()&lt;/code&gt;: Given dataframe, column names of coordinates&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;, and a transformation matrix, return dataframe with transformed coordinates.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;transform_df_coords &amp;lt;- function(df, ..., m = diag(length(df))){
   
@@ -742,10 +909,10 @@ y_breaks &amp;lt;- unique(grid_start$y)&lt;/code&gt;&lt;/pre&gt;
 &lt;h2&gt;Visualizations&lt;/h2&gt;
 &lt;p&gt;&lt;em&gt;Static image:&lt;/em&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Animation&lt;/em&gt;&lt;a href=&#34;#fn9&#34; class=&#34;footnote-ref&#34; id=&#34;fnref9&#34;&gt;&lt;sup&gt;9&lt;/sup&gt;&lt;/a&gt;:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p + gganimate::transition_states(time, wrap = FALSE)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-14-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-14-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;And there it is. To view a different matrix transformation, simply change the &lt;code&gt;transformation_matrix&lt;/code&gt; defined above and re-run the code chunks&lt;a href=&#34;#fn10&#34; class=&#34;footnote-ref&#34; id=&#34;fnref10&#34;&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/a&gt; or see the &lt;a href=&#34;#quick-start&#34;&gt;Quick start&lt;/a&gt; section.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -837,11 +1004,11 @@ basis_all &amp;lt;- bind_rows(
         legend.position = &amp;quot;none&amp;quot;) &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;em&gt;Static image:&lt;/em&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p_mult &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-19-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-19-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Animation:&lt;/em&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p_mult + 
   gganimate::transition_states(time, wrap = FALSE) &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-20-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-20-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;Notice that we see the transformations done sequentially. We could also have just inputted the single (simplified) matrix transformation:&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[\begin{bmatrix}
 -0.5 &amp;amp; -1\\
@@ -871,7 +1038,7 @@ p_rotation &amp;lt;- ggplot(aes(), data = filter(grid_all, time &amp;lt;= 2))+
         legend.position = &amp;quot;none&amp;quot;)
 
 p_rotation + gganimate::transition_states(time, wrap = FALSE) &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-21-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-21-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;However we can see this doesn’t happen (the grid scrunches up and the exterior segments cut into the circle). The reason this occurs is that during the animation the coordinates follow a straight line path to their new location as explained:&lt;/p&gt;
 &lt;blockquote class=&#34;twitter-tweet&#34;&gt;
 &lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
@@ -882,7 +1049,7 @@ The problem is that coords are tweened linearly which doesn&#39;t match a rotati
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 &lt;p&gt;Transformations that you &lt;em&gt;could&lt;/em&gt; conceptualize of as rotations will be animated as linear changes to coordinates. As a more extreme example, see animation of a matrix transformation for a &lt;span class=&#34;math inline&#34;&gt;\(180^\circ\)&lt;/span&gt; rotation:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;animate_matrix_transformation(m = matrix(c(-1, 0, 0, 1), nrow = 2))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/transform_180degrees.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/transform_180degrees.gif&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;One fix (irrespective of tweening method in &lt;code&gt;gganimate&lt;/code&gt;) could be to set specific coordinates at each frame (so that the lack of a true rotation wouldn’t be noticable)&lt;a href=&#34;#fn12&#34; class=&#34;footnote-ref&#34; id=&#34;fnref12&#34;&gt;&lt;sup&gt;12&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;problem-of-jittery-points-during-rotation&#34; class=&#34;section level3&#34;&gt;
@@ -910,7 +1077,7 @@ p_points &amp;lt;- p_rotation +
   geom_point(aes(x, y), data = points_all, colour = &amp;quot;royalblue3&amp;quot;)
 
 p_points + gganimate::transition_states(time, wrap = FALSE) &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-23-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-20-visualizing-matrix-transformations-with-gganimate_files/figure-html/unnamed-chunk-23-1.gif&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;miscellaneous-notes&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Miscellaneous notes&lt;/h3&gt;
@@ -949,20 +1116,20 @@ y_breaks &amp;lt;-
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Which are shown throughout the series and most notably in chapters 3 and 13.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;See section [Problems and potential improvements] for notes on a couple potential updates I’ll make… not positive I’ll keep the gist code updated.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;And may not care about understanding how to do multiple transformations, adding additional layers, etc.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;/ vectors&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;I’m guessing there is a better / more elegant function already out there for ‘tidy matrix multiplication’ or something… but couldn’t immediately think of anything.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;You could add additional objects to the image – just need to ensure you create &lt;em&gt;start&lt;/em&gt; and &lt;em&gt;transformed&lt;/em&gt; versions of each object.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Creating these is not needed if you just wanted to create static images for the below examples.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;No real reason for choosing this transformation, just thought it looked cool.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;If wrap = TRUE (default) the reverse looping of the image is inaccurate as the transformation back to the original basis actually represents a transformation by the inverse of the &lt;code&gt;transformation matrix&lt;/code&gt;. Though leaving it in would look cooler.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;Could functionalize more… or make a shiny app, or do more with, see [Problems and potential improvements] for notes…&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Can largely skim over&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Though this gets into decomposing the rotation, etc. components of the matrix transformation of interest for each frame.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Seems issue has to do with &lt;code&gt;group&lt;/code&gt; needing to apply both to the polygon at a given time as well as points on the polygon across time.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Would require latex title which I don’t know if is supported by &lt;code&gt;gganimate&lt;/code&gt;&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Which are shown throughout the series and most notably in chapters 3 and 13.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;See section [Problems and potential improvements] for notes on a couple potential updates I’ll make… not positive I’ll keep the gist code updated.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;And may not care about understanding how to do multiple transformations, adding additional layers, etc.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;/ vectors&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;I’m guessing there is a better / more elegant function already out there for ‘tidy matrix multiplication’ or something… but couldn’t immediately think of anything.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;You could add additional objects to the image – just need to ensure you create &lt;em&gt;start&lt;/em&gt; and &lt;em&gt;transformed&lt;/em&gt; versions of each object.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;Creating these is not needed if you just wanted to create static images for the below examples.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;No real reason for choosing this transformation, just thought it looked cool.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn9&#34;&gt;&lt;p&gt;If wrap = TRUE (default) the reverse looping of the image is inaccurate as the transformation back to the original basis actually represents a transformation by the inverse of the &lt;code&gt;transformation matrix&lt;/code&gt;. Though leaving it in would look cooler.&lt;a href=&#34;#fnref9&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn10&#34;&gt;&lt;p&gt;Could functionalize more… or make a shiny app, or do more with, see [Problems and potential improvements] for notes…&lt;a href=&#34;#fnref10&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn11&#34;&gt;&lt;p&gt;Can largely skim over&lt;a href=&#34;#fnref11&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn12&#34;&gt;&lt;p&gt;Though this gets into decomposing the rotation, etc. components of the matrix transformation of interest for each frame.&lt;a href=&#34;#fnref12&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn13&#34;&gt;&lt;p&gt;Seems issue has to do with &lt;code&gt;group&lt;/code&gt; needing to apply both to the polygon at a given time as well as points on the polygon across time.&lt;a href=&#34;#fnref13&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn14&#34;&gt;&lt;p&gt;Would require latex title which I don’t know if is supported by &lt;code&gt;gganimate&lt;/code&gt;&lt;a href=&#34;#fnref14&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
@@ -970,20 +1137,22 @@ y_breaks &amp;lt;-
     
     <item>
       <title>Riddler Solutions: Palindrome Dates &amp; Ambiguous Absolute Value Bars</title>
-      <link>/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/</link>
+      <link>https://www.bryanshalloway.com/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/</link>
       <pubDate>Thu, 13 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/</guid>
+      <guid>https://www.bryanshalloway.com/2020/02/13/fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs/</guid>
       <description>
-&lt;script src=&#34;/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;/rmarkdown-libs/str_view/str_view.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;/rmarkdown-libs/str_view-binding/str_view.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://www.bryanshalloway.com/rmarkdown-libs/str_view/str_view.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/str_view-binding/str_view.js&#34;&gt;&lt;/script&gt;
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#riddler-classic&#34;&gt;Riddler Classic&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#on-duplicates&#34;&gt;On duplicates&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#more-than-9-numbers&#34;&gt;More than 9 numbers&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#define-more-rules&#34;&gt;Define more rules&lt;/a&gt;&lt;/li&gt;
@@ -1080,7 +1249,7 @@ Of course, if we gave each pair of bars a different height (as is done in mathem
 &lt;p&gt;&lt;strong&gt;My approach:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;The question is how many ways can you interpret the expression above. As hinted at by the author, the ambiguity in the expression becomes resolved based on where the parentheses are placed. Hence the question is how many different ways can we arrange the parentheses?&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs_files/solutions_cropped.gif&#34; alt=&#34;Potential parentheses placements&#34; style=&#34;width:100.0%&#34; /&gt;
+&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs_files/solutions_cropped.gif&#34; style=&#34;width:100.0%&#34; alt=&#34;&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;Potential parentheses placements&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;&lt;em&gt;Constraints on placing parentheses:&lt;/em&gt;&lt;/p&gt;
@@ -1101,7 +1270,7 @@ Of course, if we gave each pair of bars a different height (as is done in mathem
 &lt;p&gt;We could use the &lt;code&gt;combn()&lt;/code&gt; function in R to generate all these combinations.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;However&lt;/strong&gt;, there is a problem; some of the combinations created could result in configurations with open parentheses. For example, even on a shorter version of this problem, the rules above would not safeguard from configurations such as:&lt;/p&gt;
 &lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:960px;height:100%;&#34; class=&#34;str_view html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;html&#34;:&#34;&lt;ul&gt;\n  &lt;li&gt;&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-1|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-2|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-3&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-4&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-5|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;&lt;\/li&gt;\n&lt;\/ul&gt;&#34;},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;html&#34;:&#34;&lt;ul&gt;\n  &lt;li&gt;&lt;\/li&gt;\n&lt;\/ul&gt;&#34;},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
 &lt;p&gt;that go against the rules of parentheses.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;You might take one of these approaches:&lt;/em&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -1111,21 +1280,21 @@ Of course, if we gave each pair of bars a different height (as is done in mathem
 &lt;p&gt;I ended-up doing it both ways (was a good way to verify my work). See &lt;a href=&#34;#define-more-rules&#34;&gt;Define more rules&lt;/a&gt; in the &lt;a href=&#34;#appendix&#34;&gt;Appendix&lt;/a&gt; if you want to see how you might take the latter approach. For now, I’ll go the easy route and start computing our expressions.&lt;/p&gt;
 &lt;p&gt;One thing I needed to do was make it so our mathematical expressions, i.e.:&lt;/p&gt;
 &lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:960px;height:100%;&#34; class=&#34;str_view html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;html&#34;:&#34;&lt;ul&gt;\n  &lt;li&gt;&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-1&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-2&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-3&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-4&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-5|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-6|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-7|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-8|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-9|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;&lt;\/li&gt;\n  &lt;li&gt;&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-1&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-2&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-3&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-4|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-5&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-6|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-7|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-8|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-9|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;&lt;\/li&gt;\n  &lt;li&gt;...&lt;\/li&gt;\n&lt;\/ul&gt;&#34;},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;html&#34;:&#34;&lt;ul&gt;\n  &lt;li&gt;&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-1&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-2&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-3&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-4&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-5|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-6|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-7|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-8|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-9|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;&lt;\/li&gt;\n  &lt;li&gt;&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-1&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-2&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-3&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-4&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;|-6|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-5|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-7|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-8|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-9|&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;&lt;\/li&gt;\n  &lt;li&gt;...&lt;\/li&gt;\n&lt;\/ul&gt;&#34;},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
 &lt;p&gt;Could be represented as meaningful expressions within the R programming language, i.e.:&lt;/p&gt;
 &lt;div id=&#34;htmlwidget-3&#34; style=&#34;width:960px;height:100%;&#34; class=&#34;str_view html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-3&#34;&gt;{&#34;x&#34;:{&#34;html&#34;:&#34;&lt;ul&gt;\n  &lt;li&gt;abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-1*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-2*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-3*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-4*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-5&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-6&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-7&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-8&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-9&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;&lt;\/li&gt;\n  &lt;li&gt;abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-1*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-2*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-3*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-4&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-5*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-6&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-7&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-8&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-9&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;&lt;\/li&gt;\n  &lt;li&gt;...&lt;\/li&gt;\n&lt;\/ul&gt;&#34;},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-3&#34;&gt;{&#34;x&#34;:{&#34;html&#34;:&#34;&lt;ul&gt;\n  &lt;li&gt;abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-1*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-2*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-3*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-4*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-5&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-6&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-7&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-8&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-9&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;&lt;\/li&gt;\n  &lt;li&gt;abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-1*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-2*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-3*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-4*abs&lt;span class=&#39;match&#39;&gt;(&lt;\/span&gt;-6&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-5&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-7&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-8&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;-9&lt;span class=&#39;match&#39;&gt;)&lt;\/span&gt;&lt;\/li&gt;\n  &lt;li&gt;...&lt;\/li&gt;\n&lt;\/ul&gt;&#34;},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
 &lt;p&gt;I made an equation &lt;code&gt;create_solve_expr_df()&lt;/code&gt; that creates the expressions and computes the solutions. See the &lt;a href=&#34;https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs.Rmd&#34;&gt;raw Rmd file&lt;/a&gt; on my github to see my code&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;After creating all possible configurations, I need to actually compute each viable expression to check if any of the configurations resulted in duplicate solutions.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Number of different configurations of parentheses:&lt;/em&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;solution_9 %&amp;gt;% 
   nrow()&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 42&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 70&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;strong&gt;There are 42 individual configurations.&lt;/strong&gt; However we need to check if all of the evaluated solutions are unique.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;solution_9 %&amp;gt;% 
   distinct(evaluated) %&amp;gt;% 
   nrow()&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 39&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 69&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;em&gt;Given these particular inputs, there are only 39 unique solutions&lt;/em&gt;, meaning that three configurations of parentheses led to duplicate solutions.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
@@ -1139,14 +1308,14 @@ solution_rand9 &amp;lt;- create_solve_expr_df(-runif(9))
 
 solution_rand9 %&amp;gt;% 
   nrow()&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 42&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 42&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 70&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 70&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;This led to an equal number of expressions and unique solutions – no duplicates. Hence the fact there were duplicates in our problem was specific to the inputs of -1 to -9 not something that would result when inputting any 9 numbers into this expression. I also found this to be the case on longer expressions.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;more-than-9-numbers&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;More than 9 numbers&lt;/h2&gt;
 &lt;p&gt;With the above set-up you could calculate the number of configurations for any length of input. Though I found that the computational time required increases quickly (once I started getting into problems into the 20’s things take a long-time to process). See below for a chart of unique solutions from 1 to 15&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-13-fivethirtyeightriddlersolutions-palindrome-debts-and-ambiguous-absolut-value-signs_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;define-more-rules&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Define more rules&lt;/h2&gt;
@@ -1160,7 +1329,7 @@ solution_rand9 %&amp;gt;%
 &lt;pre&gt;&lt;code&gt;## # A tibble: 1 x 1
 ##   num_possible_combinations
 ##                       &amp;lt;int&amp;gt;
-## 1                        42&lt;/code&gt;&lt;/pre&gt;
+## 1                        70&lt;/code&gt;&lt;/pre&gt;
 &lt;ul&gt;
 &lt;li&gt;Gives the number of meaningful configurations of parentheses
 &lt;ul&gt;
@@ -1191,11 +1360,11 @@ gganimate::anim_save(here::here(&amp;quot;static/post/2020-02-13-fivethirtyeight
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;vector&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;&lt;a href=&#34;khanacademy.org&#34;&gt;Khan Academy&lt;/a&gt; if you want to brush up on your combinatorics skills.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;The code isn’t &lt;em&gt;the most&lt;/em&gt; attractive. The dataframe set-up could be cleaner. Also I’d like to go back and rewrite the expression part of this using &lt;code&gt;rlang&lt;/code&gt; and some of the cool things you can do with manipulating environments and expressions in R… but alas… hacked this solution together by just stitching together text…&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;Note that &lt;span class=&#34;math inline&#34;&gt;\(x_n &amp;lt; 0\)&lt;/span&gt;.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;Note also that this problem requires that there be an odd number of inputs and that they all be negative.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;vector&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;&lt;a href=&#34;khanacademy.org&#34;&gt;Khan Academy&lt;/a&gt; if you want to brush up on your combinatorics skills.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;The code isn’t &lt;em&gt;the most&lt;/em&gt; attractive. The dataframe set-up could be cleaner. Also I’d like to go back and rewrite the expression part of this using &lt;code&gt;rlang&lt;/code&gt; and some of the cool things you can do with manipulating environments and expressions in R… but alas… hacked this solution together by just stitching together text…&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;Note that &lt;span class=&#34;math inline&#34;&gt;\(x_n &amp;lt; 0\)&lt;/span&gt;.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;Note also that this problem requires that there be an odd number of inputs and that they all be negative.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
@@ -1203,16 +1372,18 @@ gganimate::anim_save(here::here(&amp;quot;static/post/2020-02-13-fivethirtyeight
     
     <item>
       <title>Riddler Solutions: Perfect Bowl &amp; Magnetic Volume</title>
-      <link>/2020/02/06/maximizing-magnetic-volume-the-perfect-bowl/</link>
+      <link>https://www.bryanshalloway.com/2020/02/06/maximizing-magnetic-volume-the-perfect-bowl/</link>
       <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/02/06/maximizing-magnetic-volume-the-perfect-bowl/</guid>
+      <guid>https://www.bryanshalloway.com/2020/02/06/maximizing-magnetic-volume-the-perfect-bowl/</guid>
       <description>
+&lt;script src=&#34;https://www.bryanshalloway.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#riddler-express&#34;&gt;Riddler Express&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#riddler-classic&#34;&gt;Riddler Classic&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#riddler-classic&#34;&gt;Riddler Classic&lt;/a&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#area-of-the-base-of-the-pyramid&#34;&gt;Area of the base of the pyramid&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#height-of-the-pyramid&#34;&gt;Height of the pyramid&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#encode-functions-and-calculate-volumes&#34;&gt;Encode functions and calculate volumes&lt;/a&gt;&lt;/li&gt;
@@ -1245,7 +1416,7 @@ For example, here’s how you could split your opponent’s bowls when ɸ is 75�
 &lt;p&gt;&lt;strong&gt;My Approach:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Sketched-out:&lt;/em&gt;&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/bowl_calc.jpg&#34; alt=&#34;My drawings are rotated 90° clockwise from the problem description (does not affect solution)&#34; style=&#34;width:58.0%&#34; /&gt;
+&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/bowl_calc.jpg&#34; style=&#34;width:58.0%&#34; alt=&#34;&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;My drawings are rotated 90° clockwise from the problem description (does not affect solution)&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;&lt;em&gt;Walked through:&lt;/em&gt;&lt;/p&gt;
@@ -1259,7 +1430,7 @@ For example, here’s how you could split your opponent’s bowls when ɸ is 75�
 &lt;p&gt;Connecting these lines will create a right triangle with side length of 1 and hypotenuse of 1.25.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;III.&lt;/strong&gt; If you remember the &lt;em&gt;soh cah toa&lt;/em&gt; rules from trigonometry, you can use the identity &lt;span class=&#34;math inline&#34;&gt;\(sin(\phi) = \frac{opposite}{hypotenuse} \longrightarrow \phi = arcsin(\frac{1}{1.25})\)&lt;/span&gt; and compute the minimum angle is ~53.13°.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;What the path of the perfect bowl would look like:&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/figure-html/bowl-perfect-path-figure-1.png&#34; width=&#34;70%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/figure-html/bowl-perfect-path-figure-1.png&#34; width=&#34;70%&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;riddler-classic&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Riddler Classic&lt;/h1&gt;
@@ -1279,7 +1450,7 @@ For example, here’s how you could split your opponent’s bowls when ɸ is 75�
 &lt;p&gt;The side length of the base of our pyramid will be the length of the shortest side of a Magna-Tile. We weren’t told the lengths of the sides of the Magna-Tiles but they don’t matter for this problem&lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;. To keep things simple, I’ll say the two congruent sides of the Magna-Tiles are equal to 1 unit.&lt;/p&gt;
 &lt;p&gt;Drawing a line perpendicular to the base splits our Magna-Tile into two congruent triangles. Given the trigonometric identity that &lt;span class=&#34;math inline&#34;&gt;\(sin(\theta) = \frac{opposite}{hypotenuse}\)&lt;/span&gt; and that the hypotenuse of each triangle was set at 1 unit, we can calculate the length of the base of the Magna-Tile is &lt;em&gt;2sin(15°).&lt;/em&gt;&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/base_length.jpg&#34; alt=&#34;Base polygon side length&#34; style=&#34;width:58.0%&#34; /&gt;
+&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/base_length.jpg&#34; style=&#34;width:58.0%&#34; alt=&#34;&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;Base polygon side length&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;I used &lt;em&gt;Math Open Reference&lt;/em&gt; to find an equation for &lt;a href=&#34;https://www.mathopenref.com/polygonregulararea.html&#34;&gt;area of a regular polygon&lt;/a&gt; as a function of side length and number of sides: &lt;span class=&#34;math display&#34;&gt;\[(area\;of\;regular\;polygon)\;=\;\frac{(side\;length)^{2}(number\;of\;sides)}{4tan(\frac{180^{\circ}}{number\;of\;sides})}\]&lt;/span&gt;&lt;/p&gt;
@@ -1290,7 +1461,7 @@ making area a function of &lt;em&gt;only&lt;/em&gt; the number of sides on our p
 &lt;h2&gt;Height of the pyramid&lt;/h2&gt;
 &lt;p&gt;&lt;em&gt;Sketched out:&lt;/em&gt;&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg&#34; alt=&#34;Finding pyramid height&#34; style=&#34;width:80.0%&#34; /&gt;
+&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg&#34; style=&#34;width:80.0%&#34; alt=&#34;&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;Finding pyramid height&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;&lt;em&gt;Walked through:&lt;/em&gt;&lt;/p&gt;
@@ -1302,21 +1473,21 @@ making area a function of &lt;em&gt;only&lt;/em&gt; the number of sides on our p
 &lt;p&gt;&lt;strong&gt;I.&lt;/strong&gt; Length of a Magna-Tile (over its line of symmetry)&lt;/p&gt;
 &lt;p&gt;Using the trigonometric rule that &lt;span class=&#34;math inline&#34;&gt;\(cos(\theta) = \frac{adjacent}{hypotenuse}\)&lt;/span&gt; reveals the length of a Magna-Tile as equal to &lt;em&gt;cos(15°)&lt;/em&gt; – remember we are treating the longest sides of the Magna-Tile as equal to 1 unit&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/mag_length.jpg&#34; alt=&#34;Magna-Tile length (over its line of symmetry)&#34; width=&#34;200&#34; /&gt;
+&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/mag_length.jpg&#34; width=&#34;200&#34; alt=&#34;&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;Magna-Tile length (over its line of symmetry)&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;&lt;strong&gt;II.&lt;/strong&gt; I used Math Open Reference to find the equation for &lt;a href=&#34;https://www.mathopenref.com/apothem.html&#34;&gt;apothem length&lt;/a&gt; as a function of number and length of sides in a regular polygon. &lt;span class=&#34;math display&#34;&gt;\[apothem\;length = \frac{side\;length}{2tan(\frac{180^{\circ}}{number\;of\;sides})}\]&lt;/span&gt; You can replace &lt;em&gt;side length&lt;/em&gt; in this equation with &lt;em&gt;2sin(15°)&lt;/em&gt; (calculated above), making apothem length a function of &lt;em&gt;only&lt;/em&gt; the number of sides on our pyramid (i.e. the number of Magna-Tiles).&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;III.&lt;/strong&gt; Parts &lt;strong&gt;I&lt;/strong&gt; and &lt;strong&gt;II&lt;/strong&gt; represent two sides of a right triangle. To find the third side (corresponding with &lt;em&gt;pyramid height&lt;/em&gt;) simply use the Pythagorean theorem: &lt;span class=&#34;math display&#34;&gt;\[pyramid\;height = \sqrt{(MagnaTile\;length)^{2} - (apothem\;length)^{2}}\]&lt;/span&gt;
 Fill in the values for &lt;em&gt;(Magna-Tile length)&lt;/em&gt; and &lt;em&gt;(apothem length)&lt;/em&gt; (as described in &lt;strong&gt;I&lt;/strong&gt; &amp;amp; &lt;strong&gt;II&lt;/strong&gt;) and you’ll see pyramid height is now represented as a function of &lt;em&gt;only&lt;/em&gt; number of sides (i.e. number of Magna-Tiles).&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg&#34; alt=&#34;Finding pyramid height&#34; style=&#34;width:80.0%&#34; /&gt;
+&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/height_calc.jpg&#34; style=&#34;width:80.0%&#34; alt=&#34;&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;Finding pyramid height&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;encode-functions-and-calculate-volumes&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Encode functions and calculate volumes&lt;/h2&gt;
 &lt;p&gt;I used &lt;a href=&#34;https://github.com/brshallo/brshallo/blob/master/content/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl.Rmd&#34;&gt;R to encode&lt;/a&gt; these functions&lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt; and calculate the volumes for pyramids built from 2 to 12 Magna-Tiles&lt;a href=&#34;#fn7&#34; class=&#34;footnote-ref&#34; id=&#34;fnref7&#34;&gt;&lt;sup&gt;7&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/figure-html/volumes-graph-1.png&#34; width=&#34;100%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/figure-html/volumes-graph-1.png&#34; width=&#34;100%&#34; /&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Volume increases up until 10 Magna-Tiles and then decreases at 11&lt;a href=&#34;#fn8&#34; class=&#34;footnote-ref&#34; id=&#34;fnref8&#34;&gt;&lt;sup&gt;8&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
@@ -1325,19 +1496,19 @@ Fill in the values for &lt;em&gt;(Magna-Tile length)&lt;/em&gt; and &lt;em&gt;(a
 &lt;div id=&#34;appendix&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Appendix&lt;/h1&gt;
 &lt;p&gt;&lt;em&gt;Bonus plot showing number of tiles (and size of pyramid base) vs pyramid height.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/figure-html/heights-and-apothem-graph-1.png&#34; width=&#34;100%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.bryanshalloway.com/post/2020-02-06-maximizing-magnetic-volume-the-perfect-bowl_files/figure-html/heights-and-apothem-graph-1.png&#34; width=&#34;100%&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;When passing the line between the centers of the red circles.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;When passing the line between the centers of the red circles.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Could do for either or both circles and would get same solution as below steps will form congruent triangles – but following these steps using the top red circle more closely follows the story of the problem.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;As the pyramids created will be similar so each pyramid would scale proportionally to one another.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;In this case the longest sides are each a hypotenuse.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;In the code I use pi / 12 radians, which is equivalent to 15° used throughout the descriptions.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;2 and 12 Magna-Tiles represent flat structures ad therefore no volume.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;At 12 the structure is flat so no longer has volume.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;When passing the line between the centers of the red circles.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;When passing the line between the centers of the red circles.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Could do for either or both circles and would get same solution as below steps will form congruent triangles – but following these steps using the top red circle more closely follows the story of the problem.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;As the pyramids created will be similar so each pyramid would scale proportionally to one another.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;In this case the longest sides are each a hypotenuse.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;In the code I use pi / 12 radians, which is equivalent to 15° used throughout the descriptions.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn7&#34;&gt;&lt;p&gt;2 and 12 Magna-Tiles represent flat structures ad therefore no volume.&lt;a href=&#34;#fnref7&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn8&#34;&gt;&lt;p&gt;At 12 the structure is flat so no longer has volume.&lt;a href=&#34;#fnref8&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>

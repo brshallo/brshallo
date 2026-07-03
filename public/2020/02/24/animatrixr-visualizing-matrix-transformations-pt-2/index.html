@@ -5,12 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Hugo 0.75.0" />
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
 
 <title>animatrixr &amp; Visualizing Matrix Transformations pt. 2 - Bryan Shalloway&#39;s Blog</title>
 <meta property="og:title" content="animatrixr &amp; Visualizing Matrix Transformations pt. 2 - Bryan Shalloway&#39;s Blog">
 
 
-  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='https://www.bryanshalloway.com/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -30,6 +32,17 @@
 <link rel="stylesheet" href="/css/fonts.css" media="all">
 <link rel="stylesheet" href="/css/main.css" media="all">
 
+<script async src="https://use.fontawesome.com/32c3d13def.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <link rel="stylesheet" href="/css/custom.css" />
+
+
+
+
+  <script src="/js/collapse.js"></script>
+  <script src="/js/dropdown.js"></script>
+  <script src="/js/transition.js"></script>
 
 
   </head>
@@ -41,20 +54,20 @@
     <img src="/images/bryan_edit.jpg"
          width="60"
          height="60"
-         alt="Logo">
+         alt="Home">
   </a>
 
   <ul class="nav-links">
     
     <li><a href="/about/">About</a></li>
     
-    <li><a href="https://twitter.com/brshallo">Twitter</a></li>
+    <li><a href="/">Posts</a></li>
+    
+    <li><a href="https://www.youtube.com/watch?v=c9oU7ALJS3o&amp;list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95&amp;index=1">Presentations</a></li>
     
     <li><a href="https://github.com/brshallo">GitHub</a></li>
     
     <li><a href="https://www.linkedin.com/in/bryanshalloway/">LinkedIn</a></li>
-    
-    <li><a href="https://www.youtube.com/watch?v=gme4Fb9JVjk&amp;list=PL2f6B79nBqL16QFte8fN_GWDtJwZDXt95">YouTube</a></li>
     
   </ul>
 </nav>
@@ -72,11 +85,41 @@
     <h1 class="article-title">animatrixr &amp; Visualizing Matrix Transformations pt. 2</h1>
 
     
+    <p class="terms">
+      
+      
+      Tags:
+      
+      <a href='/tags/devtools'>devtools</a>
+      
+      <a href='/tags/dplyr'>dplyr</a>
+      
+      <a href='/tags/animatrixr'>animatrixr</a>
+      
+      
+      
+    </p>
+    
     <span class="article-date">2020-02-24</span>
     
+    
+<div id="code-folding-buttons" class="btn-group pull-right">
+  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-_extension-text-contrast="">
+    <span>Show/Hide all code</span> 
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" style="min-width: 50px;">
+  <li><a id="rmd-show-all-code" href="#">Show All Code</a>
+  </li><li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+  </ul>
+</div>
 
+
+    
+    
     <div class="article-content">
       
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p>This post is a continuation on my post from last week on <a href="https://www.bryanshalloway.com/2020/02/20/visualizing-matrix-transformations-with-gganimate/">Visualizing Matrix Transformations with gganimate</a>. Both posts are largely inspired by <a href="https://twitter.com/3blue1brown">Grant Sanderson’s</a> beautiful video series <a href="https://www.youtube.com/watch?v=kYB8IZa5AuE&amp;list=PL_w8oSr1JpVCZ5pKXHKz6PkjGCbPbSBYv&amp;index=4">The Essence of Linear Algebra</a> and wanting to continue messing around with <a href="https://github.com/thomasp85/gganimate">Thomas Lin Peterson’s</a> fantastic <a href="https://github.com/thomasp85/gganimate">gganimate</a> package in R.</p>
@@ -216,15 +259,15 @@ E.g. if M = {rotation}{vertical sheer} vs. M = {rotation}{horizontal sheer} –
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Provides a cleaner approach for doing this compared to the clunky method I walked through in my post last week.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>All visualizations from last week used this linear interpolation method.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>I discuss this at more length in my previous post – see the sub-section in the “Appendix”, “Problem of squeezing during rotation”.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>However I also hadn’t planned on writing a follow-up post… so who knows…<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>See <a href="https://computergraphics.stackexchange.com/questions/3932/animating-a-smooth-linear-transformation">post</a> referencing this.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>Provides a cleaner approach for doing this compared to the clunky method I walked through in my post last week.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>All visualizations from last week used this linear interpolation method.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>I discuss this at more length in my previous post – see the sub-section in the “Appendix”, “Problem of squeezing during rotation”.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>However I also hadn’t planned on writing a follow-up post… so who knows…<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>See <a href="https://computergraphics.stackexchange.com/questions/3932/animating-a-smooth-linear-transformation">post</a> referencing this.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
 <li id="fn6"><p>To find the ‘other’ component of a matrix transformation… say <em>M</em> represents the overall matrix transformation, in <a href="#showing-rotations">Showing rotations</a> I described how to calculate <em>R</em> (the rotation component), hence to calculate <em>A</em>, ‘other’, I do:</p>
 <p><span class="math display">\[AR = M\]</span>
 <span class="math display">\[ARR^{-1} = MR^{-1}\]</span>
-<span class="math display">\[A = MR^{-1}\]</span><a href="#fnref6" class="footnote-back">↩</a></p></li>
+<span class="math display">\[A = MR^{-1}\]</span><a href="#fnref6" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 
@@ -262,13 +305,28 @@ E.g. if M = {rotation}{vertical sheer} vs. M = {rotation}{horizontal sheer} –
       <footer class="footer">
         <ul class="footer-links">
           <li>
-            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+            <a href="/tags">Tags</a>
           </li>
           <li>
-            <a>Blogroll:</a><a href="https://www.r-bloggers.com/" class="footer-links-kudos">R-Bloggers</a><a href="https://rweekly.org/" class="footer-links-kudos">R-Weekly</a>
+            <a href="/categories">Categories</a>
+          </li>
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          
+          <li>
+            Blogroll:<a href="https://www.r-bloggers.com/" class="footer-links-kudos">R-Bloggers</a><a href="https://rweekly.org/" class="footer-links-kudos">R-Weekly</a>
           </li>
         </ul>
       </footer>
+
+ 
+  <script>
+  $(document).ready(function () {
+    window.initializeCodeFolding("show" === "show");
+  });
+  </script>
+  <script src="/js/codefolding.js"></script>
 
     </div>
     
