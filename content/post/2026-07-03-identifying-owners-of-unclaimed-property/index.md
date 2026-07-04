@@ -5,8 +5,7 @@ date: '2026-06-23'
 categories:
   - business
 slug: identifying-owners-of-unclaimed-property
-thumbnail: '/2026/06/23/identifying-owners-of-unclaimed-property/images/Screenshot
-  2026-07-03 at 4.07.44 PM.png'
+thumbnail: '/2026/06/23/identifying-owners-of-unclaimed-property/images/missing-money.png'
 ---
 
 **TL;DR:** I used Claude to build a pipeline that identifies likely owners of unclaimed property (lost or dormant assets held by the state) and just messaged the likely owners of ~$10M currently held by the state of CA. Initial notes on the project/approach are at [brshallo/escheat-finder](https://github.com/brshallo/escheat-finder).
@@ -37,6 +36,6 @@ We'll see how this initial run goes.
 
 Hoping people read their inboxes 🤞🤞🤞!   
 
-[![Missing Money website](<images/Screenshot 2026-07-03 at 4.07.44 PM.png>)](https://missingmoney.com/)
+[![Missing Money website](images/missing-money.png)](https://missingmoney.com/)
 
 As a PSA, everyone should check their name (and their friends' and families' names) at https://missingmoney.com/. It's free to search and file claims (the site is legitimate and run by the National Association of State Treasurers and State Unclaimed Property Administrators).
