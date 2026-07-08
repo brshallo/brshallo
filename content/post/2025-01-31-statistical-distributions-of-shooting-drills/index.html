@@ -1,0 +1,309 @@
+---
+title: Statistical Distributions of Shooting Drills
+author: R Build
+date: '2025-01-31'
+slug: statistical-distributions-of-shooting-drills
+categories:
+  - rstats
+tags: ["dplyr", "ggplot", "purrr", "tidyr"]
+thumbnail: '/2025/01/31/statistical-distributions-of-shooting-drills/index_files/figure-html/payout-stats-1.png'
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#scenario-1-difference-of-binomial-distributions" id="toc-scenario-1-difference-of-binomial-distributions">Scenario 1: difference of binomial distributions</a></li>
+<li><a href="#scenario-2-difference-in-negative-binomial-distributions" id="toc-scenario-2-difference-in-negative-binomial-distributions">Scenario 2: difference in negative binomial distributions</a></li>
+<li><a href="#which-game-should-you-play-if-youre-better" id="toc-which-game-should-you-play-if-youre-better">Which game should you play if you’re better?</a></li>
+<li><a href="#appendix" id="toc-appendix">Appendix</a>
+<ul>
+<li><a href="#hypothesis-tests-on-observational-data" id="toc-hypothesis-tests-on-observational-data">Hypothesis tests on observational data</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p><strong>TL;DR:</strong> A quick look at the binomial and negative binomial distributions through the lens of basketball shooting drills.</p>
+<p>A friend and I were doing basketball shooting drills. To make things interesting, we bet on each round: the loser paid a dollar for every shot they lost by. For the first drill we took 30 shots. E.g. if I made 16 and he made 14, I’d win $2. For the next drill you shot <em>until</em> you made 15, with the loser paying a dollar for each extra miss. So if I took 27 shots to make my 15 (12 misses) and it took them 31 (16 misses), I’d win $4.</p>
+<p>If we each shoot 50%, both games have the same expected outcome: 30 shots each, 15 for 30, and the bet’s a wash. But while the expected values match, the spread of outcomes is quite different.</p>
+<div id="scenario-1-difference-of-binomial-distributions" class="section level1">
+<h1>Scenario 1: difference of binomial distributions</h1>
+<p>The distribution of outcomes for the first scenario can be modeled as the difference of two binomial distributions. To unpack this a little: the chance of making a single shot can be represented by what’s termed a bernoulli distribution<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, which just assigns a probability to each of the two outcomes (make or miss). A binomial distribution then gives the distribution of successes<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> across some number of bernoulli trials<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. E.g. given a 50% chance of making each shot and 30 attempts, what’s the chance you make 0, 1, 2, … up to 30 shots.</p>
+<p>Here’s what that distribution looks like for a 50% shooter taking 30 shots:</p>
+<pre class="r"><code>library(tidyverse)
+
+tibble(makes = 0:30) |&gt;
+  mutate(probability = dbinom(makes, 30, 0.5)) |&gt;
+  ggplot(aes(x = makes, y = probability))+
+  geom_col()+
+  theme_bw()+
+  scale_y_continuous(labels = scales::percent)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-1-1.png" alt="" width="672" /></p>
+<p>However I care about modeling pay-outs, i.e. the distribution of the <em>difference</em> in makes between me and my friend. In this simple case you could derive that distribution analytically<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>, but often your situation is too complicated to derive, so instead you simulate from the underlying components. Each round here is just the difference of two binomial distributions (each 30 shots at 50%). I’ll run this a million times and look at the distribution of payouts<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>:</p>
+<pre class="r"><code>set.seed(123)
+# simulate a million rounds of 30 v 30 shots
+output &lt;- tibble(outcomes = rbinom(1000000, 30, 0.5) - rbinom(1000000, 30, 0.5))
+
+output |&gt;
+  count(outcomes) |&gt;
+  mutate(prop = n / sum(n)) |&gt;
+  ggplot(aes(x = outcomes, y = prop))+
+  geom_col()+
+  theme_bw()+
+  scale_y_continuous(labels = scales::percent)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" alt="" width="672" /></p>
+<p>For spread, let’s look at the magnitude of payouts irrespective of who wins.</p>
+<pre class="r"><code>output_abs &lt;- output |&gt; mutate(outcomes_abs = abs(outcomes))
+
+output_abs |&gt;
+  count(outcomes_abs) |&gt;
+  mutate(prop = n / sum(n)) |&gt;
+  ggplot(aes(x = outcomes_abs, y = prop))+
+  geom_col()+
+  theme_bw()+
+  scale_y_continuous(labels = scales::percent)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" alt="" width="672" /></p>
+<p>The typical (50th percentile) outcome is someone winning by three shots; the 90th percentile is six.</p>
+<pre class="r"><code>output_abs |&gt;
+  with(quantile(outcomes_abs, c(0.5, 0.9)))</code></pre>
+<pre><code>## 50% 90% 
+##   3   6</code></pre>
+</div>
+<div id="scenario-2-difference-in-negative-binomial-distributions" class="section level1">
+<h1>Scenario 2: difference in negative binomial distributions</h1>
+<p>In our second scenario we no longer have a fixed number of shots and an uncertain number of makes – we’ve fixed the makes at 15 and want the distribution of misses accumulated on the way there. We’re asking the inverse, or negative, of the earlier question, so perhaps it’s no surprise the relevant distribution is called the negative binomial. It too can be thought of as a series of bernoulli trials, but now we keep shooting until we hit a target number of makes, counting the failures along the way<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a><a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a><a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>.</p>
+<p>Here’s the distribution of misses on the way to 15 makes for a 50% shooter.</p>
+<pre class="r"><code>tibble(misses = 0:50) |&gt;
+  mutate(probability = dnbinom(misses, 15, 0.5)) |&gt;
+  ggplot(aes(x = misses, y = probability))+
+  geom_col()+
+  theme_bw()+
+  scale_y_continuous(labels = scales::percent)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" alt="" width="672" /></p>
+<p>A couple things to notice:</p>
+<ul>
+<li>it’s wider than our initial binomial distribution – the variance here is 30<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> vs 7.5<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> for the binomial.</li>
+<li>it’s right skewed<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>.</li>
+</ul>
+<p>So it’s not surprising that simulating the difference of two negative binomials also shows a wider spread:</p>
+<pre class="r"><code>set.seed(123)
+nb_output &lt;- tibble(outcomes = rnbinom(1000000, 15, 0.5) - rnbinom(1000000, 15, 0.5))
+
+nb_output |&gt;
+  count(outcomes) |&gt;
+  mutate(prop = n / sum(n)) |&gt;
+  ggplot(aes(x = outcomes, y = prop))+
+  geom_col()+
+  theme_bw()+
+  xlim(c(-40, 40))+
+  scale_y_continuous(labels = scales::percent)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" alt="" width="672" /></p>
+<p>In terms of magnitude of payouts:</p>
+<pre class="r"><code>nb_output_abs &lt;- nb_output |&gt; mutate(outcomes_abs = abs(outcomes))
+
+nb_output_abs |&gt;
+  count(outcomes_abs) |&gt;
+  mutate(prop = n / sum(n)) |&gt;
+  ggplot(aes(x = outcomes_abs, y = prop))+
+  geom_col()+
+  theme_bw()+
+  xlim(c(0, 40))+
+  scale_y_continuous(labels = scales::percent)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" alt="" width="672" /></p>
+<p>Our typical payout is now $5 and our 90th percentile payout is $13 (compared to $3 and $6 respectively in our first game).</p>
+<pre class="r"><code>nb_output_abs |&gt;
+  with(quantile(outcomes_abs, c(0.5, 0.9)))</code></pre>
+<pre><code>## 50% 90% 
+##   5  13</code></pre>
+<p>So if you hold the successes constant you can expect larger payouts between rounds in our second game<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a><a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>.</p>
+</div>
+<div id="which-game-should-you-play-if-youre-better" class="section level1">
+<h1>Which game should you play if you’re better?</h1>
+<p>Say you have an edge on your friend. Which game is better for you?</p>
+<p>Let’s plot the expected value and standard deviation of payouts as your friend’s shooting percentage drops from 50% to 40%.</p>
+<pre class="r"><code>diffs_of_dists &lt;- function(prob2, prob1 = .5, dist = rbinom, n = 30, size = 1000000){
+  dist(size, n, prob1) - dist(size, n, prob2)
+}
+
+game_stats &lt;- map_dfr(seq(.40, .50, by = 0.01), function(prob_friend){
+  binom_diffs &lt;- diffs_of_dists(prob_friend)
+  # in scenario 2 fewer misses is better, so flip the sign to get *your* payout
+  nbinom_diffs &lt;- -diffs_of_dists(prob_friend, n = 15, dist = rnbinom)
+
+  tibble(
+    friend_shooting_pct = prob_friend,
+    game = c(&quot;scenario 1: fixed shots&quot;, &quot;scenario 2: shoot until 15 makes&quot;),
+    expected_payout = c(mean(binom_diffs), mean(nbinom_diffs)),
+    sd_payout = c(sd(binom_diffs), sd(nbinom_diffs))
+  )
+})
+
+game_stats |&gt;
+  pivot_longer(c(expected_payout, sd_payout)) |&gt;
+  mutate(name = ifelse(name == &quot;expected_payout&quot;, &quot;expected payout&quot;, &quot;standard deviation of payout&quot;)) |&gt;
+  ggplot(aes(x = friend_shooting_pct, y = value, colour = game))+
+  geom_line()+
+  facet_wrap(~name, ncol = 1, scales = &quot;free_y&quot;)+
+  expand_limits(y = 0)+
+  theme_bw()+
+  theme(legend.position = &quot;bottom&quot;)+
+  scale_x_continuous(labels = scales::percent, breaks = c(.40, .45, .50))+
+  scale_y_continuous(labels = scales::dollar, breaks = seq(0, 10, by = 2))+
+  labs(x = &quot;friend&#39;s shooting percentage&quot;, y = NULL)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/payout-stats-1.png" alt="" width="672" /></p>
+<p>Scenario 2 has the better expected payout but more uncertainty – and its uncertainty grows with the skill gap, whereas scenario 1’s variability stays about the same either way.</p>
+<p>So the two games are only “the same” on average. The data generating process doesn’t just set what you expect to win – it also sets the spread of what actually happens and how that spread moves with the skill gap. Pick your game accordingly.</p>
+</div>
+<div id="appendix" class="section level1">
+<h1>Appendix</h1>
+<div id="hypothesis-tests-on-observational-data" class="section level2">
+<h2>Hypothesis tests on observational data</h2>
+<p>The two games can also mess with a <em>statistician</em> using observational data with no control of sample size. Pretend someone at the community center likes to watch players doing shooting drills and use the observational data to run hypothesis tests on whether they’re equally skilled. The observer doesn’t control the games – they just analyze whatever shots happen. Let’s simulate type 1 (detects a difference when there isn’t one) and type 2 (misses a difference when there is one) errors under a few scenarios.</p>
+<p>One tweak first: we’ll have the players run longer versions of both games – 100 shots in the fixed game, shoot until 50 makes in the other<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>.</p>
+<p>The observer would most likely use:</p>
+<ul>
+<li>difference of proportions z test</li>
+<li>chi-square test</li>
+<li>fisher’s exact test</li>
+</ul>
+<p>I’ll simulate the outputs from each.</p>
+<pre class="r"><code>run_tests &lt;- function(makes, misses){
+  shot_table &lt;- rbind(makes, misses)
+
+  tibble(
+    `z test` = prop.test(makes, makes + misses, correct = FALSE)$p.value,
+    `chi-square test` = chisq.test(shot_table)$p.value,
+    `fisher&#39;s exact test` = fisher.test(shot_table)$p.value
+  )
+}
+
+simulate_tests &lt;- function(prob1, prob2, game, n_sims = 10000){
+  map_dfr(1:n_sims, function(sim){
+    if(game == &quot;scenario 1&quot;){
+      makes &lt;- c(rbinom(1, 100, prob1), rbinom(1, 100, prob2))
+      misses &lt;- 100 - makes
+    } else {
+      misses &lt;- c(rnbinom(1, 50, prob1), rnbinom(1, 50, prob2))
+      makes &lt;- c(50, 50)
+    }
+    run_tests(makes, misses)
+  }) |&gt;
+    summarise(across(everything(), ~mean(.x &lt; 0.05))) |&gt;
+    mutate(game = game, .before = 1)
+}
+
+set.seed(123)
+bind_rows(
+  simulate_tests(0.5, 0.5, &quot;scenario 1&quot;) |&gt; mutate(skill = &quot;equal (both 50%)&quot;, .before = 1),
+  simulate_tests(0.5, 0.5, &quot;scenario 2&quot;) |&gt; mutate(skill = &quot;equal (both 50%)&quot;, .before = 1),
+  simulate_tests(0.5, 0.4, &quot;scenario 1&quot;) |&gt; mutate(skill = &quot;different (50% v 40%)&quot;, .before = 1),
+  simulate_tests(0.5, 0.4, &quot;scenario 2&quot;) |&gt; mutate(skill = &quot;different (50% v 40%)&quot;, .before = 1)
+) |&gt;
+  mutate(game = ifelse(game == &quot;scenario 1&quot;, &quot;scenario 1: fixed 100 shots&quot;, &quot;scenario 2: shoot until 50 makes&quot;)) |&gt;
+  knitr::kable()</code></pre>
+<table style="width:100%;">
+<colgroup>
+<col width="22%" />
+<col width="33%" />
+<col width="7%" />
+<col width="16%" />
+<col width="20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skill</th>
+<th align="left">game</th>
+<th align="right">z test</th>
+<th align="right">chi-square test</th>
+<th align="right">fisher’s exact test</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">equal (both 50%)</td>
+<td align="left">scenario 1: fixed 100 shots</td>
+<td align="right">0.0565</td>
+<td align="right">0.0401</td>
+<td align="right">0.0401</td>
+</tr>
+<tr class="even">
+<td align="left">equal (both 50%)</td>
+<td align="left">scenario 2: shoot until 50 makes</td>
+<td align="right">0.0482</td>
+<td align="right">0.0351</td>
+<td align="right">0.0401</td>
+</tr>
+<tr class="odd">
+<td align="left">different (50% v 40%)</td>
+<td align="left">scenario 1: fixed 100 shots</td>
+<td align="right">0.3163</td>
+<td align="right">0.2671</td>
+<td align="right">0.2671</td>
+</tr>
+<tr class="even">
+<td align="left">different (50% v 40%)</td>
+<td align="left">scenario 2: shoot until 50 makes</td>
+<td align="right">0.3274</td>
+<td align="right">0.2794</td>
+<td align="right">0.3007</td>
+</tr>
+</tbody>
+</table>
+<p>The table shows the proportion of rounds where each test flagged a skill difference: for “equal” rows that’s the type 1 error rate (should be near our 5% significance level), for “different” rows it’s the power of the test (the complement of the type 2 error rate).</p>
+<p>With equal players all three tests hold up in either game (z close to nominal, chi-square and fisher’s exact a touch conservative). But when there <em>is</em> a skill gap, every test is more likely to catch it in the shoot-until game. Same shooters, same tests but the observer reaches different conclusions at different rates depending on which game happened to be played.</p>
+<p>The culprit is mostly sample size: reaching 50 makes at a 40% clip takes ~125 shots vs the fixed 100, so the shoot-until game generates more data on the weaker shooter. With observational data your sample is often at the whims of the unknown data generating process which can impact your conclusions in observational studies<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>.</p>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>though this can also be thought of as a special case of a binomial distribution where number of rounds is equal to 1.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>In our case, given the probability of making each shot and the number of attempts, its probability mass function assigns a probability to each possible number of makes.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>I.e. rounds of selecting from a bernoulli distribution.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>using fancy math and convolution<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>I’m pretending we played a million rounds and showing the proportion of rounds that land in each payout bucket. Downsides of simulation: it can be slow, and it can struggle to accurately capture the tails of the distribution. E.g. if you care about a 1 in 100,000 outcome, a simulation of a million rounds will only produce a handful of draws that far out, so the simulated tail is noisy. In those cases you can apply methods that smooth information across the rare outcomes (or lean on analytic results) to get a better estimate of the tails.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>Equivalently, you can think of it as a sum of geometric distributions: chop the sequence of shots at each make and the misses between consecutive makes follow a geometric distribution, so our negative binomial is just the sum of 15 geometrics. This sum-of-independent-pieces view is also why the normal approximation discussed later works.<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>Here’s a video with a little more detail on these distributions and the relation between them: <a href="https://www.youtube.com/watch?v=BPlmjp2ymxw" class="uri">https://www.youtube.com/watch?v=BPlmjp2ymxw</a><a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>Conveniently, R’s <code>dnbinom()</code> and <code>rnbinom()</code> are parameterized in terms of the number of <em>failures</em> before hitting a target number of successes – which maps exactly onto counting misses before 15 makes.<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>(r * (1 - p)) / p^2 = (15 * 0.5) / 0.5^2 = 30<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>n * p * (1 - p) = 30 * 0.5 * 0.5 = 7.5<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>I cut the chart at 50 misses but the distribution goes on to infinity.<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>You could actually skip the simulations here: both payout distributions are approximately normal (a binomial is a sum of bernoulli trials, a negative binomial is a sum of geometrics, so the CLT applies – and differencing two identical copies cancels the negative binomial’s right skew). Scenario 1 is roughly N(0, 2 * n * p * (1 - p)) and scenario 2 roughly N(0, 2 * r * (1 - p) / p^2), and if you hold the expected number of shots equal (n = r / p) the ratio of the standard deviations works out to exactly 1/p. At 50% shooting the shoot-until game has exactly double the spread.<a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>This roughly doubled spread isn’t an artifact of double counting: in the first game paying on the difference in makes is the same as paying on the difference in misses (shots are fixed at 30, so every extra make is exactly one fewer miss). Both games are settling-up on misses, the shoot-until-15 game just genuinely has about twice the spread. You can see the same relationship in the expected (absolute) payouts: $6.12 for the shoot-until-15 game vs $3.08 for fixed shots.<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p>At the shorter lengths from earlier, the counts are small enough that these tests all get a bit conservative and noisy, which muddies the comparison we care about.<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
+<li id="fn15"><p>E.g. if you only took the first 50 observations then it doesn’t matter which game was being played – the first 50 shots of either game are just the same coin flips, since a stopping rule can’t affect shots taken before it kicks in:</p>
+<pre class="r"><code>z_pvalue &lt;- function(makes1, makes2, n = 50){
+  prop.test(c(makes1, makes2), c(n, n), correct = FALSE)$p.value
+}
+
+# play out a shoot-until-50-makes game, but only score the first 50 shots
+first_50 &lt;- function(prob){
+  shots &lt;- rbinom(500, 1, prob)
+  sum(shots[1:50])
+}
+
+set.seed(123)
+map_dfr(1:10000, function(sim){
+  tibble(
+    `first 50 of fixed 100` = z_pvalue(rbinom(1, 50, 0.5), rbinom(1, 50, 0.4)),
+    `first 50 of shoot until 50` = z_pvalue(first_50(0.5), first_50(0.4))
+  )
+}) |&gt;
+  summarise(across(everything(), ~mean(.x &lt; 0.05))) |&gt;
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">first 50 of fixed 100</th>
+<th align="right">first 50 of shoot until 50</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.186</td>
+<td align="right">0.1874</td>
+</tr>
+</tbody>
+</table>
+<a href="#fnref15" class="footnote-back">↩︎</a></li>
+</ol>
+</div>
