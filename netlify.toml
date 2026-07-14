@@ -8,3 +8,9 @@
 
 [context.production.environment]
   HUGO_ENV = "production"
+
+[[redirects]]
+  from = "/"
+  to = "/about/"
+  status = 302
+  force = true
